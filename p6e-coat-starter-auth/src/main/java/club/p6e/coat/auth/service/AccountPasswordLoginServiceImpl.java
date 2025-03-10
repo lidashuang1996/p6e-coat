@@ -1,23 +1,21 @@
 package club.p6e.coat.auth.service;
 
-import club.p6e.coat.auth.codec.PasswordTransmissionCodec;
-import club.p6e.coat.auth.repository.UserAuthRepository;
-import club.p6e.coat.auth.repository.UserRepository;
+import club.p6e.coat.auth.*;
+import club.p6e.coat.auth.repository.WebFluxUserRepository;
 import club.p6e.coat.common.utils.JsonUtil;
+import club.p6e.coat.common.utils.RsaUtil;
 import club.p6e.coat.common.utils.SpringUtil;
-import club.p6e.coat.auth.AuthPasswordEncryptor;
-import club.p6e.coat.auth.AuthUser;
-import club.p6e.coat.auth.AuthVoucher;
-import club.p6e.coat.auth.Properties;
-import club.p6e.coat.auth.cache.PasswordSignatureCache;
+import club.p6e.coat.auth.cache.AccountPasswordLoginSignatureCache;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
+import java.util.Map;
+
 /**
- * 账号密码登录的实现
+ * Account Password Login Service
  *
  * @author lidashuang
  * @version 1.0
@@ -25,159 +23,93 @@ import reactor.core.scheduler.Schedulers;
 public class AccountPasswordLoginServiceImpl implements AccountPasswordLoginService {
 
     /**
-     * 用户对象
+     * Password Encryptor Object
      */
-    private final AuthUser<?> au;
+    private final PasswordEncryptor encryptor;
 
     /**
-     * 配置文件对象
+     * Web Flux User Repository Object
      */
-    private final Properties properties;
+    private final WebFluxUserRepository repository;
 
     /**
-     * 密码加密器
-     */
-    private final AuthPasswordEncryptor encryptor;
-
-    /**
-     * 用户存储库
-     */
-    private final UserRepository userRepository;
-
-    /**
-     * 用户密码存储库
-     */
-    private final UserAuthRepository userAuthRepository;
-
-    /**
-     * 构造方法初始化
+     * Constructor Initialization
      *
-     * @param encryptor          密码加密器
-     * @param properties         配置文件对象
-     * @param userRepository     用户存储库
-     * @param userAuthRepository 用户密码存储库
+     * @param encryptor  Password Encryptor Object
+     * @param repository Web Flux User Repository Object
      */
-    public AccountPasswordLoginServiceImpl(
-            AuthUser<?> au,
-            Properties properties,
-            AuthPasswordEncryptor encryptor,
-            UserRepository userRepository,
-            UserAuthRepository userAuthRepository
-    ) {
-        this.au = au;
+    public AccountPasswordLoginServiceImpl(PasswordEncryptor encryptor, WebFluxUserRepository repository) {
         this.encryptor = encryptor;
-        this.properties = properties;
-        this.userRepository = userRepository;
-        this.userAuthRepository = userAuthRepository;
+        this.repository = repository;
     }
 
-    protected Mono<String> executeTransmissionDecryption(AuthVoucher voucher, String content) {
-        final String mark = voucher.getAccountPasswordCodecMark();
-        return Mono
-                .just(mark)
-                .flatMap(m -> {
-                    if (SpringUtil.exist(PasswordSignatureCache.class)) {
-                        return SpringUtil.getBean(PasswordSignatureCache.class).get(m);
-                    } else {
-                        return Mono.error(GlobalExceptionContext.exceptionBeanException(
-                                this.getClass(),
-                                "fun executeTransmissionDecryption(AuthVoucher voucher, String content).",
-                                "Account password login transmission decryption cache handle bean not exist exception."
-                        ));
-                    }
-                })
-                .switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(
+    /**
+     * Execute Password Transmission Decryption
+     *
+     * @param exchange Server Web Exchange Object
+     * @param password Password Encryption Content Object
+     * @return Password Decryption Content Object
+     */
+    public Mono<String> executePasswordTransmissionDecryption(ServerWebExchange exchange, String password) {
+        final boolean enableTransmissionEncryption = Properties.getInstance()
+                .getLogin().getAccountPassword().isEnableTransmissionEncryption();
+        if (enableTransmissionEncryption) {
+            final AccountPasswordLoginSignatureCache cache;
+            if (SpringUtil.exist(AccountPasswordLoginSignatureCache.class)) {
+                cache = SpringUtil.getBean(AccountPasswordLoginSignatureCache.class);
+            } else {
+                return Mono.error(GlobalExceptionContext.exceptionBeanException(
                         this.getClass(),
-                        "fun executeTransmissionDecryption(AuthVoucher voucher, String content).",
-                        "Account password login transmission decryption cache data does not exist or expire exception."
-                )))
-                .flatMap(s -> {
-                    try {
-                        final PasswordTransmissionCodec codec
-                                = SpringUtil.getBean(PasswordTransmissionCodec.class);
-                        final PasswordTransmissionCodec.Model model
-                                = JsonUtil.fromJson(s, PasswordTransmissionCodec.Model.class);
-
-                        return Mono.just(codec.decryption(model, content));
-                    } catch (Exception e) {
+                        "fun executePasswordTransmissionDecryption(ServerWebExchange exchange, String password).",
+                        "Account password login password transmission decryption cache " +
+                                "handle bean[" + AccountPasswordLoginSignatureCache.class + "] not exist exception."
+                ));
+            }
+            final ServerHttpRequest request = (ServerHttpRequest) exchange.getRequest();
+            final String mark = request.getAccountPasswordSignatureMark();
+            return cache.get(mark)
+                    .switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(
+                            this.getClass(),
+                            "fun executePasswordTransmissionDecryption(ServerWebExchange exchange, String password).",
+                            "Account password login password transmission decryption cache data does not exist or expire exception."
+                    )))
+                    .flatMap(s -> {
+                        try {
+                            final Map<String, String> data = JsonUtil.fromJsonToMap(s, String.class, String.class);
+                            if (data != null && data.get("privateKey") != null && !data.get("privateKey").isEmpty()) {
+                                return Mono.just(RsaUtil.privateKeyDecryption(data.get("privateKey"), password));
+                            }
+                        } catch (Exception e) {
+                            // ignore exception
+                        }
                         return Mono.error(GlobalExceptionContext.executeCacheException(
                                 this.getClass(),
-                                "fun executeTransmissionDecryption(AuthVoucher voucher, String content).",
-                                "Account password login transmission decryption cache data does not exist or expire exception."
+                                "fun executePasswordTransmissionDecryption(ServerWebExchange exchange, String password).",
+                                "Account password login password transmission decryption cache data does not exist or expire exception."
                         ));
-                    }
-                })
-                .publishOn(Schedulers.boundedElastic())
-                .doFinally(t -> SpringUtil.getBean(PasswordSignatureCache.class).del(mark).subscribe());
+                    })
+                    .publishOn(Schedulers.boundedElastic())
+                    .doFinally(t -> cache.del(mark).subscribe());
+        } else {
+            return Mono.just(password);
+        }
     }
 
     @Override
-    public Mono<AuthUser.Model> execute(ServerWebExchange exchange, LoginContext.AccountPassword.Request param) {
-        final Properties.Mode mode = properties.getMode();
-        final boolean ete = properties.getLogin().getAccountPassword().isEnableTransmissionEncryption();
-        return AuthVoucher
-                .init(exchange)
-                .flatMap(v -> ete ? executeTransmissionDecryption(v, param.getPassword()).map(param::setPassword) : Mono.just(param))
-                .flatMap(p -> switch (mode) {
-                    case PHONE -> executePhoneMode(p);
-                    case MAILBOX -> executeMailboxMode(p);
-                    case ACCOUNT -> executeAccountMode(p);
-                    case PHONE_OR_MAILBOX -> executePhoneOrMailboxMode(p);
+    public Mono<User> execute(ServerWebExchange exchange, LoginContext.AccountPassword.Request param) {
+        return executePasswordTransmissionDecryption(exchange, param.getPassword()).map(param::setPassword)
+                .flatMap(p -> switch (Properties.getInstance().getMode()) {
+                    case PHONE -> repository.findByPhone(p.getAccount());
+                    case MAILBOX -> repository.findByMailbox(p.getAccount());
+                    case ACCOUNT -> repository.findByAccount(p.getAccount());
+                    case PHONE_OR_MAILBOX -> repository.findByPhoneOrMailbox(p.getAccount());
                 })
-                .filter(u -> ete ? encryptor.validate(param.getPassword(), u.password()) : u.password().equals(param.getPassword()))
+                .filter(u -> encryptor.validate(param.getPassword(), u.password()))
                 .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionAccountPasswordLoginAccountOrPasswordException(
                         this.getClass(),
-                        "fun execute(LoginContext.AccountPassword.Request param).",
-                        "Account or password exception."
+                        "fun execute(ServerWebExchange exchange, LoginContext.AccountPassword.Request param).",
+                        "Account password login account or password exception."
                 )));
-    }
-
-    /**
-     * 执行手机号码登录
-     *
-     * @param param 请求对象
-     * @return 结果对象
-     */
-    private Mono<AuthUser.Model> executePhoneMode(LoginContext.AccountPassword.Request param) {
-        return userRepository
-                .findByPhone(param.getAccount())
-                .flatMap(u -> userAuthRepository.findById(u.getId()).flatMap(a -> au.create(u, a)));
-    }
-
-    /**
-     * 执行邮箱登录
-     *
-     * @param param 请求对象
-     * @return 结果对象
-     */
-    private Mono<AuthUser.Model> executeMailboxMode(LoginContext.AccountPassword.Request param) {
-        return userRepository
-                .findByMailbox(param.getAccount())
-                .flatMap(u -> userAuthRepository.findById(u.getId()).flatMap(a -> au.create(u, a)));
-    }
-
-    /**
-     * 执行账号登录
-     *
-     * @param param 请求对象
-     * @return 结果对象
-     */
-    protected Mono<AuthUser.Model> executeAccountMode(LoginContext.AccountPassword.Request param) {
-        return userRepository
-                .findByAccount(param.getAccount())
-                .flatMap(u -> userAuthRepository.findById(u.getId()).flatMap(a -> au.create(u, a)));
-    }
-
-    /**
-     * 执行手机号码/邮箱登录
-     *
-     * @param param 请求对象
-     * @return 结果对象
-     */
-    protected Mono<AuthUser.Model> executePhoneOrMailboxMode(LoginContext.AccountPassword.Request param) {
-        return userRepository
-                .findByPhoneOrMailbox(param.getAccount())
-                .flatMap(u -> userAuthRepository.findById(u.getId()).flatMap(a -> au.create(u, a)));
     }
 
 }

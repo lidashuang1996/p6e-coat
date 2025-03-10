@@ -19,6 +19,6 @@ public interface QrCodeLoginService {
      * @param param 请求对象
      * @return 结果对象
      */
-    Mono<AuthUser.Model> execute(ServerWebExchange exchange, LoginContext.QrCode.Request param);
+    Mono<AuthUser.Model> execute(ServerWebExchange exchange, LoginContext.QuickResponseCode.Request param);
 
 }

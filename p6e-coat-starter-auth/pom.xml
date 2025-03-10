@@ -8,7 +8,7 @@
         <version>3.1.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <artifactId>p6e-coat-starter-auth</artifactId>
+    <artifactId>p6e-coat-starter-auth-2</artifactId>
     <version>3.1.0</version>
     <name>p6e-coat-starter-auth</name>
     <description>p6e-coat-starter-auth</description>
@@ -73,7 +73,8 @@
         <!-- P6e Coat Common [ START ] -->
         <dependency>
             <groupId>club.p6e.coat</groupId>
-            <artifactId>p6e-coat-starter-common</artifactId>
+            <artifactId>p6e-coat-starter-common-2</artifactId>
+            <version>3.1.0</version>
         </dependency>
         <!-- P6e Coat Common [ END ] -->
         

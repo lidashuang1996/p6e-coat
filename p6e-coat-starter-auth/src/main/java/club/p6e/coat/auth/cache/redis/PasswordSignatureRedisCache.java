@@ -1,7 +1,7 @@
 package club.p6e.coat.auth.cache.redis;
 
 import club.p6e.coat.auth.cache.redis.support.RedisCache;
-import club.p6e.coat.auth.cache.PasswordSignatureCache;
+import club.p6e.coat.auth.cache.AccountPasswordLoginSignatureCache;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import reactor.core.publisher.Mono;
 
@@ -12,7 +12,7 @@ import java.time.Duration;
  * @version 1.0
  */
 public class PasswordSignatureRedisCache
-        extends RedisCache implements PasswordSignatureCache {
+        extends RedisCache implements AccountPasswordLoginSignatureCache {
 
     /**
      * 缓存对象

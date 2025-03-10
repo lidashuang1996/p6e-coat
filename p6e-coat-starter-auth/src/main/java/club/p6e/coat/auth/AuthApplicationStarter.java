@@ -9,8 +9,8 @@ import club.p6e.coat.auth.generator.*;
 import club.p6e.coat.auth.launcher.EmailMessageLauncherImpl;
 import club.p6e.coat.auth.launcher.SmsMessageLauncherImpl;
 import club.p6e.coat.auth.repository.OAuth2ClientRepository;
-import club.p6e.coat.auth.repository.UserAuthRepository;
-import club.p6e.coat.auth.repository.UserRepository;
+import club.p6e.coat.auth.repository.WebFluxUserAuthRepository;
+import club.p6e.coat.auth.repository.WebFluxUserRepository;
 import club.p6e.coat.auth.service.*;
 import club.p6e.coat.auth.validator.*;
 import club.p6e.coat.common.utils.TemplateParser;
@@ -442,8 +442,8 @@ public class AuthApplicationStarter {
      * @param factory 上下文对象工厂
      */
     private void registerUserRepositoryBean(DefaultListableBeanFactory factory) {
-        registerBean(UserRepository.class, factory);
-        registerBean(UserAuthRepository.class, factory);
+        registerBean(WebFluxUserRepository.class, factory);
+        registerBean(WebFluxUserAuthRepository.class, factory);
     }
 
     /**

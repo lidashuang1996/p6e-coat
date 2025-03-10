@@ -11,7 +11,7 @@ import java.nio.charset.StandardCharsets;
  * @author lidashuang
  * @version 1.0
  */
-public class AuthPasswordEncryptorImpl implements AuthPasswordEncryptor {
+public class AuthPasswordEncryptorImpl implements PasswordEncryptor {
 
     /**
      * 种子

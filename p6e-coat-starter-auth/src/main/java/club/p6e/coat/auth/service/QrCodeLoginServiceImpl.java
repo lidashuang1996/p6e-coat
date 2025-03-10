@@ -1,7 +1,7 @@
 package club.p6e.coat.auth.service;
 
 import club.p6e.coat.auth.cache.QrCodeLoginCache;
-import club.p6e.coat.auth.repository.UserRepository;
+import club.p6e.coat.auth.repository.WebFluxUserRepository;
 import club.p6e.coat.auth.AuthUser;
 import club.p6e.coat.auth.AuthVoucher;
 import club.p6e.coat.auth.context.LoginContext;
@@ -30,7 +30,7 @@ public class QrCodeLoginServiceImpl implements QrCodeLoginService {
     /**
      * 用户存储库
      */
-    private final UserRepository repository;
+    private final WebFluxUserRepository repository;
 
     /**
      * 构造方法初始化
@@ -42,7 +42,7 @@ public class QrCodeLoginServiceImpl implements QrCodeLoginService {
     public QrCodeLoginServiceImpl(
             AuthUser<?> au,
             QrCodeLoginCache cache,
-            UserRepository repository) {
+            WebFluxUserRepository repository) {
         this.au = au;
         this.cache = cache;
         this.repository = repository;

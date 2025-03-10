@@ -16,7 +16,7 @@ public class LoginContext implements Serializable {
     /**
      * 验证登录的对象
      */
-    public static class Verification implements Serializable {
+    public static class Authentication implements Serializable {
 
         @Data
         @Accessors(chain = true)
@@ -120,7 +120,7 @@ public class LoginContext implements Serializable {
     /**
      * 二维码登录对象
      */
-    public static class QrCode implements Serializable {
+    public static class QuickResponseCode implements Serializable {
 
         @Data
         @Accessors(chain = true)
@@ -144,7 +144,7 @@ public class LoginContext implements Serializable {
     /**
      * 二维码获取对象
      */
-    public static class QrCodeObtain implements Serializable {
+    public static class QuickResponseCodeObtain implements Serializable {
 
         @Data
         @Accessors(chain = true)

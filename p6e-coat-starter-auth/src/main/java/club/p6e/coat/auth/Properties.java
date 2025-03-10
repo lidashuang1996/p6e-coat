@@ -7,8 +7,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * 配置文件
@@ -17,9 +19,34 @@ import java.util.Map;
  * @version 1.0
  */
 @Data
-@Component("club.p6e.coat.auth.Properties")
-@ConfigurationProperties(prefix = "p6e.coat.auth")
+@Accessors(chain = true)
 public class Properties implements Serializable {
+
+    public static final String P6E_DEVICE_ATTRIBUTE_KEY = "P6e-Device";
+    public static final String P6E_USER_AUTH_COOKIE_NAME = "P6e-User-Auth";
+
+    private static Properties INSTANCE = new Properties();
+
+    public static Properties getInstance() {
+        return INSTANCE;
+    }
+
+    @Data
+    @Accessors(chain = true)
+    public static class Token {
+        private Duration duration;
+
+
+        private TokenGenerator generator;
+
+        public static interface TokenGenerator {
+            String execute();
+        }
+    }
+
+
+
+    private Token token = new Token();
 
     /**
      * 是否开启认证服务

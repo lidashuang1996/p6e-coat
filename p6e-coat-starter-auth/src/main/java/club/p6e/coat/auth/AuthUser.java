@@ -65,6 +65,6 @@ public interface AuthUser<M extends AuthUser.Model> {
      * @param uam 用户认证模型
      * @return 认证用户模型
      */
-    Mono<M> create(UserModel um, UserAuthModel uam);
+    Mono<M> create(Map<String, Object> content);
 
 }

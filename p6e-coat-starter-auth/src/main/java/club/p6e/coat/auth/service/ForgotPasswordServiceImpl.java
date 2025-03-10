@@ -1,12 +1,12 @@
 package club.p6e.coat.auth.service;
 
-import club.p6e.coat.auth.AuthPasswordEncryptor;
+import club.p6e.coat.auth.PasswordEncryptor;
 import club.p6e.coat.auth.AuthVoucher;
 import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.cache.ForgotPasswordCodeCache;
 import club.p6e.coat.auth.context.ForgotPasswordContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
-import club.p6e.coat.auth.repository.UserAuthRepository;
+import club.p6e.coat.auth.repository.WebFluxUserAuthRepository;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -31,12 +31,12 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
     /**
      * 用户密码存储库
      */
-    private final UserAuthRepository repository;
+    private final WebFluxUserAuthRepository repository;
 
     /**
      * 密码加密器
      */
-    private final AuthPasswordEncryptor encryptor;
+    private final PasswordEncryptor encryptor;
 
     /**
      * 构造方法初始化
@@ -49,8 +49,8 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
     public ForgotPasswordServiceImpl(
             Properties properties,
             ForgotPasswordCodeCache cache,
-            UserAuthRepository repository,
-            AuthPasswordEncryptor encryptor
+            WebFluxUserAuthRepository repository,
+            PasswordEncryptor encryptor
     ) {
         this.cache = cache;
         this.encryptor = encryptor;

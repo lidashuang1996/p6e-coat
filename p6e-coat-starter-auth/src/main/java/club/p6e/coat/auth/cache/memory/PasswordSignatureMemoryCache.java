@@ -1,6 +1,6 @@
 package club.p6e.coat.auth.cache.memory;
 
-import club.p6e.coat.auth.cache.PasswordSignatureCache;
+import club.p6e.coat.auth.cache.AccountPasswordLoginSignatureCache;
 import club.p6e.coat.auth.cache.memory.support.ReactiveMemoryTemplate;
 import club.p6e.coat.auth.cache.memory.support.MemoryCache;
 import reactor.core.publisher.Mono;
@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
  * @version 1.0
  */
 public class PasswordSignatureMemoryCache
-        extends MemoryCache implements PasswordSignatureCache {
+        extends MemoryCache implements AccountPasswordLoginSignatureCache {
 
     /**
      * 内存缓存模板对象

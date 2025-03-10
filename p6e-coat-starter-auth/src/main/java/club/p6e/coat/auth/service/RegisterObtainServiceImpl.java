@@ -9,7 +9,7 @@ import club.p6e.coat.auth.generator.RegisterCodeGenerator;
 import club.p6e.coat.auth.launcher.Launcher;
 import club.p6e.coat.auth.launcher.LauncherType;
 import club.p6e.coat.auth.model.UserModel;
-import club.p6e.coat.auth.repository.UserRepository;
+import club.p6e.coat.auth.repository.WebFluxUserRepository;
 import club.p6e.coat.common.utils.VerificationUtil;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -49,7 +49,7 @@ public class RegisterObtainServiceImpl implements RegisterObtainService {
     /**
      * 用户存储库
      */
-    private final UserRepository userRepository;
+    private final WebFluxUserRepository userRepository;
 
     /**
      * 构造方法初始化
@@ -62,7 +62,7 @@ public class RegisterObtainServiceImpl implements RegisterObtainService {
     public RegisterObtainServiceImpl(
             Properties properties,
             RegisterCodeCache cache,
-            UserRepository userRepository,
+            WebFluxUserRepository userRepository,
             RegisterCodeGenerator generator
     ) {
         this.cache = cache;

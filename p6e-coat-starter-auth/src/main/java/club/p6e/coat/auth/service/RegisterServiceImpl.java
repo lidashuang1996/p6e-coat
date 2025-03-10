@@ -1,10 +1,10 @@
 package club.p6e.coat.auth.service;
 
 import club.p6e.coat.auth.context.RegisterContext;
-import club.p6e.coat.auth.repository.UserAuthRepository;
-import club.p6e.coat.auth.repository.UserRepository;
+import club.p6e.coat.auth.repository.WebFluxUserAuthRepository;
+import club.p6e.coat.auth.repository.WebFluxUserRepository;
 import club.p6e.coat.common.utils.VerificationUtil;
-import club.p6e.coat.auth.AuthPasswordEncryptor;
+import club.p6e.coat.auth.PasswordEncryptor;
 import club.p6e.coat.auth.AuthVoucher;
 import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
@@ -30,7 +30,7 @@ public class RegisterServiceImpl implements RegisterService {
     /**
      * 密码加密器
      */
-    private final AuthPasswordEncryptor encryptor;
+    private final PasswordEncryptor encryptor;
 
     /**
      * 模板对象
@@ -40,12 +40,12 @@ public class RegisterServiceImpl implements RegisterService {
     /**
      * 用户存储库
      */
-    private final UserRepository userRepository;
+    private final WebFluxUserRepository userRepository;
 
     /**
      * 用户认证存储库
      */
-    private final UserAuthRepository userAuthRepository;
+    private final WebFluxUserAuthRepository userAuthRepository;
 
     /**
      * 构造方法初始化
@@ -58,9 +58,9 @@ public class RegisterServiceImpl implements RegisterService {
      */
     public RegisterServiceImpl(
             Properties properties,
-            AuthPasswordEncryptor encryptor,
-            UserRepository userRepository,
-            UserAuthRepository userAuthRepository,
+            PasswordEncryptor encryptor,
+            WebFluxUserRepository userRepository,
+            WebFluxUserAuthRepository userAuthRepository,
             TransactionalOperator transactional
     ) {
         this.properties = properties;

@@ -1,9 +1,9 @@
 package club.p6e.coat.auth.service;
 
-import club.p6e.coat.auth.cache.VerificationCodeLoginCache;
+import club.p6e.coat.auth.cache.WebFluxVerificationCodeLoginCache;
 import club.p6e.coat.auth.launcher.Launcher;
 import club.p6e.coat.auth.launcher.LauncherType;
-import club.p6e.coat.auth.repository.UserRepository;
+import club.p6e.coat.auth.repository.WebFluxUserRepository;
 import club.p6e.coat.common.utils.JsonUtil;
 import club.p6e.coat.common.utils.VerificationUtil;
 import club.p6e.coat.auth.AuthVoucher;
@@ -39,12 +39,12 @@ public class VerificationCodeObtainServiceImpl implements VerificationCodeObtain
     /**
      * 用户存储库
      */
-    private final UserRepository repository;
+    private final WebFluxUserRepository repository;
 
     /**
      * 验证码缓存对象
      */
-    private final VerificationCodeLoginCache cache;
+    private final WebFluxVerificationCodeLoginCache cache;
 
     /**
      * 验证码生成对象
@@ -61,8 +61,8 @@ public class VerificationCodeObtainServiceImpl implements VerificationCodeObtain
      */
     public VerificationCodeObtainServiceImpl(
             Properties properties,
-            UserRepository repository,
-            VerificationCodeLoginCache cache,
+            WebFluxUserRepository repository,
+            WebFluxVerificationCodeLoginCache cache,
             VerificationCodeLoginGenerator generator
     ) {
         this.cache = cache;

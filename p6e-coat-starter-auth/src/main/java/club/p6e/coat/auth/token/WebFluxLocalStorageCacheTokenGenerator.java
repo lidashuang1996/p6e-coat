@@ -28,7 +28,7 @@ public class WebFluxLocalStorageCacheTokenGenerator implements WebFluxTokenGener
     public Mono<Object> execute(ServerWebExchange context, User user) {
         final String token = token();
         final String device = context.getAttribute("P6e-Device");
-        return cache.set(user.id(), device, token, user.serialize()).map(m -> new HashMap<>(){{
+        return cache.set(user.id(), device, token, user.serialize()).map(m -> new HashMap<>() {{
             put("token", token);
             put("expiration", 3600);
         }});

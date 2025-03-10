@@ -20,7 +20,7 @@ public class WebFluxCookieJsonWebTokenGenerator implements WebFluxTokenGenerator
     }
 
     @Override
-    public Mono<String> execute(ServerWebExchange context, User user) {
+    public Mono<Object> execute(ServerWebExchange context, User user) {
         final String device = context.getAttribute("P6e-Device");
         final String content = codec.encryption(user.id(), device, user.serialize());
         final ServerHttpResponse response = context.getResponse();
