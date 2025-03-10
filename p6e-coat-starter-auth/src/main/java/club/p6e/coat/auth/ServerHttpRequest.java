@@ -14,6 +14,8 @@ public class ServerHttpRequest extends ServerHttpRequestDecorator {
 
     private Map<String, Object> attributes = new ConcurrentHashMap<>();
 
+    private static final String ACCOUNT_CONTENT = "ACCOUNT_CONTENT";
+    private static final String ACCOUNT_TYPE = "ACCOUNT_TYPE";
     private static final String ACCOUNT_PASSWORD_SIGNATURE_MARK = "ACCOUNT_PASSWORD_SIGNATURE_MARK";
 
     public ServerHttpRequest(org.springframework.http.server.reactive.ServerHttpRequest delegate) {
@@ -21,7 +23,7 @@ public class ServerHttpRequest extends ServerHttpRequestDecorator {
     }
 
 
-    public Object getAttribute(String name) {
+    public  Object getAttribute(String name) {
         return attributes.get(name);
     }
 
@@ -34,8 +36,23 @@ public class ServerHttpRequest extends ServerHttpRequestDecorator {
         return data == null ? null : String.valueOf(data);
     }
 
+    public String getQuickResponseCodeLoginMark() {
+        final Object data = getAttribute(ACCOUNT_PASSWORD_SIGNATURE_MARK);
+        return data == null ? null : String.valueOf(data);
+    }
+
     public String setAccountPasswordSignatureMark(String accountPasswordSignatureMark) {
         return attributes.put(ACCOUNT_PASSWORD_SIGNATURE_MARK, accountPasswordSignatureMark).toString();
+    }
+
+    public  String getAccountContent() {
+        final Object data = getAttribute(ACCOUNT_CONTENT);
+        return data == null ? null : String.valueOf(data);
+    }
+
+    public  String getAccountType() {
+        final Object data = getAttribute(ACCOUNT_TYPE);
+        return data == null ? null : String.valueOf(data);
     }
 
     public Mono<ServerHttpRequest> init() {

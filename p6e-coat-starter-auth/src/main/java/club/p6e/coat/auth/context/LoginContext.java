@@ -92,7 +92,7 @@ public class LoginContext implements Serializable {
     /**
      * 验证码获取的对象
      */
-    public static class VerificationCodeObtain implements Serializable {
+    public static class VerificationCodeAcquisition implements Serializable {
 
         @Data
         @Accessors(chain = true)
@@ -105,14 +105,12 @@ public class LoginContext implements Serializable {
         @Accessors(chain = true)
         public static class Vo implements Serializable {
             private String account;
-            private String message;
         }
 
         @Data
         @Accessors(chain = true)
         public static class Dto implements Serializable {
             private String account;
-            private String message;
         }
 
     }

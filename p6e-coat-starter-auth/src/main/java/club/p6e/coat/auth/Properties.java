@@ -113,7 +113,7 @@ public class Properties implements Serializable {
          * @param mode 模式内容
          * @return 模式对象
          */
-        public static Mode create(String mode) {
+        public static Mode structure(String mode) {
             if (StringUtils.hasText(mode)) {
                 return switch (mode.toUpperCase()) {
                     case "PHONE" -> PHONE;

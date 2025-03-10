@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
  * @author lidashuang
  * @version 1.0
  */
-public class WebFluxUserRepositoryImpl implements WebFluxUserRepository {
+public class WebFluxUserRepositoryImpl implements UserRepository {
 
     /**
      * 模板对象

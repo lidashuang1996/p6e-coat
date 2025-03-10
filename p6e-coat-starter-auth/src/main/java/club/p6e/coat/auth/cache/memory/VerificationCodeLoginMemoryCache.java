@@ -1,6 +1,6 @@
 package club.p6e.coat.auth.cache.memory;
 
-import club.p6e.coat.auth.cache.WebFluxVerificationCodeLoginCache;
+import club.p6e.coat.auth.cache.VerificationCodeLoginCache;
 import club.p6e.coat.auth.cache.memory.support.ReactiveMemoryTemplate;
 import club.p6e.coat.auth.cache.memory.support.MemoryCache;
 import reactor.core.publisher.Mono;
@@ -15,7 +15,7 @@ import java.util.Map;
  * @version 1.0
  */
 public class VerificationCodeLoginMemoryCache
-        extends MemoryCache implements WebFluxVerificationCodeLoginCache {
+        extends MemoryCache implements VerificationCodeLoginCache {
 
     /**
      * 内存缓存模板对象

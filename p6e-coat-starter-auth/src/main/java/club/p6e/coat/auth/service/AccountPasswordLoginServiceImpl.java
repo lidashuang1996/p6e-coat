@@ -1,7 +1,7 @@
 package club.p6e.coat.auth.service;
 
 import club.p6e.coat.auth.*;
-import club.p6e.coat.auth.repository.WebFluxUserRepository;
+import club.p6e.coat.auth.repository.UserRepository;
 import club.p6e.coat.common.utils.JsonUtil;
 import club.p6e.coat.common.utils.RsaUtil;
 import club.p6e.coat.common.utils.SpringUtil;
@@ -30,7 +30,7 @@ public class AccountPasswordLoginServiceImpl implements AccountPasswordLoginServ
     /**
      * Web Flux User Repository Object
      */
-    private final WebFluxUserRepository repository;
+    private final UserRepository repository;
 
     /**
      * Constructor Initialization
@@ -38,7 +38,7 @@ public class AccountPasswordLoginServiceImpl implements AccountPasswordLoginServ
      * @param encryptor  Password Encryptor Object
      * @param repository Web Flux User Repository Object
      */
-    public AccountPasswordLoginServiceImpl(PasswordEncryptor encryptor, WebFluxUserRepository repository) {
+    public AccountPasswordLoginServiceImpl(PasswordEncryptor encryptor, UserRepository repository) {
         this.encryptor = encryptor;
         this.repository = repository;
     }

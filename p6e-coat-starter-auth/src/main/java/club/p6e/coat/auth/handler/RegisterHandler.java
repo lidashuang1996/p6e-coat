@@ -1,9 +1,7 @@
 package club.p6e.coat.auth.handler;
 
 import club.p6e.coat.auth.aspect.WebFluxAspect;
-import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.context.RegisterContext;
-import club.p6e.coat.auth.service.QrCodeLoginService;
 import club.p6e.coat.auth.service.RegisterService;
 import club.p6e.coat.common.context.ResultContext;
 import club.p6e.coat.common.utils.SpringUtil;
@@ -14,6 +12,8 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
+ * Register Handler
+ *
  * @author lidashuang
  * @version 1.0
  */

@@ -2,9 +2,6 @@ package club.p6e.coat.auth.repository;
 
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.model.UserModel;
-import club.p6e.coat.common.utils.GeneratorUtil;
-import org.springframework.data.relational.core.query.Criteria;
-import org.springframework.data.relational.core.query.Query;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
@@ -15,7 +12,7 @@ import java.time.LocalDateTime;
  * @author lidashuang
  * @version 1.0
  */
-public interface WebFluxUserRepository {
+public interface UserRepository {
 
     /**
      * 根据 ID 查询数据
@@ -23,7 +20,7 @@ public interface WebFluxUserRepository {
      * @param id ID
      * @return Mono/UserModel 用户模型对象
      */
-    Mono<UserModel> findById(Integer id);
+    Mono<User> findById(Integer id);
 
     /**
      * 根据账号查询数据

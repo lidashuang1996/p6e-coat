@@ -10,7 +10,7 @@ import club.p6e.coat.auth.launcher.EmailMessageLauncherImpl;
 import club.p6e.coat.auth.launcher.SmsMessageLauncherImpl;
 import club.p6e.coat.auth.repository.OAuth2ClientRepository;
 import club.p6e.coat.auth.repository.WebFluxUserAuthRepository;
-import club.p6e.coat.auth.repository.WebFluxUserRepository;
+import club.p6e.coat.auth.repository.UserRepository;
 import club.p6e.coat.auth.service.*;
 import club.p6e.coat.auth.validator.*;
 import club.p6e.coat.common.utils.TemplateParser;
@@ -89,7 +89,7 @@ public class AuthApplicationStarter {
                     registerVerificationCodeLoginCacheBean(defaultListableBeanFactory);
                     registerBean(VerificationCodeLoginGeneratorImpl.class, defaultListableBeanFactory);
                     registerBean(VerificationCodeLoginServiceImpl.class, defaultListableBeanFactory);
-                    registerBean(VerificationCodeObtainServiceImpl.class, defaultListableBeanFactory);
+                    registerBean(VerificationCodeAcquisitionServiceImpl.class, defaultListableBeanFactory);
                     registerBean(VerificationCodeLoginControllerImpl.class, defaultListableBeanFactory);
                     registerBean(VerificationCodeObtainControllerImpl.class, defaultListableBeanFactory);
                     registerBean(VerificationCodeLoginParameterValidator.class, defaultListableBeanFactory, true, false);
@@ -101,7 +101,7 @@ public class AuthApplicationStarter {
                     registerUserRepositoryBean(defaultListableBeanFactory);
                     registerQrCodeLoginCacheBean(defaultListableBeanFactory);
                     registerBean(QrCodeLoginGeneratorImpl.class, defaultListableBeanFactory);
-                    registerBean(QrCodeLoginServiceImpl.class, defaultListableBeanFactory);
+                    registerBean(QuickResponseCodeLoginServiceImpl.class, defaultListableBeanFactory);
                     registerBean(QrCodeObtainServiceImpl.class, defaultListableBeanFactory);
                     registerBean(QrCodeLoginControllerImpl.class, defaultListableBeanFactory);
                     registerBean(QrCodeObtainControllerImpl.class, defaultListableBeanFactory);
@@ -442,7 +442,7 @@ public class AuthApplicationStarter {
      * @param factory 上下文对象工厂
      */
     private void registerUserRepositoryBean(DefaultListableBeanFactory factory) {
-        registerBean(WebFluxUserRepository.class, factory);
+        registerBean(UserRepository.class, factory);
         registerBean(WebFluxUserAuthRepository.class, factory);
     }
 

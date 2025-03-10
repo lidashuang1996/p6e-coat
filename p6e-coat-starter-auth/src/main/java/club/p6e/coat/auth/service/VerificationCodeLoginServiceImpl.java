@@ -1,17 +1,17 @@
 package club.p6e.coat.auth.service;
 
-import club.p6e.coat.auth.cache.WebFluxVerificationCodeLoginCache;
-import club.p6e.coat.auth.repository.WebFluxUserRepository;
-import club.p6e.coat.auth.AuthUser;
-import club.p6e.coat.auth.AuthVoucher;
+import club.p6e.coat.auth.ServerHttpRequest;
+import club.p6e.coat.auth.User;
+import club.p6e.coat.auth.cache.VerificationCodeLoginCache;
 import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
+import club.p6e.coat.auth.repository.UserRepository;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * 验证码登录服务的实现
+ * Verification Code Login Service Impl
  *
  * @author lidashuang
  * @version 1.0
@@ -19,62 +19,60 @@ import reactor.core.publisher.Mono;
 public class VerificationCodeLoginServiceImpl implements VerificationCodeLoginService {
 
     /**
-     * 用户存储库
+     * Web Flux User Repository Object
      */
-    private final WebFluxUserRepository repository;
+    private final UserRepository repository;
 
     /**
-     * 验证码缓存对象
+     * Web Flux Verification Code Login Cache Object
      */
-    private final WebFluxVerificationCodeLoginCache cache;
+    private final VerificationCodeLoginCache cache;
 
     /**
-     * 构造方法初始化
+     * Constructor Initialization
      *
-     * @param cache      验证码缓存对象
-     * @param repository 用户存储库
+     * @param cache      Verification Code Login Cache Object
+     * @param repository User Repository Object
      */
     public VerificationCodeLoginServiceImpl(
-            WebFluxUserRepository repository,
-            WebFluxVerificationCodeLoginCache cache
+            UserRepository repository,
+            VerificationCodeLoginCache cache
     ) {
         this.cache = cache;
         this.repository = repository;
     }
 
     @Override
-    public Mono<AuthUser.Model> execute(ServerWebExchange exchange, LoginContext.VerificationCode.Request param) {
+    public Mono<User> execute(ServerWebExchange exchange, LoginContext.VerificationCode.Request param) {
+        final ServerHttpRequest request = (ServerHttpRequest) exchange.getRequest();
         final String code = param.getCode();
-        final String account = v.getAccount();
-        final String accountType = v.getAccountType();
+        final String accountType = request.getAccountType();
+        final String accountContent = request.getAccountContent();
         return cache
-                .get(account)
-                .switchIfEmpty(Mono.error(
-                        GlobalExceptionContext.executeCacheException(
-                                this.getClass(),
-                                "fun execute(ServerWebExchange exchange, LoginContext.VerificationCodeObtain.Request param)",
-                                "Verification code login cache data does not exist or expire exception."
-                        )))
-                .flatMap(list -> {
+                .get(accountContent)
+                .switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(
+                        this.getClass(),
+                        "fun execute(ServerWebExchange exchange, LoginContext.VerificationCode.Request param)",
+                        "Verification code login cache data does not exist or expire exception."
+                ))).flatMap(list -> {
+                    // verify if there are any matching verification codes in the list
                     if (list != null && !list.isEmpty()) {
                         final int index = list.indexOf(code);
                         if (index >= 0) {
-                            return cache.del(account);
+                            // successfully verified and deleted all verification codes under the account
+                            return cache.del(accountContent);
                         }
                     }
-                    return Mono.error(
-                            GlobalExceptionContext.executeCacheException(
-                                    this.getClass(),
-                                    "fun execute(ServerWebExchange exchange, LoginContext.VerificationCodeObtain.Request param)",
-                                    "Verification code login cache data does not exist or expire exception."
-                            ));
-                })
-                .flatMap(r -> switch (Properties.Mode.create(accountType)) {
-                    case PHONE -> repository.findByPhone(account);
-                    case MAILBOX -> repository.findByMailbox(account);
-                    case ACCOUNT -> repository.findByAccount(account);
-                    case PHONE_OR_MAILBOX -> repository.findByPhoneOrMailbox(account);
-                })
-                .flatMap(m -> au.create(m, null));
+                    return Mono.error(GlobalExceptionContext.executeCacheException(
+                            this.getClass(),
+                            "fun execute(ServerWebExchange exchange, LoginContext.VerificationCode.Request param)",
+                            "Verification code login cache data does not exist or expire exception."
+                    ));
+                }).flatMap(r -> switch (Properties.Mode.structure(accountType)) {
+                    case PHONE -> repository.findByPhone(accountContent);
+                    case MAILBOX -> repository.findByMailbox(accountContent);
+                    case ACCOUNT -> repository.findByAccount(accountContent);
+                    case PHONE_OR_MAILBOX -> repository.findByPhoneOrMailbox(accountContent);
+                });
     }
 }

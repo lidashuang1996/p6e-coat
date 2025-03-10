@@ -6,20 +6,20 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * Verification Code Login Service
+ * Quick Response Code Login Service
  *
  * @author lidashuang
  * @version 1.0
  */
-public interface VerificationCodeLoginService {
+public interface QuickResponseCodeLoginService {
 
     /**
-     * Execute Verification Code Login Operation
+     * Execute Quick Response Code Login
      *
      * @param exchange Server Web Exchange Object
-     * @param param    Login Context Verification Code Request Object
+     * @param param    Login Context Quick Response Code Request Object
      * @return User Object
      */
-    Mono<User> execute(ServerWebExchange exchange, LoginContext.VerificationCode.Request param);
+    Mono<User> execute(ServerWebExchange exchange, LoginContext.QuickResponseCode.Request param);
 
 }

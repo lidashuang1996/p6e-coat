@@ -9,7 +9,7 @@ import club.p6e.coat.auth.generator.ForgotPasswordCodeGenerator;
 import club.p6e.coat.auth.launcher.Launcher;
 import club.p6e.coat.auth.launcher.LauncherType;
 import club.p6e.coat.auth.model.UserModel;
-import club.p6e.coat.auth.repository.WebFluxUserRepository;
+import club.p6e.coat.auth.repository.UserRepository;
 import club.p6e.coat.common.utils.VerificationUtil;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -38,7 +38,7 @@ public class ForgotPasswordObtainServiceImpl implements ForgotPasswordObtainServ
     /**
      * 用户存储库
      */
-    private final WebFluxUserRepository repository;
+    private final UserRepository repository;
 
     /**
      * 忘记密码验证码缓存
@@ -60,7 +60,7 @@ public class ForgotPasswordObtainServiceImpl implements ForgotPasswordObtainServ
      */
     public ForgotPasswordObtainServiceImpl(
             Properties properties,
-            WebFluxUserRepository repository,
+            UserRepository repository,
             ForgotPasswordCodeCache cache,
             ForgotPasswordCodeGenerator generator) {
         this.cache = cache;

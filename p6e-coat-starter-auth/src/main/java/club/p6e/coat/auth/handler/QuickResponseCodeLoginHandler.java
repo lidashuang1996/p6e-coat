@@ -2,7 +2,7 @@ package club.p6e.coat.auth.handler;
 
 import club.p6e.coat.auth.aspect.WebFluxAspect;
 import club.p6e.coat.auth.context.LoginContext;
-import club.p6e.coat.auth.service.QrCodeLoginService;
+import club.p6e.coat.auth.service.QuickResponseCodeLoginService;
 import club.p6e.coat.auth.service.QrCodeObtainService;
 import club.p6e.coat.common.context.ResultContext;
 import club.p6e.coat.common.utils.SpringUtil;
@@ -14,6 +14,8 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
+ * Quick Response Code Login Handler
+ *
  * @author lidashuang
  * @version 1.0
  */
@@ -24,7 +26,7 @@ public class QuickResponseCodeLoginHandler {
     public Mono<ResultContext> qrc(ServerWebExchange exchange, @RequestBody LoginContext.QuickResponseCode.Request request) {
         return WebFluxAspect
                 .before(new Object[]{exchange, request})
-                .flatMap(o -> SpringUtil.getBean(QrCodeLoginService.class).execute(exchange, request))
+                .flatMap(o -> SpringUtil.getBean(QuickResponseCodeLoginService.class).execute(exchange, request))
                 .flatMap(m -> WebFluxAspect.after(new Object[]{exchange, request, m}))
                 .map(ResultContext::build);
     }

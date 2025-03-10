@@ -13,6 +13,8 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
+ * Verification Code Login Handler
+ *
  * @author lidashuang
  * @version 1.0
  */
@@ -33,7 +35,7 @@ public class VerificationCodeLoginHandler {
     public Mono<ResultContext> vc(ServerWebExchange exchange, @RequestBody LoginContext.VerificationCodeObtain.Request request) {
         return WebFluxAspect
                 .before(new Object[]{exchange, request})
-                .flatMap(o -> SpringUtil.getBean(VerificationCodeObtainService.class).execute(exchange, request))
+                .flatMap(o -> SpringUtil.getBean(VerificationCodeAcquisitionService.class).execute(exchange, request))
                 .flatMap(m -> WebFluxAspect.after(new Object[]{exchange, request, m}))
                 .map(ResultContext::build);
     }

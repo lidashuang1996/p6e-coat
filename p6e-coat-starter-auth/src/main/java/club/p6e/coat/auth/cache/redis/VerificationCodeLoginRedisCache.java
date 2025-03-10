@@ -1,7 +1,7 @@
 package club.p6e.coat.auth.cache.redis;
 
 import club.p6e.coat.auth.cache.redis.support.RedisCache;
-import club.p6e.coat.auth.cache.WebFluxVerificationCodeLoginCache;
+import club.p6e.coat.auth.cache.VerificationCodeLoginCache;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import reactor.core.publisher.Mono;
 
@@ -17,7 +17,7 @@ import java.util.Map;
  * @version 1.0
  */
 public class VerificationCodeLoginRedisCache
-        extends RedisCache implements WebFluxVerificationCodeLoginCache {
+        extends RedisCache implements VerificationCodeLoginCache {
 
     /**
      * 缓存对象
