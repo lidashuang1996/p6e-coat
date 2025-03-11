@@ -11,7 +11,7 @@ import java.util.List;
  * @author lidashuang
  * @version 1.0
  */
-public interface ForgotPasswordCodeCache extends ICache {
+public interface VerificationCodeForgotPasswordCache extends ICache {
 
     /**
      * 过期的时间

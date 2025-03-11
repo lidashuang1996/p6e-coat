@@ -3,7 +3,7 @@ package club.p6e.coat.auth.service;
 import club.p6e.coat.auth.PasswordEncryptor;
 import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.ServerHttpRequest;
-import club.p6e.coat.auth.cache.ForgotPasswordCodeCache;
+import club.p6e.coat.auth.cache.VerificationCodeForgotPasswordCache;
 import club.p6e.coat.auth.context.ForgotPasswordContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.repository.UserAuthRepository;
@@ -31,7 +31,7 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
     /**
      * Forgot Password Code Cache Object
      */
-    private final ForgotPasswordCodeCache cache;
+    private final VerificationCodeForgotPasswordCache cache;
 
     /**
      * Constructor Initialization
@@ -40,7 +40,7 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
      * @param repository User Auth Repository Object
      * @param cache      Forgot Password Code Cache Object
      */
-    public ForgotPasswordServiceImpl(PasswordEncryptor encryptor, UserAuthRepository repository, ForgotPasswordCodeCache cache) {
+    public ForgotPasswordServiceImpl(PasswordEncryptor encryptor, UserAuthRepository repository, VerificationCodeForgotPasswordCache cache) {
         this.cache = cache;
         this.encryptor = encryptor;
         this.repository = repository;
@@ -51,18 +51,20 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
         final String account = ((ServerHttpRequest) exchange.getRequest()).getAccountContent();
         return cache
                 .get(account)
+                // verify if the verification code matches
                 .filter(l -> l.contains(param.getCode()))
+                // delete account cache data
                 .flatMap(l -> cache.del(account))
                 .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionForgotPasswordCodeException(
                         this.getClass(),
                         "fun execute(ServerWebExchange exchange, ForgotPasswordContext.Request param).",
-                        "Forgot password submit verification code cache data does not exist or expire exception."
+                        "forgot password submit verification code cache data does not exist or expire exception."
                 ))).flatMap(v -> (switch (Properties.getInstance().getMode()) {
                     case PHONE -> repository.findByPhone(account);
                     case MAILBOX -> repository.findByMailbox(account);
                     case ACCOUNT -> repository.findByAccount(account);
                     case PHONE_OR_MAILBOX -> repository.findByPhoneOrMailbox(account);
-                })).flatMap(m -> repository.updatePassword(m.id(), encryptor.execute(param.getPassword())))
+                })).flatMap(m -> repository.updatePassword(m.id(), encryptor.execute(param.getPassword()))) // update user passWord to the latest
                 .map(l -> new ForgotPasswordContext.Dto().setAccount(account));
     }
 

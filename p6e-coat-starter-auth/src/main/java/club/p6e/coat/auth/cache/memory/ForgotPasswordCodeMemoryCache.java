@@ -1,6 +1,6 @@
 package club.p6e.coat.auth.cache.memory;
 
-import club.p6e.coat.auth.cache.ForgotPasswordCodeCache;
+import club.p6e.coat.auth.cache.VerificationCodeForgotPasswordCache;
 import club.p6e.coat.auth.cache.memory.support.MemoryCache;
 import club.p6e.coat.auth.cache.memory.support.ReactiveMemoryTemplate;
 import reactor.core.publisher.Mono;
@@ -15,7 +15,7 @@ import java.util.Map;
  * @version 1.0
  */
 public class ForgotPasswordCodeMemoryCache
-        extends MemoryCache implements ForgotPasswordCodeCache {
+        extends MemoryCache implements VerificationCodeForgotPasswordCache {
 
     /**
      * 内存缓存模板对象

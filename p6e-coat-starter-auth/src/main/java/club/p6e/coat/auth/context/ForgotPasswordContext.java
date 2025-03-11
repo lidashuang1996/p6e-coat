@@ -32,7 +32,7 @@ public class ForgotPasswordContext implements Serializable {
         private String account;
     }
 
-    public static class CodeObtain implements Serializable {
+    public static class VerificationCodeAcquisition implements Serializable {
 
         @Data
         @Accessors(chain = true)

@@ -1,14 +1,7 @@
 package club.p6e.coat.auth.repository;
 
 import club.p6e.coat.auth.User;
-import club.p6e.coat.auth.model.UserAuthModel;
-import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
-import org.springframework.data.relational.core.query.Criteria;
-import org.springframework.data.relational.core.query.Query;
-import org.springframework.data.relational.core.query.Update;
 import reactor.core.publisher.Mono;
-
-import java.time.LocalDateTime;
 
 /**
  * User Auth Repository
@@ -16,132 +9,55 @@ import java.time.LocalDateTime;
  * @author lidashuang
  * @version 1.0
  */
-public class UserAuthRepository {
+public interface UserAuthRepository {
 
     /**
-     * 模板对象
-     */
-    private final R2dbcEntityTemplate template;
-
-    /**
-     * 构造方法初始化
-     *
-     * @param template 模板对象
-     */
-    public UserAuthRepository(R2dbcEntityTemplate template) {
-        this.template = template;
-    }
-
-    /**
-     * 根据 ID 查询数据
+     * Query By ID
      *
      * @param id ID
-     * @return Mono/UserAuthModel 用户认证模型对象
+     * @return User Object
      */
-    public Mono<User> findById(Integer id) {
-        return template.selectOne(
-                Query.query(Criteria.where(UserAuthModel.ID).is(id)),
-                User.class
-        );
-    }
+    Mono<User> findById(Integer id);
 
     /**
-     * 根据账号查询数据
+     * Query By Account
      *
-     * @param account 账号
-     * @return Mono/UserAuthModel 用户认证模型对象
+     * @param account Account
+     * @return User Object
      */
-    public Mono<User> findByAccount(String account) {
-        return template.selectOne(
-                Query.query(Criteria.where(UserAuthModel.ACCOUNT).is(account)),
-                User.class
-        );
-    }
+    Mono<User> findByAccount(String account);
 
     /**
-     * 根据账号查询数据
+     * Query By Phone Account
      *
-     * @param account 账号
-     * @return Mono/UserAuthModel 用户认证模型对象
+     * @param phone Phone Account
+     * @return User Object
      */
-    public Mono<User> findByPhone(String account) {
-        return template.selectOne(
-                Query.query(Criteria.where(UserAuthModel.PHONE).is(account)),
-                User.class
-        );
-    }
+    Mono<User> findByPhone(String phone);
 
     /**
-     * 根据账号查询数据
+     * Query By Mailbox Account
      *
-     * @param account 账号
-     * @return Mono/UserAuthModel 用户认证模型对象
+     * @param mailbox 账号
+     * @return User Object
      */
-    public Mono<User> findByMailbox(String account) {
-        return template.selectOne(
-                Query.query(Criteria.where(UserAuthModel.MAILBOX).is(account)),
-                UserAuthModel.class
-        );
-    }
+    Mono<User> findByMailbox(String mailbox);
 
     /**
-     * 根据账号查询数据
+     * Query By Phone Account Or Mailbox Account
      *
-     * @param account 账号
-     * @return Mono/UserAuthModel 用户认证模型对象
+     * @param account Phone Account Or Mailbox Account
+     * @return User Object
      */
-    public Mono<User> findByPhoneOrMailbox(String account) {
-        return template.selectOne(
-                Query.query(Criteria.where(UserAuthModel.PHONE).is(account).or(UserAuthModel.MAILBOX).is(account)),
-                UserAuthModel.class
-        );
-    }
+    Mono<User> findByPhoneOrMailbox(String account);
 
     /**
-     * 查询 QQ 数据
-     *
-     * @param qq QQ
-     * @return Mono/UserAuthModel 用户认证模型对象
-     */
-    public Mono<User> findByQq(String qq) {
-        return template.selectOne(
-                Query.query(Criteria.where(UserAuthModel.QQ).is(qq)),
-                UserAuthModel.class
-        );
-    }
-
-    /**
-     * 创建数据
-     *
-     * @param model 用户认证模型对象
-     * @return Mono/UserAuthModel 用户认证模型对象
-     */
-    public Mono<UserAuthModel> create(UserAuthModel model) {
-        model
-                .setVersion(0)
-                .setCreator("register_sys")
-                .setModifier("register_sys")
-                .setCreationDateTime(LocalDateTime.now())
-                .setModificationDateTime(LocalDateTime.now());
-        return template.insert(model);
-    }
-
-    /**
-     * 更新密码
+     * Query By ID Update Password
      *
      * @param id       ID
-     * @param password 密码数据
-     * @return Mono/UserAuthModel 修改的数据条数
+     * @param password Password
+     * @return Affected Number Count
      */
-    public Mono<Long> updatePassword(String id, String password) {
-        return template.selectOne(
-                Query.query(Criteria.where(UserAuthModel.ID).is(id)),
-                UserAuthModel.class
-        ).flatMap(m -> template.update(
-                Query.query(Criteria.where(UserAuthModel.ID).is(id).and(UserAuthModel.VERSION).is(m.getVersion())),
-                Update.update(UserAuthModel.PASSWORD, password).set(UserAuthModel.VERSION, m.getVersion() + 1),
-                UserAuthModel.class
-        ));
-    }
+    Mono<Long> updatePassword(String id, String password);
 
 }

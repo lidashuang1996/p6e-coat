@@ -1,10 +1,7 @@
 package club.p6e.coat.auth.repository;
 
 import club.p6e.coat.auth.User;
-import club.p6e.coat.auth.model.UserModel;
 import reactor.core.publisher.Mono;
-
-import java.time.LocalDateTime;
 
 /**
  * User Repository
@@ -15,103 +12,43 @@ import java.time.LocalDateTime;
 public interface UserRepository {
 
     /**
-     * 根据 ID 查询数据
+     * Query By ID
      *
      * @param id ID
-     * @return Mono/UserModel 用户模型对象
+     * @return User Object
      */
     Mono<User> findById(Integer id);
 
     /**
-     * 根据账号查询数据
+     * Query By Account
      *
-     * @param account 账号
-     * @return Mono/UserModel 用户模型对象
+     * @param account Account
+     * @return User Object
      */
-    Mono<User> findByAccount(String account)
+    Mono<User> findByAccount(String account);
 
     /**
-     * 创建用户
+     * Query By Phone Account
      *
-     * @param model 用户模型对象
-     * @return 用户模型对象
+     * @param phone Phone Account
+     * @return User Object
      */
-    Mono<User> create(UserModel model);
-
     Mono<User> findByPhone(String phone);
 
     /**
-     * 创建用户
+     * Query By MailBox Account
      *
-     * @param model 用户模型对象
-     * @return 用户模型对象
-     */
-    Mono<UserModel> createPhone(UserModel model) {
-        model
-                .setId(null)
-                .setStatus(0)
-                .setEnabled(1)
-                .setInternal(0)
-                .setAdministrator(0)
-                .setAccount(null)
-                .setMailbox(null)
-                .setName(model.getPhone())
-                .setNickname(model.getPhone())
-                .setAvatar("default.jpg")
-                .setDescription("")
-                .setVersion(0)
-                .setIsDeleted(0)
-                .setCreator("register_sys")
-                .setModifier("register_sys")
-                .setCreationDateTime(LocalDateTime.now())
-                .setModificationDateTime(LocalDateTime.now());
-        return template.insert(model);
-    }
-
-    /**
-     * 根据邮箱查询数据
-     *
-     * @param mailbox 邮箱
-     * @return Mono/UserModel 用户模型对象
+     * @param mailbox MailBox Account
+     * @return User Object
      */
     Mono<User> findByMailbox(String mailbox);
 
     /**
-     * 创建用户
+     * Query By Phone Account Or Email Account
      *
-     * @param model 用户模型对象
-     * @return 用户模型对象
-     */
-    public Mono<UserModel> createMailbox(UserModel model) {
-        model
-                .setId(null)
-                .setStatus(0)
-                .setEnabled(1)
-                .setInternal(0)
-                .setAdministrator(0)
-                .setAccount(null)
-                .setPhone(null)
-                .setName(model.getMailbox())
-                .setNickname(model.getMailbox())
-                .setAvatar("default.jpg")
-                .setDescription("")
-                .setVersion(0)
-                .setIsDeleted(0)
-                .setCreator("register_sys")
-                .setModifier("register_sys")
-                .setCreationDateTime(LocalDateTime.now())
-                .setModificationDateTime(LocalDateTime.now());
-        return template.insert(model);
-    }
-
-    /**
-     * 根据手机号码或者邮箱查询数据
-     *
-     * @param content ID
-     * @return Mono/UserModel 用户模型对象
+     * @param content Phone Account Or Mailbox Account
+     * @return User Object
      */
     Mono<User> findByPhoneOrMailbox(String content);
-
-    Mono<UserModel> createPhoneOrMailbox(UserModel model);
 
 }

@@ -15,7 +15,7 @@ import reactor.core.scheduler.Schedulers;
 import java.util.Map;
 
 /**
- * Account Password Login Service
+ * Account Password Login Service Impl
  *
  * @author lidashuang
  * @version 1.0
@@ -28,7 +28,7 @@ public class AccountPasswordLoginServiceImpl implements AccountPasswordLoginServ
     private final PasswordEncryptor encryptor;
 
     /**
-     * Web Flux User Repository Object
+     * User Repository Object
      */
     private final UserRepository repository;
 
@@ -36,7 +36,7 @@ public class AccountPasswordLoginServiceImpl implements AccountPasswordLoginServ
      * Constructor Initialization
      *
      * @param encryptor  Password Encryptor Object
-     * @param repository Web Flux User Repository Object
+     * @param repository User Repository Object
      */
     public AccountPasswordLoginServiceImpl(PasswordEncryptor encryptor, UserRepository repository) {
         this.encryptor = encryptor;
@@ -61,7 +61,7 @@ public class AccountPasswordLoginServiceImpl implements AccountPasswordLoginServ
                 return Mono.error(GlobalExceptionContext.exceptionBeanException(
                         this.getClass(),
                         "fun executePasswordTransmissionDecryption(ServerWebExchange exchange, String password).",
-                        "Account password login password transmission decryption cache " +
+                        "account password login password transmission decryption cache " +
                                 "handle bean[" + AccountPasswordLoginSignatureCache.class + "] not exist exception."
                 ));
             }
@@ -71,7 +71,7 @@ public class AccountPasswordLoginServiceImpl implements AccountPasswordLoginServ
                     .switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(
                             this.getClass(),
                             "fun executePasswordTransmissionDecryption(ServerWebExchange exchange, String password).",
-                            "Account password login password transmission decryption cache data does not exist or expire exception."
+                            "account password login password transmission decryption cache data does not exist or expire exception."
                     )))
                     .flatMap(s -> {
                         try {
@@ -85,7 +85,7 @@ public class AccountPasswordLoginServiceImpl implements AccountPasswordLoginServ
                         return Mono.error(GlobalExceptionContext.executeCacheException(
                                 this.getClass(),
                                 "fun executePasswordTransmissionDecryption(ServerWebExchange exchange, String password).",
-                                "Account password login password transmission decryption cache data does not exist or expire exception."
+                                "account password login password transmission decryption cache data does not exist or expire exception."
                         ));
                     })
                     .publishOn(Schedulers.boundedElastic())
@@ -108,7 +108,7 @@ public class AccountPasswordLoginServiceImpl implements AccountPasswordLoginServ
                 .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionAccountPasswordLoginAccountOrPasswordException(
                         this.getClass(),
                         "fun execute(ServerWebExchange exchange, LoginContext.AccountPassword.Request param).",
-                        "Account password login account or password exception."
+                        "account password login account or password exception."
                 )));
     }
 

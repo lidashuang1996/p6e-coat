@@ -166,7 +166,7 @@ public class LoginContext implements Serializable {
     /**
      * 二维码回调对象
      */
-    public static class QrCodeCallback implements Serializable {
+    public static class QuickResponseCodeCallback implements Serializable {
 
         @Data
         @Accessors(chain = true)

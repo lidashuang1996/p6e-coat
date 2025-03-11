@@ -37,36 +37,26 @@ public class QuickResponseCodeCallbackServiceImpl implements QuickResponseCodeCa
     }
 
     @Override
-    public Mono<LoginContext.QrCodeCallback.Dto> execute(ServerWebExchange exchange, LoginContext.QrCodeCallback.Request param) {
+    public Mono<LoginContext.QuickResponseCodeCallback.Dto> execute(
+            ServerWebExchange exchange, LoginContext.QuickResponseCodeCallback.Request param) {
         final String content = param.getContent();
-
         return validator
                 .execute(exchange)
                 .flatMap(u -> cache.get(content).switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(
                         this.getClass(),
-                        "fun execute(ServerWebExchange exchange, LoginContext.QrCodeCallback.Request param)",
+                        "fun execute(ServerWebExchange exchange, LoginContext.QuickResponseCodeCallback.Request param)",
                         "quick response code callback login cache data does not exist or expire exception."
                 ))).flatMap(s -> {
                     if (QuickResponseCodeLoginCache.isEmpty(s)) {
-                        return cache.set(content, u.id());
+                        return cache.set(content, u.id()).map(b ->
+                                new LoginContext.QuickResponseCodeCallback.Dto().setContent("SUCCESS"));
                     } else {
                         return Mono.error(GlobalExceptionContext.executeCacheException(
                                 this.getClass(),
-                                "fun execute(ServerWebExchange exchange, LoginContext.QrCodeCallback.Request param)",
+                                "fun execute(ServerWebExchange exchange, LoginContext.QuickResponseCodeCallback.Request param)",
                                 "quick response code callback login cache other data exists exception."
                         ));
                     }
-                }))
-                .flatMap(b -> {
-                    if (b) {
-                        return Mono.just(new LoginContext.QrCodeCallback.Dto().setContent("SUCCESS"));
-                    } else {
-                        return Mono.error(GlobalExceptionContext.executeCacheException(
-                                this.getClass(),
-                                "fun execute(ServerWebExchange exchange, LoginContext.QrCodeCallback.Request param)",
-                                "QrCode callback login cache write exception."
-                        ));
-                    }
-                });
+                }));
     }
 }

@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 import java.util.HashMap;
 
 /**
- * 账号密码登录的密码签名服务的实现
+ * Account Password Login Signature Service Impl
  *
  * @author lidashuang
  * @version 1.0
@@ -21,14 +21,14 @@ import java.util.HashMap;
 public class AccountPasswordLoginSignatureServiceImpl implements AccountPasswordLoginSignatureService {
 
     /**
-     * 缓存对象
+     * Account Password Login Signature Cache Object
      */
     private final AccountPasswordLoginSignatureCache cache;
 
     /**
-     * 构造方法初始化
+     * Constructor Initialization
      *
-     * @param cache 缓存对象
+     * @param cache Account Password Login Signature Cache Object
      */
     public AccountPasswordLoginSignatureServiceImpl(AccountPasswordLoginSignatureCache cache) {
         this.cache = cache;
@@ -41,7 +41,7 @@ public class AccountPasswordLoginSignatureServiceImpl implements AccountPassword
         String privateKey = null;
         try {
             final RsaUtil.KeyModel model = RsaUtil.generateKeyPair();
-            publicKey = model.getPrivateKey();
+            publicKey = model.getPublicKey();
             privateKey = model.getPrivateKey();
         } catch (Exception e) {
             // ignore exception
@@ -64,7 +64,7 @@ public class AccountPasswordLoginSignatureServiceImpl implements AccountPassword
                         this.getClass(),
                         "fun execute(ServerWebExchange exchange, " +
                                 "LoginContext.AccountPasswordSignature.Request param).",
-                        "Account password login signature cache exception."
+                        "account password login signature cache exception."
                 )));
     }
 

@@ -5,7 +5,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * 账号密码登录的密码签名服务
+ * Account Password Login Signature Service
  *
  * @author lidashuang
  * @version 1.0
@@ -13,11 +13,11 @@ import reactor.core.publisher.Mono;
 public interface AccountPasswordLoginSignatureService {
 
     /**
-     * 执行账号密码登录密码签名操作
+     * Execute Account Password Login Password Signature
      *
-     * @param exchange ServerWebExchange 对象
-     * @param param    请求对象
-     * @return 结果对象
+     * @param exchange Server Web Exchange Object
+     * @param param    Login Context Account Password Signature.Request Object
+     * @return Login Context Account Password Signature Dto Object
      */
     Mono<LoginContext.AccountPasswordSignature.Dto> execute(
             ServerWebExchange exchange, LoginContext.AccountPasswordSignature.Request param);

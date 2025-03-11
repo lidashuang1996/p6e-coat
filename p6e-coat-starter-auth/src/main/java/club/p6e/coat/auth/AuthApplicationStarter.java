@@ -140,7 +140,7 @@ public class AuthApplicationStarter {
                 registerForgotPasswordCodeCacheBean(defaultListableBeanFactory);
                 registerBean(ForgotPasswordCodeGeneratorImpl.class, defaultListableBeanFactory);
                 registerBean(ForgotPasswordServiceImpl.class, defaultListableBeanFactory);
-                registerBean(ForgotPasswordObtainServiceImpl.class, defaultListableBeanFactory);
+                registerBean(VerificationCodeForgotPasswordAcquisitionServiceImpl.class, defaultListableBeanFactory);
                 registerBean(ForgotPasswordControllerImpl.class, defaultListableBeanFactory);
                 registerBean(ForgotPasswordCodeObtainControllerImpl.class, defaultListableBeanFactory);
                 registerBean(ForgotPasswordParameterValidator.class, defaultListableBeanFactory, true, false);

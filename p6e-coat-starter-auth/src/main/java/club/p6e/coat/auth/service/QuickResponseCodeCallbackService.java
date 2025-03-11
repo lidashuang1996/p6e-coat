@@ -5,7 +5,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * 二维码回调服务
+ * Quick Response Code Callback Service
  *
  * @author lidashuang
  * @version 1.0
@@ -13,11 +13,12 @@ import reactor.core.publisher.Mono;
 public interface QuickResponseCodeCallbackService {
 
     /**
-     * 执行二维码回调
+     * Execute Quick Response Code Callback
      *
-     * @param param 请求对象
-     * @return 结果对象
+     * @param param Quick Response Code Callback Request Object
+     * @return Login Context Quick Response Code Callback Dto Object
      */
-    Mono<LoginContext.QrCodeCallback.Dto> execute(ServerWebExchange exchange, LoginContext.QrCodeCallback.Request param);
+    Mono<LoginContext.QuickResponseCodeCallback.Dto> execute(
+            ServerWebExchange exchange, LoginContext.QuickResponseCodeCallback.Request param);
 
 }

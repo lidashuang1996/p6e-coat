@@ -14,11 +14,11 @@ import reactor.core.publisher.Mono;
 public interface AccountPasswordLoginService {
 
     /**
-     * 执行账号密码登录操作
+     * Execute Account Password Login
      *
-     * @param exchange ServerWebExchange 对象
-     * @param param    请求对象
-     * @return 结果对象
+     * @param exchange Server Web Exchange Object
+     * @param param    Login Context Account Password Request Object
+     * @return User Object
      */
     Mono<User> execute(ServerWebExchange exchange, LoginContext.AccountPassword.Request param);
 
