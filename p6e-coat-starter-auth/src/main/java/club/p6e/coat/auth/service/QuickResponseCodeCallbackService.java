@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
-public interface QrCodeCallbackService {
+public interface QuickResponseCodeCallbackService {
 
     /**
      * 执行二维码回调

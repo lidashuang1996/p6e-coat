@@ -1,6 +1,6 @@
 package club.p6e.coat.auth.cache.memory;
 
-import club.p6e.coat.auth.cache.RegisterCodeCache;
+import club.p6e.coat.auth.cache.VerificationCodeRegisterCache;
 import club.p6e.coat.auth.cache.memory.support.MemoryCache;
 import club.p6e.coat.auth.cache.memory.support.ReactiveMemoryTemplate;
 import reactor.core.publisher.Mono;
@@ -15,7 +15,7 @@ import java.util.Map;
  * @version 1.0
  */
 public class RegisterCodeMemoryCache
-        extends MemoryCache implements RegisterCodeCache {
+        extends MemoryCache implements VerificationCodeRegisterCache {
 
     /**
      * 内存缓存模板对象

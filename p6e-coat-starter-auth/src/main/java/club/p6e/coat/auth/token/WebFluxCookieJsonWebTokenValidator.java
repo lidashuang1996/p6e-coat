@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
-public class WebFluxCookieJsonWebTokenValidator implements WebFluxTokenValidator {
+public class WebFluxCookieJsonWebTokenValidator implements TokenValidator {
 
     private final JsonWebTokenCodec codec;
 

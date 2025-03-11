@@ -5,12 +5,12 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * 注册验证码发送
+ * Register Acquisition Service
  *
  * @author lidashuang
  * @version 1.0
  */
-public interface RegisterObtainService {
+public interface VerificationCodeRegisterAcquisitionService {
 
     /**
      * 注册验证码发送
@@ -19,6 +19,6 @@ public interface RegisterObtainService {
      * @param param    请求对象
      * @return 结果对象
      */
-    Mono<RegisterContext.Obtain.Dto> execute(ServerWebExchange exchange, RegisterContext.Obtain.Request param);
+    Mono<RegisterContext.Acquisition.Dto> execute(ServerWebExchange exchange, RegisterContext.Acquisition.Request param);
 
 }

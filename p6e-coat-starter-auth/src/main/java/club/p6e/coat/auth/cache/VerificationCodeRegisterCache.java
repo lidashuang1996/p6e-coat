@@ -3,38 +3,25 @@ package club.p6e.coat.auth.cache;
 import club.p6e.coat.auth.cache.support.ICache;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 /**
- * 二维码登录缓存
+ * 注册验证码缓存
  *
  * @author lidashuang
  * @version 1.0
  */
-public interface QrCodeLoginCache extends ICache {
+public interface VerificationCodeRegisterCache extends ICache {
 
     /**
      * 过期的时间
      */
-    long EXPIRATION_TIME = 300L;
-
-    /**
-     * 空的内容标识
-     */
-    String EMPTY_CONTENT = "__null__";
+    long EXPIRATION_TIME = 180;
 
     /**
      * 缓存前缀
      */
-    String CACHE_PREFIX = "LOGIN:QR_CODE:";
-
-    /**
-     * 是否为空判断
-     *
-     * @param content 待判断内容
-     * @return 判断结果
-     */
-    static boolean isEmpty(String content) {
-        return EMPTY_CONTENT.equalsIgnoreCase(content);
-    }
+    String CACHE_PREFIX = "REGISTER:CODE:";
 
     /**
      * 删除数据
@@ -50,7 +37,7 @@ public interface QrCodeLoginCache extends ICache {
      * @param key 键
      * @return 值
      */
-    Mono<String> get(String key);
+    Mono<List<String>> get(String key);
 
     /**
      * 写入数据

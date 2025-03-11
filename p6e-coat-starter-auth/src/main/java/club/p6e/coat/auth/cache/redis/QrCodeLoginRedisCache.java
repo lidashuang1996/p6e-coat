@@ -1,7 +1,7 @@
 package club.p6e.coat.auth.cache.redis;
 
 import club.p6e.coat.auth.cache.redis.support.RedisCache;
-import club.p6e.coat.auth.cache.QrCodeLoginCache;
+import club.p6e.coat.auth.cache.QuickResponseCodeLoginCache;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import reactor.core.publisher.Mono;
 
@@ -11,7 +11,7 @@ import java.time.Duration;
  * @author lidashuang
  * @version 1.0
  */
-public class QrCodeLoginRedisCache extends RedisCache implements QrCodeLoginCache {
+public class QrCodeLoginRedisCache extends RedisCache implements QuickResponseCodeLoginCache {
 
     /**
      * 缓存对象

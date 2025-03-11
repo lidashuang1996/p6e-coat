@@ -1,7 +1,7 @@
 package club.p6e.coat.auth.service;
 
 import club.p6e.coat.auth.AuthVoucher;
-import club.p6e.coat.auth.cache.QrCodeLoginCache;
+import club.p6e.coat.auth.cache.QuickResponseCodeLoginCache;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.generator.QrCodeLoginGenerator;
@@ -19,7 +19,7 @@ public class QrCodeObtainServiceImpl implements QrCodeObtainService {
     /**
      * 二维码缓存对象
      */
-    private final QrCodeLoginCache cache;
+    private final QuickResponseCodeLoginCache cache;
 
     /**
      * 二维码生成器对象
@@ -27,13 +27,13 @@ public class QrCodeObtainServiceImpl implements QrCodeObtainService {
     private final QrCodeLoginGenerator generator;
 
     /**
-     * 构造方法初始化
+     * Constructor Initialization
      *
      * @param cache     二维码缓存对象
      * @param generator 二维码生成器对象
      */
     public QrCodeObtainServiceImpl(
-            QrCodeLoginCache cache,
+            QuickResponseCodeLoginCache cache,
             QrCodeLoginGenerator generator
     ) {
         this.cache = cache;
@@ -47,7 +47,7 @@ public class QrCodeObtainServiceImpl implements QrCodeObtainService {
                 .flatMap(v -> {
                     final String code = generator.execute();
                     return cache
-                            .set(code, QrCodeLoginCache.EMPTY_CONTENT)
+                            .set(code, QuickResponseCodeLoginCache.EMPTY_CONTENT)
                             .flatMap(b -> {
                                 if (b) {
                                     return v.setQuickResponseCodeLoginData(code)

@@ -13,7 +13,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @author lidashuang
  * @version 1.0
  */
-public class WebFluxLocalStorageCacheTokenValidator implements WebFluxTokenValidator {
+public class WebFluxLocalStorageCacheTokenValidator implements TokenValidator {
 
     private final UserTokenCache cache;
 

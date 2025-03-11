@@ -36,6 +36,11 @@ public class ServerHttpRequest extends ServerHttpRequestDecorator {
         return data == null ? null : String.valueOf(data);
     }
 
+    public String setAccountPasswordSignatureMark() {
+        final Object data = getAttribute(ACCOUNT_PASSWORD_SIGNATURE_MARK);
+        return data == null ? null : String.valueOf(data);
+    }
+
     public String getQuickResponseCodeLoginMark() {
         final Object data = getAttribute(ACCOUNT_PASSWORD_SIGNATURE_MARK);
         return data == null ? null : String.valueOf(data);
@@ -51,6 +56,16 @@ public class ServerHttpRequest extends ServerHttpRequestDecorator {
     }
 
     public  String getAccountType() {
+        final Object data = getAttribute(ACCOUNT_TYPE);
+        return data == null ? null : String.valueOf(data);
+    }
+
+    public  String setAccountContent(String a) {
+        final Object data = getAttribute(ACCOUNT_CONTENT);
+        return data == null ? null : String.valueOf(data);
+    }
+
+    public  String setAccountType(String a) {
         final Object data = getAttribute(ACCOUNT_TYPE);
         return data == null ? null : String.valueOf(data);
     }

@@ -124,7 +124,7 @@ public class VerificationCodeAcquisitionServiceImpl implements VerificationCodeA
     }
 
     private Mono<List<String>> push(List<String> recipients, LauncherType launcherType, String launcherCode, String language) {
-        return Launcher.push(launcherType, recipients, VERIFICATION_CODE_LOGIN_TEMPLATE, new HashMap<>(1) {{
+        return Launcher.push(launcherType, recipients, VERIFICATION_CODE_LOGIN_TEMPLATE, new HashMap<>() {{
             put("code", launcherCode);
         }}, language);
     }

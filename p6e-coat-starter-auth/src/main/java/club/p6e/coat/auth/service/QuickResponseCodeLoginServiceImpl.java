@@ -2,7 +2,7 @@ package club.p6e.coat.auth.service;
 
 import club.p6e.coat.auth.ServerHttpRequest;
 import club.p6e.coat.auth.User;
-import club.p6e.coat.auth.cache.QrCodeLoginCache;
+import club.p6e.coat.auth.cache.QuickResponseCodeLoginCache;
 import club.p6e.coat.auth.repository.UserRepository;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
@@ -20,7 +20,7 @@ public class QuickResponseCodeLoginServiceImpl implements QuickResponseCodeLogin
     /**
      * 二维码缓存对象
      */
-    private final QrCodeLoginCache cache;
+    private final QuickResponseCodeLoginCache cache;
 
     /**
      * User Repository Object
@@ -33,9 +33,7 @@ public class QuickResponseCodeLoginServiceImpl implements QuickResponseCodeLogin
      * @param cache      二维码缓存对象
      * @param repository User Repository Object
      */
-    public QuickResponseCodeLoginServiceImpl(
-            QrCodeLoginCache cache,
-            UserRepository repository) {
+    public QuickResponseCodeLoginServiceImpl(QuickResponseCodeLoginCache cache, UserRepository repository) {
         this.cache = cache;
         this.repository = repository;
     }
@@ -52,7 +50,7 @@ public class QuickResponseCodeLoginServiceImpl implements QuickResponseCodeLogin
                         "Quick response code login cache data does not exist or expire exception."
                 )))
                 .flatMap(s -> {
-                    if (QrCodeLoginCache.isEmpty(s)) {
+                    if (QuickResponseCodeLoginCache.isEmpty(s)) {
                         return Mono.error(GlobalExceptionContext.executeQrCodeDataNullException(
                                 this.getClass(),
                                 "fun execute(ServerWebExchange exchange, LoginContext.QuickResponseCode.Request param).",

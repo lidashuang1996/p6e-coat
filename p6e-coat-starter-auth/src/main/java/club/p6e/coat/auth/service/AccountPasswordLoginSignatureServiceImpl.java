@@ -1,5 +1,6 @@
 package club.p6e.coat.auth.service;
 
+import club.p6e.coat.auth.ServerHttpRequest;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.JsonUtil;
 import club.p6e.coat.auth.cache.AccountPasswordLoginSignatureCache;
@@ -34,7 +35,8 @@ public class AccountPasswordLoginSignatureServiceImpl implements AccountPassword
     }
 
     @Override
-    public Mono<LoginContext.AccountPasswordSignature.Dto> execute(ServerWebExchange exchange, LoginContext.AccountPasswordSignature.Request param) {
+    public Mono<LoginContext.AccountPasswordSignature.Dto> execute(
+            ServerWebExchange exchange, LoginContext.AccountPasswordSignature.Request param) {
         String publicKey = null;
         String privateKey = null;
         try {
@@ -46,8 +48,10 @@ public class AccountPasswordLoginSignatureServiceImpl implements AccountPassword
         }
         final String finalPublicKey = publicKey;
         final String finalPrivateKey = privateKey;
-        final String mark = GeneratorUtil.uuid() + GeneratorUtil.random(8, false, false);
-        final String content = JsonUtil.toJson(new HashMap<>(){{
+        final String mark = GeneratorUtil.uuid() + GeneratorUtil.random();
+        final ServerHttpRequest request = (ServerHttpRequest) exchange.getRequest();
+        request.setAccountPasswordSignatureMark(mark);
+        final String content = JsonUtil.toJson(new HashMap<>() {{
             put("mark", mark);
             put("publicKey", finalPublicKey);
             put("privateKey", finalPrivateKey);
@@ -55,14 +59,13 @@ public class AccountPasswordLoginSignatureServiceImpl implements AccountPassword
         return cache
                 .set(mark, content)
                 .flatMap(b -> b ?
-                        v.setAccountPasswordCodecMark(mark)
+                        Mono.just(new LoginContext.AccountPasswordSignature.Dto().setContent(finalPublicKey))
                         : Mono.error(GlobalExceptionContext.exceptionCacheWriteException(
                         this.getClass(),
                         "fun execute(ServerWebExchange exchange, " +
                                 "LoginContext.AccountPasswordSignature.Request param).",
-                        "Account password login signature cache write exception."
-                )))
-                .map(rv -> new LoginContext.AccountPasswordSignature.Dto().setContent(model.getPublicKey()));
+                        "Account password login signature cache exception."
+                )));
     }
 
 }

@@ -1,7 +1,7 @@
 package club.p6e.coat.auth.service;
 
 import club.p6e.coat.auth.context.RegisterContext;
-import club.p6e.coat.auth.repository.WebFluxUserAuthRepository;
+import club.p6e.coat.auth.repository.UserAuthRepository;
 import club.p6e.coat.auth.repository.UserRepository;
 import club.p6e.coat.common.utils.VerificationUtil;
 import club.p6e.coat.auth.PasswordEncryptor;
@@ -45,7 +45,7 @@ public class RegisterServiceImpl implements RegisterService {
     /**
      * 用户认证存储库
      */
-    private final WebFluxUserAuthRepository userAuthRepository;
+    private final UserAuthRepository userAuthRepository;
 
     /**
      * 构造方法初始化
@@ -60,7 +60,7 @@ public class RegisterServiceImpl implements RegisterService {
             Properties properties,
             PasswordEncryptor encryptor,
             UserRepository userRepository,
-            WebFluxUserAuthRepository userAuthRepository,
+            UserAuthRepository userAuthRepository,
             TransactionalOperator transactional
     ) {
         this.properties = properties;

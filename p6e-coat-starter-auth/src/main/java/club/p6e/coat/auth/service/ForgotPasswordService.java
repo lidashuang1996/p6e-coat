@@ -5,7 +5,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * 忘记密码服务
+ * Forgot Password Service
  *
  * @author lidashuang
  * @version 1.0
@@ -13,11 +13,11 @@ import reactor.core.publisher.Mono;
 public interface ForgotPasswordService {
 
     /**
-     * 忘记密码
+     * Execute Forgot Password
      *
-     * @param exchange ServerWebExchange 对象
-     * @param param    请求对象
-     * @return 结果对象
+     * @param exchange Server Web Exchange Object
+     * @param param    Forgot Password Context Request Object
+     * @return Forgot Password Context Dto Object
      */
     Mono<ForgotPasswordContext.Dto> execute(ServerWebExchange exchange, ForgotPasswordContext.Request param);
 

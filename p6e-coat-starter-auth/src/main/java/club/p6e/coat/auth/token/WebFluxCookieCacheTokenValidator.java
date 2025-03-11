@@ -15,7 +15,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @author lidashuang
  * @version 1.0
  */
-public class WebFluxCookieCacheTokenValidator implements WebFluxTokenValidator {
+public class WebFluxCookieCacheTokenValidator implements TokenValidator {
 
     private final UserTokenCache cache;
 

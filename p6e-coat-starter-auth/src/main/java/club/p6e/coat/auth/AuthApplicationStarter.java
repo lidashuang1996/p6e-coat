@@ -9,7 +9,7 @@ import club.p6e.coat.auth.generator.*;
 import club.p6e.coat.auth.launcher.EmailMessageLauncherImpl;
 import club.p6e.coat.auth.launcher.SmsMessageLauncherImpl;
 import club.p6e.coat.auth.repository.OAuth2ClientRepository;
-import club.p6e.coat.auth.repository.WebFluxUserAuthRepository;
+import club.p6e.coat.auth.repository.UserAuthRepository;
 import club.p6e.coat.auth.repository.UserRepository;
 import club.p6e.coat.auth.service.*;
 import club.p6e.coat.auth.validator.*;
@@ -123,7 +123,7 @@ public class AuthApplicationStarter {
                 registerRegisterCodeCacheBean(defaultListableBeanFactory);
                 registerBean(RegisterCodeGeneratorImpl.class, defaultListableBeanFactory);
                 registerBean(RegisterServiceImpl.class, defaultListableBeanFactory);
-                registerBean(RegisterObtainServiceImpl.class, defaultListableBeanFactory);
+                registerBean(VerificationCodeRegisterAcquisitionServiceImpl.class, defaultListableBeanFactory);
                 registerBean(RegisterControllerImpl.class, defaultListableBeanFactory);
                 registerBean(RegisterObtainControllerImpl.class, defaultListableBeanFactory);
 
@@ -443,7 +443,7 @@ public class AuthApplicationStarter {
      */
     private void registerUserRepositoryBean(DefaultListableBeanFactory factory) {
         registerBean(UserRepository.class, factory);
-        registerBean(WebFluxUserAuthRepository.class, factory);
+        registerBean(UserAuthRepository.class, factory);
     }
 
     /**

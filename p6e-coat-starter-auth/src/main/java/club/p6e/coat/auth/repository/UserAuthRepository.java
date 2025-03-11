@@ -1,5 +1,6 @@
 package club.p6e.coat.auth.repository;
 
+import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.model.UserAuthModel;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.data.relational.core.query.Criteria;
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
  * @author lidashuang
  * @version 1.0
  */
-public class WebFluxUserAuthRepository {
+public class UserAuthRepository {
 
     /**
      * 模板对象
@@ -27,7 +28,7 @@ public class WebFluxUserAuthRepository {
      *
      * @param template 模板对象
      */
-    public WebFluxUserAuthRepository(R2dbcEntityTemplate template) {
+    public UserAuthRepository(R2dbcEntityTemplate template) {
         this.template = template;
     }
 
@@ -37,10 +38,10 @@ public class WebFluxUserAuthRepository {
      * @param id ID
      * @return Mono/UserAuthModel 用户认证模型对象
      */
-    public Mono<UserAuthModel> findById(Integer id) {
+    public Mono<User> findById(Integer id) {
         return template.selectOne(
                 Query.query(Criteria.where(UserAuthModel.ID).is(id)),
-                UserAuthModel.class
+                User.class
         );
     }
 
@@ -50,10 +51,10 @@ public class WebFluxUserAuthRepository {
      * @param account 账号
      * @return Mono/UserAuthModel 用户认证模型对象
      */
-    public Mono<UserAuthModel> findByAccount(String account) {
+    public Mono<User> findByAccount(String account) {
         return template.selectOne(
                 Query.query(Criteria.where(UserAuthModel.ACCOUNT).is(account)),
-                UserAuthModel.class
+                User.class
         );
     }
 
@@ -63,10 +64,10 @@ public class WebFluxUserAuthRepository {
      * @param account 账号
      * @return Mono/UserAuthModel 用户认证模型对象
      */
-    public Mono<UserAuthModel> findByPhone(String account) {
+    public Mono<User> findByPhone(String account) {
         return template.selectOne(
                 Query.query(Criteria.where(UserAuthModel.PHONE).is(account)),
-                UserAuthModel.class
+                User.class
         );
     }
 
@@ -76,7 +77,7 @@ public class WebFluxUserAuthRepository {
      * @param account 账号
      * @return Mono/UserAuthModel 用户认证模型对象
      */
-    public Mono<UserAuthModel> findByMailbox(String account) {
+    public Mono<User> findByMailbox(String account) {
         return template.selectOne(
                 Query.query(Criteria.where(UserAuthModel.MAILBOX).is(account)),
                 UserAuthModel.class
@@ -89,7 +90,7 @@ public class WebFluxUserAuthRepository {
      * @param account 账号
      * @return Mono/UserAuthModel 用户认证模型对象
      */
-    public Mono<UserAuthModel> findByPhoneOrMailbox(String account) {
+    public Mono<User> findByPhoneOrMailbox(String account) {
         return template.selectOne(
                 Query.query(Criteria.where(UserAuthModel.PHONE).is(account).or(UserAuthModel.MAILBOX).is(account)),
                 UserAuthModel.class
@@ -102,7 +103,7 @@ public class WebFluxUserAuthRepository {
      * @param qq QQ
      * @return Mono/UserAuthModel 用户认证模型对象
      */
-    public Mono<UserAuthModel> findByQq(String qq) {
+    public Mono<User> findByQq(String qq) {
         return template.selectOne(
                 Query.query(Criteria.where(UserAuthModel.QQ).is(qq)),
                 UserAuthModel.class
@@ -132,7 +133,7 @@ public class WebFluxUserAuthRepository {
      * @param password 密码数据
      * @return Mono/UserAuthModel 修改的数据条数
      */
-    public Mono<Long> updatePassword(Integer id, String password) {
+    public Mono<Long> updatePassword(String id, String password) {
         return template.selectOne(
                 Query.query(Criteria.where(UserAuthModel.ID).is(id)),
                 UserAuthModel.class
