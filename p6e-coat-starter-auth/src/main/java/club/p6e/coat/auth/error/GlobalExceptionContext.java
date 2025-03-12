@@ -34,7 +34,7 @@ public final class GlobalExceptionContext {
     }
 
 
-    public static ServiceNotEnabledException executeServiceNotEnabledException(Class<?> sc, String error, String content) {
+    public static ServiceNotEnabledException executeSignatureException(Class<?> sc, String error, String content) {
         return new ServiceNotEnabledException(sc, error, content);
     }
 

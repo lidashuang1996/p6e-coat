@@ -4,6 +4,8 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 注册的上下文对象
@@ -18,18 +20,20 @@ public class RegisterContext implements Serializable {
     public static class Request implements Serializable {
         private String code;
         private String password;
+
+        private Map<String, Object> data = new HashMap<>();
     }
 
     @Data
     @Accessors(chain = true)
     public static class Vo implements Serializable {
-        private String account;
+        private Map<String, Object> data = new HashMap<>();
     }
 
     @Data
     @Accessors(chain = true)
     public static class Dto implements Serializable {
-        private String account;
+        private Map<String, Object> data = new HashMap<>();
     }
 
     /**

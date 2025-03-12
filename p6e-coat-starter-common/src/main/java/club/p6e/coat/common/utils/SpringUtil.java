@@ -3,6 +3,7 @@ package club.p6e.coat.common.utils;
 import org.springframework.context.ApplicationContext;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,7 +50,6 @@ public final class SpringUtil {
          * @return Bean 对象集合
          */
         public <T> Map<String, T> getBeans(Class<T> tClass);
-
     }
 
     /**

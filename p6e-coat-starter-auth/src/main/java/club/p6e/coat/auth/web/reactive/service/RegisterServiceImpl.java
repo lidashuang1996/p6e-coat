@@ -1,0 +1,182 @@
+package club.p6e.coat.auth.web.reactive.service;
+
+import club.p6e.coat.auth.*;
+import club.p6e.coat.auth.context.RegisterContext;
+import club.p6e.coat.auth.web.reactive.repository.UserAuthRepository;
+import club.p6e.coat.auth.web.reactive.repository.UserRepository;
+import club.p6e.coat.auth.web.reactive.ServerHttpRequest;
+import club.p6e.coat.common.utils.SpringUtil;
+import club.p6e.coat.auth.error.GlobalExceptionContext;
+import org.springframework.transaction.reactive.TransactionalOperator;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
+
+/**
+ * Register Service Impl
+ *
+ * @author lidashuang
+ * @version 1.0
+ */
+public class RegisterServiceImpl implements RegisterService {
+
+    /**
+     * Password Encryptor Object
+     */
+    private final PasswordEncryptor encryptor;
+
+    /**
+     * User Repository Object
+     */
+    private final UserRepository userRepository;
+
+    /**
+     * User Auth Repository Object
+     */
+    private final UserAuthRepository userAuthRepository;
+
+    /**
+     * Constructor Initialization
+     *
+     * @param encryptor          Password Encryptor Object
+     * @param userRepository     User Repository Object
+     * @param userAuthRepository User Auth Repository Object
+     */
+    public RegisterServiceImpl(
+            PasswordEncryptor encryptor,
+            UserRepository userRepository,
+            UserAuthRepository userAuthRepository
+    ) {
+        this.encryptor = encryptor;
+        this.userRepository = userRepository;
+        this.userAuthRepository = userAuthRepository;
+    }
+
+    @Override
+    public Mono<RegisterContext.Dto> execute(ServerWebExchange exchange, RegisterContext.Request param) {
+        final ServerHttpRequest request = (ServerHttpRequest) exchange.getRequest();
+        final String account = request.getAccountContent();
+        return (switch (Properties.getInstance().getMode()) {
+            case PHONE -> executePhoneMode(account, param);
+            case MAILBOX -> executeMailboxMode(account, param);
+            case ACCOUNT -> executeAccountMode(account, param);
+            case PHONE_OR_MAILBOX -> executePhoneOrMailboxMode(account, param);
+        }).map(u -> {
+            final RegisterContext.Dto result = new RegisterContext.Dto();
+            result.getData().putAll(u.toMap());
+            return result;
+        });
+    }
+
+    /**
+     * Execute Account Register
+     *
+     * @return User Object
+     */
+    protected Mono<User> executeAccountMode(String account, RegisterContext.Request param) {
+        return userRepository
+                .findByPhone(account)
+                .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionAccountExistException(
+                        this.getClass(),
+                        "fun executeAccountMode(String account, RegisterContext.Request param).",
+                        "create user account [ " + account + "/(exist) ] exception."
+                )))
+                .flatMap(u -> SpringUtil
+                        .getBean(TransactionalOperator.class)
+                        .execute(status -> userRepository
+                                .create(User.create(param.getData()))
+                                .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionDataBaseException(
+                                        this.getClass(),
+                                        "fun executeAccountMode(String account, RegisterContext.Request param).",
+                                        "create user account info data exception."
+                                )))
+                                .flatMap(user -> userAuthRepository.create(user, encryptor.execute(param.getPassword())))
+                                .flux()
+                        ).collectList().map(list -> list.get(0))
+                );
+    }
+
+    /**
+     * Execute Phone Register
+     *
+     * @return User Object
+     */
+    private Mono<User> executePhoneMode(String account, RegisterContext.Request param) {
+        return userRepository
+                .findByPhone(account)
+                .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionAccountExistException(
+                        this.getClass(),
+                        "fun executePhoneMode(String account, RegisterContext.Request param).",
+                        "create user phone account [ " + account + "/(exist) ] exception."
+                )))
+                .flatMap(u -> SpringUtil
+                        .getBean(TransactionalOperator.class)
+                        .execute(status -> userRepository
+                                .create(User.create(param.getData()))
+                                .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionDataBaseException(
+                                        this.getClass(),
+                                        "fun executePhoneMode(String account, RegisterContext.Request param).",
+                                        "create user phone account info data exception."
+                                )))
+                                .flatMap(user -> userAuthRepository.create(user, encryptor.execute(param.getPassword())))
+                                .flux()
+                        ).collectList().map(list -> list.get(0))
+                );
+    }
+
+    /**
+     * Execute Mailbox Register
+     *
+     * @return User Object
+     */
+    private Mono<User> executeMailboxMode(String account, RegisterContext.Request param) {
+        return userRepository
+                .findByPhone(account)
+                .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionAccountExistException(
+                        this.getClass(),
+                        "fun executeMailboxMode(String account, RegisterContext.Request param).",
+                        "create user mailbox account [ " + account + "/(exist) ] exception."
+                )))
+                .flatMap(u -> SpringUtil
+                        .getBean(TransactionalOperator.class)
+                        .execute(status -> userRepository
+                                .create(User.create(param.getData()))
+                                .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionDataBaseException(
+                                        this.getClass(),
+                                        "fun executeMailboxMode(String account, RegisterContext.Request param).",
+                                        "create user mailbox account info data exception."
+                                )))
+                                .flatMap(user -> userAuthRepository.create(user, encryptor.execute(param.getPassword())))
+                                .flux()
+                        ).collectList().map(list -> list.get(0))
+                );
+    }
+
+    /**
+     * 执行手机号码/邮箱登录
+     *
+     * @return 结果对象
+     */
+    protected Mono<User> executePhoneOrMailboxMode(String account, RegisterContext.Request param) {
+        return userRepository
+                .findByPhone(account)
+                .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionAccountExistException(
+                        this.getClass(),
+                        "fun executePhoneOrMailboxMode(String account, RegisterContext.Request param).",
+                        "create user phone/mailbox account [ " + account + "/(exist) ] exception."
+                )))
+                .flatMap(u -> SpringUtil
+                        .getBean(TransactionalOperator.class)
+                        .execute(status -> userRepository
+                                .create(User.create(param.getData()))
+                                .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionDataBaseException(
+                                        this.getClass(),
+                                        "fun executePhoneOrMailboxMode(String account, RegisterContext.Request param).",
+                                        "create user phone/mailbox account info data exception."
+                                )))
+                                .flatMap(user -> userAuthRepository.create(user, encryptor.execute(param.getPassword())))
+                                .flux()
+                        ).collectList().map(list -> list.get(0))
+                );
+    }
+
+}

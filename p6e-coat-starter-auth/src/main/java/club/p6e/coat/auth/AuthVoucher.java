@@ -1,6 +1,6 @@
 package club.p6e.coat.auth;
 
-import club.p6e.coat.auth.cache.VoucherCache;
+import club.p6e.coat.auth.web.reactive.cache.VoucherCache;
 import club.p6e.coat.auth.generator.VoucherGenerator;
 import club.p6e.coat.auth.model.OAuth2ClientModel;
 import club.p6e.coat.auth.error.GlobalExceptionContext;

@@ -39,6 +39,30 @@ public interface User {
         };
     }
 
+    static User create(Map<String, Object> data) {
+        return new User() {
+            @Override
+            public String id() {
+                return "";
+            }
+
+            @Override
+            public String password() {
+                return "";
+            }
+
+            @Override
+            public String serialize() {
+                return "";
+            }
+
+            @Override
+            public Map<String, Object> toMap() {
+                return Map.of();
+            }
+        };
+    }
+
     /**
      * 获取序号
      *

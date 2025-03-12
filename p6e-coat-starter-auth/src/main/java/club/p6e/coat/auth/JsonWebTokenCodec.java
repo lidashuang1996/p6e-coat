@@ -13,7 +13,7 @@ import java.time.ZoneId;
 import java.util.Date;
 
 /**
- * 认证 JWT 加密解密的密钥
+ * Json Web Token Codec
  *
  * @author lidashuang
  * @version 1.0
@@ -29,11 +29,6 @@ public class JsonWebTokenCodec {
      * 密钥
      */
     private String secret;
-
-    /**
-     * 密钥
-     */
-    private String refreshTokenSecret;
 
     /**
      * 初始化
@@ -76,42 +71,12 @@ public class JsonWebTokenCodec {
     }
 
     /**
-     * 获取 ACCESS TOKEN 密钥
+     * Get Secret
      *
-     * @return ACCESS TOKEN 密钥
+     * @return Secret
      */
     public String getSecret() {
-        return "321322";
+        return this.secret;
     }
 
-    /**
-     * 获取 REFRESH TOKEN 密钥
-     *
-     * @return REFRESH TOKEN 密钥
-     */
-    public String getRefreshTokenSecret() {
-        init();
-        return refreshTokenSecret;
-    }
-
-    /**
-     * 设置 ACCESS TOKEN 密钥
-     *
-     * @param secret ACCESS TOKEN 密钥
-     */
-    public void setAccessTokenSecret(String secret) {
-        this.accessTokenSecret = secret;
-        LOGGER.info(this.accessTokenSecret);
-    }
-
-    /**
-     * 设置 REFRESH TOKEN 密钥
-     *
-     * @param secret REFRESH TOKEN 密钥
-     */
-    public void setRefreshTokenSecret(String secret) {
-        this.refreshTokenSecret = secret;
-        LOGGER.info(this.refreshTokenSecret);
-    }
-    
 }

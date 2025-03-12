@@ -1,18 +1,18 @@
 package club.p6e.coat.auth;
 
-import club.p6e.coat.auth.cache.memory.*;
-import club.p6e.coat.auth.cache.memory.support.ReactiveMemoryTemplate;
-import club.p6e.coat.auth.cache.redis.*;
+import club.p6e.coat.auth.web.reactive.cache.memory.*;
+import club.p6e.coat.auth.web.reactive.cache.memory.support.ReactiveMemoryTemplate;
 import club.p6e.coat.auth.codec.PasswordTransmissionCodecImpl;
 import club.p6e.coat.auth.controller.*;
 import club.p6e.coat.auth.generator.*;
 import club.p6e.coat.auth.launcher.EmailMessageLauncherImpl;
 import club.p6e.coat.auth.launcher.SmsMessageLauncherImpl;
 import club.p6e.coat.auth.repository.OAuth2ClientRepository;
-import club.p6e.coat.auth.repository.UserAuthRepository;
-import club.p6e.coat.auth.repository.UserRepository;
-import club.p6e.coat.auth.service.*;
+import club.p6e.coat.auth.web.reactive.repository.UserAuthRepository;
+import club.p6e.coat.auth.web.reactive.repository.UserRepository;
 import club.p6e.coat.auth.validator.*;
+import club.p6e.coat.auth.web.reactive.cache.redis.*;
+import club.p6e.coat.auth.web.reactive.service.*;
 import club.p6e.coat.common.utils.TemplateParser;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
