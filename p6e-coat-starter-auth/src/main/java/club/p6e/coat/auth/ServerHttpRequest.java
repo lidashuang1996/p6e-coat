@@ -70,6 +70,11 @@ public class ServerHttpRequest extends ServerHttpRequestDecorator {
         return data == null ? null : String.valueOf(data);
     }
 
+    public  String setQuickResponseCodeLoginMark(String a) {
+        final Object data = getAttribute(ACCOUNT_PASSWORD_SIGNATURE_MARK);
+        return data == null ? null : String.valueOf(data);
+    }
+
     public Mono<ServerHttpRequest> init() {
         return Mono.just(this);
     }

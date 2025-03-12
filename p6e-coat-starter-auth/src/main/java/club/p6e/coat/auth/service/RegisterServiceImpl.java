@@ -15,7 +15,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * 注册服务的实现
+ * Register Service Impl
  *
  * @author lidashuang
  * @version 1.0

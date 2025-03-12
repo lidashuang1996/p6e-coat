@@ -44,13 +44,28 @@ public class AccountPasswordLoginServiceImpl implements AccountPasswordLoginServ
     }
 
     /**
+     * Query User By Account
+     *
+     * @param account Account
+     * @return User Object
+     */
+    private Mono<User> getUser(String account) {
+        return switch (Properties.getInstance().getMode()) {
+            case PHONE -> repository.findByPhone(account);
+            case MAILBOX -> repository.findByMailbox(account);
+            case ACCOUNT -> repository.findByAccount(account);
+            case PHONE_OR_MAILBOX -> repository.findByPhoneOrMailbox(account);
+        };
+    }
+
+    /**
      * Execute Password Transmission Decryption
      *
      * @param exchange Server Web Exchange Object
      * @param password Password Encryption Content Object
      * @return Password Decryption Content Object
      */
-    public Mono<String> executePasswordTransmissionDecryption(ServerWebExchange exchange, String password) {
+    private Mono<String> executePasswordTransmissionDecryption(ServerWebExchange exchange, String password) {
         final boolean enableTransmissionEncryption = Properties.getInstance()
                 .getLogin().getAccountPassword().isEnableTransmissionEncryption();
         if (enableTransmissionEncryption) {
@@ -98,12 +113,7 @@ public class AccountPasswordLoginServiceImpl implements AccountPasswordLoginServ
     @Override
     public Mono<User> execute(ServerWebExchange exchange, LoginContext.AccountPassword.Request param) {
         return executePasswordTransmissionDecryption(exchange, param.getPassword()).map(param::setPassword)
-                .flatMap(p -> switch (Properties.getInstance().getMode()) {
-                    case PHONE -> repository.findByPhone(p.getAccount());
-                    case MAILBOX -> repository.findByMailbox(p.getAccount());
-                    case ACCOUNT -> repository.findByAccount(p.getAccount());
-                    case PHONE_OR_MAILBOX -> repository.findByPhoneOrMailbox(p.getAccount());
-                })
+                .flatMap(p -> getUser(p.getAccount()))
                 .filter(u -> encryptor.validate(param.getPassword(), u.password()))
                 .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionAccountPasswordLoginAccountOrPasswordException(
                         this.getClass(),

@@ -3,6 +3,7 @@ package club.p6e.coat.auth.service;
 import club.p6e.coat.auth.PasswordEncryptor;
 import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.ServerHttpRequest;
+import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.cache.VerificationCodeForgotPasswordCache;
 import club.p6e.coat.auth.context.ForgotPasswordContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
@@ -46,6 +47,21 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
         this.repository = repository;
     }
 
+    /**
+     * Query User By Account
+     *
+     * @param account Account
+     * @return User Object
+     */
+    private Mono<User> getUser(String account) {
+        return switch (Properties.getInstance().getMode()) {
+            case PHONE -> repository.findByPhone(account);
+            case MAILBOX -> repository.findByMailbox(account);
+            case ACCOUNT -> repository.findByAccount(account);
+            case PHONE_OR_MAILBOX -> repository.findByPhoneOrMailbox(account);
+        };
+    }
+
     @Override
     public Mono<ForgotPasswordContext.Dto> execute(ServerWebExchange exchange, ForgotPasswordContext.Request param) {
         final String account = ((ServerHttpRequest) exchange.getRequest()).getAccountContent();
@@ -59,12 +75,9 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
                         this.getClass(),
                         "fun execute(ServerWebExchange exchange, ForgotPasswordContext.Request param).",
                         "forgot password submit verification code cache data does not exist or expire exception."
-                ))).flatMap(v -> (switch (Properties.getInstance().getMode()) {
-                    case PHONE -> repository.findByPhone(account);
-                    case MAILBOX -> repository.findByMailbox(account);
-                    case ACCOUNT -> repository.findByAccount(account);
-                    case PHONE_OR_MAILBOX -> repository.findByPhoneOrMailbox(account);
-                })).flatMap(m -> repository.updatePassword(m.id(), encryptor.execute(param.getPassword()))) // update user passWord to the latest
+                )))
+                .flatMap(v -> getUser(account))
+                .flatMap(m -> repository.updatePassword(m.id(), encryptor.execute(param.getPassword()))) // update user passWord to the latest
                 .map(l -> new ForgotPasswordContext.Dto().setAccount(account));
     }
 

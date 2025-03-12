@@ -15,7 +15,7 @@ public interface RegisterService {
     /**
      * 注册服务执行
      *
-     * @param exchange ServerWebExchange 对象
+     * @param exchange Server Web Exchange 对象
      * @param param    请求对象
      * @return 结果对象
      */

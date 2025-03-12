@@ -102,7 +102,7 @@ public class AuthApplicationStarter {
                     registerQrCodeLoginCacheBean(defaultListableBeanFactory);
                     registerBean(QrCodeLoginGeneratorImpl.class, defaultListableBeanFactory);
                     registerBean(QuickResponseCodeLoginServiceImpl.class, defaultListableBeanFactory);
-                    registerBean(QrCodeObtainServiceImpl.class, defaultListableBeanFactory);
+                    registerBean(QuickResponseCodeAcquisitionServiceImpl.class, defaultListableBeanFactory);
                     registerBean(QrCodeLoginControllerImpl.class, defaultListableBeanFactory);
                     registerBean(QrCodeObtainControllerImpl.class, defaultListableBeanFactory);
                     registerBean(QrCodeLoginCallbackParameterValidator.class, defaultListableBeanFactory, true, false);

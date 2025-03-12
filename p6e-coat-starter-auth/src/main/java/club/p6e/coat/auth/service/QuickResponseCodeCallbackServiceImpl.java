@@ -59,4 +59,5 @@ public class QuickResponseCodeCallbackServiceImpl implements QuickResponseCodeCa
                     }
                 }));
     }
+    
 }
