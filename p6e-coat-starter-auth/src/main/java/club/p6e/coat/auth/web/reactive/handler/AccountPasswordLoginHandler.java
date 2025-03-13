@@ -21,14 +21,12 @@ import reactor.core.publisher.Mono;
  */
 public class AccountPasswordLoginHandler {
 
-    private final ServerHttpRequestParameterValidator validator = new ServerHttpRequestParameterValidator();
-
     @ResponseBody
     @PostMapping("/account/password")
     public Mono<ResultContext> ap(ServerWebExchange exchange, @RequestBody LoginContext.AccountPassword.Request request) {
         return Aspect
                 .executeBefore(new Object[]{exchange, request})
-                .flatMap(o -> validator.execute(exchange, request)) // verify request param
+                .flatMap(o -> ServerHttpRequestParameterValidator.execute(exchange, request)) // verify request param
                 .flatMap(o -> SpringUtil.getBean(AccountPasswordLoginService.class).execute(exchange, request))
                 .flatMap(m -> Aspect.executeAfter(new Object[]{exchange, request, m}))
                 .map(ResultContext::build);
@@ -36,9 +34,10 @@ public class AccountPasswordLoginHandler {
 
     @ResponseBody
     @PostMapping("/account/password/signature")
-    public Mono<ResultContext> aps(ServerWebExchange exchange, @RequestBody LoginContext.AccountPasswordSignature.Request request) {
+    public Mono<ResultContext> aps(ServerWebExchange exchange, @RequestBody Sign.Request request) {
         return Aspect
                 .executeBefore(new Object[]{exchange, request})
+                .flatMap(o -> ServerHttpRequestParameterValidator.execute(exchange, request)) // verify request param
                 .flatMap(o -> SpringUtil.getBean(PasswordSignatureService.class).execute(exchange, request))
                 .flatMap(m -> Aspect.executeAfter(new Object[]{exchange, request, m}))
                 .map(ResultContext::build);

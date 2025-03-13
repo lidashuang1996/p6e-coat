@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
-public interface ServerHttpRequestParameterValidator {
+public abstract class ServerHttpRequestParameterValidator {
 
     /**
      * 执行验证
@@ -18,9 +18,7 @@ public interface ServerHttpRequestParameterValidator {
      * @param param 需要验证的参数
      * @return 验证的结果
      */
-    public abstract Mono<Object> execute(ServerWebExchange exchange, Object param);
-
-
+    public abstract Mono<Object> check(ServerWebExchange exchange, Object param);
 
     /**
      * 执行验证
@@ -28,7 +26,9 @@ public interface ServerHttpRequestParameterValidator {
      * @param param 需要验证的参数
      * @return 验证的结果
      */
-    public abstract Mono<Object> execute(ServerWebExchange exchange, Object param)
+    public static Mono<Object> execute(ServerWebExchange exchange, Object param) {
+
+    }
 
 
 }

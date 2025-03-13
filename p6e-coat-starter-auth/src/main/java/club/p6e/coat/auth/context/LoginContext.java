@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 登录的上下文
+ * Login Context
  *
  * @author lidashuang
  * @version 1.0
@@ -16,214 +16,187 @@ import java.util.Map;
 public class LoginContext implements Serializable {
 
     /**
-     * 验证登录的对象
+     * Authentication
      */
     public static class Authentication implements Serializable {
 
         @Data
         @Accessors(chain = true)
         public static class Request implements Serializable {
+
+            /**
+             * Custom Data
+             */
+            private Map<String, Object> data = new HashMap<>();
+
         }
 
     }
 
     /**
-     * 账号密码登录的对象
+     * Account Password
      */
     public static class AccountPassword implements Serializable {
 
         @Data
         @Accessors(chain = true)
         public static class Request implements Serializable {
+
+            /**
+             * Account
+             */
             private String account;
+
+            /**
+             * Password
+             */
             private String password;
+
+            /**
+             * Custom Data
+             */
             private Map<String, Object> data = new HashMap<>();
+
         }
 
     }
 
     /**
-     * 账号密码签名的对象
-     */
-    public static class AccountPasswordSignature implements Serializable {
-
-        @Data
-        @Accessors(chain = true)
-        public static class Request implements Serializable {
-        }
-
-        @Data
-        @Accessors(chain = true)
-        public static class Vo implements Serializable {
-            private String content;
-        }
-
-
-        @Data
-        @Accessors(chain = true)
-        public static class Dto implements Serializable {
-            private String content;
-        }
-
-    }
-
-    /**
-     * 验证码登录的对象
+     * Verification Code
      */
     public static class VerificationCode implements Serializable {
 
         @Data
         @Accessors(chain = true)
         public static class Request implements Serializable {
-            private String code;
-        }
 
-        @Data
-        @Accessors(chain = true)
-        public static class Dto implements Serializable {
-            private Integer id;
-            private String account;
-            private Integer status;
-            private String name;
-            private String nickname;
-            private String avatar;
-            private String describe;
+            /**
+             * Code
+             */
+            private String code;
+
+            /**
+             * Custom Data
+             */
+            private Map<String, Object> data = new HashMap<>();
+
         }
 
     }
 
     /**
-     * 验证码获取的对象
+     * Verification Code Acquisition
      */
     public static class VerificationCodeAcquisition implements Serializable {
 
         @Data
         @Accessors(chain = true)
         public static class Request implements Serializable {
-            private String account;
-            private String language;
-        }
 
-        @Data
-        @Accessors(chain = true)
-        public static class Vo implements Serializable {
+            /**
+             * Account
+             */
             private String account;
+
+            /**
+             * Language
+             */
+            private String language;
+
+            /**
+             * Custom Data
+             */
+            private Map<String, Object> data = new HashMap<>();
+
         }
 
         @Data
         @Accessors(chain = true)
         public static class Dto implements Serializable {
+
+            /**
+             * Account
+             */
             private String account;
+
         }
 
     }
 
     /**
-     * 二维码登录对象
+     * Quick Response Code
      */
     public static class QuickResponseCode implements Serializable {
 
         @Data
         @Accessors(chain = true)
         public static class Request implements Serializable {
-        }
 
-        @Data
-        @Accessors(chain = true)
-        public static class Dto implements Serializable {
-            private Integer id;
-            private String account;
-            private Integer status;
-            private String name;
-            private String nickname;
-            private String avatar;
-            private String describe;
+            /**
+             * Custom Data
+             */
+            private Map<String, Object> data = new HashMap<>();
+
         }
 
     }
 
     /**
-     * 二维码获取对象
+     * Quick Response Code Acquisition
      */
     public static class QuickResponseCodeAcquisition implements Serializable {
 
         @Data
         @Accessors(chain = true)
         public static class Request implements Serializable {
-        }
 
-        @Data
-        @Accessors(chain = true)
-        public static class Vo implements Serializable {
-            private String content;
+            /**
+             * Custom Data
+             */
+            private Map<String, Object> data = new HashMap<>();
+
         }
 
         @Data
         @Accessors(chain = true)
         public static class Dto implements Serializable {
+
+            /**
+             * Quick Response Code Content
+             */
             private String content;
+
         }
 
     }
 
     /**
-     * 二维码回调对象
+     * Quick Response Code Callback
      */
     public static class QuickResponseCodeCallback implements Serializable {
 
         @Data
         @Accessors(chain = true)
         public static class Request implements Serializable {
-            private String content;
-        }
 
-        @Data
-        @Accessors(chain = true)
-        public static class Vo implements Serializable {
-            private String content;
+            /**
+             * Custom Data
+             */
+            private Map<String, Object> data = new HashMap<>();
+
         }
 
         @Data
         @Accessors(chain = true)
         public static class Dto implements Serializable {
+
+            /**
+             * Content
+             */
             private String content;
-        }
-
-    }
-
-    /**
-     * 第三方登录对象
-     */
-    public static class Other implements Serializable {
-
-        public static class Qq implements Serializable {
-
-            /**
-             * 请求对象
-             */
-            @Data
-            @Accessors(chain = true)
-            public static class Request implements Serializable {
-                private String code;
-                private String state;
-            }
-
-            /**
-             * 结果对象
-             */
-            @Data
-            @Accessors(chain = true)
-            public static class Dto implements Serializable {
-                private Integer id;
-                private String account;
-                private Integer status;
-                private String name;
-                private String nickname;
-                private String avatar;
-                private String describe;
-            }
 
         }
+
     }
 
 }

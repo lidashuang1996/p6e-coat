@@ -1,5 +1,6 @@
 package club.p6e.coat.auth.web.reactive.handler;
 
+import club.p6e.coat.auth.web.reactive.ServerHttpRequestParameterValidator;
 import club.p6e.coat.auth.web.reactive.aspect.Aspect;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.web.reactive.service.QuickResponseCodeLoginService;
@@ -26,6 +27,7 @@ public class QuickResponseCodeLoginHandler {
     public Mono<ResultContext> qrc(ServerWebExchange exchange, @RequestBody LoginContext.QuickResponseCode.Request request) {
         return Aspect
                 .executeBefore(new Object[]{exchange, request})
+                .flatMap(o -> ServerHttpRequestParameterValidator.execute(exchange, request)) // verify request param
                 .flatMap(o -> SpringUtil.getBean(QuickResponseCodeLoginService.class).execute(exchange, request))
                 .flatMap(m -> Aspect.executeAfter(new Object[]{exchange, request, m}))
                 .map(ResultContext::build);
@@ -36,6 +38,7 @@ public class QuickResponseCodeLoginHandler {
     public Mono<ResultContext> qrc(ServerWebExchange exchange, @RequestBody LoginContext.QuickResponseCodeObtain.Request request) {
         return Aspect
                 .executeBefore(new Object[]{exchange, request})
+                .flatMap(o -> ServerHttpRequestParameterValidator.execute(exchange, request)) // verify request param
                 .flatMap(o -> SpringUtil.getBean(QuickResponseCodeAcquisitionService.class).execute(exchange, request))
                 .flatMap(m -> Aspect.executeAfter(new Object[]{exchange, request, m}))
                 .map(ResultContext::build);

@@ -1,5 +1,6 @@
 package club.p6e.coat.auth.web.reactive.handler;
 
+import club.p6e.coat.auth.web.reactive.ServerHttpRequestParameterValidator;
 import club.p6e.coat.auth.web.reactive.aspect.Aspect;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.web.reactive.service.VerificationCodeAcquisitionService;
@@ -26,6 +27,7 @@ public class VerificationCodeLoginHandler {
     public Mono<ResultContext> vc(ServerWebExchange exchange, @RequestBody LoginContext.VerificationCode.Request request) {
         return Aspect
                 .executeBefore(new Object[]{exchange, request})
+                .flatMap(o -> ServerHttpRequestParameterValidator.execute(exchange, request)) // verify request param
                 .flatMap(o -> SpringUtil.getBean(VerificationCodeLoginService.class).execute(exchange, request))
                 .flatMap(m -> Aspect.executeAfter(new Object[]{exchange, request, m}))
                 .map(ResultContext::build);
@@ -36,6 +38,7 @@ public class VerificationCodeLoginHandler {
     public Mono<ResultContext> vc(ServerWebExchange exchange, @RequestBody LoginContext.VerificationCodeAcquisition.Request request) {
         return Aspect
                 .executeBefore(new Object[]{exchange, request})
+                .flatMap(o -> ServerHttpRequestParameterValidator.execute(exchange, request)) // verify request param
                 .flatMap(o -> SpringUtil.getBean(VerificationCodeAcquisitionService.class).execute(exchange, request))
                 .flatMap(m -> Aspect.executeAfter(new Object[]{exchange, request, m}))
                 .map(ResultContext::build);

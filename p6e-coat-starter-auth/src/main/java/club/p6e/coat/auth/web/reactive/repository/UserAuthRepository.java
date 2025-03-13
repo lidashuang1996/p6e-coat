@@ -1,10 +1,7 @@
 package club.p6e.coat.auth.web.reactive.repository;
 
 import club.p6e.coat.auth.User;
-import club.p6e.coat.auth.model.UserAuthModel;
 import reactor.core.publisher.Mono;
-
-import java.util.Map;
 
 /**
  * User Auth Repository
@@ -13,6 +10,13 @@ import java.util.Map;
  * @version 1.0
  */
 public interface UserAuthRepository {
+
+    /**
+     * Init
+     *
+     * @return Object Data
+     */
+    Mono<Object> init();
 
     /**
      * Query By ID

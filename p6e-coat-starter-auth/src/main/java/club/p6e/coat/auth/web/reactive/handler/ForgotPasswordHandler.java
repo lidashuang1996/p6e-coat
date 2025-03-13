@@ -1,5 +1,6 @@
 package club.p6e.coat.auth.web.reactive.handler;
 
+import club.p6e.coat.auth.web.reactive.ServerHttpRequestParameterValidator;
 import club.p6e.coat.auth.web.reactive.aspect.Aspect;
 import club.p6e.coat.auth.context.ForgotPasswordContext;
 import club.p6e.coat.auth.web.reactive.service.ForgotPasswordService;
@@ -24,6 +25,7 @@ public class ForgotPasswordHandler {
     public Mono<ResultContext> fp(ServerWebExchange exchange, @RequestBody ForgotPasswordContext.Request request) {
         return Aspect
                 .executeBefore(new Object[]{exchange, request})
+                .flatMap(o -> ServerHttpRequestParameterValidator.execute(exchange, request)) // verify request param
                 .flatMap(o -> SpringUtil.getBean(ForgotPasswordService.class).execute(exchange, request))
                 .flatMap(m -> Aspect.executeAfter(new Object[]{exchange, request, m}))
                 .map(ResultContext::build);
