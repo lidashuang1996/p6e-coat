@@ -3,7 +3,7 @@ package club.p6e.coat.auth.web.reactive.service;
 import club.p6e.coat.auth.web.reactive.ServerHttpRequest;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.JsonUtil;
-import club.p6e.coat.auth.web.reactive.cache.AccountPasswordLoginSignatureCache;
+import club.p6e.coat.auth.web.reactive.cache.PasswordSignatureCache;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.common.utils.RsaUtil;
@@ -18,19 +18,19 @@ import java.util.HashMap;
  * @author lidashuang
  * @version 1.0
  */
-public class AccountPasswordLoginSignatureServiceImpl implements AccountPasswordLoginSignatureService {
+public class PasswordSignatureServiceImpl implements PasswordSignatureService {
 
     /**
      * Account Password Login Signature Cache Object
      */
-    private final AccountPasswordLoginSignatureCache cache;
+    private final PasswordSignatureCache cache;
 
     /**
      * Constructor Initialization
      *
      * @param cache Account Password Login Signature Cache Object
      */
-    public AccountPasswordLoginSignatureServiceImpl(AccountPasswordLoginSignatureCache cache) {
+    public PasswordSignatureServiceImpl(PasswordSignatureCache cache) {
         this.cache = cache;
     }
 
@@ -53,8 +53,8 @@ public class AccountPasswordLoginSignatureServiceImpl implements AccountPassword
         request.setAccountPasswordSignatureMark(mark);
         final String content = JsonUtil.toJson(new HashMap<>() {{
             put("mark", mark);
-            put("publicKey", finalPublicKey);
-            put("privateKey", finalPrivateKey);
+            put("public", finalPublicKey);
+            put("private", finalPrivateKey);
         }});
         return cache
                 .set(mark, content)

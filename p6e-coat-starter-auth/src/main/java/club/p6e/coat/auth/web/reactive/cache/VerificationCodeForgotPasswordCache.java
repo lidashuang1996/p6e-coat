@@ -1,51 +1,51 @@
 package club.p6e.coat.auth.web.reactive.cache;
 
-import club.p6e.coat.auth.web.reactive.cache.support.ICache;
+import club.p6e.coat.auth.web.reactive.cache.support.Cache;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
 
 /**
- * 忘记密码验证码缓存
+ * Verification Code Forgot Password Cache
  *
  * @author lidashuang
  * @version 1.0
  */
-public interface VerificationCodeForgotPasswordCache extends ICache {
+public interface VerificationCodeForgotPasswordCache extends Cache {
 
     /**
-     * 过期的时间
+     * Cache Expiration Time
      */
     long EXPIRATION_TIME = 180;
 
     /**
-     * 用户缓存前缀
+     * Cache Prefix
      */
-    String CACHE_PREFIX = "FORGOT_PASSWORD:CODE:";
+    String CACHE_PREFIX = "AUTH:FORGOT_PASSWORD:CODE:";
 
     /**
-     * 删除数据
+     * Del Data
      *
-     * @param key 键
-     * @return 删除数据的条数
+     * @param key Key
+     * @return Cache Key
      */
-    Mono<Long> del(String key);
+    Mono<String> del(String key);
 
     /**
-     * 读取数据
+     * Get Data
      *
-     * @param key 键
-     * @return 值
+     * @param key Key
+     * @return Value
      */
     Mono<List<String>> get(String key);
 
     /**
-     * 写入数据
+     * Set Data
      *
-     * @param key   键
-     * @param value 值
-     * @return 是否写入数据成功
+     * @param key   Key
+     * @param value Value
+     * @return Cache Key
      */
-    Mono<Boolean> set(String key, String value);
+    Mono<String> set(String key, String value);
 
 }

@@ -1,44 +1,61 @@
 package club.p6e.coat.auth;
 
+import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import org.springframework.util.DigestUtils;
 
 import java.nio.charset.StandardCharsets;
 
 /**
- * 认证密码加密
+ * Password Encryptor Impl
  *
  * @author lidashuang
  * @version 1.0
  */
-public class AuthPasswordEncryptorImpl implements PasswordEncryptor {
+public class PasswordEncryptorImpl implements PasswordEncryptor {
 
     /**
-     * 种子
+     * Salt Content
      */
-    public static String SEED = "";
+    private final String salt;
 
     /**
-     * 构造方法初始化
+     * Is Init Status
      */
-    @SuppressWarnings("ALL")
-    public AuthPasswordEncryptorImpl() {
-        if (SEED == null || SEED.isEmpty()) {
-            throw new RuntimeException(
-                    "fun AuthPasswordEncryptorImpl(). [ SEED ] has no configuration exceptions. " +
-                            ">> club.p6e.coat.auth.password.AuthPasswordEncryptorImpl.SEED = \"[your seed]\"");
+    private final boolean status;
+
+    /**
+     * Init
+     *
+     * @param salt Salt Content
+     */
+    public PasswordEncryptorImpl(String salt) {
+        this.salt = salt;
+        this.status = true;
+    }
+
+    /**
+     * Validate Salt
+     */
+    private void validate() {
+        if (!status) {
+            throw GlobalExceptionContext.exceptionPasswordEncryptorException(
+                    this.getClass(),
+                    "fun execute(String content).",
+                    "password encryptor salt not init exception."
+            );
         }
     }
 
     /**
-     * 格式化
+     * Format Content
      *
-     * @param content 密码
-     * @return 格式化的内容
+     * @param content Content
+     * @return Format Content
      */
     private String format(String content) {
         final String hex = DigestUtils.md5DigestAsHex(
-                (content + SEED).getBytes(StandardCharsets.UTF_8)
+                (content + this.salt).getBytes(StandardCharsets.UTF_8)
         );
         final int index = ((int) hex.charAt(16)) % 24;
         return hex.substring(index) + DigestUtils.md5DigestAsHex(
@@ -47,11 +64,11 @@ public class AuthPasswordEncryptorImpl implements PasswordEncryptor {
     }
 
     /**
-     * 加密
+     * Execute Encryption
      *
-     * @param random  随机
-     * @param content 密码
-     * @return 结果
+     * @param random  Random
+     * @param content Content
+     * @return Result
      */
     private String execute(String random, String content) {
         final int index = ((int) random.charAt(0)) % 24;
@@ -60,25 +77,22 @@ public class AuthPasswordEncryptorImpl implements PasswordEncryptor {
         );
     }
 
-    /**
-     * 执行密码加密
-     *
-     * @param content 密码
-     * @return 密码加密后的内容
-     */
     @Override
     public String execute(String content) {
+        validate();
         return execute(GeneratorUtil.random(8, true, false), format(content));
     }
 
     @Override
-    public boolean validate(String pwd1, String pwd2) {
-        if (pwd1 == null || pwd2 == null || pwd1.isEmpty() || pwd2.isEmpty()) {
+    public boolean validate(String pwdOriginal, String pwdEncryption) {
+        validate();
+        if (pwdOriginal == null || pwdEncryption == null
+                || pwdOriginal.isEmpty() || pwdEncryption.isEmpty()) {
             return false;
         } else {
             boolean bool = true;
             final StringBuilder random = new StringBuilder();
-            for (final char ch : pwd2.toCharArray()) {
+            for (final char ch : pwdEncryption.toCharArray()) {
                 if (ch == '.') {
                     bool = false;
                     break;
@@ -89,8 +103,9 @@ public class AuthPasswordEncryptorImpl implements PasswordEncryptor {
             if (bool) {
                 return false;
             } else {
-                return execute(random.toString(), format(pwd1)).equals(pwd2);
+                return execute(random.toString(), format(pwdOriginal)).equals(pwdEncryption);
             }
         }
     }
+
 }

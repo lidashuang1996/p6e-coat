@@ -1,19 +1,22 @@
 package club.p6e.coat.auth.web.reactive.cache.memory;
 
-import club.p6e.coat.auth.web.reactive.cache.VerificationCodeRegisterCache;
+import club.p6e.coat.auth.web.reactive.cache.VerificationCodeForgotPasswordCache;
 import club.p6e.coat.auth.web.reactive.cache.memory.support.MemoryCache;
 import club.p6e.coat.auth.web.reactive.cache.memory.support.ReactiveMemoryTemplate;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
- * Register Code Memory Cache
+ * Verification Code Forgot Password Memory Cache
  *
  * @author lidashuang
  * @version 1.0
  */
-public class RegisterCodeMemoryCache extends MemoryCache implements VerificationCodeRegisterCache {
+public class VerificationCodeForgotPasswordMemoryCache extends MemoryCache implements VerificationCodeForgotPasswordCache {
 
     /**
      * Reactive Memory Template Object
@@ -25,7 +28,7 @@ public class RegisterCodeMemoryCache extends MemoryCache implements Verification
      *
      * @param template Reactive Memory Template Object
      */
-    public RegisterCodeMemoryCache(ReactiveMemoryTemplate template) {
+    public VerificationCodeForgotPasswordMemoryCache(ReactiveMemoryTemplate template) {
         this.template = template;
     }
 

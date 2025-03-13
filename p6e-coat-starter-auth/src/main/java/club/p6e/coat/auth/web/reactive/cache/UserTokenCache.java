@@ -1,26 +1,27 @@
 package club.p6e.coat.auth.web.reactive.cache;
 
-import club.p6e.coat.auth.web.reactive.cache.support.ICache;
+import club.p6e.coat.auth.web.reactive.cache.support.Cache;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import reactor.core.publisher.Mono;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
- * 认证缓存服务
+ * User Token Cache
  *
  * @author lidashuang
  * @version 1.0
  */
-public interface UserTokenCache extends ICache {
+public interface UserTokenCache extends Cache {
 
     /**
-     * 令牌模型
+     * Model
      */
     @Data
     @Accessors(chain = true)
-    class Token implements Serializable {
+    class Model implements Serializable {
 
         /**
          * UID
@@ -28,107 +29,83 @@ public interface UserTokenCache extends ICache {
         private String uid;
 
         /**
-         * 设备
+         * Device
          */
         private String device;
 
         /**
-         * ACCESS TOKEN
+         * TOKEN
          */
-        private String accessToken;
-
-        /**
-         * REFRESH TOKEN
-         */
-        private String refreshToken;
+        private String token;
 
     }
 
     /**
-     * 分割符号
+     * Delimiter
      */
     String DELIMITER = ":";
 
     /**
-     * 过期的时间
+     * Expiration Time
      */
     long EXPIRATION_TIME = 3600 * 3L;
 
     /**
-     * 用户缓存前缀
+     * User Cache Prefix
      */
-    String USER_PREFIX = "AUTH:USER:";
+    String USER_CACHE_PREFIX = "AUTH:USER:";
 
     /**
-     * ACCESS TOKEN 缓存前缀
+     * Token Cache Prefix
      */
-    String ACCESS_TOKEN_PREFIX = "AUTH:ACCESS_TOKEN:";
+    String TOKEN_CACHE_PREFIX = "AUTH:TOKEN:";
 
     /**
-     * REFRESH TOKEN 缓存前缀
+     * User Token Cache Prefix
      */
-    String REFRESH_TOKEN_PREFIX = "AUTH:REFRESH_TOKEN:";
+    String USER_TOKEN_CACHE_PREFIX = "AUTH:USER_TOKEN:";
 
     /**
-     * ACCESS TOKEN 缓存前缀
-     */
-    String USER_ACCESS_TOKEN_PREFIX = "AUTH:USER:ACCESS_TOKEN:";
-
-    /**
-     * REFRESH TOKEN 缓存前缀
-     */
-    String USER_REFRESH_TOKEN_PREFIX = "AUTH:USER:REFRESH_TOKEN:";
-
-    /**
-     * 写入认证数据
+     * Set Model
      *
-     * @param uid          用户数据
-     * @param device       设备数据
-     * @param accessToken  ACCESS TOKEN 数据
-     * @param refreshToken REFRESH TOKEN 数据
-     * @param user         用户信息数据
-     * @return 令牌对象
+     * @param uid     UID
+     * @param device  Device
+     * @param token   Token
+     * @param content User Content
+     * @return Model Object
      */
-    Mono<Token> set(String uid, String device, String token, String user);
+    Mono<Model> set(String uid, String device, String token, String content);
 
     /**
-     * 读取用户内容
+     * Get User
      *
-     * @param uid 令牌内容
-     * @return Mono/String 读取用户内容
+     * @param uid UID
+     * @return User Content
      */
     Mono<String> getUser(String uid);
 
     /**
-     * 读取 ACCESS TOKEN 令牌内容
+     * Get Token
      *
-     * @param content 令牌内容
-     * @return Mono/Token 读取 ACCESS TOKEN 令牌内容
+     * @param token Token
+     * @return Model Object
      */
-    Mono<Token> getToken(String content);
+    Mono<Model> getToken(String token);
 
     /**
-     * 读取 REFRESH TOKEN 令牌内容
+     * Clean Token
      *
-     * @param content 令牌内容
-     * @return Mono/Token 读取 REFRESH TOKEN 令牌内容
+     * @param token Token
+     * @return Model Object
      */
-    Mono<Token> getRefreshToken(String content);
+    Mono<Model> cleanToken(String token);
 
     /**
-     * 清除用户的 ACCESS TOKEN 令牌对应的信息
+     * Clean User And User All Token
      *
-     * @param content 令牌内容
-     * @return Mono/Long 清除的数据条数
+     * @param uid UID
+     * @return Token List Object
      */
-    Mono<Long> cleanToken(String content);
-
-    /**
-     * 清除用户的全部信息
-     *
-     * @param uid 用户 ID
-     * @return Mono/Long 清除的数据条数
-     */
-    Mono<Long> cleanUserAll(String uid);
+    Mono<List<String>> cleanUserAll(String uid);
 
 }

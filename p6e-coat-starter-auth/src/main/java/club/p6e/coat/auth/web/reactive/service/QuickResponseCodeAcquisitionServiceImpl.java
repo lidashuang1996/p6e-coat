@@ -31,18 +31,18 @@ public class QuickResponseCodeAcquisitionServiceImpl implements QuickResponseCod
     }
 
     @Override
-    public Mono<LoginContext.QuickResponseCodeObtain.Dto> execute(
-            ServerWebExchange exchange, LoginContext.QuickResponseCodeObtain.Request param) {
+    public Mono<LoginContext.QuickResponseCodeAcquisition.Dto> execute(
+            ServerWebExchange exchange, LoginContext.QuickResponseCodeAcquisition.Request param) {
         final ServerHttpRequest request = (ServerHttpRequest) exchange.getRequest();
         final String code = GeneratorUtil.uuid() + GeneratorUtil.random(8, true, false);
         request.setQuickResponseCodeLoginMark(code);
         return cache
                 .set(code, QuickResponseCodeLoginCache.EMPTY_CONTENT)
-                .flatMap(b -> b ? Mono.just(new LoginContext.QuickResponseCodeObtain.Dto().setContent(code))
+                .flatMap(b -> b ? Mono.just(new LoginContext.QuickResponseCodeAcquisition.Dto().setContent(code))
                         : Mono.error(GlobalExceptionContext.executeCacheException(
                         this.getClass(),
-                        "fun execute(ServerWebExchange exchange, LoginContext.QrCodeObtain.Request param)",
-                        "QrCode obtain login cache data write exception."
+                        "fun execute(ServerWebExchange exchange, LoginContext.QuickResponseCodeAcquisition.Request param)",
+                        "quick response code acquisition login cache exception."
                 )));
     }
 

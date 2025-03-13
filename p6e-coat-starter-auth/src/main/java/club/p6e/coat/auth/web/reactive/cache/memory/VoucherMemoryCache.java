@@ -5,57 +5,49 @@ import club.p6e.coat.auth.web.reactive.cache.memory.support.MemoryCache;
 import club.p6e.coat.auth.web.reactive.cache.memory.support.ReactiveMemoryTemplate;
 import reactor.core.publisher.Mono;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Voucher Memory Cache
+ *
  * @author lidashuang
  * @version 1.0
  */
-public class VoucherMemoryCache
-        extends MemoryCache implements VoucherCache {
+public class VoucherMemoryCache extends MemoryCache implements VoucherCache {
 
     /**
-     * 内存缓存模板对象
+     * Reactive Memory Template Object
      */
     private final ReactiveMemoryTemplate template;
 
     /**
-     * 构造方法初始化
+     * Constructor Initialization
      *
-     * @param template 内存缓存模板对象
+     * @param template Reactive Memory Template Object
      */
     public VoucherMemoryCache(ReactiveMemoryTemplate template) {
         this.template = template;
     }
 
     @Override
-    public Mono<Long> del(String key) {
-        template.del(CACHE_PREFIX + key);
-        return Mono.just(1L);
+    public Mono<String> del(String key) {
+        final String nk = CACHE_PREFIX + key;
+        return Mono.just(template.del(nk)).map(l -> key);
     }
 
     @Override
     public Mono<Map<String, String>> get(String key) {
-        final Map<String, String> map = get0(key);
+        final String nk = CACHE_PREFIX + key;
+        final Map<String, String> map = getData(template, nk);
         return map.isEmpty() ? Mono.empty() : Mono.just(map);
     }
 
     @Override
-    public Mono<Boolean> set(String key, Map<String, String> data) {
-        final Map<String, String> map = get0(key);
+    public Mono<String> set(String key, Map<String, String> data) {
+        final String nk = CACHE_PREFIX + key;
+        final Map<String, String> map = getData(template, nk);
         map.putAll(data);
-        return Mono.just(template.set(CACHE_PREFIX + key, map, EXPIRATION_TIME));
-    }
-
-    @SuppressWarnings("ALL")
-    private Map<String, String> get0(String key) {
-        final Map map = template.get(CACHE_PREFIX + key, Map.class);
-        if (map == null) {
-            return new HashMap<>();
-        } else {
-            return (Map<String, String>) map;
-        }
+        return Mono.just(template.set(nk, map, EXPIRATION_TIME)).map(b -> key);
     }
 
 }

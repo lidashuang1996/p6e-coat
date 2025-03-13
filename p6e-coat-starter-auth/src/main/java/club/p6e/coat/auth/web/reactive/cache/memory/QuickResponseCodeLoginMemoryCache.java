@@ -6,29 +6,31 @@ import club.p6e.coat.auth.web.reactive.cache.memory.support.ReactiveMemoryTempla
 import reactor.core.publisher.Mono;
 
 /**
+ * Quick Response Code Login Memory Cache
+ *
  * @author lidashuang
  * @version 1.0
  */
-public class QrCodeLoginMemoryCache
-        extends MemoryCache implements QuickResponseCodeLoginCache {
+public class QuickResponseCodeLoginMemoryCache extends MemoryCache implements QuickResponseCodeLoginCache {
 
     /**
-     * 内存缓存模板对象
+     * Reactive Memory Template Object
      */
     private final ReactiveMemoryTemplate template;
 
     /**
-     * 构造方法初始化
+     * Constructor Initialization
      *
-     * @param template 内存缓存模板对象
+     * @param template Reactive Memory Template Object
      */
-    public QrCodeLoginMemoryCache(ReactiveMemoryTemplate template) {
+    public QuickResponseCodeLoginMemoryCache(ReactiveMemoryTemplate template) {
         this.template = template;
     }
 
     @Override
-    public Mono<Long> del(String key) {
-        return Mono.just(template.del(CACHE_PREFIX + key));
+    public Mono<String> del(String key) {
+        final String nk = CACHE_PREFIX + key;
+        return Mono.just(template.del(nk)).map(l -> nk);
     }
 
     @Override
@@ -38,8 +40,9 @@ public class QrCodeLoginMemoryCache
     }
 
     @Override
-    public Mono<Boolean> set(String key, String value) {
-        return Mono.just(template.set(CACHE_PREFIX + key, value, EXPIRATION_TIME));
+    public Mono<String> set(String key, String value) {
+        final String nk = CACHE_PREFIX + key;
+        return Mono.just(template.set(nk, value, EXPIRATION_TIME)).map(b -> nk);
     }
 
 }

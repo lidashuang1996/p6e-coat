@@ -1,6 +1,6 @@
 package club.p6e.coat.auth.web.reactive.cache;
 
-import club.p6e.coat.auth.web.reactive.cache.support.ICache;
+import club.p6e.coat.auth.web.reactive.cache.support.Cache;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -11,25 +11,25 @@ import java.util.List;
  * @author lidashuang
  * @version 1.0
  */
-public interface VerificationCodeLoginCache extends ICache {
+public interface VerificationCodeLoginCache extends Cache {
 
     /**
-     * 过期的时间
+     * Cache Expiration Time
      */
     long EXPIRATION_TIME = 200L;
 
     /**
-     * 缓存前缀
+     * Cache Prefix
      */
-    String CACHE_PREFIX = "LOGIN:VERIFICATION_CODE:";
+    String CACHE_PREFIX = "AUTH:VERIFICATION:CODE:";
 
     /**
-     * 删除数据
+     * Del Data
      *
-     * @param key 键
-     * @return 删除数据的条数
+     * @param key Key
+     * @return Cache Key
      */
-    Mono<Long> del(String key);
+    Mono<String> del(String key);
 
     /**
      * 读取数据
@@ -40,12 +40,12 @@ public interface VerificationCodeLoginCache extends ICache {
     Mono<List<String>> get(String key);
 
     /**
-     * 写入数据
+     * Set Data
      *
-     * @param key   键
-     * @param value 值
-     * @return 是否写入数据成功
+     * @param key   Key
+     * @param value Value
+     * @return Cache Key
      */
-    Mono<Boolean> set(String key, String value);
+    Mono<String> set(String key, String value);
 
 }

@@ -35,13 +35,6 @@ public class Properties implements Serializable {
     @Accessors(chain = true)
     public static class Token {
         private Duration duration;
-
-
-        private TokenGenerator generator;
-
-        public static interface TokenGenerator {
-            String execute();
-        }
     }
 
 
@@ -67,16 +60,6 @@ public class Properties implements Serializable {
      * 404 页面进行重定向到网站首页的地址路径
      */
     private String redirectIndexPagePath = "/";
-
-    /**
-     * JWT ACCESS TOKEN SECRET
-     */
-    private String jwtAccessTokenSecret;
-
-    /**
-     * JWT REFRESH TOKEN SECRET
-     */
-    private String jwtRefreshTokenSecret;
 
     /**
      * 认证的账号模式
@@ -169,30 +152,6 @@ public class Properties implements Serializable {
         private Bean authority = new Bean(HTTP_LOCAL_CACHE);
     }
 
-    @SuppressWarnings("ALL")
-    @Data
-    @Accessors(chain = true)
-    public static class Bean implements Serializable {
-        /**
-         * 全路径类名
-         */
-        private String name;
-
-        /**
-         * 依赖的全路径类名数组
-         */
-        private String[] dependency = new String[]{};
-
-        public Bean(String name) {
-            this.name = name;
-        }
-
-        public Bean(String name, String[] depend) {
-            this.name = name;
-            this.dependency = depend;
-        }
-    }
-
     /**
      * 缓存类型
      */
@@ -266,11 +225,11 @@ public class Properties implements Serializable {
         /**
          * 二维码登录的配置
          */
-        private QrCode qrCode = new QrCode();
+        private QuickResponseCode quickResponseCode = new QuickResponseCode();
 
         @Data
         @Accessors(chain = true)
-        public static class QrCode implements Serializable {
+        public static class QuickResponseCode implements Serializable {
             /**
              * 是否开启二维码扫码登录功能
              */

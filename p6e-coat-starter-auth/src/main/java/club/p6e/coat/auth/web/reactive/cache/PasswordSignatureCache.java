@@ -3,15 +3,13 @@ package club.p6e.coat.auth.web.reactive.cache;
 import club.p6e.coat.auth.web.reactive.cache.support.Cache;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-
 /**
- * Verification Code Register Cache
+ * Password Signature Cache
  *
  * @author lidashuang
  * @version 1.0
  */
-public interface VerificationCodeRegisterCache extends Cache {
+public interface PasswordSignatureCache extends Cache {
 
     /**
      * Cache Expiration Time
@@ -21,7 +19,7 @@ public interface VerificationCodeRegisterCache extends Cache {
     /**
      * Cache Prefix
      */
-    String CACHE_PREFIX = "AUTH:REGISTER:CODE:";
+    String CACHE_PREFIX = "AUTH:PASSWORD:SIGNATURE_RSA:";
 
     /**
      * Del Data
@@ -37,7 +35,7 @@ public interface VerificationCodeRegisterCache extends Cache {
      * @param key Key
      * @return Value
      */
-    Mono<List<String>> get(String key);
+    Mono<String> get(String key);
 
     /**
      * Set Data

@@ -21,17 +21,11 @@ public class AccountPasswordLoginParameterValidator implements ParameterValidato
     private static final int ORDER = 0;
 
     /**
-     * 配置文件对象
-     */
-    private final Properties properties;
-
-    /**
      * 构造方法初始化
      *
      * @param properties 配置文件对象
      */
     public AccountPasswordLoginParameterValidator(Properties properties) {
-        this.properties = properties;
     }
 
     @Override

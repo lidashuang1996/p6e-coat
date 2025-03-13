@@ -1,6 +1,6 @@
 package club.p6e.coat.auth.web.reactive.cache.redis;
 
-import club.p6e.coat.auth.web.reactive.cache.VerificationCodeLoginCache;
+import club.p6e.coat.auth.web.reactive.cache.VerificationCodeForgotPasswordCache;
 import club.p6e.coat.auth.web.reactive.cache.redis.support.RedisCache;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import reactor.core.publisher.Mono;
@@ -8,12 +8,13 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 /**
- * Verification Code Login Redis Cache
+ * Verification Code Forgot Password Redis Cache
  *
  * @author lidashuang
  * @version 1.0
  */
-public class VerificationCodeLoginRedisCache extends RedisCache implements VerificationCodeLoginCache {
+public class VerificationCodeForgotPasswordRedisCache
+        extends RedisCache implements VerificationCodeForgotPasswordCache {
 
     /**
      * Reactive String Redis Template Object
@@ -25,7 +26,7 @@ public class VerificationCodeLoginRedisCache extends RedisCache implements Verif
      *
      * @param template Reactive String Redis Template Object
      */
-    public VerificationCodeLoginRedisCache(ReactiveStringRedisTemplate template) {
+    public VerificationCodeForgotPasswordRedisCache(ReactiveStringRedisTemplate template) {
         this.template = template;
     }
 

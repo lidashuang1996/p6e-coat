@@ -13,11 +13,11 @@ import reactor.core.publisher.Mono;
 public interface RegisterService {
 
     /**
-     * 注册服务执行
+     * Execution Register
      *
-     * @param exchange Server Web Exchange 对象
-     * @param param    请求对象
-     * @return 结果对象
+     * @param exchange Server Web Exchange Object
+     * @param param    Register Context Request Object
+     * @return Register Context Dto Object
      */
     Mono<RegisterContext.Dto> execute(ServerWebExchange exchange, RegisterContext.Request param);
 

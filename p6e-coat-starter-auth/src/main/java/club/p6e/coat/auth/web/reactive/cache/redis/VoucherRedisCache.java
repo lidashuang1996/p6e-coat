@@ -11,32 +11,33 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Voucher Redis Cache
+ *
  * @author lidashuang
  * @version 1.0
  */
-public class VoucherRedisCache
-        extends RedisCache implements VoucherCache {
+public class VoucherRedisCache extends RedisCache implements VoucherCache {
 
     /**
-     * 缓存对象
+     * Reactive String Redis Template Object
      */
     private final ReactiveStringRedisTemplate template;
 
     /**
-     * 构造方法初始化
+     * Constructor Initialization
      *
-     * @param template 缓存对象
+     * @param template Reactive String Redis Template Object
      */
     public VoucherRedisCache(ReactiveStringRedisTemplate template) {
         this.template = template;
     }
 
     @Override
-    public Mono<Long> del(String key) {
-        return template.delete(CACHE_PREFIX + key);
+    public Mono<String> del(String key) {
+        final String nk = CACHE_PREFIX + key;
+        return template.delete(nk).map(l -> nk);
     }
 
-    @SuppressWarnings("ALL")
     @Override
     public Mono<Map<String, String>> get(String key) {
         return template
@@ -50,22 +51,14 @@ public class VoucherRedisCache
                 });
     }
 
-    @SuppressWarnings("ALL")
     @Override
-    public Mono<Boolean> set(String key, Map<String, String> data) {
+    public Mono<String> set(String key, Map<String, String> data) {
+        final String nk = CACHE_PREFIX + key;
         return template
                 .opsForHash()
-                .putAll(CACHE_PREFIX + key, data)
-                .flatMap(b -> {
-                    if (b) {
-                        return template.expire(
-                                CACHE_PREFIX + key,
-                                Duration.of(EXPIRATION_TIME, ChronoUnit.SECONDS)
-                        );
-                    } else {
-                        return Mono.just(false);
-                    }
-                });
+                .putAll(nk, data)
+                .flatMap(b -> b ? template.expire(nk, Duration.of(
+                        EXPIRATION_TIME, ChronoUnit.SECONDS)).map(bb -> nk) : Mono.empty());
     }
 
 }

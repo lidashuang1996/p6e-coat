@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
-public interface AuthenticationService {
+public interface AuthenticationLoginService {
 
     /**
      * Execute Authorization Verification

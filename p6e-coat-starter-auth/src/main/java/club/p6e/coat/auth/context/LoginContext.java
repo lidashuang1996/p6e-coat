@@ -4,6 +4,8 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 登录的上下文
@@ -35,6 +37,7 @@ public class LoginContext implements Serializable {
         public static class Request implements Serializable {
             private String account;
             private String password;
+            private Map<String, Object> data = new HashMap<>();
         }
 
     }
@@ -142,7 +145,7 @@ public class LoginContext implements Serializable {
     /**
      * 二维码获取对象
      */
-    public static class QuickResponseCodeObtain implements Serializable {
+    public static class QuickResponseCodeAcquisition implements Serializable {
 
         @Data
         @Accessors(chain = true)

@@ -1,19 +1,19 @@
 package club.p6e.coat.auth.web.reactive.cache.redis;
 
-import club.p6e.coat.auth.web.reactive.cache.VerificationCodeLoginCache;
 import club.p6e.coat.auth.web.reactive.cache.redis.support.RedisCache;
+import club.p6e.coat.auth.web.reactive.cache.QuickResponseCodeLoginCache;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
+import java.time.Duration;
 
 /**
- * Verification Code Login Redis Cache
+ * Quick Response Code Login Redis Cache
  *
  * @author lidashuang
  * @version 1.0
  */
-public class VerificationCodeLoginRedisCache extends RedisCache implements VerificationCodeLoginCache {
+public class QuickResponseCodeLoginRedisCache extends RedisCache implements QuickResponseCodeLoginCache {
 
     /**
      * Reactive String Redis Template Object
@@ -25,23 +25,25 @@ public class VerificationCodeLoginRedisCache extends RedisCache implements Verif
      *
      * @param template Reactive String Redis Template Object
      */
-    public VerificationCodeLoginRedisCache(ReactiveStringRedisTemplate template) {
+    public QuickResponseCodeLoginRedisCache(ReactiveStringRedisTemplate template) {
         this.template = template;
     }
 
     @Override
     public Mono<String> del(String key) {
-        return delVerificationCode(template, CACHE_PREFIX + key);
+        final String nk = CACHE_PREFIX + key;
+        return template.delete(nk).map(l -> nk);
     }
 
     @Override
-    public Mono<List<String>> get(String key) {
-        return getVerificationCode(template, CACHE_PREFIX + key, EXPIRATION_TIME);
+    public Mono<String> get(String key) {
+        return template.opsForValue().get(CACHE_PREFIX + key);
     }
 
     @Override
     public Mono<String> set(String key, String value) {
-        return setVerificationCode(template, CACHE_PREFIX + key, value, EXPIRATION_TIME);
+        final String nk = CACHE_PREFIX + key;
+        return template.opsForValue().set(nk, value, Duration.ofSeconds(EXPIRATION_TIME)).map(b -> nk);
     }
 
 }

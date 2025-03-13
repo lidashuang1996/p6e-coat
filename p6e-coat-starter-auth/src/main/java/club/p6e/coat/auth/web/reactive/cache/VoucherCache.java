@@ -1,35 +1,35 @@
 package club.p6e.coat.auth.web.reactive.cache;
 
-import club.p6e.coat.auth.web.reactive.cache.support.ICache;
+import club.p6e.coat.auth.web.reactive.cache.support.Cache;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
 
 /**
- * 凭证缓存
+ * Voucher Cache
  *
  * @author lidashuang
  * @version 1.0
  */
-public interface VoucherCache extends ICache {
+public interface VoucherCache extends Cache {
 
     /**
-     * 过期的时间
+     * Cache Expiration Time
      */
     long EXPIRATION_TIME = 900L;
 
     /**
-     * 缓存前缀
+     * Cache Prefix
      */
-    String CACHE_PREFIX = "VOUCHER:";
+    String CACHE_PREFIX = "AUTH:VOUCHER:";
 
     /**
-     * 删除数据
+     * Del Data
      *
-     * @param key 键
-     * @return 删除数据的条数
+     * @param key Key
+     * @return Value
      */
-    Mono<Long> del(String key);
+    Mono<String> del(String key);
 
     /**
      * 读取数据
@@ -40,12 +40,12 @@ public interface VoucherCache extends ICache {
     Mono<Map<String, String>> get(String key);
 
     /**
-     * 写入数据
+     * Set Data
      *
-     * @param key  键
-     * @param data 值
-     * @return 是否写入数据成功
+     * @param key   Key
+     * @param value Value
+     * @return Cache Key
      */
-    Mono<Boolean> set(String key, Map<String, String> data);
+    Mono<String> set(String key, Map<String, String> value);
 
 }

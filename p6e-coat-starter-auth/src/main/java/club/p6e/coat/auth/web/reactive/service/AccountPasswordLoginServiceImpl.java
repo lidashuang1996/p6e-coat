@@ -6,7 +6,7 @@ import club.p6e.coat.auth.web.reactive.ServerHttpRequest;
 import club.p6e.coat.common.utils.JsonUtil;
 import club.p6e.coat.common.utils.RsaUtil;
 import club.p6e.coat.common.utils.SpringUtil;
-import club.p6e.coat.auth.web.reactive.cache.AccountPasswordLoginSignatureCache;
+import club.p6e.coat.auth.web.reactive.cache.PasswordSignatureCache;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import org.springframework.web.server.ServerWebExchange;
@@ -24,14 +24,14 @@ import java.util.Map;
 public class AccountPasswordLoginServiceImpl implements AccountPasswordLoginService {
 
     /**
-     * Password Encryptor Object
-     */
-    private final PasswordEncryptor encryptor;
-
-    /**
      * User Repository Object
      */
     private final UserRepository repository;
+
+    /**
+     * Password Encryptor Object
+     */
+    private final PasswordEncryptor encryptor;
 
     /**
      * Constructor Initialization
@@ -70,15 +70,15 @@ public class AccountPasswordLoginServiceImpl implements AccountPasswordLoginServ
         final boolean enableTransmissionEncryption = Properties.getInstance()
                 .getLogin().getAccountPassword().isEnableTransmissionEncryption();
         if (enableTransmissionEncryption) {
-            final AccountPasswordLoginSignatureCache cache;
-            if (SpringUtil.exist(AccountPasswordLoginSignatureCache.class)) {
-                cache = SpringUtil.getBean(AccountPasswordLoginSignatureCache.class);
+            final PasswordSignatureCache cache;
+            if (SpringUtil.exist(PasswordSignatureCache.class)) {
+                cache = SpringUtil.getBean(PasswordSignatureCache.class);
             } else {
                 return Mono.error(GlobalExceptionContext.exceptionBeanException(
                         this.getClass(),
                         "fun executePasswordTransmissionDecryption(ServerWebExchange exchange, String password).",
                         "account password login password transmission decryption cache " +
-                                "handle bean[" + AccountPasswordLoginSignatureCache.class + "] not exist exception."
+                                "handle bean[" + PasswordSignatureCache.class + "] not exist exception."
                 ));
             }
             final ServerHttpRequest request = (ServerHttpRequest) exchange.getRequest();
@@ -92,8 +92,8 @@ public class AccountPasswordLoginServiceImpl implements AccountPasswordLoginServ
                     .flatMap(s -> {
                         try {
                             final Map<String, String> data = JsonUtil.fromJsonToMap(s, String.class, String.class);
-                            if (data != null && data.get("privateKey") != null && !data.get("privateKey").isEmpty()) {
-                                return Mono.just(RsaUtil.privateKeyDecryption(data.get("privateKey"), password));
+                            if (data != null && data.get("private") != null && !data.get("private").isEmpty()) {
+                                return Mono.just(RsaUtil.privateKeyDecryption(data.get("private"), password));
                             }
                         } catch (Exception e) {
                             // ignore exception

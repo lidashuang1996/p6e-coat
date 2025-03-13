@@ -64,7 +64,7 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
 
     @Override
     public Mono<ForgotPasswordContext.Dto> execute(ServerWebExchange exchange, ForgotPasswordContext.Request param) {
-        final String account = ((ServerHttpRequest) exchange.getRequest()).getAccountContent();
+        final String account = ((ServerHttpRequest) exchange.getRequest()).getAccount();
         return cache
                 .get(account)
                 // verify if the verification code matches

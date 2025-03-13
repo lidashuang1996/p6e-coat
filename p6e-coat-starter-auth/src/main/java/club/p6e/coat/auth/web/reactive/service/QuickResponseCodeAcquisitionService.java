@@ -13,12 +13,13 @@ import reactor.core.publisher.Mono;
 public interface QuickResponseCodeAcquisitionService {
 
     /**
-     * 执行二维码获取操作
+     * Execute Quick Response Code Acquisition
      *
      * @param exchange Server Web Exchange Object
-     * @param param    Login Context Quick Response Code Obtain Request Object
-     * @return Login Context Quick Response Code Obtain Dto Object
+     * @param param    Login Context Quick Response Code Acquisition Request Object
+     * @return Login Context Quick Response Code Acquisition Dto Object
      */
-    Mono<LoginContext.QuickResponseCodeObtain.Dto> execute(ServerWebExchange exchange, LoginContext.QuickResponseCodeObtain.Request param);
+    Mono<LoginContext.QuickResponseCodeAcquisition.Dto> execute(
+            ServerWebExchange exchange, LoginContext.QuickResponseCodeAcquisition.Request param);
 
 }

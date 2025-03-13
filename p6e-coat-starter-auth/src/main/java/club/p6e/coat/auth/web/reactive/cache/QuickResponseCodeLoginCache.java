@@ -1,64 +1,64 @@
 package club.p6e.coat.auth.web.reactive.cache;
 
-import club.p6e.coat.auth.web.reactive.cache.support.ICache;
+import club.p6e.coat.auth.web.reactive.cache.support.Cache;
 import reactor.core.publisher.Mono;
 
 /**
- * 二维码登录缓存
+ * Quick Response Code Login Cache
  *
  * @author lidashuang
  * @version 1.0
  */
-public interface QuickResponseCodeLoginCache extends ICache {
+public interface QuickResponseCodeLoginCache extends Cache {
 
     /**
-     * 过期的时间
+     * Cache Expiration Time
      */
     long EXPIRATION_TIME = 300L;
 
     /**
-     * 空的内容标识
+     * Empty Content
      */
     String EMPTY_CONTENT = "__null__";
 
     /**
-     * 缓存前缀
+     * Cache Prefix
      */
-    String CACHE_PREFIX = "LOGIN:QR_CODE:";
+    String CACHE_PREFIX = "AUTH:QUICK:RESPONSE:CODE:";
 
     /**
-     * 是否为空判断
+     * Judgment Content Is Empty
      *
-     * @param content 待判断内容
-     * @return 判断结果
+     * @param content Content
+     * @return Content Is Empty Result
      */
     static boolean isEmpty(String content) {
         return EMPTY_CONTENT.equalsIgnoreCase(content);
     }
 
     /**
-     * 删除数据
+     * Del Data
      *
-     * @param key 键
-     * @return 删除数据的条数
+     * @param key Key
+     * @return Cache Key
      */
-    Mono<Long> del(String key);
+    Mono<String> del(String key);
 
     /**
-     * 读取数据
+     * Get Data
      *
-     * @param key 键
-     * @return 值
+     * @param key Key
+     * @return Value
      */
     Mono<String> get(String key);
 
     /**
-     * 写入数据
+     * Set Data
      *
-     * @param key   键
-     * @param value 值
-     * @return 是否写入数据成功
+     * @param key   Key
+     * @param value Value
+     * @return Cache Key
      */
-    Mono<Boolean> set(String key, String value);
+    Mono<String> set(String key, String value);
 
 }

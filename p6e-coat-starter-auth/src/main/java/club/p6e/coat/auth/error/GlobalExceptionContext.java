@@ -77,6 +77,14 @@ public final class GlobalExceptionContext {
         return new AccountException(sc, error, content);
     }
 
+    public static AccountException exceptionPasswordEncryptorException(Class<?> sc, String error, String content) {
+        return new AccountException(sc, error, content);
+    }
+
+    public static AccountException exceptionJsonWebTokenSecretException(Class<?> sc, String error, String content) {
+        return new AccountException(sc, error, content);
+    }
+
     public static AccountException exceptionAccountExistException(Class<?> sc, String error, String content) {
         return new AccountException(sc, error, content);
     }

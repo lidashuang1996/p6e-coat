@@ -1,7 +1,7 @@
 package club.p6e.coat.auth;
 
 /**
- * 认证密码加密
+ * Password Encryptor
  *
  * @author lidashuang
  * @version 1.0
@@ -9,20 +9,20 @@ package club.p6e.coat.auth;
 public interface PasswordEncryptor {
 
     /**
-     * 执行密码加密
+     * Execute Password Encryption
      *
-     * @param content 密码
-     * @return 密码加密后的内容
+     * @param content Password
+     * @return Password Encryption Content
      */
     String execute(String content);
 
     /**
-     * 验证密码是否正确
+     * Verify If The Password Matches
      *
-     * @param pwd1 密码
-     * @param pwd2 密码
-     * @return 密码加密后的内容
+     * @param pwdOriginal   Password Original Content
+     * @param pwdEncryption Password Encryption Content
+     * @return Password Matches Result
      */
-    boolean validate(String pwd1, String pwd2);
+    boolean validate(String pwdOriginal, String pwdEncryption);
 
 }

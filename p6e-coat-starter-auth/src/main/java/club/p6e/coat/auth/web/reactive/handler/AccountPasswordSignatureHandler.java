@@ -1,8 +1,7 @@
 package club.p6e.coat.auth.web.reactive.handler;
 
-import club.p6e.coat.auth.web.reactive.ServerHttpRequestParameterValidator;
-import club.p6e.coat.auth.web.reactive.aspect.Aspect;
 import club.p6e.coat.auth.context.LoginContext;
+import club.p6e.coat.auth.web.reactive.aspect.Aspect;
 import club.p6e.coat.auth.web.reactive.service.AccountPasswordLoginService;
 import club.p6e.coat.auth.web.reactive.service.PasswordSignatureService;
 import club.p6e.coat.common.context.ResultContext;
@@ -19,16 +18,13 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
-public class AccountPasswordLoginHandler {
-
-    private final ServerHttpRequestParameterValidator validator = new ServerHttpRequestParameterValidator();
+public class AccountPasswordSignatureHandler {
 
     @ResponseBody
     @PostMapping("/account/password")
     public Mono<ResultContext> ap(ServerWebExchange exchange, @RequestBody LoginContext.AccountPassword.Request request) {
         return Aspect
                 .executeBefore(new Object[]{exchange, request})
-                .flatMap(o -> validator.execute(exchange, request)) // verify request param
                 .flatMap(o -> SpringUtil.getBean(AccountPasswordLoginService.class).execute(exchange, request))
                 .flatMap(m -> Aspect.executeAfter(new Object[]{exchange, request, m}))
                 .map(ResultContext::build);

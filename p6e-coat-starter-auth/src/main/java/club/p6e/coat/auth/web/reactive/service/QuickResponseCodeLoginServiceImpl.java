@@ -47,21 +47,21 @@ public class QuickResponseCodeLoginServiceImpl implements QuickResponseCodeLogin
                 .switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(
                         this.getClass(),
                         "fun execute(ServerWebExchange exchange, LoginContext.QuickResponseCode.Request param).",
-                        "Quick response code login cache data does not exist or expire exception."
+                        "quick response code login cache data does not exist or expire exception."
                 )))
                 .flatMap(s -> {
                     if (QuickResponseCodeLoginCache.isEmpty(s)) {
                         return Mono.error(GlobalExceptionContext.executeQrCodeDataNullException(
                                 this.getClass(),
                                 "fun execute(ServerWebExchange exchange, LoginContext.QuickResponseCode.Request param).",
-                                "Quick response code login data is null exception."
+                                "quick response code login data is null exception."
                         ));
                     } else {
                         return cache.del(mark).flatMap(l -> repository.findById(Integer.valueOf(s))
                                 .flatMap(u -> u == null ? Mono.error(GlobalExceptionContext.executeUserNotExistException(
                                         this.getClass(),
                                         "fun execute(ServerWebExchange exchange, LoginContext.QuickResponseCode.Request param).",
-                                        "Quick response code login user id select data does not exist exception."
+                                        "quick response code login user id select data does not exist exception."
                                 )) : Mono.just(u)));
                     }
                 });

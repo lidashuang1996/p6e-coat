@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
-public class ServerHttpRequestVoucherAspect extends Aspect {
+public class ServerHttpRequestAspect extends Aspect {
 
     @Override
     public int getOrder() {

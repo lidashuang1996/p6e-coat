@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
-public class AuthenticationServiceImpl implements AuthenticationService {
+public class AuthenticationLoginServiceImpl implements AuthenticationLoginService {
 
     /**
      * Token Validator Object
@@ -24,7 +24,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      *
      * @param validator Token Validator Object
      */
-    public AuthenticationServiceImpl(TokenValidator validator) {
+    public AuthenticationLoginServiceImpl(TokenValidator validator) {
         this.validator = validator;
     }
 

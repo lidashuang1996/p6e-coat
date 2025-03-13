@@ -2,7 +2,7 @@ package club.p6e.coat.auth.web.reactive.handler;
 
 import club.p6e.coat.auth.web.reactive.aspect.Aspect;
 import club.p6e.coat.auth.context.LoginContext;
-import club.p6e.coat.auth.web.reactive.service.AuthenticationService;
+import club.p6e.coat.auth.web.reactive.service.AuthenticationLoginService;
 import club.p6e.coat.common.context.ResultContext;
 import club.p6e.coat.common.utils.SpringUtil;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +24,7 @@ public class AuthenticationLoginHandler {
     public Mono<ResultContext> authentication(ServerWebExchange exchange, @RequestBody LoginContext.Authentication.Request request) {
         return Aspect
                 .executeBefore(new Object[]{exchange, request})
-                .flatMap(o -> SpringUtil.getBean(AuthenticationService.class).execute(exchange, request))
+                .flatMap(o -> SpringUtil.getBean(AuthenticationLoginService.class).execute(exchange, request))
                 .flatMap(m -> Aspect.executeAfter(new Object[]{exchange, request, m}))
                 .map(ResultContext::build);
     }

@@ -33,6 +33,20 @@ public abstract class Aspect implements Ordered {
      */
     abstract Mono<Object> after(Object[] o);
 
+    /**
+     * Get Aspect List
+     *
+     * @return Aspect List
+     */
+    private static List<Aspect> getAspects() {
+        final List<Aspect> list = new CopyOnWriteArrayList<>();
+        final Map<String, Aspect> aspects = SpringUtil.getBeans(Aspect.class);
+        for (final String key : aspects.keySet()) {
+            list.add(aspects.get(key));
+        }
+        list.sort(Comparator.comparingInt(Ordered::getOrder));
+        return list;
+    }
 
     /**
      * Execute Aspect Before
@@ -41,13 +55,7 @@ public abstract class Aspect implements Ordered {
      * @return Aspect Point Result Object
      */
     public static Mono<Object> executeBefore(Object[] o) {
-        final List<Aspect> list = new CopyOnWriteArrayList<>();
-        final Map<String, Aspect> aspects = SpringUtil.getBeans(Aspect.class);
-        for (final String key : aspects.keySet()) {
-            list.add(aspects.get(key));
-        }
-        list.sort(Comparator.comparingInt(Ordered::getOrder));
-        return Mono.just(list).flatMap(l -> executeBefore(l, o));
+        return Mono.just(getAspects()).flatMap(l -> executeBefore(l, o));
     }
 
     /**
@@ -68,13 +76,7 @@ public abstract class Aspect implements Ordered {
      * @return Aspect Point Result Object
      */
     public static Mono<Object> executeAfter(Object[] o) {
-        final List<Aspect> list = new CopyOnWriteArrayList<>();
-        final Map<String, Aspect> aspects = SpringUtil.getBeans(Aspect.class);
-        for (final String key : aspects.keySet()) {
-            list.add(aspects.get(key));
-        }
-        list.sort(Comparator.comparingInt(Ordered::getOrder));
-        return Mono.just(list).flatMap(l -> executeAfter(l, o));
+        return Mono.just(getAspects()).flatMap(l -> executeAfter(l, o));
     }
 
     /**

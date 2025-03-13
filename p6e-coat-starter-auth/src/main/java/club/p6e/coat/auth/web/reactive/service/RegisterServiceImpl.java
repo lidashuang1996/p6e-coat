@@ -54,7 +54,7 @@ public class RegisterServiceImpl implements RegisterService {
     @Override
     public Mono<RegisterContext.Dto> execute(ServerWebExchange exchange, RegisterContext.Request param) {
         final ServerHttpRequest request = (ServerHttpRequest) exchange.getRequest();
-        final String account = request.getAccountContent();
+        final String account = request.getAccount();
         return (switch (Properties.getInstance().getMode()) {
             case PHONE -> executePhoneMode(account, param);
             case MAILBOX -> executeMailboxMode(account, param);
