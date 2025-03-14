@@ -1,44 +1,41 @@
-package club.p6e.coat.auth.web.reactive.handler;
+package club.p6e.coat.auth.web.reactive.controller;
 
 import club.p6e.coat.auth.web.reactive.ServerHttpRequestParameterValidator;
 import club.p6e.coat.auth.web.reactive.aspect.Aspect;
 import club.p6e.coat.auth.context.LoginContext;
-import club.p6e.coat.auth.web.reactive.service.AccountPasswordLoginService;
-import club.p6e.coat.auth.web.reactive.service.PasswordSignatureService;
+import club.p6e.coat.auth.web.reactive.service.VerificationCodeAcquisitionService;
+import club.p6e.coat.auth.web.reactive.service.VerificationCodeLoginService;
 import club.p6e.coat.common.context.ResultContext;
 import club.p6e.coat.common.utils.SpringUtil;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * Account Password Login Handler
+ * Verification Code Login Handler
  *
  * @author lidashuang
  * @version 1.0
  */
-public class AccountPasswordLoginHandler {
+@RestController
+public class VerificationCodeLoginHandler {
 
-    @ResponseBody
-    @PostMapping("/account/password")
-    public Mono<ResultContext> ap(ServerWebExchange exchange, @RequestBody LoginContext.AccountPassword.Request request) {
+    @PostMapping(value = "/verification/code")
+    public Mono<ResultContext> def(ServerWebExchange exchange, @RequestBody LoginContext.VerificationCode.Request request) {
         return Aspect
                 .executeBefore(new Object[]{exchange, request})
                 .flatMap(o -> ServerHttpRequestParameterValidator.execute(exchange, request)) // verify request param
-                .flatMap(o -> SpringUtil.getBean(AccountPasswordLoginService.class).execute(exchange, request))
+                .flatMap(o -> SpringUtil.getBean(VerificationCodeLoginService.class).execute(exchange, request))
                 .flatMap(m -> Aspect.executeAfter(new Object[]{exchange, request, m}))
                 .map(ResultContext::build);
     }
 
-    @ResponseBody
-    @PostMapping("/account/password/signature")
-    public Mono<ResultContext> aps(ServerWebExchange exchange, @RequestBody Sign.Request request) {
+    @GetMapping(value = "/verification/code")
+    public Mono<ResultContext> def(ServerWebExchange exchange, @RequestBody LoginContext.VerificationCodeAcquisition.Request request) {
         return Aspect
                 .executeBefore(new Object[]{exchange, request})
                 .flatMap(o -> ServerHttpRequestParameterValidator.execute(exchange, request)) // verify request param
-                .flatMap(o -> SpringUtil.getBean(PasswordSignatureService.class).execute(exchange, request))
+                .flatMap(o -> SpringUtil.getBean(VerificationCodeAcquisitionService.class).execute(exchange, request))
                 .flatMap(m -> Aspect.executeAfter(new Object[]{exchange, request, m}))
                 .map(ResultContext::build);
     }

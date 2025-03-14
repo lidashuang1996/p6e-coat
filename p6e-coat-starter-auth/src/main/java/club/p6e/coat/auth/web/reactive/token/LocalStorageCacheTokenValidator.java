@@ -33,7 +33,7 @@ public class LocalStorageCacheTokenValidator implements TokenValidator {
         return Mono.empty();
     }
 
-    public Mono<UserTokenCache.Token> execute(List<String> list) {
+    public Mono<UserTokenCache.Model> execute(List<String> list) {
         if (list == null || list.isEmpty()) {
             return Mono.empty();
         } else {

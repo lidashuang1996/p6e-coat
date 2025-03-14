@@ -19,6 +19,7 @@ public interface VerificationCodeRegisterAcquisitionService {
      * @param param    请求对象
      * @return 结果对象
      */
-    Mono<RegisterContext.Acquisition.Dto> execute(ServerWebExchange exchange, RegisterContext.Acquisition.Request param);
+    Mono<RegisterContext.VerificationCodeAcquisition.Dto> execute(
+            ServerWebExchange exchange, RegisterContext.VerificationCodeAcquisition.Request param);
 
 }

@@ -1,4 +1,4 @@
-package club.p6e.coat.auth.web.reactive.handler;
+package club.p6e.coat.auth.web.reactive.controller;
 
 import club.p6e.coat.auth.web.reactive.ServerHttpRequestParameterValidator;
 import club.p6e.coat.auth.web.reactive.aspect.Aspect;
@@ -7,10 +7,7 @@ import club.p6e.coat.auth.web.reactive.service.QuickResponseCodeLoginService;
 import club.p6e.coat.auth.web.reactive.service.QuickResponseCodeAcquisitionService;
 import club.p6e.coat.common.context.ResultContext;
 import club.p6e.coat.common.utils.SpringUtil;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -20,10 +17,10 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
-public class QuickResponseCodeLoginHandler {
+@RestController
+public class QuickResponseCodeLoginController {
 
-    @ResponseBody
-    @PostMapping("/quick/response/code")
+    @PostMapping("/login/quick/response/code")
     public Mono<ResultContext> qrc(ServerWebExchange exchange, @RequestBody LoginContext.QuickResponseCode.Request request) {
         return Aspect
                 .executeBefore(new Object[]{exchange, request})
@@ -33,9 +30,8 @@ public class QuickResponseCodeLoginHandler {
                 .map(ResultContext::build);
     }
 
-    @ResponseBody
-    @GetMapping("/quick/response/code")
-    public Mono<ResultContext> qrc(ServerWebExchange exchange, @RequestBody LoginContext.QuickResponseCodeObtain.Request request) {
+    @GetMapping("/login/quick/response/code")
+    public Mono<ResultContext> qrc(ServerWebExchange exchange, @RequestBody LoginContext.QuickResponseCodeAcquisition.Request request) {
         return Aspect
                 .executeBefore(new Object[]{exchange, request})
                 .flatMap(o -> ServerHttpRequestParameterValidator.execute(exchange, request)) // verify request param

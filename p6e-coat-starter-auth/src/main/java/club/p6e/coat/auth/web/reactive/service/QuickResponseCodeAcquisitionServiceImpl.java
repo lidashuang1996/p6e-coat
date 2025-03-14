@@ -38,12 +38,12 @@ public class QuickResponseCodeAcquisitionServiceImpl implements QuickResponseCod
         request.setQuickResponseCodeLoginMark(code);
         return cache
                 .set(code, QuickResponseCodeLoginCache.EMPTY_CONTENT)
-                .flatMap(b -> b ? Mono.just(new LoginContext.QuickResponseCodeAcquisition.Dto().setContent(code))
-                        : Mono.error(GlobalExceptionContext.executeCacheException(
+                .switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(
                         this.getClass(),
                         "fun execute(ServerWebExchange exchange, LoginContext.QuickResponseCodeAcquisition.Request param)",
                         "quick response code acquisition login cache exception."
-                )));
+                )))
+                .flatMap(b -> Mono.just(new LoginContext.QuickResponseCodeAcquisition.Dto().setContent(code)));
     }
 
 }

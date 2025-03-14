@@ -1,15 +1,11 @@
 package club.p6e.coat.auth;
 
-import club.p6e.coat.auth.web.reactive.handler.*;
+import club.p6e.coat.auth.web.reactive.controller.*;
 import club.p6e.coat.auth.web.reactive.token.LocalStorageCacheTokenGenerator;
 import club.p6e.coat.auth.web.reactive.token.LocalStorageCacheTokenValidator;
-import club.p6e.coat.auth.web.reactive.token.TokenGenerator;
 import club.p6e.coat.common.utils.SpringUtil;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
-import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping;
-
-import java.util.Map;
 
 /**
  * @author lidashuang
@@ -39,7 +35,7 @@ public final class P6eAuth {
 
     public void initLogin() {
         if (PROPERTIES.getLogin() != null && PROPERTIES.getLogin().isEnable()) {
-            register(AuthenticationLoginHandler.class);
+            register(AuthenticationLoginController.class);
             register(LocalStorageCacheTokenGenerator.class);
             register(LocalStorageCacheTokenValidator.class);
             initAccountPasswordLogin();
@@ -49,10 +45,10 @@ public final class P6eAuth {
     public static void initAccountPasswordLogin() {
         final Properties.Login.AccountPassword config = PROPERTIES.getLogin().getAccountPassword();
         if (config.isEnable()) {
-            register(AccountPasswordLoginHandler.class);
+            register(AccountPasswordLoginController.class);
 
             if (config.isEnableTransmissionEncryption()) {
-                register(AccountPasswordSignatureHandler.class);
+                register(PasswordSignatureController.class);
             }
         }
     }
@@ -67,7 +63,7 @@ public final class P6eAuth {
     public static void initForgotPassword() {
         final Properties.ForgotPassword config = PROPERTIES.getForgotPassword();
         if (config.isEnable()) {
-            register(ForgotPasswordHandler.class);
+            register(ForgotPasswordController.class);
         }
     }
 

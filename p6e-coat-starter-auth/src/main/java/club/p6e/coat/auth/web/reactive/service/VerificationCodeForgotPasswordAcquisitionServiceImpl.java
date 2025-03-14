@@ -1,14 +1,16 @@
 package club.p6e.coat.auth.web.reactive.service;
 
 import club.p6e.coat.auth.Properties;
+import club.p6e.coat.auth.event.PushMessageEvent;
+import club.p6e.coat.auth.web.reactive.ServerHttpRequest;
 import club.p6e.coat.auth.web.reactive.cache.VerificationCodeForgotPasswordCache;
 import club.p6e.coat.auth.context.ForgotPasswordContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
-import club.p6e.coat.auth.generator.ForgotPasswordCodeGenerator;
-import club.p6e.coat.auth.launcher.Launcher;
-import club.p6e.coat.auth.launcher.LauncherType;
 import club.p6e.coat.auth.web.reactive.repository.UserRepository;
+import club.p6e.coat.common.utils.GeneratorUtil;
+import club.p6e.coat.common.utils.SpringUtil;
 import club.p6e.coat.common.utils.VerificationUtil;
+import org.springframework.context.ApplicationContext;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -53,49 +55,16 @@ public class VerificationCodeForgotPasswordAcquisitionServiceImpl implements Ver
     @Override
     public Mono<ForgotPasswordContext.VerificationCodeAcquisition.Dto> execute(
             ServerWebExchange exchange, ForgotPasswordContext.VerificationCodeAcquisition.Request param) {
-        return validate(param.getAccount())
-                .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionAccountNoException(
+        // before registration, it is necessary to verify whether the input account exists
+        return validate(param.getAccount()).flatMap(b ->
+                // register account does not exist
+                b ? execute(exchange, param.getAccount(), param.getLanguage())
+                        // register account exist
+                        : Mono.error(GlobalExceptionContext.exceptionAccountExistException(
                         this.getClass(),
-                        "fun execute(ServerWebExchange exchange, ForgotPasswordContext.Obtain.Request param).",
-                        "forgot password obtain code account not exist exception."
-                )))
-                .flatMap(m -> {
-                    final String code;
-                    final LauncherType type;
-                    final String account = param.getAccount();
-                    if (VerificationUtil.validationPhone(account)) {
-                        type = LauncherType.SMS;
-                        code = generator.execute(LauncherType.SMS.name());
-                    } else if (VerificationUtil.validationMailbox(account)) {
-                        type = LauncherType.EMAIL;
-                        code = generator.execute(LauncherType.EMAIL.name());
-                    } else {
-                        return Mono.error(GlobalExceptionContext.exceptionLauncherTypeException(
-                                this.getClass(),
-                                "fun execute(ServerWebExchange exchange, ForgotPasswordContext.Obtain.Request param).",
-                                "forgot password obtain code type (LauncherType) exception."
-                        ));
-                    }
-                    return v.setAccount(account)
-                            .flatMap(a -> cache.set(account, code))
-                            .filter(b -> b)
-                            .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionCacheWriteException(
-                                    this.getClass(),
-                                    "fun execute(ServerWebExchange exchange, ForgotPasswordContext.Obtain.Request param).",
-                                    "forgot password obtain code cache write exception."
-                            )))
-                            .flatMap(b -> Launcher.push(
-                                    type,
-                                    List.of(account),
-                                    FORGOT_PASSWORD_TEMPLATE,
-                                    new HashMap<>(0) {{
-                                        put("code", code);
-                                    }},
-                                    param.getAccount()
-                            ));
-                })
-                ).
-        map(l -> new ForgotPasswordContext.CodeObtain.Dto().setAccount(param.getAccount()).setMessage(String.join(",", l)));
+                        "fun execute(ServerWebExchange exchange, RegisterContext.Acquisition.Request param).",
+                        "Verification code register acquisition, register account exist exception."
+                )));
     }
 
     /**
@@ -111,6 +80,36 @@ public class VerificationCodeForgotPasswordAcquisitionServiceImpl implements Ver
             case ACCOUNT -> repository.findByAccount(account);
             case PHONE_OR_MAILBOX -> repository.findByPhoneOrMailbox(account);
         }).map(u -> false).defaultIfEmpty(true);
+    }
+
+    private Mono<ForgotPasswordContext.VerificationCodeAcquisition.Dto> execute(ServerWebExchange exchange, String account, String language) {
+        final String code = GeneratorUtil.random();
+        final boolean pb = VerificationUtil.validationPhone(account);
+        final boolean mb = VerificationUtil.validationMailbox(account);
+        final ServerHttpRequest request = (ServerHttpRequest) exchange.getRequest();
+        if (pb || mb) {
+            request.setAccount(account);
+            return cache
+                    .set(account, code)
+                    .switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(
+                            this.getClass(),
+                            "fun execute(ServerWebExchange exchange, String account, String language).",
+                            "Verification code register acquisition, register cache exception."
+                    )))
+                    .map(s -> {
+                        final PushMessageEvent event = new PushMessageEvent(this, List.of(account), FORGOT_PASSWORD_TEMPLATE, language, new HashMap<>() {{
+                            put("code", code);
+                        }});
+                        SpringUtil.getBean(ApplicationContext.class).publishEvent(event);
+                        return new ForgotPasswordContext.VerificationCodeAcquisition.Dto().setAccount(account);
+                    });
+        } else {
+            return Mono.error(GlobalExceptionContext.exceptionAccountException(
+                    this.getClass(),
+                    "fun execute(ServerWebExchange exchange, String account, String language).",
+                    "Verification code register acquisition, register account format verification exception."
+            ));
+        }
     }
 
 }

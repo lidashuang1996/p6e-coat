@@ -1,10 +1,10 @@
 package club.p6e.coat.auth.web.reactive.service;
 
+import club.p6e.coat.auth.context.PasswordSignatureContext;
 import club.p6e.coat.auth.web.reactive.ServerHttpRequest;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.JsonUtil;
 import club.p6e.coat.auth.web.reactive.cache.PasswordSignatureCache;
-import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.common.utils.RsaUtil;
 import org.springframework.web.server.ServerWebExchange;
@@ -35,8 +35,7 @@ public class PasswordSignatureServiceImpl implements PasswordSignatureService {
     }
 
     @Override
-    public Mono<LoginContext.AccountPasswordSignature.Dto> execute(
-            ServerWebExchange exchange, LoginContext.AccountPasswordSignature.Request param) {
+    public Mono<PasswordSignatureContext.Dto> execute(ServerWebExchange exchange, PasswordSignatureContext.Request param) {
         String publicKey = null;
         String privateKey = null;
         try {
@@ -58,14 +57,13 @@ public class PasswordSignatureServiceImpl implements PasswordSignatureService {
         }});
         return cache
                 .set(mark, content)
-                .flatMap(b -> b ?
-                        Mono.just(new LoginContext.AccountPasswordSignature.Dto().setContent(finalPublicKey))
-                        : Mono.error(GlobalExceptionContext.exceptionCacheWriteException(
+                .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionCacheWriteException(
                         this.getClass(),
                         "fun execute(ServerWebExchange exchange, " +
                                 "LoginContext.AccountPasswordSignature.Request param).",
                         "account password login signature cache exception."
-                )));
+                )))
+                .flatMap(b -> Mono.just(new PasswordSignatureContext.Dto().setContent(finalPublicKey)));
     }
 
 }

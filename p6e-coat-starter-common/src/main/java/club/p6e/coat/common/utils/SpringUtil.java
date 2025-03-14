@@ -18,6 +18,7 @@ public final class SpringUtil {
      */
     public interface Definition {
 
+        public ApplicationContext getApplicationContext();
         /**
          * 初始化 Spring Boot 的上下文对象
          *
@@ -61,6 +62,11 @@ public final class SpringUtil {
          * 全局的 Spring Boot 的上下文对象
          */
         private ApplicationContext application = null;
+
+        @Override
+        public ApplicationContext getApplicationContext() {
+            return application;
+        }
 
         @Override
         public void init(ApplicationContext application) {
@@ -119,6 +125,10 @@ public final class SpringUtil {
      */
     public static boolean exist(Class<?> tClass) {
         return DEFINITION.exist(tClass);
+    }
+
+    public static ApplicationContext getApplicationContext() {
+        return DEFINITION.getApplicationContext();
     }
 
     /**

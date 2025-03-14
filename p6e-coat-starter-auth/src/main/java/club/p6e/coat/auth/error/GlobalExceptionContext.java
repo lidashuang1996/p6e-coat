@@ -77,6 +77,10 @@ public final class GlobalExceptionContext {
         return new AccountException(sc, error, content);
     }
 
+    public static AccountException exceptionAccountNotExistException(Class<?> sc, String error, String content) {
+        return new AccountException(sc, error, content);
+    }
+
     public static AccountException exceptionPasswordEncryptorException(Class<?> sc, String error, String content) {
         return new AccountException(sc, error, content);
     }
