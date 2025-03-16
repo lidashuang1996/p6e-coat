@@ -1,17 +1,18 @@
 package club.p6e.coat.auth.web.reactive.service;
 
-import club.p6e.coat.auth.User;
+import club.p6e.coat.auth.event.PushMessageEvent;
+import club.p6e.coat.auth.web.reactive.ServerHttpRequest;
 import club.p6e.coat.auth.web.reactive.cache.VerificationCodeLoginCache;
-import club.p6e.coat.auth.launcher.Launcher;
-import club.p6e.coat.auth.launcher.LauncherType;
 import club.p6e.coat.auth.web.reactive.repository.UserRepository;
 import club.p6e.coat.common.utils.GeneratorUtil;
+import club.p6e.coat.common.utils.SpringUtil;
 import club.p6e.coat.common.utils.VerificationUtil;
 import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -60,73 +61,61 @@ public class VerificationCodeAcquisitionServiceImpl implements VerificationCodeA
     @Override
     public Mono<LoginContext.VerificationCodeAcquisition.Dto> execute(
             ServerWebExchange exchange, LoginContext.VerificationCodeAcquisition.Request param) {
-        Mono<User> mono;
-        String launcherCode = null;
-        LauncherType launcherType = null;
-        final String account = param.getAccount();
-        switch (Properties.getInstance().getMode()) {
-            case PHONE -> {
-                launcherType = LauncherType.SMS;
-                launcherCode = GeneratorUtil.random();
-                mono = repository.findByPhone(account);
-            }
-            case MAILBOX -> {
-                launcherType = LauncherType.EMAIL;
-                launcherCode = GeneratorUtil.random(8, true, false);
-                mono = repository.findByMailbox(account);
-            }
-            case PHONE_OR_MAILBOX -> {
-                if (VerificationUtil.validationPhone(account)) {
-                    launcherType = LauncherType.SMS;
-                    launcherCode = GeneratorUtil.random();
-                } else if (VerificationUtil.validationMailbox(account)) {
-                    launcherType = LauncherType.EMAIL;
-                    launcherCode = GeneratorUtil.random(8, true, false);
-                }
-                mono = repository.findByPhoneOrMailbox(account);
-            }
-            default -> {
-                return Mono.error(GlobalExceptionContext.executeServiceNotSupportException(
+        // before registration, it is necessary to verify whether the input account exists
+        return validate(param.getAccount()).flatMap(b ->
+                // register account does not exist
+                b ? execute(exchange, param.getAccount(), param.getLanguage())
+                        // register account exist
+                        : Mono.error(GlobalExceptionContext.exceptionAccountExistException(
                         this.getClass(),
-                        "fun execute(ServerWebExchange exchange, LoginContext.VerificationCodeAcquisition.Request param).",
-                        "Verification code obtain <type> service not supported. [" + account + "]."
-                ));
-            }
-        }
-        if (launcherType == null) {
-            return Mono.error(GlobalExceptionContext.executeServiceNotSupportException(
-                    this.getClass(),
-                    "fun execute(ServerWebExchange exchange, LoginContext.VerificationCodeAcquisition.Request param).",
-                    "Verification code obtain <type> service not supported. [" + account + "]."
-            ));
-        } else {
-            final String finalLauncherCode = launcherCode.toUpperCase();
-            final LauncherType finalLauncherType = launcherType;
-            return mono
-                    .flatMap(u -> cache.set(account, finalLauncherCode))
-                    .flatMap(b -> {
-                        if (b) {
-                            LOGGER.info("MESSAGE PUSH : [ {}/{} ] >>> {} ::: {}",
-                                    account, finalLauncherType, finalLauncherCode, param.getLanguage());
-                            return push(List.of(account), finalLauncherType, finalLauncherCode, param.getLanguage());
-                        } else {
-                            return Mono.error(GlobalExceptionContext.executeCacheException(
-                                    this.getClass(),
-                                    "fun execute(ServerWebExchange exchange, LoginContext.VerificationCodeAcquisition.Request param).",
-                                    "Verification code obtain write cache error."
-                            ));
-                        }
-                    }).map(l -> {
-                        LOGGER.info("MESSAGE PUSH RESULT LIST : [ {}/{} ] >>> {}", account, finalLauncherType, l);
-                        return new LoginContext.VerificationCodeAcquisition.Dto().setAccount(account);
-                    });
-        }
+                        "fun execute(ServerWebExchange exchange, RegisterContext.Acquisition.Request param).",
+                        "Verification code register acquisition, register account exist exception."
+                )));
     }
 
-    private Mono<List<String>> push(List<String> recipients, LauncherType launcherType, String launcherCode, String language) {
-        return Launcher.push(launcherType, recipients, VERIFICATION_CODE_LOGIN_TEMPLATE, new HashMap<>() {{
-            put("code", launcherCode);
-        }}, language);
+    /**
+     * Validate Account Exist Status
+     *
+     * @param account Account Content
+     * @return Account Verification Result
+     */
+    private Mono<Boolean> validate(String account) {
+        return (switch (Properties.getInstance().getMode()) {
+            case PHONE -> repository.findByPhone(account);
+            case MAILBOX -> repository.findByMailbox(account);
+            case ACCOUNT -> repository.findByAccount(account);
+            case PHONE_OR_MAILBOX -> repository.findByPhoneOrMailbox(account);
+        }).map(u -> false).defaultIfEmpty(true);
+    }
+
+    private Mono<LoginContext.VerificationCodeAcquisition.Dto> execute(ServerWebExchange exchange, String account, String language) {
+        final String code = GeneratorUtil.random();
+        final boolean pb = VerificationUtil.validationPhone(account);
+        final boolean mb = VerificationUtil.validationMailbox(account);
+        final ServerHttpRequest request = (ServerHttpRequest) exchange.getRequest();
+        if (pb || mb) {
+            request.setAccount(account);
+            return cache
+                    .set(account, code)
+                    .switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(
+                            this.getClass(),
+                            "fun execute(ServerWebExchange exchange, String account, String language).",
+                            "Verification code register acquisition, register cache exception."
+                    )))
+                    .map(s -> {
+                        final PushMessageEvent event = new PushMessageEvent(this, List.of(account), VERIFICATION_CODE_LOGIN_TEMPLATE, language, new HashMap<>() {{
+                            put("code", code);
+                        }});
+                        SpringUtil.getBean(ApplicationContext.class).publishEvent(event);
+                        return new LoginContext.VerificationCodeAcquisition.Dto().setAccount(account);
+                    });
+        } else {
+            return Mono.error(GlobalExceptionContext.exceptionAccountException(
+                    this.getClass(),
+                    "fun execute(ServerWebExchange exchange, String account, String language).",
+                    "Verification code register acquisition, register account format verification exception."
+            ));
+        }
     }
 
 }

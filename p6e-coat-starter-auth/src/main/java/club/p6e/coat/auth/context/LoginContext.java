@@ -16,7 +16,7 @@ import java.util.Map;
 public class LoginContext implements Serializable {
 
     /**
-     * Authentication
+     * Login Context / Authentication
      */
     public static class Authentication implements Serializable {
 
@@ -34,7 +34,7 @@ public class LoginContext implements Serializable {
     }
 
     /**
-     * Account Password
+     * Login Context / Account Password
      */
     public static class AccountPassword implements Serializable {
 
@@ -62,7 +62,7 @@ public class LoginContext implements Serializable {
     }
 
     /**
-     * Verification Code
+     * Login Context / Verification Code
      */
     public static class VerificationCode implements Serializable {
 
@@ -85,7 +85,7 @@ public class LoginContext implements Serializable {
     }
 
     /**
-     * Verification Code Acquisition
+     * Login Context / Verification Code Acquisition
      */
     public static class VerificationCodeAcquisition implements Serializable {
 
@@ -124,7 +124,7 @@ public class LoginContext implements Serializable {
     }
 
     /**
-     * Quick Response Code
+     * Login Context / Quick Response Code
      */
     public static class QuickResponseCode implements Serializable {
 
@@ -142,7 +142,7 @@ public class LoginContext implements Serializable {
     }
 
     /**
-     * Quick Response Code Acquisition
+     * Login Context / Quick Response Code Acquisition
      */
     public static class QuickResponseCodeAcquisition implements Serializable {
 
@@ -171,13 +171,18 @@ public class LoginContext implements Serializable {
     }
 
     /**
-     * Quick Response Code Callback
+     * Login Context / Quick Response Code Callback
      */
     public static class QuickResponseCodeCallback implements Serializable {
 
         @Data
         @Accessors(chain = true)
         public static class Request implements Serializable {
+
+            /**
+             * Content
+             */
+            private String content;
 
             /**
              * Custom Data

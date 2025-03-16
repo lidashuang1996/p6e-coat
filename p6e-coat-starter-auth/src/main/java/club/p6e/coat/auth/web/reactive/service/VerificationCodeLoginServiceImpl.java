@@ -58,7 +58,7 @@ public class VerificationCodeLoginServiceImpl implements VerificationCodeLoginSe
     public Mono<User> execute(ServerWebExchange exchange, LoginContext.VerificationCode.Request param) {
         final ServerHttpRequest request = (ServerHttpRequest) exchange.getRequest();
         final String code = param.getCode();
-        final String account = request.getAccountContent();
+        final String account = request.getAccount();
         return cache
                 .get(account)
                 .switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(

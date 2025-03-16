@@ -4,9 +4,11 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * 忘记密码的上下文对象
+ * Forgot Password Context
  *
  * @author lidashuang
  * @version 1.0
@@ -16,14 +18,22 @@ public class ForgotPasswordContext implements Serializable {
     @Data
     @Accessors(chain = true)
     public static class Request implements Serializable {
-        private String code;
-        private String password;
-    }
 
-    @Data
-    @Accessors(chain = true)
-    public static class Vo implements Serializable {
-        private String account;
+        /**
+         * Code
+         */
+        private String code;
+
+        /**
+         * Password
+         */
+        private String password;
+
+        /**
+         * Custom Data
+         */
+        private Map<String, Object> data = new HashMap<>();
+
     }
 
     @Data
@@ -32,27 +42,40 @@ public class ForgotPasswordContext implements Serializable {
         private String account;
     }
 
+    /**
+     * Forgot Password Context / Verification Code Acquisition
+     */
     public static class VerificationCodeAcquisition implements Serializable {
 
         @Data
         @Accessors(chain = true)
         public static class Request implements Serializable {
-            private String account;
-            private String language;
-        }
 
-        @Data
-        @Accessors(chain = true)
-        public static class Vo implements Serializable {
+            /**
+             * Account
+             */
             private String account;
-            private String message;
+
+            /**
+             * Password
+             */
+            private String language;
+
+            /**
+             * Custom Data
+             */
+            private Map<String, Object> data = new HashMap<>();
         }
 
         @Data
         @Accessors(chain = true)
         public static class Dto implements Serializable {
+
+            /**
+             * Account
+             */
             private String account;
-            private String message;
+
         }
 
     }

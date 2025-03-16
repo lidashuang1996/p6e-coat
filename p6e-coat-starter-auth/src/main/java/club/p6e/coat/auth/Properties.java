@@ -38,7 +38,6 @@ public class Properties implements Serializable {
     }
 
 
-
     private Token token = new Token();
 
     /**
@@ -111,48 +110,6 @@ public class Properties implements Serializable {
     }
 
     /**
-     * 认证的方式配置
-     */
-    private Auth auth = new Auth();
-
-    @Data
-    @Accessors(chain = true)
-    public static class Auth implements Serializable {
-
-        /**
-         * JWT 本地存储模式
-         */
-        public static final String HTTP_LOCAL_JWT = "HTTP_LOCAL_JWT";
-
-        /**
-         * CACHE 本地存储模式
-         */
-        public static final String HTTP_LOCAL_CACHE = "HTTP_LOCAL_CACHE";
-
-        /**
-         * JWT cookies
-         */
-        public static final String HTTP_COOKIE_JWT = "HTTP_COOKIE_JWT";
-
-        /**
-         * CACHE cookies
-         */
-        public static final String HTTP_COOKIE_CACHE = "HTTP_COOKIE_CACHE";
-
-        /**
-         * 验证实现的类以及依赖的类
-         * 验证的作用是用来验证程序下发的合法的令牌/证书（现在实现的方式有多种主要是需要和授权对应）
-         */
-        private Bean validator = new Bean(HTTP_LOCAL_CACHE);
-
-        /**
-         * 授权实现的类以及依赖的类
-         * 授权的作用是用来下发合法的令牌/证书（现在实现的方式有多种主要是需要和验证对应）
-         */
-        private Bean authority = new Bean(HTTP_LOCAL_CACHE);
-    }
-
-    /**
      * 缓存类型
      */
     private Cache cache = new Cache();
@@ -163,7 +120,7 @@ public class Properties implements Serializable {
         /**
          * 缓存方式的配置
          */
-        private Type type = Type.MEMORY;
+        private Type type = Type.REDIS;
 
         /**
          * 缓存枚举类型

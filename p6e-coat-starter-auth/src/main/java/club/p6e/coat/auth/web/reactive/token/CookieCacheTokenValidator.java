@@ -39,7 +39,7 @@ public class CookieCacheTokenValidator implements TokenValidator {
         return Mono.empty();
     }
 
-    public Mono<UserTokenCache.Token> execute(List<HttpCookie> list) {
+    public Mono<UserTokenCache.Model> execute(List<HttpCookie> list) {
         if (list == null || list.isEmpty()) {
             return Mono.empty();
         } else {

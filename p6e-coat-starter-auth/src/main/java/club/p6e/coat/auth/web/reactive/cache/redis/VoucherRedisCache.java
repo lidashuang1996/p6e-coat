@@ -40,11 +40,13 @@ public class VoucherRedisCache extends RedisCache implements VoucherCache {
 
     @Override
     public Mono<Map<String, String>> get(String key) {
+        System.out.println("  >>> >> " + key);
         return template
                 .opsForHash()
                 .entries(CACHE_PREFIX + key)
                 .collectList()
                 .map(list -> {
+                    System.out.println(list);
                     final Map<String, String> map = new HashMap<>(list.size());
                     list.forEach(item -> map.put((String) item.getKey(), (String) item.getValue()));
                     return map;

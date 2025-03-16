@@ -27,7 +27,9 @@ public abstract class ServerHttpRequestParameterValidator {
      * @return 验证的结果
      */
     public static Mono<Object> execute(ServerWebExchange exchange, Object param) {
-
+//        return Mono.create()
+        System.out.println("param: " + param);
+        return Mono.just(param);
     }
 
 

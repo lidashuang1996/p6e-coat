@@ -81,6 +81,12 @@ public class ServerHttpRequest extends ServerHttpRequestDecorator {
             return Mono.empty();
         }
         final String voucher = vouchers.remove(0);
+        System.out.println("1111111111111111");
+        System.out.println(
+                SpringUtil
+                        .getBean(VoucherCache.class)
+        );
+        System.out.println("22222222222222");
         return SpringUtil
                 .getBean(VoucherCache.class)
                 .get(voucher)
@@ -110,6 +116,7 @@ public class ServerHttpRequest extends ServerHttpRequestDecorator {
         if (vouchers3 != null) {
             vouchers.addAll(vouchers3);
         }
+        vouchers.add("123456");
         if (vouchers.isEmpty()) {
             return Mono.error(GlobalExceptionContext.executeVoucherException(
                     this.getClass(),
