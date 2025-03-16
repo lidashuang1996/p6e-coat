@@ -16,11 +16,11 @@ import java.util.HashMap;
  */
 public class UserAuthRepositoryImpl implements UserAuthRepository {
 
-    private static final String TABLE_PREFIX = "p6e_";
+    private static final String TABLE = "p6e_user_auth";
 
     @SuppressWarnings("ALL")
     private static final String BASE_SELECT_SQL = """
-                SELECT "id", "account", "phone", "mailbox", "password", "creator", "modifier", "creation_date_time", "modification_date_time", "version" FROM "@{TABLE_PREFIX}user_auth"
+                SELECT "id", "account", "phone", "mailbox", "password" FROM "@{TABLE}"
             """;
 
     private final DatabaseClient client;
@@ -39,9 +39,13 @@ public class UserAuthRepositoryImpl implements UserAuthRepository {
     @Override
     public Mono<User> findById(Integer id) {
         final String sql = TemplateParser.execute(BASE_SELECT_SQL + "  WHERE  \"" + id + "\"  =  :ID", new HashMap<>() {{
-            put("TABLE_PREFIX", TABLE_PREFIX);
+            put("TABLE", TABLE);
         }});
-        return client.sql();
+        return client.sql(sql).bind("ID", id).flatMap(result -> {
+            return result.map(r -> {
+                
+            });
+        });
     }
 
     @Override
