@@ -85,11 +85,14 @@ public class PasswordEncryptorImpl implements PasswordEncryptor {
 
     @Override
     public boolean validate(String pwdOriginal, String pwdEncryption) {
+        System.out.println("aaaaaaaaaaaaa");
+        System.out.println(pwdOriginal + " " + pwdEncryption);
         validate();
         if (pwdOriginal == null || pwdEncryption == null
                 || pwdOriginal.isEmpty() || pwdEncryption.isEmpty()) {
             return false;
         } else {
+            System.out.println("bbbbbbbbbbb");
             boolean bool = true;
             final StringBuilder random = new StringBuilder();
             for (final char ch : pwdEncryption.toCharArray()) {
@@ -100,9 +103,12 @@ public class PasswordEncryptorImpl implements PasswordEncryptor {
                     random.append(ch);
                 }
             }
+            System.out.println("ccccccccc");
             if (bool) {
                 return false;
             } else {
+                System.out.println(pwdOriginal + " " + pwdEncryption);
+                System.out.println(random.toString() + " " + execute(random.toString(), format(pwdOriginal)));
                 return execute(random.toString(), format(pwdOriginal)).equals(pwdEncryption);
             }
         }

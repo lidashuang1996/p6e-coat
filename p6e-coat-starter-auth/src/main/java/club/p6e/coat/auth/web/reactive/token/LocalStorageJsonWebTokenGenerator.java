@@ -25,7 +25,7 @@ public class LocalStorageJsonWebTokenGenerator implements TokenGenerator {
         final Properties.Token properties = Properties.getInstance().getToken();
         final String device = context.getAttribute("P6e-Device");
         final String content = codec.encryption(user.id(),
-                device + "@" + user.serialize(), properties.getDuration().getSeconds());
+                (device == null ? "PC" : device) + "@" + user.serialize(), properties.getDuration().getSeconds());
         return Mono.just(content).map(m -> new HashMap<>() {{
             put("token", content);
             put("expiration", properties.getDuration().getSeconds());

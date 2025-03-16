@@ -28,6 +28,11 @@ public interface User {
             }
 
             @Override
+            public User password(String password) {
+                return null;
+            }
+
+            @Override
             public String serialize() {
                 return "";
             }
@@ -49,6 +54,11 @@ public interface User {
             @Override
             public String password() {
                 return "";
+            }
+
+            @Override
+            public User password(String password) {
+                return null;
             }
 
             @Override
@@ -76,6 +86,8 @@ public interface User {
      * @return 密码
      */
     String password();
+
+    User password(String password);
 
     /**
      * 序列化方法

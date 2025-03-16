@@ -45,11 +45,14 @@ public class VoucherRedisCache extends RedisCache implements VoucherCache {
                 .opsForHash()
                 .entries(CACHE_PREFIX + key)
                 .collectList()
-                .map(list -> {
+                .flatMap(list -> {
                     System.out.println(list);
+                    if (list.isEmpty()) {
+                        return Mono.empty();
+                    }
                     final Map<String, String> map = new HashMap<>(list.size());
                     list.forEach(item -> map.put((String) item.getKey(), (String) item.getValue()));
-                    return map;
+                    return Mono.just(map);
                 });
     }
 

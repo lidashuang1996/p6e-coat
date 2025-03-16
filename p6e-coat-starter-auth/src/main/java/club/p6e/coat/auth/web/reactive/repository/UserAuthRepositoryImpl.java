@@ -1,12 +1,13 @@
 package club.p6e.coat.auth.web.reactive.repository;
 
+import club.p6e.coat.auth.SimpleUserModel;
 import club.p6e.coat.auth.User;
 import club.p6e.coat.common.utils.TemplateParser;
+import club.p6e.coat.common.utils.TransformationUtil;
+import io.r2dbc.spi.Readable;
 import org.springframework.r2dbc.core.DatabaseClient;
 import reactor.core.publisher.Mono;
 
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * User Auth Repository Impl [ DEFAULT: PostgreSQL ]
@@ -16,19 +17,11 @@ import java.util.Map;
  */
 public class UserAuthRepositoryImpl implements UserAuthRepository {
 
-<<<<<<< HEAD
-    private static final String TABLE = "p6e_user_auth";
+    private static final String TABLE = "ss_user_auth";
 
     @SuppressWarnings("ALL")
     private static final String BASE_SELECT_SQL = """
-                SELECT "id", "account", "phone", "mailbox", "password" FROM "@{TABLE}"
-=======
-    private static final String TABLE_NAME = "ss_user_auth";
-
-    @SuppressWarnings("ALL")
-    private static final String BASE_SELECT_SQL = """
-                SELECT "id", "account", "phone", "mailbox", "password", "creator", "modifier", "creation_date_time", "modification_date_time", "version" FROM "@{TABLE_NAME}"
->>>>>>> 928a19c48ecbee867bc41568a9c732d98bf64241
+            SELECT "id", "account", "phone", "mailbox", "password" FROM "@{TABLE}"
             """;
 
     private final DatabaseClient client;
@@ -37,90 +30,80 @@ public class UserAuthRepositoryImpl implements UserAuthRepository {
         this.client = client;
     }
 
+    private User convertReadableToUser(Readable readable) {
+        return new SimpleUserModel(
+                TransformationUtil.objectToInteger(readable.get("id")),
+                TransformationUtil.objectToString(readable.get("account")),
+                TransformationUtil.objectToString(readable.get("phone")),
+                TransformationUtil.objectToString(readable.get("mailbox")),
+                TransformationUtil.objectToString(readable.get("password"))
+        );
+    }
+
     @Override
     public Mono<Object> init() {
-        // verify if there are tables in the database
-        final String sql1 = TemplateParser.execute("SELECT EXISTS ( SELECT 1 FROM " +
-                "\"information_schema\".\"tables\" WHERE \"table_name\" = \"@{TABLE_NAME}\" );", "TABLE_NAME", TABLE_NAME);
-        final String sql2 = TemplateParser.execute("INSERT INTO \"@{TABLE_NAME}\" ( " + "\"id\", " +
-                "\"account\", \"phone\", \"mailbox\", \"password\", \"creator\", \"modifier\", \"creation_date_time\", " +
-                "\"modification_date_time\", \"version\", \"qq\" ) VALUES (\"account\", \"phone\", \"mailbox\", \"password\", " +
-                "\"creator\", \"modifier\", \"creation_date_time\", \"modification_date_time\", \"version\" );", TABLE_NAME);
-        return client
-                .sql(sql1)
-                .map(row -> {
-                    final Map<String, Object> data = new HashMap<>();
-                    data.put("id", row.get("id"));
-                    data.put("account", row.get("account"));
-                    data.put("phone", row.get("phone"));
-                    data.put("mailbox", row.get("mailbox"));
-                    data.put("password", row.get("password"));
-                    data.put("creator", row.get("creator"));
-                    data.put("modifier", row.get("modifier"));
-                    data.put("creation_date_time", row.get("creation_date_time"));
-                    data.put("modification_date_time", row.get("modification_date_time"));
-                    data.put("version", row.get("version"));
-                    return data;
-                })
-                .all()
-                .switchIfEmpty(client
-                        .sql(sql2)
-                        .bind("account", "123")
-                        .flatMap(result ->
-                                result.map(row -> {
-                                    final Map<String, Object> data = new HashMap<>();
-                                    data.put("data", row.get(0));
-                                    return data;
-                                })
-                        )
-                )
-                .collectList()
-                .map(l -> l);
+        return null;
     }
 
     @Override
     public Mono<User> findById(Integer id) {
-<<<<<<< HEAD
-        final String sql = TemplateParser.execute(BASE_SELECT_SQL + "  WHERE  \"" + id + "\"  =  :ID", new HashMap<>() {{
-            put("TABLE", TABLE);
-        }});
-        return client.sql(sql).bind("ID", id).flatMap(result -> {
-            return result.map(r -> {
-                
-            });
-        });
-=======
-//        final String sql = TemplateParser.execute(BASE_SELECT_SQL + "  WHERE  \"" + id + "\"  =  :ID", new HashMap<>() {{
-//            put("TABLE_PREFIX", TABLE_PREFIX);
-//        }});
-//        return client.sql();
-        return null;
->>>>>>> 928a19c48ecbee867bc41568a9c732d98bf64241
+        return client
+                .sql(TemplateParser.execute(BASE_SELECT_SQL
+                        + " WHERE \"id\" = :ID ; ", "TABLE", TABLE))
+                .bind("ID", id)
+                .map(this::convertReadableToUser)
+                .first();
     }
 
     @Override
     public Mono<User> findByAccount(String account) {
-        return null;
+        return client
+                .sql(TemplateParser.execute(BASE_SELECT_SQL
+                        + " WHERE \"account\" = :ACCOUNT ; ", "TABLE", TABLE))
+                .bind("ACCOUNT", account)
+                .map(this::convertReadableToUser)
+                .first();
     }
 
     @Override
     public Mono<User> findByPhone(String phone) {
-        return null;
+        return client
+                .sql(TemplateParser.execute(BASE_SELECT_SQL
+                        + " WHERE \"phone\" = :PHONE ; ", "TABLE", TABLE))
+                .bind("PHONE", phone)
+                .map(this::convertReadableToUser)
+                .first();
     }
 
     @Override
     public Mono<User> findByMailbox(String mailbox) {
-        return null;
+        return client
+                .sql(TemplateParser.execute(BASE_SELECT_SQL
+                        + " WHERE \"mailbox\" = :MAILBOX ; ", "TABLE", TABLE))
+                .bind("MAILBOX", mailbox)
+                .map(this::convertReadableToUser)
+                .first();
     }
 
     @Override
     public Mono<User> findByPhoneOrMailbox(String account) {
-        return null;
+        return client
+                .sql(TemplateParser.execute(BASE_SELECT_SQL
+                        + " WHERE \"phone\" = :ACCOUNT \" OR \"account\" = :ACCOUNT ; ", "TABLE", TABLE))
+                .bind("ACCOUNT", account)
+                .map(this::convertReadableToUser)
+                .first();
     }
 
     @Override
-    public Mono<Long> updatePassword(String id, String password) {
-        return null;
+    public Mono<Long> updatePassword(Integer id, String password) {
+        return findById(id).flatMap(u -> client
+                .sql(TemplateParser.execute("UPDATE @{TABLE} "
+                        + "SET \"password\" = :PASSWORD WHERE \"id\" = :ID ; ", "TABLE", TABLE))
+                .bind("ID", id)
+                .bind("PASSWORD", password)
+                .fetch()
+                .rowsUpdated());
     }
 
     @Override

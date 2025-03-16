@@ -54,8 +54,8 @@ public abstract class Aspect implements Ordered {
      * @param o Aspect Point Param Object
      * @return Aspect Point Result Object
      */
-    public static Mono<Object> executeBefore(Object[] o) {
-        return Mono.just(getAspects()).flatMap(l -> executeBefore(l, o));
+    public static Mono<Object> executeBefore(Object[] os) {
+        return Mono.just(getAspects()).flatMap(l -> executeBefore(l, os));
     }
 
     /**
@@ -65,8 +65,9 @@ public abstract class Aspect implements Ordered {
      * @param o Aspect Point Param Object
      * @return Aspect Point Result Object
      */
-    private static Mono<Object> executeBefore(List<Aspect> l, Object[] o) {
-        return l.isEmpty() ? Mono.just(o) : Mono.just(o).flatMap(s -> l.remove(0).before(s).flatMap(r -> executeBefore(l, s)));
+    private static Mono<Object> executeBefore(List<Aspect> l, Object o) {
+        return l.isEmpty() ? Mono.just(o) : Mono.just(o).flatMap(s -> l.remove(0)
+                .before((s instanceof Object[]) ? (Object[]) s : new Object[]{s}).flatMap(r -> executeBefore(l, r)));
     }
 
     /**
@@ -75,8 +76,8 @@ public abstract class Aspect implements Ordered {
      * @param o Aspect Point Param Object
      * @return Aspect Point Result Object
      */
-    public static Mono<Object> executeAfter(Object[] o) {
-        return Mono.just(getAspects()).flatMap(l -> executeAfter(l, o));
+    public static Mono<Object> executeAfter(Object[] os) {
+        return Mono.just(getAspects()).flatMap(l -> executeAfter(l, os));
     }
 
     /**
@@ -86,8 +87,9 @@ public abstract class Aspect implements Ordered {
      * @param o Aspect Point Param Object
      * @return Aspect Point Result Object
      */
-    private static Mono<Object> executeAfter(List<Aspect> l, Object[] o) {
-        return l.isEmpty() ? Mono.just(o) : Mono.just(o).flatMap(s -> l.remove(0).after(s).flatMap(r -> executeAfter(l, s)));
+    private static Mono<Object> executeAfter(List<Aspect> l, Object o) {
+        return l.isEmpty() ? Mono.just(o) : Mono.just(o).flatMap(s -> l.remove(0)
+                .after((s instanceof Object[]) ? (Object[]) s : new Object[]{s}).flatMap(r -> executeAfter(l, r)));
     }
 
 }

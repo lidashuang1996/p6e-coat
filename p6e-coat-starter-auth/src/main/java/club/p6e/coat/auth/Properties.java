@@ -34,7 +34,7 @@ public class Properties implements Serializable {
     @Data
     @Accessors(chain = true)
     public static class Token {
-        private Duration duration;
+        private Duration duration = Duration.ofSeconds(3600 * 3L);
     }
 
 
@@ -63,7 +63,7 @@ public class Properties implements Serializable {
     /**
      * 认证的账号模式
      */
-    private Mode mode = Mode.PHONE_OR_MAILBOX;
+    private Mode mode = Mode.ACCOUNT;
 
     /**
      * 模式

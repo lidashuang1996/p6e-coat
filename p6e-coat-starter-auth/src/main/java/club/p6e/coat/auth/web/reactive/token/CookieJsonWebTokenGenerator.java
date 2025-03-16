@@ -25,7 +25,7 @@ public class CookieJsonWebTokenGenerator implements TokenGenerator {
         final Properties.Token properties = Properties.getInstance().getToken();
         final String device = context.getAttribute("P6e-Device");
         final String content = codec.encryption(user.id(),
-                device + "@" + user.serialize(), properties.getDuration().getSeconds());
+                (device == null ? "PC" : device) + "@" + user.serialize(), properties.getDuration().getSeconds());
         final ServerHttpResponse response = context.getResponse();
         return Mono.just(content).flatMap(c -> {
             response.addCookie(ResponseCookie.from("P6e-User-Auth", c)

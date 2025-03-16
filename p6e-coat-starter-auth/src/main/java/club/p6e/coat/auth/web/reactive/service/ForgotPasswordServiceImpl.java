@@ -77,7 +77,7 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
                         "forgot password submit verification code cache data does not exist or expire exception."
                 )))
                 .flatMap(v -> getUser(account))
-                .flatMap(m -> repository.updatePassword(m.id(), encryptor.execute(param.getPassword()))) // update user passWord to the latest
+                .flatMap(m -> repository.updatePassword(Integer.valueOf(m.id()), encryptor.execute(param.getPassword()))) // update user passWord to the latest
                 .map(l -> new ForgotPasswordContext.Dto().setAccount(account));
     }
 

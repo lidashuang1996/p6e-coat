@@ -41,6 +41,11 @@
         </dependency>
         <!-- Spring Reactive Redis [END] -->
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
         <!-- Spring Data [ START ] -->
         <!-- Spring Data R2DBC [ START ] -->
         <dependency>

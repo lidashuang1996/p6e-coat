@@ -10,6 +10,8 @@ import club.p6e.coat.auth.web.reactive.controller.*;
 import club.p6e.coat.auth.web.reactive.repository.UserAuthRepositoryImpl;
 import club.p6e.coat.auth.web.reactive.repository.UserRepositoryImpl;
 import club.p6e.coat.auth.web.reactive.service.*;
+import club.p6e.coat.auth.web.reactive.token.CookieCacheTokenGenerator;
+import club.p6e.coat.auth.web.reactive.token.CookieCacheTokenValidator;
 import club.p6e.coat.auth.web.reactive.token.LocalStorageCacheTokenGenerator;
 import club.p6e.coat.auth.web.reactive.token.LocalStorageCacheTokenValidator;
 import club.p6e.coat.common.utils.SpringUtil;
@@ -53,7 +55,9 @@ public class ServerConfig {
                 case REDIS -> register(VoucherRedisCache.class);
                 case MEMORY -> register(VoucherMemoryCache.class);
             }
-            register(ServerHttpRequestAspect.class);
+//            register(GlobalAspect.class);
+//            register(LoginResultAspect.class);
+//            register(ServerHttpRequestAspect.class);
 
             final DefaultListableBeanFactory factory = (DefaultListableBeanFactory)
                     SpringUtil.getApplicationContext().getAutowireCapableBeanFactory();
@@ -82,6 +86,10 @@ public class ServerConfig {
             }
             register(LocalStorageCacheTokenGenerator.class);
             register(LocalStorageCacheTokenValidator.class);
+
+//            register(CookieCacheTokenGenerator.class);
+//            register(CookieCacheTokenValidator.class);
+
             register(AuthenticationLoginServiceImpl.class);
             register(AuthenticationLoginController.class);
             initAccountPasswordLogin();
@@ -94,7 +102,7 @@ public class ServerConfig {
         final Properties.Login.AccountPassword config = PROPERTIES.getLogin().getAccountPassword();
         if (config.isEnable()) {
             register(AccountPasswordLoginServiceImpl.class);
-            register(AccountPasswordLoginController.class);
+//            register(AccountPasswordLoginController.class);
 
 
             if (config.isEnableTransmissionEncryption()) {

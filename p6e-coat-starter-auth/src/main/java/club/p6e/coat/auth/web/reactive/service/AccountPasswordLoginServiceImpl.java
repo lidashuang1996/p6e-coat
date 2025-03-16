@@ -69,6 +69,7 @@ public class AccountPasswordLoginServiceImpl implements AccountPasswordLoginServ
     private Mono<String> executePasswordTransmissionDecryption(ServerWebExchange exchange, String password) {
         final boolean enableTransmissionEncryption = Properties.getInstance()
                 .getLogin().getAccountPassword().isEnableTransmissionEncryption();
+        System.out.println("enableTransmissionEncryption >> " + enableTransmissionEncryption);
         if (enableTransmissionEncryption) {
             final PasswordSignatureCache cache;
             if (SpringUtil.exist(PasswordSignatureCache.class)) {

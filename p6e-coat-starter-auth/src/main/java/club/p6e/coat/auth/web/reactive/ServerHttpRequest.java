@@ -142,9 +142,10 @@ public class ServerHttpRequest extends ServerHttpRequestDecorator {
      *
      * @return Server Http Request Object
      */
-    public Mono<ServerHttpRequest> cache() {
+    public Mono<ServerHttpRequest> save() {
         final Map<String, String> content = new HashMap<>();
         this.attributes.forEach((k, v) -> content.put(k, String.valueOf(v)));
+        System.out.println("00000 >>> 0 " + this.attributes);
         return SpringUtil
                 .getBean(VoucherCache.class)
                 .set(this.mark, content)
@@ -161,7 +162,7 @@ public class ServerHttpRequest extends ServerHttpRequestDecorator {
      *
      * @return Server Http Request Object
      */
-    public Mono<ServerHttpRequest> delete() {
+    public Mono<ServerHttpRequest> remove() {
         return SpringUtil.getBean(VoucherCache.class).del(this.mark).map(b -> this);
     }
 

@@ -65,7 +65,7 @@ public interface UserAuthRepository {
      * @param password Password
      * @return Affected Number Count
      */
-    Mono<Long> updatePassword(String id, String password);
+    Mono<Long> updatePassword(Integer id, String password);
 
     Mono<User> create(User user, String password);
 }
