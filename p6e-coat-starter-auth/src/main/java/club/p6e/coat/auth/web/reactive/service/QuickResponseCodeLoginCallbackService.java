@@ -1,11 +1,12 @@
 package club.p6e.coat.auth.web.reactive.service;
 
+import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.context.LoginContext;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * Quick Response Code Callback Service
+ * Quick Response Code Login Service
  *
  * @author lidashuang
  * @version 1.0
@@ -13,12 +14,12 @@ import reactor.core.publisher.Mono;
 public interface QuickResponseCodeLoginCallbackService {
 
     /**
-     * Execute Quick Response Code Callback
+     * Execute Quick Response Code Login
      *
-     * @param param Quick Response Code Callback Request Object
-     * @return Login Context Quick Response Code Callback Dto Object
+     * @param exchange Server Web Exchange Object
+     * @param param    Login Context Quick Response Code Request Object
+     * @return User Object
      */
-    Mono<LoginContext.QuickResponseCodeCallback.Dto> execute(
-            ServerWebExchange exchange, LoginContext.QuickResponseCodeCallback.Request param);
+    Mono<User> execute(ServerWebExchange exchange, LoginContext.QuickResponseCodeCallback.Request param);
 
 }

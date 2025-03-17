@@ -56,7 +56,7 @@ public final class P6eAuth {
     public static void initRegister() {
         final Properties.Register config = PROPERTIES.getRegister();
         if (config.isEnable()) {
-            register(RegisterHandler.class);
+            register(RegisterController.class);
         }
     }
 

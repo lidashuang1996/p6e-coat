@@ -1,22 +1,24 @@
 package club.p6e.coat.auth.web.reactive.controller;
 
-import club.p6e.coat.auth.context.PasswordSignatureContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.web.reactive.ServerHttpRequestParameterValidator;
-import club.p6e.coat.auth.web.reactive.service.PasswordSignatureService;
+import club.p6e.coat.auth.context.RegisterContext;
+import club.p6e.coat.auth.web.reactive.service.RegisterService;
 import club.p6e.coat.common.utils.SpringUtil;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * Password Signature Controller
+ * Register Controller
  *
  * @author lidashuang
  * @version 1.0
  */
 @RestController
-public class PasswordSignatureController {
+public class RegisterController {
 
     /**
      * Request Parameter Validation
@@ -25,26 +27,26 @@ public class PasswordSignatureController {
      * @param request  Password Signature Context Request Object
      * @return Password Signature Context Request Object
      */
-    private Mono<PasswordSignatureContext.Request> validate(
-            ServerWebExchange exchange, PasswordSignatureContext.Request request) {
+    private Mono<RegisterContext.Request> validate(
+            ServerWebExchange exchange, RegisterContext.Request request) {
         return ServerHttpRequestParameterValidator.execute(exchange, request)
                 .flatMap(o -> {
-                    if (o instanceof PasswordSignatureContext.Request oRequest) {
+                    if (o instanceof RegisterContext.Request oRequest) {
                         return Mono.just(oRequest);
                     } else {
                         return Mono.error(GlobalExceptionContext.executeParameterException(
                                 this.getClass(),
-                                "fun Mono<PasswordSignatureContext.Request> validate(" +
-                                        "ServerWebExchange exchange, PasswordSignatureContext.Request request).",
+                                "fun Mono<RegisterContext.Request> validate(" +
+                                        "ServerWebExchange exchange, RegisterContext.Request request).",
                                 "request parameter validation exception."
                         ));
                     }
                 });
     }
 
-    @GetMapping("/password/signature")
-    public Mono<Object> def(ServerWebExchange exchange, PasswordSignatureContext.Request request) {
-        return validate(exchange, request).flatMap(r -> SpringUtil.getBean(PasswordSignatureService.class).execute(exchange, r));
+    @PostMapping("/register")
+    public Mono<Object> def(ServerWebExchange exchange, @RequestBody RegisterContext.Request request) {
+        return validate(exchange, request).flatMap(r -> SpringUtil.getBean(RegisterService.class).execute(exchange, r));
     }
 
 }

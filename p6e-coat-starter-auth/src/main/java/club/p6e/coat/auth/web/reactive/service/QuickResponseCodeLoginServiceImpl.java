@@ -1,16 +1,14 @@
 package club.p6e.coat.auth.web.reactive.service;
 
-import club.p6e.coat.auth.web.reactive.ServerHttpRequest;
-import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.web.reactive.cache.QuickResponseCodeLoginCache;
-import club.p6e.coat.auth.web.reactive.repository.UserRepository;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
+import club.p6e.coat.auth.web.reactive.token.TokenValidator;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * Quick Response Code Login Service Impl
+ * Quick Response Code Callback Service Impl
  *
  * @author lidashuang
  * @version 1.0
@@ -18,52 +16,55 @@ import reactor.core.publisher.Mono;
 public class QuickResponseCodeLoginServiceImpl implements QuickResponseCodeLoginService {
 
     /**
-     * 二维码缓存对象
+     * Token Validator Object
+     */
+    private final TokenValidator validator;
+
+    /**
+     * Quick Response Code Login Cache Object
      */
     private final QuickResponseCodeLoginCache cache;
 
     /**
-     * User Repository Object
-     */
-    private final UserRepository repository;
-
-    /**
      * Constructor Initialization
      *
-     * @param cache      二维码缓存对象
-     * @param repository User Repository Object
+     * @param validator Token Validator Object
+     * @param cache     Quick Response Code Login Cache Object
      */
-    public QuickResponseCodeLoginServiceImpl(QuickResponseCodeLoginCache cache, UserRepository repository) {
+    public QuickResponseCodeLoginServiceImpl(TokenValidator validator, QuickResponseCodeLoginCache cache) {
         this.cache = cache;
-        this.repository = repository;
+        this.validator = validator;
     }
 
     @Override
-    public Mono<User> execute(ServerWebExchange exchange, LoginContext.QuickResponseCode.Request param) {
-        final ServerHttpRequest request = (ServerHttpRequest) exchange.getRequest();
-        final String mark = request.getQuickResponseCodeLoginMark();
-        return cache
-                .get(mark)
-                .switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(
+    public Mono<LoginContext.QuickResponseCodeCallback.Dto> execute(
+            ServerWebExchange exchange, LoginContext.QuickResponseCode.Request param) {
+        final String content = param.getContent();
+        System.out.println("Content: " + content);
+        return validator
+                .execute(exchange)
+                .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionAuthException(
                         this.getClass(),
-                        "fun execute(ServerWebExchange exchange, LoginContext.QuickResponseCode.Request param).",
-                        "quick response code login cache data does not exist or expire exception."
+                        "fun execute(ServerWebExchange exchange, LoginContext.QuickResponseCodeCallback.Request param)",
+                        "quick response code callback login auth exception."
                 )))
-                .flatMap(s -> {
+                .flatMap(u -> cache.get(content).switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(
+                        this.getClass(),
+                        "fun execute(ServerWebExchange exchange, LoginContext.QuickResponseCodeCallback.Request param)",
+                        "quick response code callback login cache data does not exist or expire exception."
+                ))).flatMap(s -> {
+                    System.out.println("sssss >>> " + s);
                     if (QuickResponseCodeLoginCache.isEmpty(s)) {
-                        return Mono.error(GlobalExceptionContext.executeQrCodeDataNullException(
-                                this.getClass(),
-                                "fun execute(ServerWebExchange exchange, LoginContext.QuickResponseCode.Request param).",
-                                "quick response code login data is null exception."
-                        ));
+                        return cache.set(content, u.id()).map(b ->
+                                new LoginContext.QuickResponseCodeCallback.Dto().setContent("SUCCESS"));
                     } else {
-                        return cache.del(mark).flatMap(l -> repository.findById(Integer.valueOf(s))
-                                .flatMap(u -> u == null ? Mono.error(GlobalExceptionContext.executeUserNotExistException(
-                                        this.getClass(),
-                                        "fun execute(ServerWebExchange exchange, LoginContext.QuickResponseCode.Request param).",
-                                        "quick response code login user id select data does not exist exception."
-                                )) : Mono.just(u)));
+                        return Mono.error(GlobalExceptionContext.executeCacheException(
+                                this.getClass(),
+                                "fun execute(ServerWebExchange exchange, LoginContext.QuickResponseCodeCallback.Request param)",
+                                "quick response code callback login cache other data exists exception."
+                        ));
                     }
-                });
+                }));
     }
+    
 }

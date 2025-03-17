@@ -9,8 +9,6 @@ import club.p6e.coat.auth.web.reactive.controller.*;
 import club.p6e.coat.auth.web.reactive.repository.UserAuthRepositoryImpl;
 import club.p6e.coat.auth.web.reactive.repository.UserRepositoryImpl;
 import club.p6e.coat.auth.web.reactive.service.*;
-import club.p6e.coat.auth.web.reactive.token.CookieCacheTokenGenerator;
-import club.p6e.coat.auth.web.reactive.token.CookieCacheTokenValidator;
 import club.p6e.coat.auth.web.reactive.token.LocalStorageCacheTokenGenerator;
 import club.p6e.coat.auth.web.reactive.token.LocalStorageCacheTokenValidator;
 import club.p6e.coat.common.utils.SpringUtil;
@@ -150,7 +148,7 @@ public class ServerConfig {
                 case MEMORY -> register(UserTokenMemoryCache.class);
             }
             register(RegisterService.class);
-            register(RegisterHandler.class);
+            register(RegisterController.class);
         }
     }
 
