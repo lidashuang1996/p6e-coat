@@ -1,5 +1,7 @@
-package club.p6e.coat.permission;
+package club.p6e.coat.permission.validator;
 
+import club.p6e.coat.permission.PermissionDetails;
+import club.p6e.coat.permission.matcher.PermissionPathMatcherImpl;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -20,16 +22,21 @@ import java.util.List;
 public class PermissionValidatorImpl implements PermissionValidator {
 
     /**
-     * PermissionPathMatcher object
+     * Common Char
      */
-    private final PermissionPathMatcher matcher;
+    private static final String COMMON_CHAR = "*";
 
     /**
-     * Constructor initializers
-     *
-     * @param matcher PermissionPathMatcher object
+     * Permission Path Matcher Object
      */
-    public PermissionValidatorImpl(PermissionPathMatcher matcher) {
+    private final PermissionPathMatcherImpl matcher;
+
+    /**
+     * Constructor Initializers
+     *
+     * @param matcher Permission Path Matcher Object
+     */
+    public PermissionValidatorImpl(PermissionPathMatcherImpl matcher) {
         this.matcher = matcher;
     }
 
@@ -41,8 +48,8 @@ public class PermissionValidatorImpl implements PermissionValidator {
                 for (final PermissionDetails permission : permissions) {
                     final String pm = permission.getMethod();
                     final String pg = String.valueOf(permission.getGid());
-                    if ((groups.contains("*") || groups.contains(pg))
-                            && ("*".equals(pm) || method.equalsIgnoreCase(pm))) {
+                    if ((groups.contains(COMMON_CHAR) || groups.contains(pg))
+                            && (COMMON_CHAR.equals(pm) || method.equalsIgnoreCase(pm))) {
                         return Mono.just(permission);
                     }
                 }
@@ -59,10 +66,10 @@ public class PermissionValidatorImpl implements PermissionValidator {
                 for (final PermissionDetails permission : permissions) {
                     final String pm = permission.getMethod();
                     final String pg = String.valueOf(permission.getGid());
-                    final String pd = String.valueOf(permission.getPid());
-                    if (pd.equals(project)
-                            && (groups.contains("*") || groups.contains(pg))
-                            && ("*".equals(pm) || method.equalsIgnoreCase(pm))) {
+                    final String pp = String.valueOf(permission.getPid());
+                    if (pp.equals(project)
+                            && (groups.contains(COMMON_CHAR) || groups.contains(pg))
+                            && (COMMON_CHAR.equals(pm) || method.equalsIgnoreCase(pm))) {
                         return Mono.just(permission);
                     }
                 }

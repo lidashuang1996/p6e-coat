@@ -1,4 +1,4 @@
-package club.p6e.coat.permission.repository;
+package club.p6e.coat.permission.web.repository;
 
 import club.p6e.coat.common.utils.CopyUtil;
 import club.p6e.coat.permission.model.PermissionModel;

@@ -1,5 +1,6 @@
-package club.p6e.coat.permission;
+package club.p6e.coat.permission.matcher;
 
+import club.p6e.coat.permission.PermissionDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -20,31 +21,26 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 @ConditionalOnMissingBean(
         value = PermissionPathMatcher.class,
-        ignored = PermissionPathMatcher.class
+        ignored = PermissionPathMatcherImpl.class
 )
-public class PermissionPathMatcher {
+public class PermissionPathMatcherImpl implements PermissionPathMatcher {
 
     /**
-     * Inject log object
+     * Inject Log Object
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(PermissionPathMatcher.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PermissionPathMatcherImpl.class);
 
     /**
-     * PathPatternParser object
+     * Path Pattern Parser Object
      */
     private final PathPatternParser parser = new PathPatternParser();
 
     /**
-     * PathPatternParser/PermissionDetails cache object
+     * Path Pattern Parser / Permission Details Cache Object
      */
     private final Map<PathPattern, List<PermissionDetails>> cache = new ConcurrentHashMap<>();
 
-    /**
-     * Matching Path
-     *
-     * @param path Path
-     * @return PermissionDetails/List object
-     */
+    @Override
     public List<PermissionDetails> match(String path) {
         final List<PermissionDetails> result = new ArrayList<>();
         final PathContainer container = PathContainer.parsePath(path);
@@ -57,17 +53,12 @@ public class PermissionPathMatcher {
         return result;
     }
 
-    /**
-     * Cache register path
-     *
-     * @param model PermissionDetails object
-     */
+    @Override
     public void register(PermissionDetails model) {
         if (model != null
                 && model.getGid() != null
                 && model.getUid() != null
-                && model.getPath() != null
-                && !model.getPath().isEmpty()) {
+                && model.getPath() != null) {
             final String path = model.getPath();
             for (final PathPattern pattern : cache.keySet()) {
                 if (pattern.getPatternString().equalsIgnoreCase(path)) {
@@ -84,22 +75,13 @@ public class PermissionPathMatcher {
         }
     }
 
-    /**
-     * Cache unregister path
-     *
-     * @param path Path
-     */
-    @SuppressWarnings("ALL")
+    @Override
     public void unregister(PathPattern path) {
         cache.remove(path);
     }
 
-    /**
-     * Delete expired version permission data
-     *
-     * @param version Version
-     */
-    public void deleteExpiredVersionData(long version) {
+    @Override
+    public synchronized void cleanExpiredVersionData(long version) {
         for (final PathPattern key : cache.keySet()) {
             final List<PermissionDetails> list = cache.get(key);
             if (list != null && !list.isEmpty()) {

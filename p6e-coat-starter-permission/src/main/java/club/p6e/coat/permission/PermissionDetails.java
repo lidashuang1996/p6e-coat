@@ -4,6 +4,8 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Permission Details
@@ -15,18 +17,69 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class PermissionDetails implements Serializable {
 
+    /**
+     * OID
+     */
     private Integer oid;
+
+    /**
+     * PID
+     */
     private Integer pid;
+
+    /**
+     * UID
+     */
     private Integer uid;
+
+    /**
+     * GID
+     */
     private Integer gid;
-    private String url;
-    private String baseUrl;
-    private String method;
+
+    /**
+     * Weight
+     */
     private Integer weight;
+
+    /**
+     * Url
+     */
+    private String url;
+
+    /**
+     * Base Url
+     */
+    private String baseUrl;
+
+    /**
+     * Method
+     */
+    private String method;
+
+    /**
+     * Mark
+     */
     private String mark;
-    private String config;
+
+    /**
+     * Attribute
+     */
     private String attribute;
+
+    /**
+     * Path
+     */
     private String path;
+
+    /**
+     * Version
+     */
     private Long version;
+
+    /**
+     * Data
+     */
+    private Map<String, Objects> data;
 
 }

@@ -1,8 +1,10 @@
 package club.p6e.coat.permission;
 
 import club.p6e.coat.common.utils.SpringUtil;
+import club.p6e.coat.permission.matcher.PermissionPathMatcherImpl;
 import club.p6e.coat.permission.model.PermissionModel;
-import club.p6e.coat.permission.repository.PermissionRepository;
+import club.p6e.coat.permission.web.reactive.task.PermissionTask;
+import club.p6e.coat.permission.web.reactive.repository.PermissionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -46,7 +48,7 @@ public final class PermissionTaskActuator {
     /**
      * PermissionPathMatcher object
      */
-    private final PermissionPathMatcher matcher;
+    private final PermissionPathMatcherImpl matcher;
 
     /**
      * Constructor initializers
@@ -58,7 +60,7 @@ public final class PermissionTaskActuator {
     public PermissionTaskActuator(
             PermissionTask task,
             TaskScheduler taskScheduler,
-            PermissionPathMatcher matcher
+            PermissionPathMatcherImpl matcher
     ) {
         this.task = task;
         this.matcher = matcher;
