@@ -3,7 +3,7 @@ package club.p6e.coat.auth.web.reactive.service;
 import club.p6e.coat.auth.PasswordEncryptor;
 import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.web.reactive.ServerHttpRequest;
-import club.p6e.coat.auth.User;
+import club.p6e.coat.auth.user.User;
 import club.p6e.coat.auth.web.reactive.cache.VerificationCodeForgotPasswordCache;
 import club.p6e.coat.auth.context.ForgotPasswordContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;

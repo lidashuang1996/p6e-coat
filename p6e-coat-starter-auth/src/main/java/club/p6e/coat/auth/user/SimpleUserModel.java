@@ -1,4 +1,4 @@
-package club.p6e.coat.auth;
+package club.p6e.coat.auth.user;
 
 import club.p6e.coat.common.utils.JsonUtil;
 import club.p6e.coat.common.utils.TransformationUtil;
@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Simple User Model
+ *
  * @author lidashuang
  * @version 1.0
  */
@@ -52,14 +54,6 @@ public class SimpleUserModel implements User, Serializable {
         this.description = TransformationUtil.objectToString(content.get("description"));
     }
 
-    public SimpleUserModel(Integer id, String account, String phone, String mailbox, String password) {
-        this.id = id;
-        this.account = account;
-        this.phone = phone;
-        this.mailbox = mailbox;
-        this.password = password;
-    }
-
     public SimpleUserModel(
             Integer id,
             Integer status,
@@ -97,7 +91,6 @@ public class SimpleUserModel implements User, Serializable {
 
     @Override
     public String password() {
-        System.out.println("password    >>>> LLLLL <<<<<<<<<<" + password);
         return this.password;
     }
 

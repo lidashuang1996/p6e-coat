@@ -46,11 +46,6 @@ public interface UserTokenCache extends Cache {
     String DELIMITER = ":";
 
     /**
-     * Expiration Time
-     */
-    long EXPIRATION_TIME = 3600 * 3L;
-
-    /**
      * User Cache Prefix
      */
     String USER_CACHE_PREFIX = "AUTH:USER:";
@@ -74,7 +69,7 @@ public interface UserTokenCache extends Cache {
      * @param content User Content
      * @return Model Object
      */
-    Mono<Model> set(String uid, String device, String token, String content);
+    Mono<Model> set(String uid, String device, String token, String content, long expiration);
 
     /**
      * Get User

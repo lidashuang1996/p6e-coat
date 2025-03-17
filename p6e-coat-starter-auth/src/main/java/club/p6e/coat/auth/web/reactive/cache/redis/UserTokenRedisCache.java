@@ -38,7 +38,7 @@ public class UserTokenRedisCache extends RedisCache implements UserTokenCache {
     }
 
     @Override
-    public Mono<Model> set(String uid, String device, String token, String content) {
+    public Mono<Model> set(String uid, String device, String token, String content, long expiration) {
         System.out.println("contentcontentcontent >> " + content);
         final Model model = new Model().setUid(uid).setDevice(device).setToken(token);
         final String json = JsonUtil.toJson(model);
@@ -49,19 +49,19 @@ public class UserTokenRedisCache extends RedisCache implements UserTokenCache {
         return template.execute(connection -> Flux.concat(connection.stringCommands().set(
                         ByteBuffer.wrap((USER_CACHE_PREFIX + uid).getBytes(StandardCharsets.UTF_8)),
                         ByteBuffer.wrap(content.getBytes(StandardCharsets.UTF_8)),
-                        Expiration.from(EXPIRATION_TIME, TimeUnit.SECONDS),
+                        Expiration.from(expiration, TimeUnit.SECONDS),
                         RedisStringCommands.SetOption.UPSERT
                 ),
                 connection.stringCommands().set(
                         ByteBuffer.wrap((TOKEN_CACHE_PREFIX + token).getBytes(StandardCharsets.UTF_8)),
                         ByteBuffer.wrap(jBytes),
-                        Expiration.from(EXPIRATION_TIME, TimeUnit.SECONDS),
+                        Expiration.from(expiration, TimeUnit.SECONDS),
                         RedisStringCommands.SetOption.UPSERT
                 ),
                 connection.stringCommands().set(
                         ByteBuffer.wrap((USER_TOKEN_CACHE_PREFIX + uid + DELIMITER + token).getBytes(StandardCharsets.UTF_8)),
                         ByteBuffer.wrap(jBytes),
-                        Expiration.from(EXPIRATION_TIME, TimeUnit.SECONDS),
+                        Expiration.from(expiration, TimeUnit.SECONDS),
                         RedisStringCommands.SetOption.UPSERT
                 ))).count().map(l -> model);
     }

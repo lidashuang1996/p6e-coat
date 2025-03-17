@@ -2,6 +2,8 @@ package club.p6e.coat.auth.web.reactive.service;
 
 import club.p6e.coat.auth.*;
 import club.p6e.coat.auth.context.RegisterContext;
+import club.p6e.coat.auth.user.User;
+import club.p6e.coat.auth.user.UserBuilder;
 import club.p6e.coat.auth.web.reactive.repository.UserAuthRepository;
 import club.p6e.coat.auth.web.reactive.repository.UserRepository;
 import club.p6e.coat.auth.web.reactive.ServerHttpRequest;

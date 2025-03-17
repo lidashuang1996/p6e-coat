@@ -9,8 +9,7 @@ import club.p6e.coat.auth.web.reactive.controller.*;
 import club.p6e.coat.auth.web.reactive.repository.UserAuthRepositoryImpl;
 import club.p6e.coat.auth.web.reactive.repository.UserRepositoryImpl;
 import club.p6e.coat.auth.web.reactive.service.*;
-import club.p6e.coat.auth.web.reactive.token.LocalStorageCacheTokenGenerator;
-import club.p6e.coat.auth.web.reactive.token.LocalStorageCacheTokenValidator;
+import club.p6e.coat.auth.web.reactive.token.*;
 import club.p6e.coat.common.utils.SpringUtil;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
@@ -84,8 +83,11 @@ public class ServerConfig {
             register(LocalStorageCacheTokenGenerator.class);
             register(LocalStorageCacheTokenValidator.class);
 
-//            register(CookieCacheTokenGenerator.class);
-//            register(CookieCacheTokenValidator.class);
+            register(CookieCacheTokenGenerator.class);
+            register(CookieCacheTokenValidator.class);
+
+            register(CookieJsonWebTokenGenerator.class);
+            register(CookieJsonWebTokenValidator.class);
 
             register(AuthenticationLoginServiceImpl.class);
             register(AuthenticationLoginController.class);

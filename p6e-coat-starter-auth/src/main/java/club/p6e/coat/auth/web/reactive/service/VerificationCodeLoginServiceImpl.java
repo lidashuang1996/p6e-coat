@@ -1,7 +1,7 @@
 package club.p6e.coat.auth.web.reactive.service;
 
 import club.p6e.coat.auth.web.reactive.ServerHttpRequest;
-import club.p6e.coat.auth.User;
+import club.p6e.coat.auth.user.User;
 import club.p6e.coat.auth.web.reactive.cache.VerificationCodeLoginCache;
 import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.LoginContext;

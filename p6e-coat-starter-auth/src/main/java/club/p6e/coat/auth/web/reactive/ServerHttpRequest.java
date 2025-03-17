@@ -243,4 +243,7 @@ public class ServerHttpRequest extends ServerHttpRequestDecorator {
         return data == null ? null : String.valueOf(data);
     }
 
+    public String getDevice() {
+        return "PC";
+    }
 }

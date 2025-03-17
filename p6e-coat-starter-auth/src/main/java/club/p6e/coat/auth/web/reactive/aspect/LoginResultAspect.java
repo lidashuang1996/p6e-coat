@@ -1,6 +1,6 @@
 package club.p6e.coat.auth.web.reactive.aspect;
 
-import club.p6e.coat.auth.User;
+import club.p6e.coat.auth.user.User;
 import club.p6e.coat.auth.web.reactive.token.TokenGenerator;
 import club.p6e.coat.common.context.ResultContext;
 import club.p6e.coat.common.utils.SpringUtil;

@@ -22,8 +22,7 @@ import java.util.function.Function;
 @Accessors(chain = true)
 public class Properties implements Serializable {
 
-    public static final String P6E_DEVICE_ATTRIBUTE_KEY = "P6e-Device";
-    public static final String P6E_USER_AUTH_COOKIE_NAME = "P6e-User-Auth";
+
 
     private static Properties INSTANCE = new Properties();
 

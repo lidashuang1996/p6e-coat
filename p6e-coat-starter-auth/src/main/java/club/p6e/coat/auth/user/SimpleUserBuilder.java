@@ -1,10 +1,12 @@
-package club.p6e.coat.auth;
+package club.p6e.coat.auth.user;
 
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 /**
+ * Simple User Builder
+ *
  * @author lidashuang
  * @version 1.0
  */
@@ -20,4 +22,5 @@ public class SimpleUserBuilder implements UserBuilder {
     public User create(Map<String, Object> content) {
         return new SimpleUserModel(content);
     }
+
 }

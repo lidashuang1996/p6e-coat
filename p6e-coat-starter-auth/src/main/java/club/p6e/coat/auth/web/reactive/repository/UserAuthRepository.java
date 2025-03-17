@@ -1,6 +1,6 @@
 package club.p6e.coat.auth.web.reactive.repository;
 
-import club.p6e.coat.auth.User;
+import club.p6e.coat.auth.user.User;
 import reactor.core.publisher.Mono;
 
 /**

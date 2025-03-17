@@ -32,15 +32,15 @@ public class UserTokenMemoryCache extends MemoryCache implements UserTokenCache 
     }
 
     @Override
-    public Mono<Model> set(String uid, String device, String token, String content) {
+    public Mono<Model> set(String uid, String device, String token, String content, long expiration) {
         final Model model = new Model().setUid(uid).setDevice(device).setToken(token);
         final String json = JsonUtil.toJson(model);
         if (json == null) {
             return Mono.empty();
         }
-        template.set(USER_CACHE_PREFIX + uid, content, EXPIRATION_TIME);
-        template.set(TOKEN_CACHE_PREFIX + token, json, EXPIRATION_TIME);
-        template.set(USER_TOKEN_CACHE_PREFIX + uid + DELIMITER + token, json, EXPIRATION_TIME);
+        template.set(USER_CACHE_PREFIX + uid, content, expiration);
+        template.set(TOKEN_CACHE_PREFIX + token, json, expiration);
+        template.set(USER_TOKEN_CACHE_PREFIX + uid + DELIMITER + token, json, expiration);
         return Mono.just(model);
     }
 

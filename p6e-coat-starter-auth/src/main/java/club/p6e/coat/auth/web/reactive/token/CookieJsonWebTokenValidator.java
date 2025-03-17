@@ -1,8 +1,8 @@
 package club.p6e.coat.auth.web.reactive.token;
 
 import club.p6e.coat.auth.JsonWebTokenCodec;
-import club.p6e.coat.auth.User;
-import club.p6e.coat.auth.UserBuilder;
+import club.p6e.coat.auth.user.User;
+import club.p6e.coat.auth.user.UserBuilder;
 import club.p6e.coat.common.utils.SpringUtil;
 import org.springframework.http.HttpCookie;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -11,13 +11,28 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
+ * Cookie Json Web Token Validator
+ *
  * @author lidashuang
  * @version 1.0
  */
 public class CookieJsonWebTokenValidator implements TokenValidator {
 
+    /**
+     * Auth Cookie Name
+     */
+    private static final String AUTH_COOKIE_NAME = "P6E_AUTH";
+
+    /**
+     * Json Web Token Codec Object
+     */
     private final JsonWebTokenCodec codec;
 
+    /**
+     * Constructor Initialization
+     *
+     * @param codec Json Web Token Codec Object
+     */
     public CookieJsonWebTokenValidator(JsonWebTokenCodec codec) {
         this.codec = codec;
     }
@@ -28,20 +43,17 @@ public class CookieJsonWebTokenValidator implements TokenValidator {
         final MultiValueMap<String, HttpCookie> cookies = request.getCookies();
         if (!cookies.isEmpty()) {
             for (final String key : cookies.keySet()) {
-                if ("P6e-User-Auth".equalsIgnoreCase(key)) {
-                    String content = null;
+                if (AUTH_COOKIE_NAME.equalsIgnoreCase(key)) {
                     for (final HttpCookie cookie : cookies.get(key)) {
-                        content = codec.decryption(cookie.getValue());
+                        String content = codec.decryption(cookie.getValue());
                         if (content != null) {
-                            break;
+                            return Mono.just(SpringUtil.getBean(UserBuilder.class).create(content));
                         }
                     }
-                    return Mono.just(SpringUtil.getBean(UserBuilder.class).create(content));
                 }
             }
         }
         return Mono.empty();
     }
-
 
 }

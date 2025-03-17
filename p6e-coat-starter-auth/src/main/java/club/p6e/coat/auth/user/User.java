@@ -1,4 +1,4 @@
-package club.p6e.coat.auth;
+package club.p6e.coat.auth.user;
 
 
 import java.util.Map;
