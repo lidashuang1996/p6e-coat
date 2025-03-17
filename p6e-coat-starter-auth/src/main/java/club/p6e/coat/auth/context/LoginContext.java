@@ -133,6 +133,11 @@ public class LoginContext implements Serializable {
         public static class Request implements Serializable {
 
             /**
+             * Content
+             */
+            private String content;
+
+            /**
              * Custom Data
              */
             private Map<String, Object> data = new HashMap<>();
@@ -149,6 +154,11 @@ public class LoginContext implements Serializable {
         @Data
         @Accessors(chain = true)
         public static class Request implements Serializable {
+
+            /**
+             * Content
+             */
+            private String content;
 
             /**
              * Custom Data

@@ -2,6 +2,8 @@ package club.p6e.coat.auth.web.reactive.token;
 
 import club.p6e.coat.auth.JsonWebTokenCodec;
 import club.p6e.coat.auth.User;
+import club.p6e.coat.auth.UserBuilder;
+import club.p6e.coat.common.utils.SpringUtil;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -29,7 +31,7 @@ public class LocalStorageJsonWebTokenValidator implements TokenValidator {
                 if (item.startsWith("Bearer ")) {
                     final String content = codec.decryption(item.substring("Bearer ".length()));
                     if (content != null) {
-                        return Mono.just(User.create(content));
+                        return Mono.just(SpringUtil.getBean(UserBuilder.class).create(content));
                     }
                 }
             }

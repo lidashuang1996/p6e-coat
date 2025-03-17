@@ -37,12 +37,14 @@ public class QuickResponseCodeLoginRedisCache extends RedisCache implements Quic
 
     @Override
     public Mono<String> get(String key) {
+        System.out.println("duqu  >>> " + CACHE_PREFIX + key);
         return template.opsForValue().get(CACHE_PREFIX + key);
     }
 
     @Override
     public Mono<String> set(String key, String value) {
         final String nk = CACHE_PREFIX + key;
+        System.out.println("NK >>> " + nk + " >>>> " + value);
         return template.opsForValue().set(nk, value, Duration.ofSeconds(EXPIRATION_TIME)).map(b -> nk);
     }
 

@@ -25,14 +25,14 @@ import java.util.List;
  * @author lidashuang
  * @version 1.0
  */
-public class VerificationCodeAcquisitionServiceImpl implements VerificationCodeAcquisitionService {
+public class VerificationCodeLoginAcquisitionServiceImpl implements VerificationCodeLoginAcquisitionService {
 
     /**
      * VERIFICATION CODE LOGIN TEMPLATE
      */
     private static final String VERIFICATION_CODE_LOGIN_TEMPLATE = "VERIFICATION_CODE_LOGIN_TEMPLATE";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(VerificationCodeAcquisitionServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(VerificationCodeLoginAcquisitionServiceImpl.class);
 
     /**
      * 用户存储库
@@ -50,7 +50,7 @@ public class VerificationCodeAcquisitionServiceImpl implements VerificationCodeA
      * @param repository User Repository Object
      * @param cache      Verification Code Login Cache Object
      */
-    public VerificationCodeAcquisitionServiceImpl(
+    public VerificationCodeLoginAcquisitionServiceImpl(
             UserRepository repository,
             VerificationCodeLoginCache cache
     ) {
@@ -66,10 +66,10 @@ public class VerificationCodeAcquisitionServiceImpl implements VerificationCodeA
                 // register account does not exist
                 b ? execute(exchange, param.getAccount(), param.getLanguage())
                         // register account exist
-                        : Mono.error(GlobalExceptionContext.exceptionAccountExistException(
+                        : Mono.error(GlobalExceptionContext.exceptionAccountNotExistException(
                         this.getClass(),
                         "fun execute(ServerWebExchange exchange, RegisterContext.Acquisition.Request param).",
-                        "Verification code register acquisition, register account exist exception."
+                        "verification code login acquisition, login account not exist exception."
                 )));
     }
 
@@ -85,7 +85,7 @@ public class VerificationCodeAcquisitionServiceImpl implements VerificationCodeA
             case MAILBOX -> repository.findByMailbox(account);
             case ACCOUNT -> repository.findByAccount(account);
             case PHONE_OR_MAILBOX -> repository.findByPhoneOrMailbox(account);
-        }).map(u -> false).defaultIfEmpty(true);
+        }).map(u -> true).defaultIfEmpty(false);
     }
 
     private Mono<LoginContext.VerificationCodeAcquisition.Dto> execute(ServerWebExchange exchange, String account, String language) {
@@ -106,14 +106,14 @@ public class VerificationCodeAcquisitionServiceImpl implements VerificationCodeA
                         final PushMessageEvent event = new PushMessageEvent(this, List.of(account), VERIFICATION_CODE_LOGIN_TEMPLATE, language, new HashMap<>() {{
                             put("code", code);
                         }});
-                        SpringUtil.getBean(ApplicationContext.class).publishEvent(event);
+                        SpringUtil.getApplicationContext().publishEvent(event);
                         return new LoginContext.VerificationCodeAcquisition.Dto().setAccount(account);
                     });
         } else {
             return Mono.error(GlobalExceptionContext.exceptionAccountException(
                     this.getClass(),
                     "fun execute(ServerWebExchange exchange, String account, String language).",
-                    "Verification code register acquisition, register account format verification exception."
+                    "verification code login acquisition, login account format verification exception."
             ));
         }
     }

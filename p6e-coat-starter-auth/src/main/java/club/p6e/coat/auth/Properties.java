@@ -63,7 +63,7 @@ public class Properties implements Serializable {
     /**
      * 认证的账号模式
      */
-    private Mode mode = Mode.ACCOUNT;
+    private Mode mode = Mode.PHONE_OR_MAILBOX;
 
     /**
      * 模式
@@ -161,7 +161,7 @@ public class Properties implements Serializable {
             /**
              * 开启账号密码登录时候是否对密码进行加密
              */
-            private boolean enableTransmissionEncryption = false;
+            private boolean enableTransmissionEncryption = true;
         }
 
         /**
@@ -176,7 +176,7 @@ public class Properties implements Serializable {
              * 是否开启验证码登录功能
              * 开启验证码登录功能，账号模式需要为手机模式或邮箱模式或手机或者邮箱模式
              */
-            private boolean enable = false;
+            private boolean enable = true;
         }
 
         /**
@@ -190,7 +190,7 @@ public class Properties implements Serializable {
             /**
              * 是否开启二维码扫码登录功能
              */
-            private boolean enable = false;
+            private boolean enable = true;
         }
 
         /**

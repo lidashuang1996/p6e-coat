@@ -32,12 +32,12 @@ public class CookieCacheTokenGenerator implements TokenGenerator {
         final Properties.Token properties = Properties.getInstance().getToken();
         final String token = token();
         final String device = context.getAttribute(Properties.P6E_DEVICE_ATTRIBUTE_KEY);
-        final ServerHttpResponse response = context.getResponse();
-        return cache.set(user.id(), device == null ? "PC" : device, token, user.serialize()).flatMap(m -> {
-            response.addCookie(ResponseCookie.from(Properties.P6E_USER_AUTH_COOKIE_NAME, token)
-                    .maxAge(properties.getDuration().getSeconds()).secure(true).build());
-            return Mono.just("SUCCESS");
-        });
+        return cache
+                .set(user.id(), device == null ? "PC" : device, token, user.serialize())
+                .flatMap(m -> Mono.just(ResponseCookie
+                        .from(Properties.P6E_USER_AUTH_COOKIE_NAME, token)
+                        .maxAge(properties.getDuration().getSeconds()).secure(true).build()
+                ));
     }
 
 }

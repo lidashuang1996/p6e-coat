@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
-public class QuickResponseCodeCallbackServiceImpl implements QuickResponseCodeCallbackService {
+public class QuickResponseCodeLoginCallbackServiceImpl implements QuickResponseCodeLoginCallbackService {
 
     /**
      * Token Validator Object
@@ -31,7 +31,7 @@ public class QuickResponseCodeCallbackServiceImpl implements QuickResponseCodeCa
      * @param validator Token Validator Object
      * @param cache     Quick Response Code Login Cache Object
      */
-    public QuickResponseCodeCallbackServiceImpl(TokenValidator validator, QuickResponseCodeLoginCache cache) {
+    public QuickResponseCodeLoginCallbackServiceImpl(TokenValidator validator, QuickResponseCodeLoginCache cache) {
         this.cache = cache;
         this.validator = validator;
     }
@@ -40,13 +40,20 @@ public class QuickResponseCodeCallbackServiceImpl implements QuickResponseCodeCa
     public Mono<LoginContext.QuickResponseCodeCallback.Dto> execute(
             ServerWebExchange exchange, LoginContext.QuickResponseCodeCallback.Request param) {
         final String content = param.getContent();
+        System.out.println("Content: " + content);
         return validator
                 .execute(exchange)
+                .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionAuthException(
+                        this.getClass(),
+                        "fun execute(ServerWebExchange exchange, LoginContext.QuickResponseCodeCallback.Request param)",
+                        "quick response code callback login auth exception."
+                )))
                 .flatMap(u -> cache.get(content).switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(
                         this.getClass(),
                         "fun execute(ServerWebExchange exchange, LoginContext.QuickResponseCodeCallback.Request param)",
                         "quick response code callback login cache data does not exist or expire exception."
                 ))).flatMap(s -> {
+                    System.out.println("sssss >>> " + s);
                     if (QuickResponseCodeLoginCache.isEmpty(s)) {
                         return cache.set(content, u.id()).map(b ->
                                 new LoginContext.QuickResponseCodeCallback.Dto().setContent("SUCCESS"));

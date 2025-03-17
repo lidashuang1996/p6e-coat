@@ -2,7 +2,6 @@ package club.p6e.coat.auth.web.reactive;
 
 import club.p6e.coat.auth.PasswordEncryptorImpl;
 import club.p6e.coat.auth.Properties;
-import club.p6e.coat.auth.web.reactive.aspect.ServerHttpRequestAspect;
 import club.p6e.coat.auth.web.reactive.cache.memory.*;
 import club.p6e.coat.auth.web.reactive.cache.memory.support.ReactiveMemoryTemplate;
 import club.p6e.coat.auth.web.reactive.cache.redis.*;
@@ -123,6 +122,8 @@ public class ServerConfig {
                 case REDIS -> register(QuickResponseCodeLoginRedisCache.class);
                 case MEMORY -> register(QuickResponseCodeLoginMemoryCache.class);
             }
+            register(QuickResponseCodeLoginAcquisitionServiceImpl.class);
+            register(QuickResponseCodeLoginCallbackServiceImpl.class);
             register(QuickResponseCodeLoginServiceImpl.class);
             register(QuickResponseCodeLoginController.class);
         }
@@ -136,7 +137,8 @@ public class ServerConfig {
                 case MEMORY -> register(VerificationCodeLoginMemoryCache.class);
             }
             register(VerificationCodeLoginServiceImpl.class);
-            register(VerificationCodeLoginHandler.class);
+            register(VerificationCodeLoginAcquisitionServiceImpl.class);
+            register(VerificationCodeLoginController.class);
         }
     }
 

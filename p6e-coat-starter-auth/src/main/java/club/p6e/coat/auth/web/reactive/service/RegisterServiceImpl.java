@@ -83,7 +83,7 @@ public class RegisterServiceImpl implements RegisterService {
                 .flatMap(u -> SpringUtil
                         .getBean(TransactionalOperator.class)
                         .execute(status -> userRepository
-                                .create(User.create(param.getData()))
+                                .create(SpringUtil.getBean(UserBuilder.class).create(param.getData()))
                                 .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionDataBaseException(
                                         this.getClass(),
                                         "fun executeAccountMode(String account, RegisterContext.Request param).",
@@ -111,7 +111,7 @@ public class RegisterServiceImpl implements RegisterService {
                 .flatMap(u -> SpringUtil
                         .getBean(TransactionalOperator.class)
                         .execute(status -> userRepository
-                                .create(User.create(param.getData()))
+                                .create(SpringUtil.getBean(UserBuilder.class).create(param.getData()))
                                 .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionDataBaseException(
                                         this.getClass(),
                                         "fun executePhoneMode(String account, RegisterContext.Request param).",
@@ -139,7 +139,7 @@ public class RegisterServiceImpl implements RegisterService {
                 .flatMap(u -> SpringUtil
                         .getBean(TransactionalOperator.class)
                         .execute(status -> userRepository
-                                .create(User.create(param.getData()))
+                                .create(SpringUtil.getBean(UserBuilder.class).create(param.getData()))
                                 .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionDataBaseException(
                                         this.getClass(),
                                         "fun executeMailboxMode(String account, RegisterContext.Request param).",
@@ -167,7 +167,7 @@ public class RegisterServiceImpl implements RegisterService {
                 .flatMap(u -> SpringUtil
                         .getBean(TransactionalOperator.class)
                         .execute(status -> userRepository
-                                .create(User.create(param.getData()))
+                                .create(SpringUtil.getBean(UserBuilder.class).create(param.getData()))
                                 .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionDataBaseException(
                                         this.getClass(),
                                         "fun executePhoneOrMailboxMode(String account, RegisterContext.Request param).",

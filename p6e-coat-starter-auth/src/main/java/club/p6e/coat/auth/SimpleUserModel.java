@@ -1,9 +1,12 @@
 package club.p6e.coat.auth;
 
+import club.p6e.coat.common.utils.JsonUtil;
+import club.p6e.coat.common.utils.TransformationUtil;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -28,6 +31,26 @@ public class SimpleUserModel implements User, Serializable {
     private String avatar;
     private String description;
     private String password;
+
+    public SimpleUserModel(String content) {
+        this(JsonUtil.fromJsonToMap(content, String.class, Object.class));
+    }
+
+    public SimpleUserModel(Map<String, Object> content) {
+        this.id = TransformationUtil.objectToInteger(content.get("id"));
+        this.status = TransformationUtil.objectToInteger(content.get("status"));
+        this.enabled = TransformationUtil.objectToInteger(content.get("enabled"));
+        this.internal = TransformationUtil.objectToInteger(content.get("internal"));
+        this.administrator = TransformationUtil.objectToInteger(content.get("administrator"));
+        this.account = TransformationUtil.objectToString(content.get("account"));
+        this.phone = TransformationUtil.objectToString(content.get("phone"));
+        this.mailbox = TransformationUtil.objectToString(content.get("mailbox"));
+        this.name = TransformationUtil.objectToString(content.get("name"));
+        this.nickname = TransformationUtil.objectToString(content.get("nickname"));
+        this.language = TransformationUtil.objectToString(content.get("language"));
+        this.avatar = TransformationUtil.objectToString(content.get("avatar"));
+        this.description = TransformationUtil.objectToString(content.get("description"));
+    }
 
     public SimpleUserModel(Integer id, String account, String phone, String mailbox, String password) {
         this.id = id;
@@ -86,7 +109,21 @@ public class SimpleUserModel implements User, Serializable {
 
     @Override
     public String serialize() {
-        return "";
+        return JsonUtil.toJson(new HashMap<>() {{
+            put("id", id);
+            put("status", status);
+            put("enabled", enabled);
+            put("internal", internal);
+            put("administrator", administrator);
+            put("account", account);
+            put("phone", phone);
+            put("mailbox", mailbox);
+            put("name", name);
+            put("nickname", nickname);
+            put("language", language);
+            put("avatar", avatar);
+            put("description", description);
+        }});
     }
 
     @Override

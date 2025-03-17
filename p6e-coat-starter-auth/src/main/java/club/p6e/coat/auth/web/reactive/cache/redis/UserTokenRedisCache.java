@@ -39,6 +39,7 @@ public class UserTokenRedisCache extends RedisCache implements UserTokenCache {
 
     @Override
     public Mono<Model> set(String uid, String device, String token, String content) {
+        System.out.println("contentcontentcontent >> " + content);
         final Model model = new Model().setUid(uid).setDevice(device).setToken(token);
         final String json = JsonUtil.toJson(model);
         if (json == null) {

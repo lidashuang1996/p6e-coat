@@ -1,7 +1,9 @@
 package club.p6e.coat.auth.web.reactive.token;
 
 import club.p6e.coat.auth.User;
+import club.p6e.coat.auth.UserBuilder;
 import club.p6e.coat.auth.web.reactive.cache.UserTokenCache;
+import club.p6e.coat.common.utils.SpringUtil;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -28,7 +30,12 @@ public class LocalStorageCacheTokenValidator implements TokenValidator {
         if (list != null && !list.isEmpty()) {
             return execute(new CopyOnWriteArrayList<>(list))
                     .flatMap(m -> cache.getUser(m.getUid()))
-                    .flatMap(user -> Mono.just(User.create(user)));
+                    .flatMap(content -> {
+                        System.out.println("ccccc   " + content);
+                        System.out.println("ccccc   " + SpringUtil.getBean(UserBuilder.class));
+                        System.out.println("ccccc   " + SpringUtil.getBean(UserBuilder.class).create(content));
+                        return Mono.just(SpringUtil.getBean(UserBuilder.class).create(content));
+                    });
         }
         return Mono.empty();
     }

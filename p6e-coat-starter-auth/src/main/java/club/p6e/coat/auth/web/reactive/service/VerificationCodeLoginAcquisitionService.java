@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
-public interface VerificationCodeAcquisitionService {
+public interface VerificationCodeLoginAcquisitionService {
 
     /**
      * Execute Verification Code Acquisition Operation

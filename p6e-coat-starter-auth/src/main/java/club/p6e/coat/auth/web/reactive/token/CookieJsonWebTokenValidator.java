@@ -2,6 +2,8 @@ package club.p6e.coat.auth.web.reactive.token;
 
 import club.p6e.coat.auth.JsonWebTokenCodec;
 import club.p6e.coat.auth.User;
+import club.p6e.coat.auth.UserBuilder;
+import club.p6e.coat.common.utils.SpringUtil;
 import org.springframework.http.HttpCookie;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.util.MultiValueMap;
@@ -34,7 +36,7 @@ public class CookieJsonWebTokenValidator implements TokenValidator {
                             break;
                         }
                     }
-                    return Mono.just(User.create(content));
+                    return Mono.just(SpringUtil.getBean(UserBuilder.class).create(content));
                 }
             }
         }

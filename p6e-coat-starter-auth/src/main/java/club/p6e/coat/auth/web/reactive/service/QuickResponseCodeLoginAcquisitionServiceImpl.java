@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
-public class QuickResponseCodeAcquisitionServiceImpl implements QuickResponseCodeAcquisitionService {
+public class QuickResponseCodeLoginAcquisitionServiceImpl implements QuickResponseCodeLoginAcquisitionService {
 
     /**
      * Quick Response Code Login Cache Object
@@ -26,7 +26,7 @@ public class QuickResponseCodeAcquisitionServiceImpl implements QuickResponseCod
      *
      * @param cache Quick Response Code Login Cache Object
      */
-    public QuickResponseCodeAcquisitionServiceImpl(QuickResponseCodeLoginCache cache) {
+    public QuickResponseCodeLoginAcquisitionServiceImpl(QuickResponseCodeLoginCache cache) {
         this.cache = cache;
     }
 

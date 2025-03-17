@@ -97,7 +97,8 @@ public class UserRepositoryImpl implements UserRepository {
                         + " WHERE \"phone\" = :ACCOUNT OR \"mailbox\" = :ACCOUNT ; ", "TABLE", TABLE))
                 .bind("ACCOUNT", account)
                 .map(this::convertReadableToUser)
-                .first();
+                .first()
+                .flatMap(u -> findPasswordById(Integer.valueOf(u.id())).map(u::password));
     }
 
     @Override
