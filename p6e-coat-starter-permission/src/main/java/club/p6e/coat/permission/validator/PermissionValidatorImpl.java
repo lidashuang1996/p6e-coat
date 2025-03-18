@@ -22,7 +22,7 @@ import java.util.List;
 public class PermissionValidatorImpl implements PermissionValidator {
 
     /**
-     * Common Char
+     * COMMON CHAR
      */
     private static final String COMMON_CHAR = "*";
 

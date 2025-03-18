@@ -1,6 +1,4 @@
-package club.p6e.coat.permission.web.reactive.task;
-
-import reactor.core.publisher.Mono;
+package club.p6e.coat.permission;
 
 /**
  * Permission Task
@@ -13,6 +11,6 @@ public interface PermissionTask {
     /**
      * Execute Inject Permission Data
      */
-    Mono<Long> execute() ;
+    Object execute() ;
 
 }
