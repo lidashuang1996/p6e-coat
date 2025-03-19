@@ -8,25 +8,25 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * Auth Gateway Filter Factory
+ * Authentication Gateway Filter Factory
  *
  * @author lidashuang
  * @version 1.0
  */
 @Component
-public class AuthGatewayFilterFactory extends AbstractGatewayFilterFactory<Object> {
+public class AuthenticationGatewayFilterFactory extends AbstractGatewayFilterFactory<Object> {
 
     /**
-     * AuthGatewayService object
+     * Authentication Gateway Service Object
      */
-    private final AuthGatewayService service;
+    private final AuthenticationGatewayService service;
 
     /**
-     * Constructor initializers
+     * Constructor Initializers
      *
-     * @param service AuthGatewayService object
+     * @param service Authentication Gateway Service object
      */
-    public AuthGatewayFilterFactory(AuthGatewayService service) {
+    public AuthenticationGatewayFilterFactory(AuthenticationGatewayService service) {
         this.service = service;
     }
 
@@ -36,11 +36,11 @@ public class AuthGatewayFilterFactory extends AbstractGatewayFilterFactory<Objec
     }
 
     /**
-     * CustomGatewayFilter
+     * Custom Gateway Filter
      *
-     * @param service AuthGatewayService object
+     * @param service Authentication Gateway Service Object
      */
-    private record CustomGatewayFilter(AuthGatewayService service) implements GatewayFilter {
+    private record CustomGatewayFilter(AuthenticationGatewayService service) implements GatewayFilter {
 
         @Override
         public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {

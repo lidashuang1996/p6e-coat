@@ -22,10 +22,10 @@ import java.util.concurrent.TimeUnit;
  */
 @Component
 @ConditionalOnMissingBean(
-        value = AuthGatewayCache.class,
-        ignored = AuthGatewayRedisCache.class
+        value = AuthenticationGatewayCache.class,
+        ignored = AuthenticationGatewayRedisCache.class
 )
-public class AuthGatewayRedisCache implements AuthGatewayCache {
+public class AuthenticationGatewayRedisCache implements AuthenticationGatewayCache {
 
     /**
      * ReactiveStringRedisTemplate object
@@ -37,7 +37,7 @@ public class AuthGatewayRedisCache implements AuthGatewayCache {
      *
      * @param template ReactiveRedisConnectionFactory object
      */
-    public AuthGatewayRedisCache(ReactiveStringRedisTemplate template) {
+    public AuthenticationGatewayRedisCache(ReactiveStringRedisTemplate template) {
         this.template = template;
     }
 

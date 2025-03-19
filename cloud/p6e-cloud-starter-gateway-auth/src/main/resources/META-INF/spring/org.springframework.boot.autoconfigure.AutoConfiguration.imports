@@ -1,4 +1,4 @@
-club.p6e.cloud.gateway.auth.AuthGatewayService
-club.p6e.cloud.gateway.auth.AuthGatewayRedisCache
-club.p6e.cloud.gateway.auth.AuthGatewayFilterFactory
+club.p6e.cloud.gateway.auth.AuthenticationGatewayService
+club.p6e.cloud.gateway.auth.AuthenticationGatewayRedisCache
+club.p6e.cloud.gateway.auth.AuthenticationGatewayFilterFactory
 club.p6e.cloud.gateway.auth.AuthGlobalFilter
