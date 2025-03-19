@@ -1,9 +1,5 @@
 package club.p6e.coat.permission;
 
-import reactor.core.publisher.Mono;
-
-import java.util.List;
-
 /**
  * Permission Repository
  *
@@ -19,6 +15,6 @@ public interface PermissionRepository {
      * @param size Size Data
      * @return Permission Details List Object
      */
-    Mono<List<PermissionDetails>> getPermissionDetailsList(Integer page, Integer size);
+    Object getPermissionDetailsList(Integer page, Integer size);
 
 }

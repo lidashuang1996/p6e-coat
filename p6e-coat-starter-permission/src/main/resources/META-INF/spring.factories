@@ -1,11 +1,9 @@
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-club.p6e.coat.permission.config.SchedulingConfig,\
-club.p6e.coat.permission.web.reactive.PermissionRepositoryImpl,\
-club.p6e.coat.permission.matcher.PermissionPathMatcherImpl,\
 club.p6e.coat.permission.PermissionUpdaters,\
+club.p6e.coat.permission.matcher.PermissionPathMatcherImpl,\
+club.p6e.coat.permission.validator.PermissionValidatorImpl,\
+club.p6e.coat.permission.web.PermissionTaskImpl,\
+club.p6e.coat.permission.web.PermissionRepositoryImpl,\
 club.p6e.coat.permission.web.reactive.PermissionTaskImpl,\
-club.p6e.coat.permission.validator.PermissionValidatorImpl
-
-
-
+club.p6e.coat.permission.web.reactive.PermissionRepositoryImpl

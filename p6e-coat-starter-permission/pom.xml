@@ -5,57 +5,56 @@
     <parent>
         <groupId>club.p6e.coat</groupId>
         <artifactId>p6e-coat-starter-parent</artifactId>
-        <version>3.1.0</version>
+        <version>3.4.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <artifactId>p6e-coat-starter-permission</artifactId>
-    <version>3.1.0</version>
+    <version>3.4.2</version>
     <name>p6e-coat-starter-permission</name>
     <description>p6e-coat-starter-permission</description>
 
     <dependencies>
-
-        <!--  R2DBC POOL [START]  -->
-        <dependency>
-            <groupId>io.r2dbc</groupId>
-            <artifactId>r2dbc-pool</artifactId>
-        </dependency>
-        <!--  R2DBC POOL [END]  -->
-
-        <!--  R2DBC PostGreSQL [START]  -->
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>r2dbc-postgresql</artifactId>
-        </dependency>
-
-        <!--  R2DBC PostGreSQL [END]  -->
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-            <version>${netty.version}</version>
-        </dependency>
-
+        <!-- Spring Web [ START ] -->
+        <!-- Spring Web [ START ] -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-r2dbc</artifactId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <!-- scope provided dependency -->
+            <scope>provided</scope>
         </dependency>
+        <!-- Spring Web [ END ] -->
 
-        <!-- p6e coat common [START] -->
+        <!-- PostgresSQL [ START ] -->
         <dependency>
-            <groupId>club.p6e.coat</groupId>
-            <artifactId>p6e-coat-starter-common</artifactId>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <!-- scope provided dependency -->
+            <scope>provided</scope>
         </dependency>
-        <!-- p6e coat common [END] -->
+        <!-- PostgresSQL [ END ] -->
+
+        <!-- Spring JDBC [ START ] -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+        <!-- Spring JDBC [ END ] -->
+        <!-- Spring Web [ END ] -->
 
         <!-- Spring Web Flux [ START ] -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
-            <!-- scope provided dependency -->
-            <scope>provided</scope>
         </dependency>
         <!-- Spring Web Flux [ END ] -->
+
+        <!-- P6e Coat Common [START] -->
+        <dependency>
+            <groupId>club.p6e.coat</groupId>
+            <artifactId>p6e-coat-starter-common</artifactId>
+        </dependency>
+        <!-- P6e Coat Common [END] -->
 
     </dependencies>
 </project>

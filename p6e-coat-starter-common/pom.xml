@@ -5,11 +5,11 @@
     <parent>
         <groupId>club.p6e.coat</groupId>
         <artifactId>p6e-coat-starter-parent</artifactId>
-        <version>3.1.0</version>
+        <version>3.4.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <artifactId>p6e-coat-starter-common-2</artifactId>
-    <version>3.1.0</version>
+    <artifactId>p6e-coat-starter-common</artifactId>
+    <version>3.4.2</version>
     <name>p6e-coat-starter-common</name>
     <description>p6e-coat-starter-common</description>
 

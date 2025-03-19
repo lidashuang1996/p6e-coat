@@ -54,6 +54,21 @@ public class PermissionPathMatcherImpl implements PermissionPathMatcher {
     }
 
     @Override
+    public List<PermissionDetails> match(String path, int mode) {
+        final List<PermissionDetails> list = match(path);
+        if (mode == 1) {
+            list.removeIf(details -> !details.getPath().equals(path));
+            return list;
+        } else if (mode == 0) {
+            final List<PermissionDetails> tmp = new ArrayList<>(list);
+            list.removeIf(details -> !details.getPath().equals(path));
+            return list.isEmpty() ? tmp : list;
+        } else {
+            return list;
+        }
+    }
+
+    @Override
     public void register(PermissionDetails model) {
         if (model != null
                 && model.getGid() != null

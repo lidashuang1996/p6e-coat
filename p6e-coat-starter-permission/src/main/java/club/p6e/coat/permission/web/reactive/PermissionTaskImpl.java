@@ -7,6 +7,7 @@ import club.p6e.coat.permission.PermissionTask;
 import club.p6e.coat.permission.matcher.PermissionPathMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -27,10 +28,11 @@ import java.util.concurrent.atomic.AtomicInteger;
         value = PermissionTask.class,
         ignored = PermissionTaskImpl.class
 )
+@ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
 public class PermissionTaskImpl implements PermissionTask {
 
     /**
-     * Inject log object
+     * Inject Log Object
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(PermissionTaskImpl.class);
 
@@ -61,10 +63,23 @@ public class PermissionTaskImpl implements PermissionTask {
 
     private Mono<List<PermissionDetails>> execute(int page, int size, List<PermissionDetails> list) {
         final PermissionRepository repository = SpringUtil.getBean(PermissionRepository.class);
-        return repository.getPermissionDetailsList(page, size).flatMap(l -> {
-            list.addAll(l);
-            return l.isEmpty() ? Mono.just(l) : execute(page + 1, size, list);
-        }).switchIfEmpty(Mono.just(list));
+        final Object data = repository.getPermissionDetailsList(page, size);
+        if (data instanceof final Mono<?> mono) {
+            return mono.flatMap(o -> {
+                final List<PermissionDetails> tmp = new ArrayList<>();
+                if (o instanceof List<?> l) {
+                    for (final Object i : l) {
+                        if (i instanceof PermissionDetails details) {
+                            tmp.add(details);
+                        }
+                    }
+                }
+                list.addAll(tmp);
+                return tmp.isEmpty() ? Mono.just(list) : execute(page + 1, size, list);
+            }).switchIfEmpty(Mono.just(list));
+        } else {
+            return Mono.just(list);
+        }
     }
 
 }

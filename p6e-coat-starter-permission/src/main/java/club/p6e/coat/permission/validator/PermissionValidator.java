@@ -1,7 +1,6 @@
 package club.p6e.coat.permission.validator;
 
 import club.p6e.coat.permission.PermissionDetails;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -21,7 +20,7 @@ public interface PermissionValidator {
      * @param groups Permission Group
      * @return Permission Details Object
      */
-    Mono<PermissionDetails> execute(String path, String method, List<String> groups);
+    PermissionDetails execute(String path, String method, List<String> groups);
 
     /**
      * Validate Request Permission
@@ -32,6 +31,6 @@ public interface PermissionValidator {
      * @param groups  Permission Group
      * @return Permission Details Object
      */
-    Mono<PermissionDetails> execute(String path, String method, String project, List<String> groups);
+    PermissionDetails execute(String path, String method, String project, List<String> groups);
 
 }

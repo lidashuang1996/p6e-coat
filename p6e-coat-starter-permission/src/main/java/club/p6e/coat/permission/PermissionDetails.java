@@ -63,6 +63,11 @@ public class PermissionDetails implements Serializable {
     private String mark;
 
     /**
+     * Config
+     */
+    private String config;
+
+    /**
      * Attribute
      */
     private String attribute;

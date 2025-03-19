@@ -5,11 +5,11 @@
     <parent>
         <groupId>club.p6e.coat</groupId>
         <artifactId>p6e-coat-starter-parent</artifactId>
-        <version>3.1.0</version>
+        <version>3.4.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <artifactId>p6e-coat-starter-auth-2</artifactId>
-    <version>3.1.0</version>
+    <artifactId>p6e-coat-starter-auth</artifactId>
+    <version>3.4.2</version>
     <name>p6e-coat-starter-auth</name>
     <description>p6e-coat-starter-auth</description>
 
@@ -20,8 +20,6 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.auth.jwt>4.4.0</java.auth.jwt>
-        <r2dbc.postgresql>1.0.0.RELEASE</r2dbc.postgresql>
     </properties>
 
     <dependencies>
@@ -30,9 +28,59 @@
         <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
-            <version>${java.auth.jwt}</version>
         </dependency>
         <!-- Java JWT [END] -->
+
+        <!-- Spring Aop [START] -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <!-- Spring Aop [END] -->
+
+        <!-- Web [START] -->
+        <!-- Spring Web [START] -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <!-- scope provided dependency -->
+            <scope>provided</scope>
+        </dependency>
+        <!-- Spring Web [END] -->
+
+        <!-- Spring Data [ START ] -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <!-- scope provided dependency -->
+            <scope>provided</scope>
+        </dependency>
+        <!-- Spring Data [ END ] -->
+
+        <!-- Spring Redis [START] -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+            <!-- scope provided dependency -->
+            <scope>provided</scope>
+        </dependency>
+        <!-- Spring Redis [END] -->
+        <!-- Web [END] -->
+
+        <!-- Reactive [START] -->
+        <!-- Spring Web Flux [START] -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+        <!-- Spring Web Flux [END] -->
+
+        <!-- Spring Data [ START ] -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>r2dbc-postgresql</artifactId>
+        </dependency>
+        <!-- Spring Data [ END ] -->
 
         <!-- Spring Reactive Redis [START] -->
         <dependency>
@@ -40,48 +88,15 @@
             <artifactId>spring-boot-starter-data-redis-reactive</artifactId>
         </dependency>
         <!-- Spring Reactive Redis [END] -->
+        <!-- Reactive [END] -->
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
-        </dependency>
-
-        <!-- Spring Data [ START ] -->
-        <!-- Spring Data R2DBC [ START ] -->
-        <dependency>
-            <groupId>io.r2dbc</groupId>
-            <artifactId>r2dbc-spi</artifactId>
-            <version>${r2dbc.postgresql}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>r2dbc-postgresql</artifactId>
-            <version>${r2dbc.postgresql}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-            <version>${netty.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-r2dbc</artifactId>
-        </dependency>
-        <!--  Spring Data R2DBC PostGrepSQL [ END ] -->
-        <!-- Spring Data [ END ] -->
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webflux</artifactId>
-        </dependency>
 
         <!-- P6e Coat Common [ START ] -->
         <dependency>
             <groupId>club.p6e.coat</groupId>
-            <artifactId>p6e-coat-starter-common-2</artifactId>
-            <version>3.1.0</version>
+            <artifactId>p6e-coat-starter-common</artifactId>
         </dependency>
         <!-- P6e Coat Common [ END ] -->
-        
+
     </dependencies>
 </project>

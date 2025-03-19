@@ -1,0 +1,34 @@
+{
+  "groups": [],
+  "properties": [
+    {
+      "name": "p6e.cloud.gateway.log.enable",
+      "type": "java.lang.Boolean",
+      "description": "Gateway enabled for logging.",
+      "defaultValue": false
+    },
+    {
+      "name": "p6e.cloud.gateway.log.details",
+      "type": "java.lang.Boolean",
+      "description": "Gateway enabled for logging details.",
+      "defaultValue": false
+    },
+    {
+      "name": "p6e.cloud.gateway.request-header-clear",
+      "type": "java.util.List<java.lang.String>",
+      "description": "Gateway request header clear list.",
+      "defaultValue": [
+        "*"
+      ]
+    },
+    {
+      "name": "p6e.cloud.gateway.response-header-only",
+      "type": "java.util.List<java.lang.String>",
+      "description": "Gateway response header only list.",
+      "defaultValue": [
+        "*"
+      ]
+    }
+  ]
+}
+
