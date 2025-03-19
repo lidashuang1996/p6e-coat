@@ -26,7 +26,10 @@ public interface PermissionPathMatcher {
      * Matching Path
      *
      * @param path Path
-     * @param mode Mode -1 模糊匹配 0 优选完全匹配其次模糊匹配 1 完全匹配
+     * @param mode Mode
+     *             Mode -1  Fuzzy Matching
+     *             Mode  1  Perfect Matching
+     *             Mode  0  Complete Matching Followed By Fuzzy Matching
      * @return Permission Details List Object
      */
     @SuppressWarnings("ALL")

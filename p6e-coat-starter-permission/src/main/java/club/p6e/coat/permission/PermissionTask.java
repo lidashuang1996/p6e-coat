@@ -11,6 +11,6 @@ public interface PermissionTask {
     /**
      * Execute Inject Permission Data
      */
-    Object execute() ;
+    Object execute();
 
 }

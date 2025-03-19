@@ -15,7 +15,8 @@
     <description>p6e-coat-starter-permission</description>
 
     <dependencies>
-        <!-- Spring Web [ START ] -->
+
+        <!-- Web [ START ] -->
         <!-- Spring Web [ START ] -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -38,16 +39,34 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
+            <!-- scope provided dependency -->
+            <scope>provided</scope>
         </dependency>
         <!-- Spring JDBC [ END ] -->
-        <!-- Spring Web [ END ] -->
+        <!-- Web [END] -->
 
+        <!-- Web Flux [ START ] -->
         <!-- Spring Web Flux [ START ] -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
         <!-- Spring Web Flux [ END ] -->
+
+        <!-- R2DBC PostgresSQL [ START ] -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>r2dbc-postgresql</artifactId>
+        </dependency>
+        <!-- R2DBC PostgresSQL [ END ] -->
+
+        <!-- Spring R2DBC [ START ] -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-r2dbc</artifactId>
+        </dependency>
+        <!-- Spring R2DBC [ END ] -->
+        <!-- Web Flux [END] -->
 
         <!-- P6e Coat Common [START] -->
         <dependency>
