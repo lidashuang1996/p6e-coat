@@ -58,8 +58,23 @@ public class PermissionFilter implements WebFilter, Ordered {
     @Nonnull
     @Override
     public Mono<Void> filter(@Nonnull ServerWebExchange exchange, @Nonnull WebFilterChain chain) {
-        final List<String> permissions = new ArrayList<>();
         final ServerHttpRequest request = exchange.getRequest();
+        final PermissionDetails details = validate(request);
+        if (details == null) {
+            return Mono.error(new PermissionException(
+                    this.getClass(),
+                    "filter(ServerWebExchange exchange, WebFilterChain chain).",
+                    "request permission exception."
+            ));
+        } else {
+            exchange.mutate().request(request.mutate().header(
+                    PERMISSION_HEADER, JsonUtil.toJson(details)).build()).build();
+            return chain.filter(exchange);
+        }
+    }
+
+    public PermissionDetails validate(ServerHttpRequest request) {
+        final List<String> permissions = new ArrayList<>();
         final String path = request.getPath().value();
         final String method = request.getMethod().name().toUpperCase();
         final String project = request.getHeaders().getFirst(PROJECT_HEADER);
@@ -78,17 +93,7 @@ public class PermissionFilter implements WebFilter, Ordered {
         } else {
             details = validator.execute(path, method, project, permissions);
         }
-        if (details == null) {
-            return Mono.error(new PermissionException(
-                    this.getClass(),
-                    "filter(ServerWebExchange exchange, WebFilterChain chain).",
-                    "request permission exception."
-            ));
-        } else {
-            exchange.mutate().request(request.mutate().header(
-                    PERMISSION_HEADER, JsonUtil.toJson(details)).build()).build();
-            return chain.filter(exchange);
-        }
+        return details;
     }
 
 }

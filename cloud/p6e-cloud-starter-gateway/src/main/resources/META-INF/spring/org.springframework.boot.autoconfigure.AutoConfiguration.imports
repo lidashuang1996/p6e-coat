@@ -1,9 +1,8 @@
-club.p6e.cloud.gateway.filter.Base64GatewayFilterFactory
-club.p6e.cloud.gateway.filter.LanguageGatewayFilterFactory
-club.p6e.cloud.gateway.filter.VoucherGatewayFilterFactory
-club.p6e.cloud.gateway.CustomLogWebFilter
-club.p6e.cloud.gateway.CustomRequestHeaderClearWebFilter
-club.p6e.cloud.gateway.CustomResponseHeaderOnlyWebFilter
-club.p6e.cloud.gateway.CustomRouteLocator
+club.p6e.cloud.gateway.filter.InjectLanguageGatewayFilterFactory
+club.p6e.cloud.gateway.filter.InjectVoucherGatewayFilterFactory
+club.p6e.cloud.gateway.filter.ValidateVoucherGatewayFilterFactory
+club.p6e.cloud.gateway.filter.Base64EncoderHeaderGatewayFilterFactory
+club.p6e.cloud.gateway.BasicWebFilter
 club.p6e.cloud.gateway.Properties
 club.p6e.cloud.gateway.PropertiesRefresher
+club.p6e.cloud.gateway.RouteLocator

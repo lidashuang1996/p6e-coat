@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>club.p6e.cloud</groupId>
+        <artifactId>p6e-cloud-starter-parent</artifactId>
+        <version>3.4.2</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <artifactId>p6e-cloud-starter-common</artifactId>
+    <version>3.4.2</version>
+    <name>p6e-cloud-starter-common</name>
+    <description>p6e-cloud-starter-common</description>
+
+    <dependencies>
+
+        <!-- Spring Cloud Alibaba Nacos [START] -->
+        <!-- Spring Cloud Alibaba BootStrap [ START ] -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+        </dependency>
+        <!-- Spring Cloud Alibaba BootStrap [ END ] -->
+        <!-- Spring Cloud Alibaba Nacos Config [START] -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+        <!-- Spring Cloud Alibaba Nacos Config [END] -->
+        <!-- Spring Cloud Alibaba Nacos Discovery [START] -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+        <!-- Spring Cloud Alibaba Nacos Discovery [END] -->
+        <!-- Spring Cloud Alibaba Nacos [END] -->
+
+        <!-- P6e Coat Common [START] -->
+        <dependency>
+            <groupId>club.p6e.coat</groupId>
+            <artifactId>p6e-coat-starter-common</artifactId>
+            <version>3.4.2</version>
+        </dependency>
+        <!-- P6e Coat Common [END] -->
+
+        <!-- Spring Reactive Redis [START] -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis-reactive</artifactId>
+            <!-- scope provided dependency -->
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+            <!-- scope provided dependency -->
+            <scope>provided</scope>
+        </dependency>
+        <!-- Spring Reactive Redis [END] -->
+
+    </dependencies>
+</project>

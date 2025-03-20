@@ -43,5 +43,11 @@
         </dependency>
         <!-- P6e Coat Common [END] -->
 
+        <dependency>
+            <groupId>club.p6e.coat</groupId>
+            <artifactId>p6e-coat-starter-auth-token</artifactId>
+            <version>3.4.2</version>
+        </dependency>
+
     </dependencies>
 </project>

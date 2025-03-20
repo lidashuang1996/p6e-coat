@@ -21,9 +21,14 @@ import java.util.List;
 public class PermissionValidatorImpl implements PermissionValidator {
 
     /**
-     * COMMON CHAR
+     * COMMON MARK
      */
-    private static final String COMMON_CHAR = "*";
+    private static final String COMMON_MARK = "*";
+
+    /**
+     * IGNORE MARK
+     */
+    private static final String IGNORE_MARK = "@IGNORE";
 
     /**
      * Permission Path Matcher Object
@@ -47,8 +52,8 @@ public class PermissionValidatorImpl implements PermissionValidator {
                 for (final PermissionDetails permission : permissions) {
                     final String pm = permission.getMethod();
                     final String pg = String.valueOf(permission.getGid());
-                    if ((groups.contains(COMMON_CHAR) || groups.contains(pg))
-                            && (COMMON_CHAR.equals(pm) || method.equalsIgnoreCase(pm))) {
+                    if ((groups.contains(COMMON_MARK) || groups.contains(pg))
+                            && (COMMON_MARK.equals(pm) || method.equalsIgnoreCase(pm))) {
                         return permission;
                     }
                 }
@@ -67,8 +72,8 @@ public class PermissionValidatorImpl implements PermissionValidator {
                     final String pg = String.valueOf(permission.getGid());
                     final String pp = String.valueOf(permission.getPid());
                     if (pp.equals(project)
-                            && (groups.contains(COMMON_CHAR) || groups.contains(pg))
-                            && (COMMON_CHAR.equals(pm) || method.equalsIgnoreCase(pm))) {
+                            && (COMMON_MARK.equals(pm) || method.equalsIgnoreCase(pm))
+                            && (groups.contains(COMMON_MARK) || groups.contains(pg) || permission.getMark().toUpperCase().endsWith(IGNORE_MARK))) {
                         return permission;
                     }
                 }

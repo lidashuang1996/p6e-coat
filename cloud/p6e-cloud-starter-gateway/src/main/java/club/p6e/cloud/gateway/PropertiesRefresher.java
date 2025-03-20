@@ -15,45 +15,43 @@ import org.springframework.stereotype.Component;
 public class PropertiesRefresher {
 
     /**
-     * Inject log objects
+     * Inject Log Object
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesRefresher.class);
 
     /**
-     * Properties object
+     * Properties Object
      */
     private final Properties properties;
 
     /**
-     * CustomRouteLocator object
+     * Custom Route Locator Object
      */
-    private final CustomRouteLocator locator;
+    private final RouteLocator locator;
 
     /**
-     * Constructor initializers
+     * Constructor Initialization
      *
-     * @param properties Properties object
-     * @param locator    CustomRouteLocator object
+     * @param properties Properties Object
+     * @param locator    Custom Route Locator Object
      */
-    public PropertiesRefresher(Properties properties, CustomRouteLocator locator) {
+    public PropertiesRefresher(Properties properties, RouteLocator locator) {
         this.locator = locator;
         this.properties = properties;
         this.locator.refresh(this.properties.getRoutes());
     }
 
     /**
-     * Execute refresh
+     * Execute Refresh
      *
-     * @param properties Properties object
+     * @param properties Properties Object
      */
     @SuppressWarnings("ALL")
     public void execute(Properties properties) {
         LOGGER.info("[ NEW PROPERTIES ] ({}) >>> {}", properties.getClass(), JsonUtil.toJson(properties));
         this.properties.setLog(properties.getLog());
-        this.properties.setRequestHeaderClear(properties.getRequestHeaderClear());
-        this.properties.setResponseHeaderOnly(properties.getResponseHeaderOnly());
         this.properties.setRoutes(properties.getRoutes());
-        // Use custom gateway routing locators to perform new routing configurations
+        // custom gateway routing locators to perform new routing configurations
         this.locator.refresh(this.properties.getRoutes());
     }
 

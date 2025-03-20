@@ -86,4 +86,8 @@ public class PermissionFilter implements Filter, Ordered {
         }
     }
 
+    private PermissionDetails validate(final String path, final PermissionDetails details) {
+
+    }
+
 }
