@@ -55,8 +55,20 @@ public class PermissionFilter implements Filter, Ordered {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws ServletException, IOException {
+        final PermissionDetails details = validate((HttpServletRequest) servletRequest);
+        if (details == null) {
+            throw new PermissionException(
+                    this.getClass(),
+                    "fun doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain).",
+                    "request permission exception."
+            );
+        } else {
+            filterChain.doFilter(servletRequest, servletResponse);
+        }
+    }
+
+    private PermissionDetails validate(HttpServletRequest request) {
         final List<String> permissions = new ArrayList<>();
-        final HttpServletRequest request = (HttpServletRequest) servletRequest;
         final String path = request.getServletPath();
         final String method = request.getMethod().toUpperCase();
         final String project = request.getHeader(PROJECT_HEADER);
@@ -75,19 +87,7 @@ public class PermissionFilter implements Filter, Ordered {
         } else {
             details = validator.execute(path, method, project, permissions);
         }
-        if (details == null) {
-            throw new PermissionException(
-                    this.getClass(),
-                    "fun doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain).",
-                    "request permission exception."
-            );
-        } else {
-            filterChain.doFilter(servletRequest, servletResponse);
-        }
-    }
-
-    private PermissionDetails validate(final String path, final PermissionDetails details) {
-
+        return details;
     }
 
 }
