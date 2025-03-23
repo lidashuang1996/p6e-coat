@@ -1,6 +1,6 @@
 package club.p6e.coat.auth.web.reactive.service;
 
-import club.p6e.coat.auth.user.User;
+import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.context.LoginContext;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;

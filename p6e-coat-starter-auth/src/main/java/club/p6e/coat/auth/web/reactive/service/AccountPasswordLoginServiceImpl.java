@@ -1,7 +1,8 @@
 package club.p6e.coat.auth.web.reactive.service;
 
 import club.p6e.coat.auth.*;
-import club.p6e.coat.auth.user.User;
+import club.p6e.coat.auth.password.PasswordEncryptor;
+import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.web.reactive.repository.UserRepository;
 import club.p6e.coat.auth.web.reactive.ServerHttpRequest;
 import club.p6e.coat.common.utils.JsonUtil;
@@ -70,7 +71,6 @@ public class AccountPasswordLoginServiceImpl implements AccountPasswordLoginServ
     private Mono<String> executePasswordTransmissionDecryption(ServerWebExchange exchange, String password) {
         final boolean enableTransmissionEncryption = Properties.getInstance()
                 .getLogin().getAccountPassword().isEnableTransmissionEncryption();
-        System.out.println("enableTransmissionEncryption >> " + enableTransmissionEncryption);
         if (enableTransmissionEncryption) {
             final PasswordSignatureCache cache;
             if (SpringUtil.exist(PasswordSignatureCache.class)) {

@@ -5,12 +5,12 @@
     <parent>
         <groupId>club.p6e.cloud</groupId>
         <artifactId>p6e-cloud-starter-parent</artifactId>
-        <version>3.1.0</version>
+        <version>3.4.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <artifactId>p6e-cloud-starter-auth</artifactId>
-    <version>3.1.0</version>
+    <version>3.4.2</version>
     <name>p6e-cloud-starter-auth</name>
     <description>p6e-cloud-starter-auth</description>
 

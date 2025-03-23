@@ -75,6 +75,7 @@ public class PermissionTaskImpl implements PermissionTask {
                     }
                 }
                 list.addAll(tmp);
+                System.out.println("list >>>> " + list);
                 return tmp.isEmpty() ? Mono.just(list) : execute(page + 1, size, list);
             }).switchIfEmpty(Mono.just(list));
         } else {

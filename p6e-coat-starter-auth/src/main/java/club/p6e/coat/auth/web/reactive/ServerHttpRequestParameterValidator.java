@@ -3,7 +3,6 @@ package club.p6e.coat.auth.web.reactive;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-
 /**
  * Server Http Request Param Validator
  *

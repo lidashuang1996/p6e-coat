@@ -1,15 +1,13 @@
 package club.p6e.coat.auth.web.reactive;
 
-import club.p6e.coat.auth.PasswordEncryptorImpl;
+import club.p6e.coat.auth.password.PasswordEncryptorImpl;
 import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.web.reactive.cache.memory.*;
 import club.p6e.coat.auth.web.reactive.cache.memory.support.ReactiveMemoryTemplate;
 import club.p6e.coat.auth.web.reactive.cache.redis.*;
 import club.p6e.coat.auth.web.reactive.controller.*;
-import club.p6e.coat.auth.web.reactive.repository.UserAuthRepositoryImpl;
 import club.p6e.coat.auth.web.reactive.repository.UserRepositoryImpl;
 import club.p6e.coat.auth.web.reactive.service.*;
-import club.p6e.coat.auth.web.reactive.token.*;
 import club.p6e.coat.common.utils.SpringUtil;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
@@ -29,7 +27,6 @@ public class ServerConfig {
     public static void init() {
         if (PROPERTIES.isEnable()) {
             register(UserRepositoryImpl.class);
-            register(UserAuthRepositoryImpl.class);
 
             if (PROPERTIES.getCache().getType() == Properties.Cache.Type.MEMORY) {
                 register(ReactiveMemoryTemplate.class);
@@ -76,19 +73,6 @@ public class ServerConfig {
 
     public static void initLogin() {
         if (PROPERTIES.getLogin().isEnable()) {
-            switch (PROPERTIES.getCache().getType()) {
-                case REDIS -> register(UserTokenRedisCache.class);
-                case MEMORY -> register(UserTokenMemoryCache.class);
-            }
-            register(LocalStorageCacheTokenGenerator.class);
-            register(LocalStorageCacheTokenValidator.class);
-
-            register(CookieCacheTokenGenerator.class);
-            register(CookieCacheTokenValidator.class);
-
-            register(CookieJsonWebTokenGenerator.class);
-            register(CookieJsonWebTokenValidator.class);
-
             register(AuthenticationLoginServiceImpl.class);
             register(AuthenticationLoginController.class);
             initAccountPasswordLogin();
@@ -145,10 +129,6 @@ public class ServerConfig {
     private static void initRegister() {
         final Properties.Register config = PROPERTIES.getRegister();
         if (config.isEnable()) {
-            switch (PROPERTIES.getCache().getType()) {
-                case REDIS -> register(UserTokenRedisCache.class);
-                case MEMORY -> register(UserTokenMemoryCache.class);
-            }
             register(RegisterService.class);
             register(RegisterController.class);
         }

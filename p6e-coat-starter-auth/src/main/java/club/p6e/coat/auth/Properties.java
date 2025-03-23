@@ -2,18 +2,15 @@ package club.p6e.coat.auth;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 /**
- * 配置文件
+ * Properties
  *
  * @author lidashuang
  * @version 1.0
@@ -22,79 +19,81 @@ import java.util.function.Function;
 @Accessors(chain = true)
 public class Properties implements Serializable {
 
-
-
+    /**
+     * Properties Instance Object
+     */
     private static Properties INSTANCE = new Properties();
 
+    /**
+     * Get Properties Instance
+     *
+     * @return Properties Object
+     */
     public static Properties getInstance() {
         return INSTANCE;
     }
 
+    /**
+     * Private Constructors
+     */
+    private Properties() {
+    }
+
+    /**
+     * Token
+     */
     @Data
     @Accessors(chain = true)
     public static class Token {
+
+        /**
+         * Token Duration -> Default Value 3600 (S) * 3
+         */
         private Duration duration = Duration.ofSeconds(3600 * 3L);
+
     }
 
-
+    /**
+     * Token
+     */
     private Token token = new Token();
 
     /**
-     * 是否开启认证服务
+     * Enable
      */
     private boolean enable = true;
 
     /**
-     * 对需要认证访问的路径进行拦截
-     */
-    private String[] interceptor = new String[]{};
-
-    /**
-     * 404 页面是否重定向到网站首页
-     */
-    private boolean redirectIndexPage = false;
-
-    /**
-     * 404 页面进行重定向到网站首页的地址路径
-     */
-    private String redirectIndexPagePath = "/";
-
-    /**
-     * 认证的账号模式
-     */
-    private Mode mode = Mode.PHONE_OR_MAILBOX;
-
-    /**
-     * 模式
+     * Mode
      */
     public enum Mode implements Serializable {
         /**
-         * 账号格式为手机
+         * PHONE Mode
          */
         PHONE,
 
         /**
-         * 账号格式为邮箱
+         * MAILBOX Mode
          */
         MAILBOX,
 
         /**
-         * 账号为普通的账号
+         * ACCOUNT Mode
          */
         ACCOUNT,
 
         /**
-         * 账号为手机或者邮箱
+         * PHONE_OR_MAILBOX Mode
          */
         PHONE_OR_MAILBOX;
 
         /**
-         * 创建模式对象
+         * Create Mode Object
          *
-         * @param mode 模式内容
-         * @return 模式对象
+         * @param mode Mode Content
+         * @return Mode Object
          */
-        public static Mode structure(String mode) {
+        public static Mode create(String mode) {
             if (StringUtils.hasText(mode)) {
                 return switch (mode.toUpperCase()) {
                     case "PHONE" -> PHONE;
@@ -109,31 +108,40 @@ public class Properties implements Serializable {
     }
 
     /**
-     * 缓存类型
+     * Authentication Mode
      */
-    private Cache cache = new Cache();
+    private Mode mode = Mode.PHONE_OR_MAILBOX;
 
     @Data
     @Accessors(chain = true)
     public static class Cache implements Serializable {
         /**
-         * 缓存方式的配置
+         * Cache Type Object
          */
         private Type type = Type.REDIS;
 
         /**
-         * 缓存枚举类型
+         * Cache Type Enum
          */
         public enum Type implements Serializable {
+
+            /**
+             * REDIS
+             */
             REDIS,
+
+            /**
+             * MEMORY
+             */
             MEMORY
+
         }
     }
 
     /**
-     * 常见的登录方式配置
+     * Cache Type
      */
-    private Login login = new Login();
+    private Cache cache = new Cache();
 
     @Data
     @Accessors(chain = true)
@@ -243,106 +251,47 @@ public class Properties implements Serializable {
     }
 
     /**
-     * 常见的 OAUTH2 的配置
+     * Login
      */
-    private Oauth2 oauth2 = new Oauth2();
+    private Login login = new Login();
 
     @Data
     @Accessors(chain = true)
-    public static class Oauth2 implements Serializable {
-        /**
-         * 是否开启 OAUTH2 功能
-         */
-        private boolean enable = true;
+    public static class Register implements Serializable {
 
         /**
-         * 客户端授权登录的配置
+         * Enable
          */
-        private Client client = new Client();
-
-        @Data
-        @Accessors(chain = true)
-        public static class Client implements Serializable {
-            /**
-             * 是否开启客户端授权登录
-             */
-            private boolean enable = false;
-        }
+        private boolean enable = false;
 
         /**
-         * 密码授权登录的配置
+         * Enable Other Login Binding
+         * register and bind when there is no
+         * corresponding binding information for third-party login
          */
-        private Password password = new Password();
+        private boolean enableOtherLoginBinding = false;
 
-        @Data
-        @Accessors(chain = true)
-        public static class Password implements Serializable {
-            /**
-             * 是否开启密码授权登录
-             */
-            private boolean enable = false;
-        }
-
-        /**
-         * CODE 授权登录的配置
-         */
-        private AuthorizationCode authorizationCode = new AuthorizationCode();
-
-        @Data
-        @Accessors(chain = true)
-        public static class AuthorizationCode implements Serializable {
-            /**
-             * 是否开启 CODE 授权登录
-             */
-            private boolean enable = true;
-        }
     }
 
     /**
-     * 注册配置
+     * Register
      */
     private Register register = new Register();
 
     @Data
     @Accessors(chain = true)
-    public static class Register implements Serializable {
+    public static class ForgotPassword implements Serializable {
+
         /**
-         * 是否开启注册的功能
+         * Enable
          */
         private boolean enable = false;
 
-        /**
-         * 是否开启第三方登录没有对应绑定信息时候进行注册绑定
-         */
-        private boolean enableOtherLoginBinding = false;
     }
 
     /**
-     * 忘记密码配置
+     * Forgot Password
      */
     private ForgotPassword forgotPassword = new ForgotPassword();
-
-    @Data
-    @Accessors(chain = true)
-    public static class ForgotPassword implements Serializable {
-        /**
-         * 是否开启注册的功能
-         */
-        private boolean enable = false;
-    }
-
-    /**
-     * 页面配置
-     */
-    private Page page = new Page();
-
-    @Data
-    @Accessors(chain = true)
-    public static class Page implements Serializable {
-        private String me;
-        private String login;
-        private String register;
-        private String forgotPassword;
-    }
 
 }

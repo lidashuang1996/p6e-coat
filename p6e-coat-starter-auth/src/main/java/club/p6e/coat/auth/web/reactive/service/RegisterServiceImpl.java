@@ -2,9 +2,8 @@ package club.p6e.coat.auth.web.reactive.service;
 
 import club.p6e.coat.auth.*;
 import club.p6e.coat.auth.context.RegisterContext;
-import club.p6e.coat.auth.user.User;
-import club.p6e.coat.auth.user.UserBuilder;
-import club.p6e.coat.auth.web.reactive.repository.UserAuthRepository;
+import club.p6e.coat.auth.password.PasswordEncryptor;
+import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.web.reactive.repository.UserRepository;
 import club.p6e.coat.auth.web.reactive.ServerHttpRequest;
 import club.p6e.coat.common.utils.SpringUtil;
@@ -32,25 +31,17 @@ public class RegisterServiceImpl implements RegisterService {
     private final UserRepository userRepository;
 
     /**
-     * User Auth Repository Object
-     */
-    private final UserAuthRepository userAuthRepository;
-
-    /**
      * Constructor Initialization
      *
      * @param encryptor          Password Encryptor Object
      * @param userRepository     User Repository Object
-     * @param userAuthRepository User Auth Repository Object
      */
     public RegisterServiceImpl(
             PasswordEncryptor encryptor,
-            UserRepository userRepository,
-            UserAuthRepository userAuthRepository
+            UserRepository userRepository
     ) {
         this.encryptor = encryptor;
         this.userRepository = userRepository;
-        this.userAuthRepository = userAuthRepository;
     }
 
     @Override
@@ -91,7 +82,6 @@ public class RegisterServiceImpl implements RegisterService {
                                         "fun executeAccountMode(String account, RegisterContext.Request param).",
                                         "create user account info data exception."
                                 )))
-                                .flatMap(user -> userAuthRepository.create(user, encryptor.execute(param.getPassword())))
                                 .flux()
                         ).collectList().map(list -> list.get(0))
                 );
@@ -119,7 +109,6 @@ public class RegisterServiceImpl implements RegisterService {
                                         "fun executePhoneMode(String account, RegisterContext.Request param).",
                                         "create user phone account info data exception."
                                 )))
-                                .flatMap(user -> userAuthRepository.create(user, encryptor.execute(param.getPassword())))
                                 .flux()
                         ).collectList().map(list -> list.get(0))
                 );
@@ -147,7 +136,6 @@ public class RegisterServiceImpl implements RegisterService {
                                         "fun executeMailboxMode(String account, RegisterContext.Request param).",
                                         "create user mailbox account info data exception."
                                 )))
-                                .flatMap(user -> userAuthRepository.create(user, encryptor.execute(param.getPassword())))
                                 .flux()
                         ).collectList().map(list -> list.get(0))
                 );
@@ -175,7 +163,6 @@ public class RegisterServiceImpl implements RegisterService {
                                         "fun executePhoneOrMailboxMode(String account, RegisterContext.Request param).",
                                         "create user phone/mailbox account info data exception."
                                 )))
-                                .flatMap(user -> userAuthRepository.create(user, encryptor.execute(param.getPassword())))
                                 .flux()
                         ).collectList().map(list -> list.get(0))
                 );

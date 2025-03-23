@@ -1,5 +1,6 @@
 package club.p6e.coat.permission.web.reactive;
 
+import club.p6e.coat.common.utils.TemplateParser;
 import club.p6e.coat.common.utils.TransformationUtil;
 import club.p6e.coat.permission.PermissionDetails;
 import club.p6e.coat.permission.PermissionRepository;
@@ -26,6 +27,11 @@ import java.util.List;
 public class PermissionRepositoryImpl implements PermissionRepository {
 
     /**
+     * TABLE PREFIX
+     */
+    private static final String TABLE_PREFIX = "ss_";
+
+    /**
      * Database Client Object
      */
     private final DatabaseClient client;
@@ -42,7 +48,8 @@ public class PermissionRepositoryImpl implements PermissionRepository {
     @SuppressWarnings("ALL")
     @Override
     public Mono<List<PermissionDetails>> getPermissionDetailsList(Integer page, Integer size) {
-        return client.sql("""
+        System.out.println(
+                TemplateParser.execute("""
                         SELECT
                             "PU"."oid",
                             "PU"."pid",
@@ -64,7 +71,7 @@ public class PermissionRepositoryImpl implements PermissionRepository {
                                     "base_url",
                                     "method"
                                 FROM
-                                    "ss_permission_url"
+                                    "@{TABLE_PREFIX}permission_url"
                                 ORDER BY
                                     "id"
                                     ASC
@@ -74,12 +81,53 @@ public class PermissionRepositoryImpl implements PermissionRepository {
                                     :OFFSET
                             ) AS "PU"
                             LEFT JOIN 
-                                "ss_permission_url_group_association_url" AS "PUG" 
+                                "@{TABLE_PREFIX}permission_url_group_association_url" AS "PUG" 
                                 ON "PU"."id" = "PUG"."uid"
                             LEFT JOIN 
-                                "ss_permission_url_group" AS "PG" 
+                                "@{TABLE_PREFIX}permission_url_group" AS "PG" 
                                 ON "PG"."id" = "PUG"."gid"
-                        """)
+                        """, "TABLE_PREFIX", TABLE_PREFIX
+                )
+        );
+        return client.sql(TemplateParser.execute("""
+                        SELECT
+                            "PU"."oid",
+                            "PU"."pid",
+                            "PU"."url",
+                            "PU"."base_url",
+                            "PU"."method",
+                            "PG"."mark",
+                            "PG"."weight",
+                            "PUG"."config",
+                            "PUG"."config",
+                            "PUG"."attribute"
+                        FROM
+                            (
+                                SELECT
+                                    "id",
+                                    "oid",
+                                    "pid",
+                                    "url",
+                                    "base_url",
+                                    "method"
+                                FROM
+                                    "@{TABLE_PREFIX}permission_url"
+                                ORDER BY
+                                    "id"
+                                    ASC
+                                LIMIT 
+                                    :LIMIT
+                                OFFSET
+                                    :OFFSET
+                            ) AS "PU"
+                            LEFT JOIN 
+                                "@{TABLE_PREFIX}permission_url_group_association_url" AS "PUG" 
+                                ON "PU"."id" = "PUG"."uid"
+                            LEFT JOIN 
+                                "@{TABLE_PREFIX}permission_url_group" AS "PG" 
+                                ON "PG"."id" = "PUG"."gid"
+                        """, "TABLE_PREFIX", TABLE_PREFIX
+                ))
                 .bind("LIMIT", size)
                 .bind("OFFSET", (page - 1) * size)
                 .map((row) -> {

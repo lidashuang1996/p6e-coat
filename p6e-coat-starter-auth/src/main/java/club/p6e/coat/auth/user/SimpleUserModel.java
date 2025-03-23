@@ -1,5 +1,6 @@
 package club.p6e.coat.auth.user;
 
+import club.p6e.coat.auth.User;
 import club.p6e.coat.common.utils.JsonUtil;
 import club.p6e.coat.common.utils.TransformationUtil;
 import lombok.Data;

@@ -1,7 +1,7 @@
 package club.p6e.coat.auth.web.reactive.repository;
 
 import club.p6e.coat.auth.user.SimpleUserModel;
-import club.p6e.coat.auth.user.User;
+import club.p6e.coat.auth.User;
 import club.p6e.coat.common.utils.TemplateParser;
 import club.p6e.coat.common.utils.TransformationUtil;
 import io.r2dbc.spi.Readable;

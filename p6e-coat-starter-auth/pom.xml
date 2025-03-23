@@ -13,23 +13,7 @@
     <name>p6e-coat-starter-auth</name>
     <description>p6e-coat-starter-auth</description>
 
-    <properties>
-        <skipTests>true</skipTests>
-        <java.version>17</java.version>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    </properties>
-
     <dependencies>
-
-        <!-- Java JWT [START] -->
-        <dependency>
-            <groupId>com.auth0</groupId>
-            <artifactId>java-jwt</artifactId>
-        </dependency>
-        <!-- Java JWT [END] -->
 
         <!-- Spring Aop [START] -->
         <dependency>
@@ -38,7 +22,7 @@
         </dependency>
         <!-- Spring Aop [END] -->
 
-        <!-- Web [START] -->
+        <!-- Web [ START ] -->
         <!-- Spring Web [START] -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -55,7 +39,15 @@
             <!-- scope provided dependency -->
             <scope>provided</scope>
         </dependency>
-        <!-- Spring Data [ END ] -->
+
+        <!-- Spring JDBC [ START ] -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+            <!-- scope provided dependency -->
+            <scope>provided</scope>
+        </dependency>
+        <!-- Spring JDBC [ END ] -->
 
         <!-- Spring Redis [START] -->
         <dependency>
@@ -82,6 +74,13 @@
         </dependency>
         <!-- Spring Data [ END ] -->
 
+        <!-- Spring R2DBC [ START ] -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-r2dbc</artifactId>
+        </dependency>
+        <!-- Spring R2DBC [ END ] -->
+
         <!-- Spring Reactive Redis [START] -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -90,6 +89,12 @@
         <!-- Spring Reactive Redis [END] -->
         <!-- Reactive [END] -->
 
+        <!-- P6e Coat Auth Token [ START ] -->
+        <dependency>
+            <groupId>club.p6e.coat</groupId>
+            <artifactId>p6e-coat-starter-auth-token</artifactId>
+        </dependency>
+        <!-- P6e Coat Auth Token [ END ] -->
 
         <!-- P6e Coat Common [ START ] -->
         <dependency>

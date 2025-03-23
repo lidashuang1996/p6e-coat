@@ -1,5 +1,7 @@
 package club.p6e.coat.auth.user;
 
+import club.p6e.coat.auth.User;
+import club.p6e.coat.auth.UserBuilder;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;

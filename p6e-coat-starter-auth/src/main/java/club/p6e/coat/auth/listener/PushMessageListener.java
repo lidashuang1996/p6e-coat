@@ -5,21 +5,19 @@ import jakarta.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
-import org.springframework.stereotype.Component;
 
 /**
- * Push Message Event Listener
+ * Push Message Listener
  *
  * @author lidashuang
  * @version 1.0
  */
-@Component
-public class PushMessageEventListener implements ApplicationListener<PushMessageEvent> {
+public class PushMessageListener implements ApplicationListener<PushMessageEvent> {
 
     /**
      * Inject Log Object
      */
-    private final Logger LOGGER = LoggerFactory.getLogger(PushMessageEventListener.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(PushMessageListener.class);
 
     @Override
     public void onApplicationEvent(@Nonnull PushMessageEvent event) {

@@ -1,13 +1,12 @@
 package club.p6e.coat.auth.web.reactive.repository;
 
+import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.user.SimpleUserModel;
-import club.p6e.coat.auth.user.User;
 import club.p6e.coat.common.utils.TemplateParser;
 import club.p6e.coat.common.utils.TransformationUtil;
 import io.r2dbc.spi.Readable;
 import org.springframework.r2dbc.core.DatabaseClient;
 import reactor.core.publisher.Mono;
-
 
 /**
  * User Auth Repository Impl [ DEFAULT: PostgreSQL ]
@@ -33,10 +32,18 @@ public class UserAuthRepositoryImpl implements UserAuthRepository {
     private User convertReadableToUser(Readable readable) {
         return new SimpleUserModel(
                 TransformationUtil.objectToInteger(readable.get("id")),
+                TransformationUtil.objectToInteger(readable.get("status")),
+                TransformationUtil.objectToInteger(readable.get("enabled")),
+                TransformationUtil.objectToInteger(readable.get("internal")),
+                TransformationUtil.objectToInteger(readable.get("administrator")),
                 TransformationUtil.objectToString(readable.get("account")),
                 TransformationUtil.objectToString(readable.get("phone")),
                 TransformationUtil.objectToString(readable.get("mailbox")),
-                TransformationUtil.objectToString(readable.get("password"))
+                TransformationUtil.objectToString(readable.get("name")),
+                TransformationUtil.objectToString(readable.get("nickname")),
+                TransformationUtil.objectToString(readable.get("language")),
+                TransformationUtil.objectToString(readable.get("avatar")),
+                TransformationUtil.objectToString(readable.get("description"))
         );
     }
 

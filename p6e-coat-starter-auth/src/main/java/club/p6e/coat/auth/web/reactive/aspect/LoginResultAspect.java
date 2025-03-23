@@ -1,7 +1,7 @@
 package club.p6e.coat.auth.web.reactive.aspect;
 
-import club.p6e.coat.auth.user.User;
-import club.p6e.coat.auth.web.reactive.token.TokenGenerator;
+import club.p6e.coat.auth.User;
+import club.p6e.coat.auth.token.web.reactive.TokenGenerator;
 import club.p6e.coat.common.context.ResultContext;
 import club.p6e.coat.common.utils.SpringUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -54,8 +54,7 @@ public class LoginResultAspect {
                         }
                     }).map(ResultContext::build);
                 }
-                if (r instanceof final User user
-                        || (r instanceof final String string && string.equals("AUTHENTICATION"))) {
+                if (r instanceof final String string && string.equals("AUTHENTICATION")) {
                     return Mono.just(ResultContext.build(String.valueOf(System.currentTimeMillis())));
                 }
                 return Mono.just(ResultContext.build(r));
