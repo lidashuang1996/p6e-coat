@@ -1,8 +1,10 @@
 package club.p6e.coat.auth.web.reactive.cache.redis;
 
-import club.p6e.coat.auth.web.reactive.cache.redis.support.RedisCache;
+import club.p6e.coat.auth.web.reactive.cache.redis.support.AbstractRedisCache;
 import club.p6e.coat.auth.web.reactive.cache.PasswordSignatureCache;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
@@ -13,7 +15,12 @@ import java.time.Duration;
  * @author lidashuang
  * @version 1.0
  */
-public class PasswordSignatureRedisCache extends RedisCache implements PasswordSignatureCache {
+@Component
+@ConditionalOnMissingBean(
+        value = PasswordSignatureCache.class,
+        ignored = PasswordSignatureRedisCache.class
+)
+public class PasswordSignatureRedisCache extends AbstractRedisCache implements PasswordSignatureCache {
 
     /**
      * Reactive String Redis Template Object

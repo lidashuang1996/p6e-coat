@@ -7,6 +7,8 @@ import club.p6e.coat.common.utils.JsonUtil;
 import club.p6e.coat.auth.web.reactive.cache.PasswordSignatureCache;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.common.utils.RsaUtil;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -18,6 +20,11 @@ import java.util.HashMap;
  * @author lidashuang
  * @version 1.0
  */
+@Component
+@ConditionalOnMissingBean(
+        value = PasswordSignatureService.class,
+        ignored = PasswordSignatureServiceImpl.class
+)
 public class PasswordSignatureServiceImpl implements PasswordSignatureService {
 
     /**

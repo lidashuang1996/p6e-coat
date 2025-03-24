@@ -11,6 +11,8 @@ import club.p6e.coat.common.utils.SpringUtil;
 import club.p6e.coat.auth.web.reactive.cache.PasswordSignatureCache;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -23,6 +25,11 @@ import java.util.Map;
  * @author lidashuang
  * @version 1.0
  */
+@Component
+@ConditionalOnMissingBean(
+        value = AccountPasswordLoginService.class,
+        ignored = AccountPasswordLoginServiceImpl.class
+)
 public class AccountPasswordLoginServiceImpl implements AccountPasswordLoginService {
 
     /**

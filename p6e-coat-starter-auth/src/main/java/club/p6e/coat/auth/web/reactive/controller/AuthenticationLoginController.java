@@ -5,6 +5,7 @@ import club.p6e.coat.auth.web.reactive.ServerHttpRequestParameterValidator;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.web.reactive.service.AuthenticationLoginService;
 import club.p6e.coat.common.utils.SpringUtil;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -16,6 +17,10 @@ import reactor.core.publisher.Mono;
  * @version 1.0
  */
 @RestController
+@ConditionalOnMissingBean(
+        value = AuthenticationLoginController.class,
+        ignored = AuthenticationLoginController.class
+)
 public class AuthenticationLoginController {
 
     /**

@@ -5,6 +5,7 @@ import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.web.reactive.ServerHttpRequestParameterValidator;
 import club.p6e.coat.auth.web.reactive.service.PasswordSignatureService;
 import club.p6e.coat.common.utils.SpringUtil;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -16,6 +17,10 @@ import reactor.core.publisher.Mono;
  * @version 1.0
  */
 @RestController
+@ConditionalOnMissingBean(
+        value = PasswordSignatureController.class,
+        ignored = PasswordSignatureController.class
+)
 public class PasswordSignatureController {
 
     /**

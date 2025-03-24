@@ -1,6 +1,5 @@
 package club.p6e.coat.auth.web.reactive.cache;
 
-import club.p6e.coat.auth.web.reactive.cache.support.Cache;
 import reactor.core.publisher.Mono;
 
 /**
@@ -9,7 +8,7 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
-public interface QuickResponseCodeLoginCache extends Cache {
+public interface QuickResponseCodeLoginCache {
 
     /**
      * Cache Expiration Time

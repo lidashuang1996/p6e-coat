@@ -10,7 +10,9 @@ import club.p6e.coat.auth.web.reactive.repository.UserRepository;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.SpringUtil;
 import club.p6e.coat.common.utils.VerificationUtil;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -23,6 +25,11 @@ import java.util.List;
  * @author lidashuang
  * @version 1.0
  */
+@Component
+@ConditionalOnMissingBean(
+        value = VerificationCodeRegisterAcquisitionService.class,
+        ignored = VerificationCodeRegisterAcquisitionServiceImpl.class
+)
 public class VerificationCodeRegisterAcquisitionServiceImpl implements VerificationCodeRegisterAcquisitionService {
 
     /**

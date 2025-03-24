@@ -5,6 +5,7 @@ import club.p6e.coat.auth.web.reactive.ServerHttpRequestParameterValidator;
 import club.p6e.coat.auth.context.RegisterContext;
 import club.p6e.coat.auth.web.reactive.service.RegisterService;
 import club.p6e.coat.common.utils.SpringUtil;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +19,10 @@ import reactor.core.publisher.Mono;
  * @version 1.0
  */
 @RestController
+@ConditionalOnMissingBean(
+        value = RegisterController.class,
+        ignored = RegisterController.class
+)
 public class RegisterController {
 
     /**

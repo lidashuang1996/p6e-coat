@@ -12,7 +12,9 @@ import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -25,6 +27,11 @@ import java.util.List;
  * @author lidashuang
  * @version 1.0
  */
+@Component
+@ConditionalOnMissingBean(
+        value = VerificationCodeLoginAcquisitionService.class,
+        ignored = VerificationCodeLoginAcquisitionServiceImpl.class
+)
 public class VerificationCodeLoginAcquisitionServiceImpl implements VerificationCodeLoginAcquisitionService {
 
     /**

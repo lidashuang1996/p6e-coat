@@ -1,13 +1,12 @@
 package club.p6e.coat.auth.web.reactive.service;
 
 import club.p6e.coat.auth.password.PasswordEncryptor;
-import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.web.reactive.ServerHttpRequest;
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.web.reactive.cache.VerificationCodeForgotPasswordCache;
 import club.p6e.coat.auth.context.ForgotPasswordContext;
-import club.p6e.coat.auth.error.GlobalExceptionContext;
-import club.p6e.coat.auth.web.reactive.repository.UserAuthRepository;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -17,6 +16,11 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
+@Component
+@ConditionalOnMissingBean(
+        value = ForgotPasswordService.class,
+        ignored = ForgotPasswordServiceImpl.class
+)
 public class ForgotPasswordServiceImpl implements ForgotPasswordService {
 
     /**

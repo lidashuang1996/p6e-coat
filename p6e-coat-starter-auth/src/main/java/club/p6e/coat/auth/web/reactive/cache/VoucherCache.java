@@ -1,6 +1,5 @@
 package club.p6e.coat.auth.web.reactive.cache;
 
-import club.p6e.coat.auth.web.reactive.cache.support.Cache;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
@@ -11,7 +10,7 @@ import java.util.Map;
  * @author lidashuang
  * @version 1.0
  */
-public interface VoucherCache extends Cache {
+public interface VoucherCache {
 
     /**
      * Cache Expiration Time
@@ -32,10 +31,10 @@ public interface VoucherCache extends Cache {
     Mono<String> del(String key);
 
     /**
-     * 读取数据
+     * Get Data
      *
-     * @param key 键
-     * @return 值
+     * @param key Key
+     * @return Value
      */
     Mono<Map<String, String>> get(String key);
 

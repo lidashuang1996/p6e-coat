@@ -15,6 +15,9 @@ import java.util.Map;
  */
 public class ForgotPasswordContext implements Serializable {
 
+    /**
+     * Request
+     */
     @Data
     @Accessors(chain = true)
     public static class Request implements Serializable {
@@ -36,6 +39,9 @@ public class ForgotPasswordContext implements Serializable {
 
     }
 
+    /**
+     * Dto
+     */
     @Data
     @Accessors(chain = true)
     public static class Dto implements Serializable {
@@ -47,6 +53,9 @@ public class ForgotPasswordContext implements Serializable {
      */
     public static class VerificationCodeAcquisition implements Serializable {
 
+        /**
+         * Request
+         */
         @Data
         @Accessors(chain = true)
         public static class Request implements Serializable {
@@ -67,6 +76,9 @@ public class ForgotPasswordContext implements Serializable {
             private Map<String, Object> data = new HashMap<>();
         }
 
+        /**
+         * Dto
+         */
         @Data
         @Accessors(chain = true)
         public static class Dto implements Serializable {

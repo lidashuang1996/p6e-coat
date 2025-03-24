@@ -1,8 +1,10 @@
 package club.p6e.coat.auth.web.reactive.cache.redis;
 
-import club.p6e.coat.auth.web.reactive.cache.redis.support.RedisCache;
+import club.p6e.coat.auth.web.reactive.cache.redis.support.AbstractRedisCache;
 import club.p6e.coat.auth.web.reactive.cache.QuickResponseCodeLoginCache;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
@@ -13,7 +15,12 @@ import java.time.Duration;
  * @author lidashuang
  * @version 1.0
  */
-public class QuickResponseCodeLoginRedisCache extends RedisCache implements QuickResponseCodeLoginCache {
+@Component
+@ConditionalOnMissingBean(
+        value = QuickResponseCodeLoginCache.class,
+        ignored = QuickResponseCodeLoginRedisCache.class
+)
+public class QuickResponseCodeLoginRedisCache extends AbstractRedisCache implements QuickResponseCodeLoginCache {
 
     /**
      * Reactive String Redis Template Object

@@ -1,8 +1,10 @@
 package club.p6e.coat.auth.web.reactive.cache.redis;
 
-import club.p6e.coat.auth.web.reactive.cache.redis.support.RedisCache;
+import club.p6e.coat.auth.web.reactive.cache.redis.support.AbstractRedisCache;
 import club.p6e.coat.auth.web.reactive.cache.VoucherCache;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
@@ -16,7 +18,12 @@ import java.util.Map;
  * @author lidashuang
  * @version 1.0
  */
-public class VoucherRedisCache extends RedisCache implements VoucherCache {
+@Component
+@ConditionalOnMissingBean(
+        value = VoucherCache.class,
+        ignored = VoucherRedisCache.class
+)
+public class VoucherRedisCache extends AbstractRedisCache implements VoucherCache {
 
     /**
      * Reactive String Redis Template Object
@@ -40,13 +47,11 @@ public class VoucherRedisCache extends RedisCache implements VoucherCache {
 
     @Override
     public Mono<Map<String, String>> get(String key) {
-        System.out.println("  >>> >> " + key);
         return template
                 .opsForHash()
                 .entries(CACHE_PREFIX + key)
                 .collectList()
                 .flatMap(list -> {
-                    System.out.println(list);
                     if (list.isEmpty()) {
                         return Mono.empty();
                     }

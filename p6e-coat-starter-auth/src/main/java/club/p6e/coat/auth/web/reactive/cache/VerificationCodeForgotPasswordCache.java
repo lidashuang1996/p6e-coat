@@ -1,6 +1,5 @@
 package club.p6e.coat.auth.web.reactive.cache;
 
-import club.p6e.coat.auth.web.reactive.cache.support.Cache;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -11,7 +10,7 @@ import java.util.List;
  * @author lidashuang
  * @version 1.0
  */
-public interface VerificationCodeForgotPasswordCache extends Cache {
+public interface VerificationCodeForgotPasswordCache {
 
     /**
      * Cache Expiration Time

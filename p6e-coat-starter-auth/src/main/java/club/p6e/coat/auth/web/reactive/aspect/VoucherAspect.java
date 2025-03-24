@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 /**
  * Login Result Aspect
  *
@@ -18,6 +20,13 @@ import reactor.core.publisher.Mono;
 @Aspect
 @Component
 public class VoucherAspect {
+
+    /**
+     * White Path List Object
+     */
+    private static final List<String> WHITE_PATH_LIST = List.of(
+            "/", "/index"
+    );
 
     @Pointcut("execution(* club.p6e.coat.auth.web.reactive.controller.*.*(..))")
     public void pointcut() {
@@ -38,7 +47,11 @@ public class VoucherAspect {
         final Object result = joinPoint.proceed(args);
         if (request != null && result instanceof final Mono<?> mono) {
             final ServerHttpRequest r = request;
-            return r.init().then(mono).flatMap(o -> r.save().map(t -> o));
+            if (WHITE_PATH_LIST.contains(request.getPath().value())) {
+                return mono.flatMap(o -> r.save().map(t -> o));
+            } else {
+                return r.init().then(mono).flatMap(o -> r.save().map(t -> o));
+            }
         }
         return result;
     }

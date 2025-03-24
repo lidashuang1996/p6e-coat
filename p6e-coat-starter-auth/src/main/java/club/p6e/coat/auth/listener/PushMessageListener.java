@@ -4,7 +4,9 @@ import club.p6e.coat.auth.event.PushMessageEvent;
 import jakarta.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationListener;
+import org.springframework.stereotype.Component;
 
 /**
  * Push Message Listener
@@ -12,6 +14,11 @@ import org.springframework.context.ApplicationListener;
  * @author lidashuang
  * @version 1.0
  */
+@Component
+@ConditionalOnMissingBean(
+        value = PushMessageListener.class,
+        ignored = PushMessageListener.class
+)
 public class PushMessageListener implements ApplicationListener<PushMessageEvent> {
 
     /**

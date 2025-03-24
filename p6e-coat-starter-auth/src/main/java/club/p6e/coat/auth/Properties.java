@@ -1,7 +1,10 @@
 package club.p6e.coat.auth;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
@@ -114,34 +117,12 @@ public class Properties implements Serializable {
 
     @Data
     @Accessors(chain = true)
-    public static class Cache implements Serializable {
-        /**
-         * Cache Type Object
-         */
-        private Type type = Type.REDIS;
-
-        /**
-         * Cache Type Enum
-         */
-        public enum Type implements Serializable {
-
-            /**
-             * REDIS
-             */
-            REDIS,
-
-            /**
-             * MEMORY
-             */
-            MEMORY
-
-        }
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Page implements Serializable {
+        private String type;
+        private String content;
     }
-
-    /**
-     * Cache Type
-     */
-    private Cache cache = new Cache();
 
     @Data
     @Accessors(chain = true)
@@ -150,6 +131,14 @@ public class Properties implements Serializable {
          * 是否开启登录功能
          */
         private boolean enable = true;
+
+        /**
+         * 页面
+         */
+        private Page page = new Page(
+                "application/javascript",
+                "window.p6e_v='@{VOUCHER}';"
+        );
 
         /**
          * 账号密码登录的配置

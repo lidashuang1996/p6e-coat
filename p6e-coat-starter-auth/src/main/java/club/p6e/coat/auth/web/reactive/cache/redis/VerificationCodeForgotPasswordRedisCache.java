@@ -1,8 +1,10 @@
 package club.p6e.coat.auth.web.reactive.cache.redis;
 
 import club.p6e.coat.auth.web.reactive.cache.VerificationCodeForgotPasswordCache;
-import club.p6e.coat.auth.web.reactive.cache.redis.support.RedisCache;
+import club.p6e.coat.auth.web.reactive.cache.redis.support.AbstractRedisCache;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -13,8 +15,13 @@ import java.util.List;
  * @author lidashuang
  * @version 1.0
  */
+@Component
+@ConditionalOnMissingBean(
+        value = VerificationCodeForgotPasswordCache.class,
+        ignored = VerificationCodeForgotPasswordRedisCache.class
+)
 public class VerificationCodeForgotPasswordRedisCache
-        extends RedisCache implements VerificationCodeForgotPasswordCache {
+        extends AbstractRedisCache implements VerificationCodeForgotPasswordCache {
 
     /**
      * Reactive String Redis Template Object

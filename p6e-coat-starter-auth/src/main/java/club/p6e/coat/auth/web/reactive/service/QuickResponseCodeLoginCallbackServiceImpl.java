@@ -6,6 +6,8 @@ import club.p6e.coat.auth.web.reactive.cache.QuickResponseCodeLoginCache;
 import club.p6e.coat.auth.web.reactive.repository.UserRepository;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -15,6 +17,11 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
+@Component
+@ConditionalOnMissingBean(
+        value = QuickResponseCodeLoginCallbackService.class,
+        ignored = QuickResponseCodeLoginCallbackServiceImpl.class
+)
 public class QuickResponseCodeLoginCallbackServiceImpl implements QuickResponseCodeLoginCallbackService {
 
     /**

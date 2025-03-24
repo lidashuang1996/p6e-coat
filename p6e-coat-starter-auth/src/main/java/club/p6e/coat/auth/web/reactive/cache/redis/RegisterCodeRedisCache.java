@@ -1,8 +1,10 @@
 package club.p6e.coat.auth.web.reactive.cache.redis;
 
 import club.p6e.coat.auth.web.reactive.cache.VerificationCodeRegisterCache;
-import club.p6e.coat.auth.web.reactive.cache.redis.support.RedisCache;
+import club.p6e.coat.auth.web.reactive.cache.redis.support.AbstractRedisCache;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -13,7 +15,12 @@ import java.util.List;
  * @author lidashuang
  * @version 1.0
  */
-public class RegisterCodeRedisCache extends RedisCache implements VerificationCodeRegisterCache {
+@Component
+@ConditionalOnMissingBean(
+        value = VerificationCodeRegisterCache.class,
+        ignored = RegisterCodeRedisCache.class
+)
+public class RegisterCodeRedisCache extends AbstractRedisCache implements VerificationCodeRegisterCache {
 
     /**
      * Reactive String Redis Template Object

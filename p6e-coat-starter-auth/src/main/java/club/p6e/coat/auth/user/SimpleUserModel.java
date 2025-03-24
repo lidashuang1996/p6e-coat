@@ -103,7 +103,12 @@ public class SimpleUserModel implements User, Serializable {
 
     @Override
     public String serialize() {
-        return JsonUtil.toJson(new HashMap<>() {{
+        return JsonUtil.toJson(toMap());
+    }
+
+    @Override
+    public Map<String, Object> toMap() {
+        return new HashMap<>() {{
             put("id", id);
             put("status", status);
             put("enabled", enabled);
@@ -117,12 +122,7 @@ public class SimpleUserModel implements User, Serializable {
             put("language", language);
             put("avatar", avatar);
             put("description", description);
-        }});
-    }
-
-    @Override
-    public Map<String, Object> toMap() {
-        return Map.of();
+        }};
     }
 
 }

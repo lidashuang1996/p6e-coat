@@ -1,17 +1,16 @@
 package club.p6e.coat.auth.web.reactive.cache;
 
-import club.p6e.coat.auth.web.reactive.cache.support.Cache;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
 
 /**
- * 验证码登录的验证码缓存
+ * Verification Code Login Cache
  *
  * @author lidashuang
  * @version 1.0
  */
-public interface VerificationCodeLoginCache extends Cache {
+public interface VerificationCodeLoginCache {
 
     /**
      * Cache Expiration Time

@@ -5,16 +5,23 @@ import club.p6e.coat.auth.User;
 import club.p6e.coat.common.utils.TemplateParser;
 import club.p6e.coat.common.utils.TransformationUtil;
 import io.r2dbc.spi.Readable;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.r2dbc.core.DatabaseClient;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 /**
  * @author lidashuang
  * @version 1.0
  */
+@Component
+@ConditionalOnMissingBean(
+        value = UserRepository.class,
+        ignored = UserRepositoryImpl.class
+)
 public class UserRepositoryImpl implements UserRepository {
 
-    private static final String TABLE = "ss_user";
+    private static final String USER_TABLE = "ss_user";
     private static final String USER_AUTH_TABLE = "ss_user_auth";
 
     @SuppressWarnings("ALL")
@@ -50,7 +57,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Mono<User> findById(Integer id) {
         return client.sql(TemplateParser.execute(BASE_SELECT_SQL
-                        + " WHERE \"id\" = :ID ; ", "TABLE", TABLE))
+                        + " WHERE \"id\" = :ID ; ", "TABLE", USER_TABLE))
                 .bind("ID", id)
                 .map(this::convertReadableToUser)
                 .first()
@@ -60,7 +67,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Mono<User> findByAccount(String account) {
         return client.sql(TemplateParser.execute(BASE_SELECT_SQL
-                        + " WHERE \"account\" = :ACCOUNT ; ", "TABLE", TABLE))
+                        + " WHERE \"account\" = :ACCOUNT ; ", "TABLE", USER_TABLE))
                 .bind("ACCOUNT", account)
                 .map(this::convertReadableToUser)
                 .first()
@@ -74,7 +81,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Mono<User> findByPhone(String phone) {
         return client.sql(TemplateParser.execute(BASE_SELECT_SQL
-                        + " WHERE \"phone\" = :PHONE ; ", "TABLE", TABLE))
+                        + " WHERE \"phone\" = :PHONE ; ", "TABLE", USER_TABLE))
                 .bind("PHONE", phone)
                 .map(this::convertReadableToUser)
                 .first()
@@ -84,7 +91,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Mono<User> findByMailbox(String mailbox) {
         return client.sql(TemplateParser.execute(BASE_SELECT_SQL
-                        + " WHERE \"mailbox\" = :MAILBOX ; ", "TABLE", TABLE))
+                        + " WHERE \"mailbox\" = :MAILBOX ; ", "TABLE", USER_TABLE))
                 .bind("MAILBOX", mailbox)
                 .map(this::convertReadableToUser)
                 .first()
@@ -94,7 +101,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Mono<User> findByPhoneOrMailbox(String account) {
         return client.sql(TemplateParser.execute(BASE_SELECT_SQL
-                        + " WHERE \"phone\" = :ACCOUNT OR \"mailbox\" = :ACCOUNT ; ", "TABLE", TABLE))
+                        + " WHERE \"phone\" = :ACCOUNT OR \"mailbox\" = :ACCOUNT ; ", "TABLE", USER_TABLE))
                 .bind("ACCOUNT", account)
                 .map(this::convertReadableToUser)
                 .first()

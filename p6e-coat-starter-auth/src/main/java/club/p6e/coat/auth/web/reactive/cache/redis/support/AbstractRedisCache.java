@@ -1,6 +1,5 @@
 package club.p6e.coat.auth.web.reactive.cache.redis.support;
 
-import club.p6e.coat.auth.web.reactive.cache.support.Cache;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import reactor.core.publisher.Mono;
 
@@ -17,12 +16,7 @@ import java.util.Map;
  * @author lidashuang
  * @version 1.0
  */
-public abstract class RedisCache implements Cache {
-
-    @Override
-    public String type() {
-        return "REDIS_TYPE";
-    }
+public abstract class AbstractRedisCache {
 
     public Mono<String> delVerificationCode(ReactiveStringRedisTemplate template, String key) {
         return template.delete(key).map(l -> key);
