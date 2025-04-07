@@ -1,7 +1,8 @@
 package club.p6e.coat.auth.web.reactive.repository;
 
-import club.p6e.coat.auth.user.SimpleUserModel;
 import club.p6e.coat.auth.User;
+import club.p6e.coat.auth.UserBuilder;
+import club.p6e.coat.common.utils.SpringUtil;
 import club.p6e.coat.common.utils.TemplateParser;
 import club.p6e.coat.common.utils.TransformationUtil;
 import io.r2dbc.spi.Readable;
@@ -9,6 +10,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
+
+import java.util.HashMap;
+import java.util.function.Consumer;
 
 /**
  * @author lidashuang
@@ -21,8 +25,8 @@ import reactor.core.publisher.Mono;
 )
 public class UserRepositoryImpl implements UserRepository {
 
-    private static final String USER_TABLE = "ss_user";
-    private static final String USER_AUTH_TABLE = "ss_user_auth";
+    private static final String USER_TABLE = "p6e_user";
+    private static final String USER_AUTH_TABLE = "p6e_user_auth";
 
     @SuppressWarnings("ALL")
     private static final String BASE_SELECT_SQL = """
@@ -37,21 +41,21 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     private User convertReadableToUser(Readable readable) {
-        return new SimpleUserModel(
-                TransformationUtil.objectToInteger(readable.get("id")),
-                TransformationUtil.objectToInteger(readable.get("status")),
-                TransformationUtil.objectToInteger(readable.get("enabled")),
-                TransformationUtil.objectToInteger(readable.get("internal")),
-                TransformationUtil.objectToInteger(readable.get("administrator")),
-                TransformationUtil.objectToString(readable.get("account")),
-                TransformationUtil.objectToString(readable.get("phone")),
-                TransformationUtil.objectToString(readable.get("mailbox")),
-                TransformationUtil.objectToString(readable.get("name")),
-                TransformationUtil.objectToString(readable.get("nickname")),
-                TransformationUtil.objectToString(readable.get("language")),
-                TransformationUtil.objectToString(readable.get("avatar")),
-                TransformationUtil.objectToString(readable.get("description"))
-        );
+        return SpringUtil.getBean(UserBuilder.class).create(new HashMap<>() {{
+            put("id", TransformationUtil.objectToString(readable.get("id")));
+            put("status", TransformationUtil.objectToString(readable.get("status")));
+            put("enabled", TransformationUtil.objectToString(readable.get("enabled")));
+            put("internal", TransformationUtil.objectToString(readable.get("internal")));
+            put("administrator", TransformationUtil.objectToString(readable.get("administrator")));
+            put("account", TransformationUtil.objectToString(readable.get("account")));
+            put("phone", TransformationUtil.objectToString(readable.get("phone")));
+            put("mailbox", TransformationUtil.objectToString(readable.get("mailbox")));
+            put("name", TransformationUtil.objectToString(readable.get("name")));
+            put("nickname", TransformationUtil.objectToString(readable.get("nickname")));
+            put("language", TransformationUtil.objectToString(readable.get("language")));
+            put("avatar", TransformationUtil.objectToString(readable.get("avatar")));
+            put("description", TransformationUtil.objectToString(readable.get("description")));
+        }});
     }
 
     @Override
@@ -66,6 +70,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public Mono<User> findByAccount(String account) {
+        System.out.println("CCCCCCCCC >>> findByAccount  :::::: " + account);
         return client.sql(TemplateParser.execute(BASE_SELECT_SQL
                         + " WHERE \"account\" = :ACCOUNT ; ", "TABLE", USER_TABLE))
                 .bind("ACCOUNT", account)
@@ -100,12 +105,20 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public Mono<User> findByPhoneOrMailbox(String account) {
+        System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         return client.sql(TemplateParser.execute(BASE_SELECT_SQL
                         + " WHERE \"phone\" = :ACCOUNT OR \"mailbox\" = :ACCOUNT ; ", "TABLE", USER_TABLE))
                 .bind("ACCOUNT", account)
                 .map(this::convertReadableToUser)
                 .first()
-                .flatMap(u -> findPasswordById(Integer.valueOf(u.id())).map(u::password));
+                .flatMap(u -> findPasswordById(Integer.valueOf(u.id())).map(u::password))
+                .doOnError(new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) {
+                        System.out.println(" xx >>> " + throwable);
+                        throwable.printStackTrace();
+                    }
+                });
     }
 
     @Override

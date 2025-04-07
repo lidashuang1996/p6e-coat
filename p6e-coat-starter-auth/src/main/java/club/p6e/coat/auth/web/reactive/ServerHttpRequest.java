@@ -1,7 +1,7 @@
 package club.p6e.coat.auth.web.reactive;
 
-import club.p6e.coat.auth.web.reactive.cache.VoucherCache;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
+import club.p6e.coat.auth.web.reactive.cache.VoucherCache;
 import club.p6e.coat.common.utils.SpringUtil;
 import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
 import reactor.core.publisher.Mono;
@@ -24,7 +24,7 @@ public class ServerHttpRequest extends ServerHttpRequestDecorator {
      * Http Request Header Voucher Name
      */
     @SuppressWarnings("ALL")
-    private static final String VOUCHER_HEADER = "P6e-Voucher";
+    private static final String VOUCHER_HEADER = "X-Voucher";
 
     /**
      * Http Request Param V
@@ -50,16 +50,14 @@ public class ServerHttpRequest extends ServerHttpRequestDecorator {
      * Cache Key [ACCOUNT_PASSWORD_SIGNATURE_MARK]
      */
     private static final String ACCOUNT_PASSWORD_SIGNATURE_MARK = "ACCOUNT_PASSWORD_SIGNATURE_MARK";
-
-    /**
-     * Mark
-     */
-    private String mark;
-
     /**
      * Server Http Request Attributes Object
      */
     private final Map<String, Object> attributes = new ConcurrentHashMap<>();
+    /**
+     * Mark
+     */
+    private String mark;
 
     /**
      * Constructor Initialization
@@ -116,7 +114,7 @@ public class ServerHttpRequest extends ServerHttpRequestDecorator {
         if (vouchers3 != null) {
             vouchers.addAll(vouchers3);
         }
-        vouchers.add("123456");
+        System.out.println("vouchersvouchers >>> " + vouchers);
         if (vouchers.isEmpty()) {
             return Mono.error(GlobalExceptionContext.executeVoucherException(
                     this.getClass(),
@@ -187,15 +185,6 @@ public class ServerHttpRequest extends ServerHttpRequestDecorator {
     }
 
     /**
-     * Set Account
-     *
-     * @param account Account
-     */
-    public void setAccount(String account) {
-        setAttribute(ACCOUNT, account);
-    }
-
-    /**
      * Get Account
      *
      * @return Account
@@ -206,12 +195,12 @@ public class ServerHttpRequest extends ServerHttpRequestDecorator {
     }
 
     /**
-     * Set Account Password Signature Mark
+     * Set Account
      *
-     * @param mark Mark
+     * @param account Account
      */
-    public void setAccountPasswordSignatureMark(String mark) {
-        setAttribute(ACCOUNT_PASSWORD_SIGNATURE_MARK, mark);
+    public void setAccount(String account) {
+        setAttribute(ACCOUNT, account);
     }
 
     /**
@@ -225,12 +214,12 @@ public class ServerHttpRequest extends ServerHttpRequestDecorator {
     }
 
     /**
-     * Set Quick Response Code Login Mark
+     * Set Account Password Signature Mark
      *
      * @param mark Mark
      */
-    public void setQuickResponseCodeLoginMark(String mark) {
-        setAttribute(QUICK_RESPONSE_CODE_LOGIN_MARK, mark);
+    public void setAccountPasswordSignatureMark(String mark) {
+        setAttribute(ACCOUNT_PASSWORD_SIGNATURE_MARK, mark);
     }
 
     /**
@@ -241,6 +230,15 @@ public class ServerHttpRequest extends ServerHttpRequestDecorator {
     public String getQuickResponseCodeLoginMark() {
         final Object data = getAttribute(QUICK_RESPONSE_CODE_LOGIN_MARK);
         return data == null ? null : String.valueOf(data);
+    }
+
+    /**
+     * Set Quick Response Code Login Mark
+     *
+     * @param mark Mark
+     */
+    public void setQuickResponseCodeLoginMark(String mark) {
+        setAttribute(QUICK_RESPONSE_CODE_LOGIN_MARK, mark);
     }
 
     public String getDevice() {

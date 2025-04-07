@@ -6,11 +6,8 @@ import club.p6e.coat.common.context.ResultContext;
 import club.p6e.coat.common.utils.SpringUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseCookie;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -20,9 +17,6 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
-@Aspect
-@Component
-@Order(Integer.MIN_VALUE)
 public class LoginResultAspect {
 
     @Pointcut("execution(* club.p6e.coat.auth.web.reactive.controller.*.*(..))")

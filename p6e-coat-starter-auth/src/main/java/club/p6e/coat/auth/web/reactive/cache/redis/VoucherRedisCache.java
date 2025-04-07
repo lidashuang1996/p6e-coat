@@ -47,6 +47,7 @@ public class VoucherRedisCache extends AbstractRedisCache implements VoucherCach
 
     @Override
     public Mono<Map<String, String>> get(String key) {
+        System.out.println("keykeykeykey >>>> " + key);
         return template
                 .opsForHash()
                 .entries(CACHE_PREFIX + key)
@@ -57,6 +58,7 @@ public class VoucherRedisCache extends AbstractRedisCache implements VoucherCach
                     }
                     final Map<String, String> map = new HashMap<>(list.size());
                     list.forEach(item -> map.put((String) item.getKey(), (String) item.getValue()));
+                    System.out.println("mapmapmap >>> " + map);
                     return Mono.just(map);
                 });
     }

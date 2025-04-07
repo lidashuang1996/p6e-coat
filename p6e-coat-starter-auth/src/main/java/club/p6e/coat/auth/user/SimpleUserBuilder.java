@@ -15,7 +15,7 @@ import java.util.Map;
  */
 @Component
 @ConditionalOnMissingBean(
-        value = SimpleUserBuilder.class,
+        value = UserBuilder.class,
         ignored = SimpleUserBuilder.class
 )
 public class SimpleUserBuilder implements UserBuilder {

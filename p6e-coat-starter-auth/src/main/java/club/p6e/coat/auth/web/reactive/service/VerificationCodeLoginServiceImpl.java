@@ -66,6 +66,8 @@ public class VerificationCodeLoginServiceImpl implements VerificationCodeLoginSe
         final ServerHttpRequest request = (ServerHttpRequest) exchange.getRequest();
         final String code = param.getCode();
         final String account = request.getAccount();
+        System.out.println("code >>> {}" + code);
+        System.out.println("account >>> {}" + account);
         return cache
                 .get(account)
                 .switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(
@@ -78,6 +80,7 @@ public class VerificationCodeLoginServiceImpl implements VerificationCodeLoginSe
                         final int index = list.indexOf(code);
                         if (index >= 0) {
                             // successfully verified and deleted all verification codes under the account
+                            System.out.println("aaaaaaaa1111111111aaaaaaaaaaaaaa222222222222");
                             return cache.del(account);
                         }
                     }
