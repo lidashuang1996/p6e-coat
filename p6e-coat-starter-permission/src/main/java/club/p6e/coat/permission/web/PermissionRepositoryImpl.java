@@ -67,7 +67,7 @@ public class PermissionRepositoryImpl implements PermissionRepository {
                                         "base_url",
                                         "method"
                                     FROM
-                                        "ss_permission_url"
+                                        "p6epermission_url"
                                     ORDER BY
                                         "id"
                                         ASC
@@ -77,10 +77,10 @@ public class PermissionRepositoryImpl implements PermissionRepository {
                                         :OFFSET
                                 ) AS "PU"
                                 LEFT JOIN 
-                                    "ss_permission_url_group_association_url" AS "PUG" 
+                                    "p6epermission_url_group_mapper_url" AS "PUG" 
                                     ON "PU"."id" = "PUG"."uid"
                                 LEFT JOIN 
-                                    "ss_permission_url_group" AS "PG" 
+                                    "p6epermission_url_group" AS "PG" 
                                     ON "PG"."id" = "PUG"."gid"
                         """,
                 new ResultSetExtractor<List<PermissionDetails>>() {

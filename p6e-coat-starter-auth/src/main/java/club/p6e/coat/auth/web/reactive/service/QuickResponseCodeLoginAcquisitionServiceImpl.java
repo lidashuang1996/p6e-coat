@@ -18,7 +18,7 @@ import reactor.core.publisher.Mono;
  */
 @Component
 @ConditionalOnMissingBean(
-        value = PasswordSignatureService.class,
+        value = QuickResponseCodeLoginAcquisitionService.class,
         ignored = QuickResponseCodeLoginAcquisitionServiceImpl.class
 )
 public class QuickResponseCodeLoginAcquisitionServiceImpl implements QuickResponseCodeLoginAcquisitionService {

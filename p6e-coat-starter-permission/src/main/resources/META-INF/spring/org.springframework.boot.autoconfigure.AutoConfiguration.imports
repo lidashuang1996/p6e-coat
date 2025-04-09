@@ -4,6 +4,5 @@ club.p6e.coat.permission.validator.PermissionValidatorImpl
 club.p6e.coat.permission.web.PermissionFilter
 club.p6e.coat.permission.web.PermissionTaskImpl
 club.p6e.coat.permission.web.PermissionRepositoryImpl
-club.p6e.coat.permission.web.reactive.PermissionFilter
 club.p6e.coat.permission.web.reactive.PermissionTaskImpl
 club.p6e.coat.permission.web.reactive.PermissionRepositoryImpl

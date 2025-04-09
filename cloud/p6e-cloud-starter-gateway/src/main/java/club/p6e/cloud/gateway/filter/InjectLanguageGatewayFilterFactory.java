@@ -20,6 +20,7 @@ public class InjectLanguageGatewayFilterFactory extends AbstractGatewayFilterFac
     /**
      * Language Param Name
      */
+    @SuppressWarnings("ALL")
     private static final String LANGUAGE_PARAM = "language";
 
     /**

@@ -119,8 +119,22 @@ public final class Globals {
     }
 
     public static String getUserInfoContent() {
-        final GlobalUserInfo data = getUserInfo();
-        return data == null ? null : JsonUtil.toJson(data);
+        if (BaseController.isServletRequest()) {
+            try {
+                if (DEBUG) {
+                    return JsonUtil.toJson(GlobalUserInfo.DEBUG);
+                } else {
+                    String result = USER_THREAD_LOCAL.get();
+                    if (result == null) {
+                        result = BaseWebController.getHeader(USER_INFO_HEADER);
+                    }
+                    return (result == null || result.isEmpty()) ? null : result;
+                }
+            } catch (Exception e) {
+                return null;
+            }
+        }
+        return null;
     }
 
     public static String getUserInfoContent(ServerHttpRequest request) {

@@ -13,11 +13,6 @@ import java.util.Map;
  * @author lidashuang
  * @version 1.0
  */
-@Component
-@ConditionalOnMissingBean(
-        value = UserBuilder.class,
-        ignored = SimpleUserBuilder.class
-)
 public class SimpleUserBuilder implements UserBuilder {
 
     @Override

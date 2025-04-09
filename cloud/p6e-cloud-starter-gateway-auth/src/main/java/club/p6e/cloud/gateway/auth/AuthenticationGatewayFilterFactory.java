@@ -52,6 +52,12 @@ public class AuthenticationGatewayFilterFactory extends AbstractGatewayFilterFac
         private static final String USER_INFO_HEADER = "P6e-User-Info";
 
         /**
+         * Authentication Header Name
+         */
+        @SuppressWarnings("ALL")
+        private static final String AUTHENTICATION_HEADER = "P6e-Authentication";
+
+        /**
          * Anonymous User
          */
         private static final User ANONYMOUS = new User() {
@@ -87,11 +93,15 @@ public class AuthenticationGatewayFilterFactory extends AbstractGatewayFilterFac
                     .execute(exchange)
                     .defaultIfEmpty(ANONYMOUS)
                     .flatMap(u -> {
+                        System.out.println("1111111 >>>>>> " + u);
                         if (ANONYMOUS == u) {
                             return chain.filter(exchange);
                         } else {
                             return chain.filter(exchange.mutate().request(
-                                    exchange.getRequest().mutate().header(USER_INFO_HEADER, u.serialize()).build()
+                                    exchange.getRequest().mutate()
+                                            .header(USER_INFO_HEADER, u.serialize())
+                                            .header(AUTHENTICATION_HEADER, "1")
+                                            .build()
                             ).build());
                         }
                     });

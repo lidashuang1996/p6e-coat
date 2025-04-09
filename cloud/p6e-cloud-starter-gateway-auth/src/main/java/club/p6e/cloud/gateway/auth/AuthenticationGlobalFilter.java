@@ -40,6 +40,12 @@ public class AuthenticationGlobalFilter implements GlobalFilter, Ordered {
     @SuppressWarnings("ALL")
     private static final String PERMISSION_HEADER = "P6e-Permission";
 
+    /**
+     * Authentication Header Name
+     */
+    @SuppressWarnings("ALL")
+    private static final String AUTHENTICATION_HEADER = "P6e-Authentication";
+
     @Override
     public int getOrder() {
         return ORDER;
@@ -50,7 +56,9 @@ public class AuthenticationGlobalFilter implements GlobalFilter, Ordered {
         final ServerHttpRequest request = exchange.getRequest();
         final String userInfo = request.getHeaders().getFirst(USER_INFO_HEADER);
         final String permission = request.getHeaders().getFirst(PERMISSION_HEADER);
-        if ((userInfo == null || userInfo.isEmpty()) && (permission == null || permission.isEmpty())) {
+        final String authentication = request.getHeaders().getFirst(AUTHENTICATION_HEADER);
+        final boolean status = authentication != null && !authentication.isEmpty();
+        if (status && (userInfo == null || userInfo.isEmpty()) && (permission == null || permission.isEmpty())) {
             return Mono.error(new AuthException(
                     this.getClass(),
                     "fun filter(ServerWebExchange exchange, GatewayFilterChain chain).",

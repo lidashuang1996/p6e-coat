@@ -23,8 +23,6 @@ import java.util.List;
  * @author lidashuang
  * @version 1.0
  */
-@Component
-@ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
 public class PermissionFilter implements WebFilter, Ordered {
 
     @SuppressWarnings("ALL")

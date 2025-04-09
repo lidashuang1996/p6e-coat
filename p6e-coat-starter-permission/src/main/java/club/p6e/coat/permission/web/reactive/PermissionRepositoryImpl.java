@@ -29,7 +29,7 @@ public class PermissionRepositoryImpl implements PermissionRepository {
     /**
      * TABLE PREFIX
      */
-    private static final String TABLE_PREFIX = "ss_";
+    private static final String TABLE_PREFIX = "p6e_";
 
     /**
      * Database Client Object
@@ -81,7 +81,7 @@ public class PermissionRepositoryImpl implements PermissionRepository {
                                     :OFFSET
                             ) AS "PU"
                             LEFT JOIN 
-                                "@{TABLE_PREFIX}permission_url_group_association_url" AS "PUG" 
+                                "@{TABLE_PREFIX}permission_url_group_mapper_url" AS "PUG" 
                                 ON "PU"."id" = "PUG"."uid"
                             LEFT JOIN 
                                 "@{TABLE_PREFIX}permission_url_group" AS "PG" 
@@ -121,7 +121,7 @@ public class PermissionRepositoryImpl implements PermissionRepository {
                                     :OFFSET
                             ) AS "PU"
                             LEFT JOIN 
-                                "@{TABLE_PREFIX}permission_url_group_association_url" AS "PUG" 
+                                "@{TABLE_PREFIX}permission_url_group_mapper_url" AS "PUG" 
                                 ON "PU"."id" = "PUG"."uid"
                             LEFT JOIN 
                                 "@{TABLE_PREFIX}permission_url_group" AS "PG" 
