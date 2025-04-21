@@ -58,14 +58,23 @@ public class AuthenticationGlobalFilter implements GlobalFilter, Ordered {
         final String permission = request.getHeaders().getFirst(PERMISSION_HEADER);
         final String authentication = request.getHeaders().getFirst(AUTHENTICATION_HEADER);
         final boolean status = authentication != null && !authentication.isEmpty();
-        if (status && (userInfo == null || userInfo.isEmpty()) && (permission == null || permission.isEmpty())) {
+        System.out.println("authenticationauthenticationauthentication >>>>  " + authentication + "   ?? " + status);
+        System.out.println("userInfouserInfo >>>   " + userInfo);
+        System.out.println("permissionpermissionpermissionpermission >>>   " + permission);
+        if (status) {
+            if (("1".equalsIgnoreCase(authentication) || "MQ==".equalsIgnoreCase(authentication)) && userInfo != null && !userInfo.isEmpty()) {
+                return chain.filter(exchange);
+            } else if (("0".equalsIgnoreCase(authentication) || "MA==".equalsIgnoreCase(authentication)) && userInfo != null && !userInfo.isEmpty() && permission != null && !permission.isEmpty()) {
+                return chain.filter(exchange);
+            }
             return Mono.error(new AuthException(
                     this.getClass(),
                     "fun filter(ServerWebExchange exchange, GatewayFilterChain chain).",
                     "request authentication exception"
             ));
+        } else {
+            return chain.filter(exchange);
         }
-        return chain.filter(exchange);
     }
 
 }
