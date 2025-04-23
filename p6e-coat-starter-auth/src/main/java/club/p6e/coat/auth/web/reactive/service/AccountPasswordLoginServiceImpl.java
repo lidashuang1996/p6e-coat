@@ -124,12 +124,22 @@ public class AccountPasswordLoginServiceImpl implements AccountPasswordLoginServ
     public Mono<User> execute(ServerWebExchange exchange, LoginContext.AccountPassword.Request param) {
         return executePasswordTransmissionDecryption(exchange, param.getPassword()).map(param::setPassword)
                 .flatMap(p -> getUser(p.getAccount()))
-                .filter(u -> encryptor.validate(param.getPassword(), u.password()))
+                .filter(u -> {
+                    System.out.println("par>>> " + param);
+                    System.out.println(u.password());
+                    System.out.println("xxx >>> " + param.getPassword() + "  " + u.password());
+                    System.out.println("rrrr >>>" + encryptor.validate(param.getPassword(), u.password()));
+                    return encryptor.validate(param.getPassword(), u.password());
+                })
                 .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionAccountPasswordLoginAccountOrPasswordException(
                         this.getClass(),
                         "fun execute(ServerWebExchange exchange, LoginContext.AccountPassword.Request param).",
                         "account password login account or password exception."
-                )));
+                )))
+                .map(a -> {
+                    System.out.println("aaaaaaaaa >>> " + a);
+                    return a;
+                });
     }
 
 }

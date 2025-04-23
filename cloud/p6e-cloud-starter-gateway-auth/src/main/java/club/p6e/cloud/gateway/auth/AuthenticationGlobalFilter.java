@@ -58,6 +58,10 @@ public class AuthenticationGlobalFilter implements GlobalFilter, Ordered {
         final String permission = request.getHeaders().getFirst(PERMISSION_HEADER);
         final String authentication = request.getHeaders().getFirst(AUTHENTICATION_HEADER);
         final boolean status = authentication != null && !authentication.isEmpty();
+        System.out.println(userInfo);
+        System.out.println(permission);
+        System.out.println(authentication);
+        System.out.println(status);
         if (status && (userInfo == null || userInfo.isEmpty()) && (permission == null || permission.isEmpty())) {
             return Mono.error(new AuthException(
                     this.getClass(),

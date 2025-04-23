@@ -25,9 +25,6 @@ import java.util.function.Consumer;
 )
 public class UserRepositoryImpl implements UserRepository {
 
-    private static final String USER_TABLE = "p6e_user";
-    private static final String USER_AUTH_TABLE = "p6e_user_auth";
-
     @SuppressWarnings("ALL")
     private static final String BASE_SELECT_SQL = """
                 SELECT "id", "status", "enabled", "internal", "administrator", "account", "phone",
@@ -61,7 +58,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Mono<User> findById(Integer id) {
         return client.sql(TemplateParser.execute(BASE_SELECT_SQL
-                        + " WHERE \"id\" = :ID ; ", "TABLE", USER_TABLE))
+                        + " WHERE \"id\" = :ID ; ", "TABLE", getUserTableName()))
                 .bind("ID", id)
                 .map(this::convertReadableToUser)
                 .first()
@@ -72,7 +69,7 @@ public class UserRepositoryImpl implements UserRepository {
     public Mono<User> findByAccount(String account) {
         System.out.println("CCCCCCCCC >>> findByAccount  :::::: " + account);
         return client.sql(TemplateParser.execute(BASE_SELECT_SQL
-                        + " WHERE \"account\" = :ACCOUNT ; ", "TABLE", USER_TABLE))
+                        + " WHERE \"account\" = :ACCOUNT ; ", "TABLE", getUserTableName()))
                 .bind("ACCOUNT", account)
                 .map(this::convertReadableToUser)
                 .first()
@@ -86,7 +83,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Mono<User> findByPhone(String phone) {
         return client.sql(TemplateParser.execute(BASE_SELECT_SQL
-                        + " WHERE \"phone\" = :PHONE ; ", "TABLE", USER_TABLE))
+                        + " WHERE \"phone\" = :PHONE ; ", "TABLE", getUserTableName()))
                 .bind("PHONE", phone)
                 .map(this::convertReadableToUser)
                 .first()
@@ -96,7 +93,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Mono<User> findByMailbox(String mailbox) {
         return client.sql(TemplateParser.execute(BASE_SELECT_SQL
-                        + " WHERE \"mailbox\" = :MAILBOX ; ", "TABLE", USER_TABLE))
+                        + " WHERE \"mailbox\" = :MAILBOX ; ", "TABLE", getUserTableName()))
                 .bind("MAILBOX", mailbox)
                 .map(this::convertReadableToUser)
                 .first()
@@ -107,7 +104,7 @@ public class UserRepositoryImpl implements UserRepository {
     public Mono<User> findByPhoneOrMailbox(String account) {
         System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         return client.sql(TemplateParser.execute(BASE_SELECT_SQL
-                        + " WHERE \"phone\" = :ACCOUNT OR \"mailbox\" = :ACCOUNT ; ", "TABLE", USER_TABLE))
+                        + " WHERE \"phone\" = :ACCOUNT OR \"mailbox\" = :ACCOUNT ; ", "TABLE", getUserTableName()))
                 .bind("ACCOUNT", account)
                 .map(this::convertReadableToUser)
                 .first()
@@ -129,7 +126,7 @@ public class UserRepositoryImpl implements UserRepository {
     private Mono<String> findPasswordById(Integer id) {
         return client
                 .sql(TemplateParser.execute("SELECT \"id\", \"password\" FROM "
-                        + "\"@{TABLE}\" WHERE \"id\" = :ID ; ", "TABLE", USER_AUTH_TABLE))
+                        + "\"@{TABLE}\" WHERE \"id\" = :ID ; ", "TABLE", getUserAuthTableName()))
                 .bind("ID", id)
                 .map(readable -> {
                     System.out.println("OOOOOOOPPPPPPPPP");
@@ -137,6 +134,14 @@ public class UserRepositoryImpl implements UserRepository {
                     return TransformationUtil.objectToString(readable.get("password"));
                 })
                 .first();
+    }
+
+    public String getUserTableName() {
+        return "p6e_user";
+    }
+
+    public String getUserAuthTableName() {
+        return "p6e_user_auth";
     }
 
 }
