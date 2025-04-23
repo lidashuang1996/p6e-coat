@@ -94,16 +94,12 @@ public class AuthenticationGatewayFilterFactory extends AbstractGatewayFilterFac
                     .defaultIfEmpty(ANONYMOUS)
                     .flatMap(u -> {
                         System.out.println("1111111 >>>>>> " + u);
-                        if (ANONYMOUS == u) {
-                            return chain.filter(exchange);
-                        } else {
-                            return chain.filter(exchange.mutate().request(
-                                    exchange.getRequest().mutate()
-                                            .header(USER_INFO_HEADER, u.serialize())
-                                            .header(AUTHENTICATION_HEADER, "1")
-                                            .build()
-                            ).build());
-                        }
+                        return chain.filter(exchange.mutate().request(
+                                exchange.getRequest().mutate()
+                                        .header(USER_INFO_HEADER, u.serialize())
+                                        .header(AUTHENTICATION_HEADER, ANONYMOUS == u ? "0" : "1")
+                                        .build()
+                        ).build());
                     });
         }
 
