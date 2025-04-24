@@ -59,13 +59,17 @@ public class LocalStorageCacheTokenValidator implements TokenValidator {
         final List<String> list = new CopyOnWriteArrayList<>();
         final List<String> hList = request.getHeaders().get(AUTHORIZATION_HEADER_NAME);
         final List<String> pList = request.getQueryParams().get(REQUEST_PARAMETER_NAME);
+        System.out.println("1111111111111111111" + list);
         if (hList != null) {
             list.addAll(hList);
         }
+        System.out.println("2222222222222222222222222222222" + list);
         if (pList != null) {
             list.addAll(pList);
         }
+        System.out.println("333333333333333333333333333333333333333333333333" + list);
         if (!list.isEmpty()) {
+            System.out.println("listlistlistlistlistlistlist >>> " + list);
             return execute(new CopyOnWriteArrayList<>(list))
                     .flatMap(m -> cache.getUser(m.getUid()))
                     .flatMap(content -> Mono.just(SpringUtil.getBean(UserBuilder.class).create(content)));
@@ -91,6 +95,7 @@ public class LocalStorageCacheTokenValidator implements TokenValidator {
                     break;
                 }
             }
+            System.out.println("kkkkkkkkkkkkkk  >>>>  " + token);
             return token == null ? Mono.empty() : cache.getToken(token).switchIfEmpty(execute(list));
         }
     }
