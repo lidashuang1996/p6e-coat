@@ -55,6 +55,9 @@ public class PermissionTaskImpl implements PermissionTask {
 
     private Mono<Long> execute(long version) {
         return execute(1, 20, new ArrayList<>()).map(list -> {
+            for (PermissionDetails permissionDetails : list) {
+                System.out.println(permissionDetails);
+            }
             LOGGER.info("[ PERMISSION TASK ] successfully read data, list data >>> [{}].", list.size());
             list.forEach(item -> SpringUtil.getBean(PermissionPathMatcher.class).register(item.setVersion(version)));
             return Long.valueOf(list.size());
@@ -75,7 +78,6 @@ public class PermissionTaskImpl implements PermissionTask {
                     }
                 }
                 list.addAll(tmp);
-                System.out.println("list >>>> " + list);
                 return tmp.isEmpty() ? Mono.just(list) : execute(page + 1, size, list);
             }).switchIfEmpty(Mono.just(list));
         } else {
