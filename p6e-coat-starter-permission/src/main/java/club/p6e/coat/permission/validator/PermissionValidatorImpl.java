@@ -46,10 +46,14 @@ public class PermissionValidatorImpl implements PermissionValidator {
 
     @Override
     public PermissionDetails execute(String path, String method, List<String> groups) {
+        System.out.println("p1");
         if (groups != null) {
+            System.out.println("p3");
             final List<PermissionDetails> permissions = matcher.match(path, 0);
             if (permissions != null && !permissions.isEmpty()) {
+                System.out.println("p5");
                 for (final PermissionDetails permission : permissions) {
+                    System.out.println("permissionpermission 1 >>>" + permission);
                     final String pm = permission.getMethod();
                     final String pg = String.valueOf(permission.getGid());
                     if ((groups.contains(COMMON_MARK) || groups.contains(pg))

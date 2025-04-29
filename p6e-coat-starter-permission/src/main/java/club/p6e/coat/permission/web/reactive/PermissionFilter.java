@@ -77,6 +77,15 @@ public class PermissionFilter implements WebFilter, Ordered {
         final String method = request.getMethod().name().toUpperCase();
         final String project = request.getHeaders().getFirst(PROJECT_HEADER);
         final List<String> list = request.getHeaders().get(USER_PERMISSION_HEADER);
+        System.out.println(
+                method
+        );
+        System.out.println(
+                project
+        );
+        System.out.println(
+                list
+        );
         if (list != null) {
             for (final String item : list) {
                 final List<String> data = JsonUtil.fromJsonToList(item, String.class);
@@ -85,12 +94,16 @@ public class PermissionFilter implements WebFilter, Ordered {
                 }
             }
         }
+        System.out.println(
+                "permissions >> "+ permissions
+        );
         final PermissionDetails details;
         if (project == null || project.isEmpty()) {
             details = validator.execute(path, method, permissions);
         } else {
             details = validator.execute(path, method, project, permissions);
         }
+        System.out.println("details >>> " + details);
         return details;
     }
 

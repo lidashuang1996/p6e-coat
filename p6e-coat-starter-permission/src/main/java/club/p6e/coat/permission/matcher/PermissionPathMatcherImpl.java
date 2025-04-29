@@ -55,13 +55,17 @@ public class PermissionPathMatcherImpl implements PermissionPathMatcher {
 
     @Override
     public List<PermissionDetails> match(String path, int mode) {
+        System.out.println("pathpathpath >>> " + path);
         final List<PermissionDetails> list = match(path);
         if (mode == 1) {
             list.removeIf(details -> !details.getPath().equals(path));
             return list;
         } else if (mode == 0) {
             final List<PermissionDetails> tmp = new ArrayList<>(list);
+            System.out.println(" p tmp11 >>> " + tmp);
             list.removeIf(details -> !details.getPath().equals(path));
+            System.out.println(" p tmp12 >>> " + tmp);
+            System.out.println(" p tmp13 >>> " + list);
             return list.isEmpty() ? tmp : list;
         } else {
             return list;
