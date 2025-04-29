@@ -1,6 +1,7 @@
 package club.p6e.cloud.gateway.auth;
 
 import club.p6e.coat.auth.User;
+import club.p6e.coat.common.utils.JsonUtil;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -78,12 +79,12 @@ public class AuthenticationGatewayFilterFactory extends AbstractGatewayFilterFac
 
             @Override
             public String serialize() {
-                return "";
+                return JsonUtil.toJson(toMap());
             }
 
             @Override
             public Map<String, Object> toMap() {
-                return Map.of();
+                return Map.of("id", "0");
             }
         };
 

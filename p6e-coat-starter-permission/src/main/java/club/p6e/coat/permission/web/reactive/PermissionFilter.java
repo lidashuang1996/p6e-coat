@@ -85,8 +85,10 @@ public class PermissionFilter implements WebFilter, Ordered {
                 }
             }
         }
+        System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxx");
         final PermissionDetails details;
         if (project == null || project.isEmpty()) {
+            System.out.println("ttttttttt  permissions >>> " + permissions);
             details = validator.execute(path, method, permissions);
         } else {
             details = validator.execute(path, method, project, permissions);

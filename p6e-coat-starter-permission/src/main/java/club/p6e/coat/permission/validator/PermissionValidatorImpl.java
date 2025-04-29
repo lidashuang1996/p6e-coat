@@ -47,13 +47,19 @@ public class PermissionValidatorImpl implements PermissionValidator {
     @Override
     public PermissionDetails execute(String path, String method, List<String> groups) {
         if (groups != null) {
-            final List<PermissionDetails> permissions = matcher.match(path, 0);
+            System.out.println("path >>> " + path);
+            final List<PermissionDetails> permissions = matcher.match(path);
+            System.out.println(permissions);
             if (permissions != null && !permissions.isEmpty()) {
                 for (final PermissionDetails permission : permissions) {
+                    System.out.println("permissionpermissionpermission >>> " + permission);
+                    System.out.println("permission.getMark().toUpperCase().endsWith(\"IGNORE\") >> " + permission.getMark().toUpperCase().endsWith("IGNORE"));
                     final String pm = permission.getMethod();
                     final String pg = String.valueOf(permission.getGid());
                     if ((groups.contains(COMMON_MARK) || groups.contains(pg))
                             && (COMMON_MARK.equals(pm) || method.equalsIgnoreCase(pm))) {
+                        return permission;
+                    } else if (permission.getMark().toUpperCase().endsWith("IGNORE")) {
                         return permission;
                     }
                 }
@@ -74,6 +80,8 @@ public class PermissionValidatorImpl implements PermissionValidator {
                     if (pp.equals(project)
                             && (COMMON_MARK.equals(pm) || method.equalsIgnoreCase(pm))
                             && (groups.contains(COMMON_MARK) || groups.contains(pg) || permission.getMark().toUpperCase().endsWith(IGNORE_MARK))) {
+                        return permission;
+                    } else if (permission.getMark().toUpperCase().endsWith("IGNORE")) {
                         return permission;
                     }
                 }

@@ -48,10 +48,9 @@ public class PermissionValidationGatewayFilterFactory extends AbstractGatewayFil
         @Override
         public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
             final ServerHttpRequest request = exchange.getRequest();
-            return service.execute(exchange).flatMap(p -> {
-                exchange.mutate().request(request.mutate().header(PERMISSION_HEADER, JsonUtil.toJson(p)).build()).build();
-                return chain.filter(exchange);
-            });
+            return service.execute(exchange).flatMap(p ->
+                    chain.filter(exchange.mutate().request(request.mutate()
+                            .header(PERMISSION_HEADER, JsonUtil.toJson(p)).build()).build()));
         }
 
     }
