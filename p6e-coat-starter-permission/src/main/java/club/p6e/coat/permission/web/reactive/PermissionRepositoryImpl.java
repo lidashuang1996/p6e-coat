@@ -27,11 +27,6 @@ import java.util.List;
 public class PermissionRepositoryImpl implements PermissionRepository {
 
     /**
-     * TABLE PREFIX
-     */
-    private static final String TABLE_PREFIX = "p6e_";
-
-    /**
      * Database Client Object
      */
     private final DatabaseClient client;
@@ -45,89 +40,75 @@ public class PermissionRepositoryImpl implements PermissionRepository {
         this.client = client;
     }
 
+    /**
+     * Get Permission Url Table Name
+     *
+     * @return Permission Url Table Name
+     */
+    public String getPermissionUrlTableName() {
+        return "p6e_permission_url";
+    }
+
+    /**
+     * Get Permission Url Group Table Name
+     *
+     * @return Permission Url Group Table Name
+     */
+    public String getPermissionUrlGroupTableName() {
+        return "p6e_permission_url_group";
+    }
+
+    /**
+     * Get Permission Url Group Mapper Url Table Name
+     *
+     * @return Permission Url Group Mapper Url Table Name
+     */
+    public String getPermissionUrlGroupMapperUrlTableName() {
+        return "p6e_permission_url_group_mapper_url";
+    }
+
     @SuppressWarnings("ALL")
     @Override
     public Mono<List<PermissionDetails>> getPermissionDetailsList(Integer page, Integer size) {
-        System.out.println(
-                TemplateParser.execute("""
+        return client.sql(TemplateParser.execute(TemplateParser.execute("""
                         SELECT
-                            "PU"."oid",
-                            "PU"."pid",
-                            "PU"."url",
-                            "PU"."base_url",
-                            "PU"."method",
-                            "PG"."mark",
-                            "PG"."weight",
-                            "PUG"."config",
-                            "PUG"."config",
-                            "PUG"."attribute"
+                            _permission_url_table.oid,
+                            _permission_url_table.pid,
+                            _permission_url_table.url,
+                            _permission_url_table.base_url,
+                            _permission_url_table.method,
+                            _permission_url_group_table.mark,
+                            _permission_url_group_table.weight,
+                            _permission_url_group_mapper_url_table.config,
+                            _permission_url_group_mapper_url_table.config,
+                            _permission_url_group_mapper_url_table.attribute
                         FROM
                             (
                                 SELECT
-                                    "id",
-                                    "oid",
-                                    "pid",
-                                    "url",
-                                    "base_url",
-                                    "method"
+                                    _permission_url.id,
+                                    _permission_url.oid,
+                                    _permission_url.pid,
+                                    _permission_url.url,
+                                    _permission_url.base_url,
+                                    _permission_url.method
                                 FROM
-                                    "@{TABLE_PREFIX}permission_url"
+                                    @{TABLE1} AS _permission_url
                                 ORDER BY
-                                    "id"
+                                    _permission_url.id
                                     ASC
                                 LIMIT 
                                     :LIMIT
                                 OFFSET
                                     :OFFSET
-                            ) AS "PU"
+                            ) AS _permission_url_table
                             LEFT JOIN 
-                                "@{TABLE_PREFIX}permission_url_group_mapper_url" AS "PUG" 
-                                ON "PU"."id" = "PUG"."uid"
+                                @{TABLE2} AS _permission_url_group_mapper_url_table
+                                ON _permission_url_table.id = _permission_url_group_mapper_url_table.uid
                             LEFT JOIN 
-                                "@{TABLE_PREFIX}permission_url_group" AS "PG" 
-                                ON "PG"."id" = "PUG"."gid"
-                        """, "TABLE_PREFIX", TABLE_PREFIX
-                )
-        );
-        return client.sql(TemplateParser.execute("""
-                        SELECT
-                            "PU"."oid",
-                            "PU"."pid",
-                            "PU"."url",
-                            "PU"."base_url",
-                            "PU"."method",
-                            "PG"."mark",
-                            "PG"."weight",
-                            "PUG"."config",
-                            "PUG"."config",
-                            "PUG"."attribute"
-                        FROM
-                            (
-                                SELECT
-                                    "id",
-                                    "oid",
-                                    "pid",
-                                    "url",
-                                    "base_url",
-                                    "method"
-                                FROM
-                                    "@{TABLE_PREFIX}permission_url"
-                                ORDER BY
-                                    "id"
-                                    ASC
-                                LIMIT 
-                                    :LIMIT
-                                OFFSET
-                                    :OFFSET
-                            ) AS "PU"
-                            LEFT JOIN 
-                                "@{TABLE_PREFIX}permission_url_group_mapper_url" AS "PUG" 
-                                ON "PU"."id" = "PUG"."uid"
-                            LEFT JOIN 
-                                "@{TABLE_PREFIX}permission_url_group" AS "PG" 
-                                ON "PG"."id" = "PUG"."gid"
-                        """, "TABLE_PREFIX", TABLE_PREFIX
-                ))
+                                @{TABLE3} AS _permission_url_group_table
+                                ON _permission_url_group_mapper_url_table.gid = _permission_url_group_table.id
+                        """, "TABLE1", getPermissionUrlTableName(), "TABLE2", getPermissionUrlGroupMapperUrlTableName(), "TABLE3", getPermissionUrlGroupTableName()
+                )))
                 .bind("LIMIT", size)
                 .bind("OFFSET", (page - 1) * size)
                 .map((row) -> {

@@ -1,6 +1,5 @@
 package club.p6e.cloud.gateway;
 
-import club.p6e.coat.common.utils.JsonUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.gateway.event.RefreshRoutesEvent;
 import org.springframework.cloud.gateway.route.*;
@@ -52,9 +51,6 @@ public class RouteLocator implements RouteDefinitionRepository {
     public synchronized void refresh(List<RouteDefinition> routeDefinitions) {
         this.routeDefinitions.clear();
         this.routeDefinitions.addAll(routeDefinitions);
-        System.out.println(
-                "REFRESH ROUTE DEFINITIONS >>> " + JsonUtil.toJson(this.routeDefinitions)
-        );
         if (!this.routeDefinitions.isEmpty()) {
             this.publisher.publishEvent(new RefreshRoutesEvent(this));
         }

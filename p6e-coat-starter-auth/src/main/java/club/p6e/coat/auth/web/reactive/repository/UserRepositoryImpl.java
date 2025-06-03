@@ -12,9 +12,10 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
-import java.util.function.Consumer;
 
 /**
+ * User Repository Impl
+ *
  * @author lidashuang
  * @version 1.0
  */
@@ -25,10 +26,23 @@ import java.util.function.Consumer;
 )
 public class UserRepositoryImpl implements UserRepository {
 
-    @SuppressWarnings("ALL")
     private static final String BASE_SELECT_SQL = """
-                SELECT "id", "status", "enabled", "internal", "administrator", "account", "phone",
-                 "mailbox", "name", "nickname", "language", "avatar", "description" FROM "@{TABLE}"
+            SELECT
+            _user.id,
+            _user.status,
+            _user.enabled,
+            _user.internal,
+            _user.administrator,
+            _user.account,
+            _user.phone,
+            _user.mailbox,
+            _user.name,
+            _user.nickname,
+            _user.language,
+            _user.avatar,
+            _user.description
+            FROM
+            @{TABLE} AS _user
             """;
 
     private final DatabaseClient client;
@@ -55,67 +69,54 @@ public class UserRepositoryImpl implements UserRepository {
         }});
     }
 
+    @SuppressWarnings("ALL")
     @Override
     public Mono<User> findById(Integer id) {
-        return client.sql(TemplateParser.execute(BASE_SELECT_SQL
-                        + " WHERE \"id\" = :ID ; ", "TABLE", getUserTableName()))
+        return client.sql(TemplateParser.execute(BASE_SELECT_SQL + " WHERE _user.id = :ID ; ", "TABLE", getUserTableName()))
                 .bind("ID", id)
                 .map(this::convertReadableToUser)
                 .first()
                 .flatMap(u -> findPasswordById(Integer.valueOf(u.id())).map(u::password));
     }
 
+    @SuppressWarnings("ALL")
     @Override
     public Mono<User> findByAccount(String account) {
-        System.out.println("CCCCCCCCC >>> findByAccount  :::::: " + account);
-        return client.sql(TemplateParser.execute(BASE_SELECT_SQL
-                        + " WHERE \"account\" = :ACCOUNT ; ", "TABLE", getUserTableName()))
+        return client.sql(TemplateParser.execute(BASE_SELECT_SQL + " WHERE _user.account = :ACCOUNT ; ", "TABLE", getUserTableName()))
                 .bind("ACCOUNT", account)
                 .map(this::convertReadableToUser)
                 .first()
-                .flatMap(u -> {
-                    System.out.println("bbbbbbbbbbb ?11111 ");
-                    System.out.println("uuu ::" + u);
-                    return findPasswordById(Integer.valueOf(u.id())).map(u::password);
-                });
+                .flatMap(u -> findPasswordById(Integer.valueOf(u.id())).map(u::password));
     }
 
+    @SuppressWarnings("ALL")
     @Override
     public Mono<User> findByPhone(String phone) {
-        return client.sql(TemplateParser.execute(BASE_SELECT_SQL
-                        + " WHERE \"phone\" = :PHONE ; ", "TABLE", getUserTableName()))
+        return client.sql(TemplateParser.execute(BASE_SELECT_SQL + " WHERE _user.phone = :PHONE ; ", "TABLE", getUserTableName()))
                 .bind("PHONE", phone)
                 .map(this::convertReadableToUser)
                 .first()
                 .flatMap(u -> findPasswordById(Integer.valueOf(u.id())).map(u::password));
     }
 
+    @SuppressWarnings("ALL")
     @Override
     public Mono<User> findByMailbox(String mailbox) {
-        return client.sql(TemplateParser.execute(BASE_SELECT_SQL
-                        + " WHERE \"mailbox\" = :MAILBOX ; ", "TABLE", getUserTableName()))
+        return client.sql(TemplateParser.execute(BASE_SELECT_SQL + " WHERE _user.mailbox = :MAILBOX ; ", "TABLE", getUserTableName()))
                 .bind("MAILBOX", mailbox)
                 .map(this::convertReadableToUser)
                 .first()
                 .flatMap(u -> findPasswordById(Integer.valueOf(u.id())).map(u::password));
     }
 
+    @SuppressWarnings("ALL")
     @Override
     public Mono<User> findByPhoneOrMailbox(String account) {
-        System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-        return client.sql(TemplateParser.execute(BASE_SELECT_SQL
-                        + " WHERE \"phone\" = :ACCOUNT OR \"mailbox\" = :ACCOUNT ; ", "TABLE", getUserTableName()))
+        return client.sql(TemplateParser.execute(BASE_SELECT_SQL + " WHERE \"phone\" = :ACCOUNT OR \"mailbox\" = :ACCOUNT ; ", "TABLE", getUserTableName()))
                 .bind("ACCOUNT", account)
                 .map(this::convertReadableToUser)
                 .first()
-                .flatMap(u -> findPasswordById(Integer.valueOf(u.id())).map(u::password))
-                .doOnError(new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) {
-                        System.out.println(" xx >>> " + throwable);
-                        throwable.printStackTrace();
-                    }
-                });
+                .flatMap(u -> findPasswordById(Integer.valueOf(u.id())).map(u::password));
     }
 
     @Override
@@ -123,16 +124,12 @@ public class UserRepositoryImpl implements UserRepository {
         return null;
     }
 
+    @SuppressWarnings("ALL")
     private Mono<String> findPasswordById(Integer id) {
         return client
-                .sql(TemplateParser.execute("SELECT \"id\", \"password\" FROM "
-                        + "\"@{TABLE}\" WHERE \"id\" = :ID ; ", "TABLE", getUserAuthTableName()))
+                .sql(TemplateParser.execute("SELECT _user_auth.id, _user_auth.password FROM @{TABLE} AS _user_auth WHERE _user_auth.id = :ID ; ", "TABLE", getUserAuthTableName()))
                 .bind("ID", id)
-                .map(readable -> {
-                    System.out.println("OOOOOOOPPPPPPPPP");
-                    System.out.println(readable.get("password") + "?>>>>>>>>>");
-                    return TransformationUtil.objectToString(readable.get("password"));
-                })
+                .map(readable -> TransformationUtil.objectToString(readable.get("password")))
                 .first();
     }
 

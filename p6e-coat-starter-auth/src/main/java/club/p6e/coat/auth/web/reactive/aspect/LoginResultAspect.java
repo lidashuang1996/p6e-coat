@@ -39,22 +39,39 @@ public class LoginResultAspect {
             final ServerWebExchange e = exchange;
             return mono.flatMap(r -> {
                 if (r instanceof final User user) {
-                    return SpringUtil.getBean(TokenGenerator.class).execute(e, user).flatMap(o -> {
-                        if (o instanceof final ResponseCookie cookie) {
-                            e.getResponse().addCookie(cookie);
-                            return Mono.just(String.valueOf(System.currentTimeMillis()));
-                        } else {
-                            return Mono.just(o);
-                        }
-                    }).map(ResultContext::build);
+                    return executeDecorateUserMono(user)
+                            .flatMap(u -> SpringUtil.getBean(TokenGenerator.class).execute(e, user))
+                            .flatMap(o -> {
+                                if (o instanceof final ResponseCookie cookie) {
+                                    e.getResponse().addCookie(cookie);
+                                    return Mono.just(String.valueOf(System.currentTimeMillis()));
+                                } else {
+                                    return Mono.just(o);
+                                }
+                            }).map(ResultContext::build);
                 }
-                if (r instanceof final String string && string.equals("AUTHENTICATION")) {
+                if (r instanceof final String string && "AUTHENTICATION".equalsIgnoreCase(string)) {
                     return Mono.just(ResultContext.build(String.valueOf(System.currentTimeMillis())));
                 }
                 return Mono.just(ResultContext.build(r));
             });
+        } else {
+            if (result instanceof final User user) {
+                return ResultContext.build(executeDecorateUser(user));
+            }
+            if (result instanceof final String string && "AUTHENTICATION".equalsIgnoreCase(string)) {
+                return ResultContext.build(String.valueOf(System.currentTimeMillis()));
+            }
+            return ResultContext.build(result);
         }
-        return result;
+    }
+
+    public User executeDecorateUser(User user) {
+        return user;
+    }
+
+    public Mono<User> executeDecorateUserMono(User user) {
+        return Mono.just(user);
     }
 
 }
