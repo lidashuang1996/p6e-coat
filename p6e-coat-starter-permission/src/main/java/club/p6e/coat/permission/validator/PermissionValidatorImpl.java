@@ -45,49 +45,35 @@ public class PermissionValidatorImpl implements PermissionValidator {
     }
 
     @Override
-    public PermissionDetails execute(String path, String method, List<String> groups) {
+    public PermissionDetails execute(String mode, String path, String method, List<String> groups) {
+        PermissionDetails vague = null;
         if (groups != null) {
-            System.out.println("path >>> " + path);
             final List<PermissionDetails> permissions = matcher.match(path);
-            System.out.println(permissions);
             if (permissions != null && !permissions.isEmpty()) {
                 for (final PermissionDetails permission : permissions) {
-                    System.out.println("permissionpermissionpermission >>> " + permission);
-                    System.out.println("permission.getMark().toUpperCase().endsWith(\"IGNORE\") >> " + permission.getMark().toUpperCase().endsWith("IGNORE"));
+                    final String pp = permission.getPath();
+                    final String pk = permission.getMark();
                     final String pm = permission.getMethod();
                     final String pg = String.valueOf(permission.getGid());
-                    if ((groups.contains(COMMON_MARK) || groups.contains(pg))
-                            && (COMMON_MARK.equals(pm) || method.equalsIgnoreCase(pm))) {
-                        return permission;
-                    } else if (permission.getMark().toUpperCase().endsWith("IGNORE")) {
-                        return permission;
+                    final boolean gv = groups.contains(pg) || pk.toUpperCase().endsWith(IGNORE_MARK);
+                    final boolean mv = COMMON_MARK.equalsIgnoreCase(pm) || method.equalsIgnoreCase(pm);
+                    if (gv && mv) {
+                        if (pp.contains("*")) {
+                            switch (mode) {
+                                case "0":
+                                    vague = permission;
+                                    break;
+                                case "-1":
+                                    return permission;
+                            }
+                        } else {
+                            return permission;
+                        }
                     }
                 }
             }
         }
-        return null;
-    }
-
-    @Override
-    public PermissionDetails execute(String path, String method, String project, List<String> groups) {
-        if (groups != null) {
-            final List<PermissionDetails> permissions = matcher.match(path, 0);
-            if (permissions != null && !permissions.isEmpty()) {
-                for (final PermissionDetails permission : permissions) {
-                    final String pm = permission.getMethod();
-                    final String pg = String.valueOf(permission.getGid());
-                    final String pp = String.valueOf(permission.getPid());
-                    if (pp.equals(project)
-                            && (COMMON_MARK.equals(pm) || method.equalsIgnoreCase(pm))
-                            && (groups.contains(COMMON_MARK) || groups.contains(pg) || permission.getMark().toUpperCase().endsWith(IGNORE_MARK))) {
-                        return permission;
-                    } else if (permission.getMark().toUpperCase().endsWith("IGNORE")) {
-                        return permission;
-                    }
-                }
-            }
-        }
-        return null;
+        return vague;
     }
 
 }

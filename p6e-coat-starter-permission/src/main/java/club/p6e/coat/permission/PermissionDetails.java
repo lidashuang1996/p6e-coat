@@ -18,16 +18,6 @@ import java.util.Objects;
 public class PermissionDetails implements Serializable {
 
     /**
-     * OID
-     */
-    private Integer oid;
-
-    /**
-     * PID
-     */
-    private Integer pid;
-
-    /**
      * UID
      */
     private Integer uid;

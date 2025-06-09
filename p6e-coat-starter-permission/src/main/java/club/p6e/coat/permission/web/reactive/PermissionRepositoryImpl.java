@@ -72,22 +72,19 @@ public class PermissionRepositoryImpl implements PermissionRepository {
     public Mono<List<PermissionDetails>> getPermissionDetailsList(Integer page, Integer size) {
         return client.sql(TemplateParser.execute(TemplateParser.execute("""
                         SELECT
-                            _permission_url_table.oid,
-                            _permission_url_table.pid,
                             _permission_url_table.url,
                             _permission_url_table.base_url,
                             _permission_url_table.method,
                             _permission_url_group_table.mark,
                             _permission_url_group_table.weight,
-                            _permission_url_group_mapper_url_table.config,
+                            _permission_url_group_mapper_url_table.gid,
+                            _permission_url_group_mapper_url_table.uid,
                             _permission_url_group_mapper_url_table.config,
                             _permission_url_group_mapper_url_table.attribute
                         FROM
                             (
                                 SELECT
                                     _permission_url.id,
-                                    _permission_url.oid,
-                                    _permission_url.pid,
                                     _permission_url.url,
                                     _permission_url.base_url,
                                     _permission_url.method
@@ -113,8 +110,8 @@ public class PermissionRepositoryImpl implements PermissionRepository {
                 .bind("OFFSET", (page - 1) * size)
                 .map((row) -> {
                     final PermissionDetails details = new PermissionDetails();
-                    details.setOid(TransformationUtil.objectToInteger(row.get("oid")));
-                    details.setPid(TransformationUtil.objectToInteger(row.get("pid")));
+                    details.setGid(TransformationUtil.objectToInteger(row.get("gid")));
+                    details.setUid(TransformationUtil.objectToInteger(row.get("uid")));
                     details.setUrl(TransformationUtil.objectToString(row.get("url")));
                     details.setBaseUrl(TransformationUtil.objectToString(row.get("base_url")));
                     details.setMethod(TransformationUtil.objectToString(row.get("method")));

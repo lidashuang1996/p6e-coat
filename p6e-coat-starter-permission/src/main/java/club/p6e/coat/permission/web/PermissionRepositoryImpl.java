@@ -89,8 +89,6 @@ public class PermissionRepositoryImpl implements PermissionRepository {
                         final List<PermissionDetails> list = new ArrayList<>();
                         while (rs.next()) {
                             final PermissionDetails details = new PermissionDetails();
-                            details.setOid(rs.getInt("oid"));
-                            details.setPid(rs.getInt("pid"));
                             details.setUrl(rs.getString("url"));
                             details.setBaseUrl(rs.getString("base_url"));
                             details.setMethod(rs.getString("method"));

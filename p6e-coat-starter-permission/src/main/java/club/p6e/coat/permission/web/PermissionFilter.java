@@ -81,13 +81,13 @@ public class PermissionFilter implements Filter, Ordered {
                 }
             }
         }
-        final PermissionDetails details;
-        if (project == null || project.isEmpty()) {
-            details = validator.execute(path, method, permissions);
-        } else {
-            details = validator.execute(path, method, project, permissions);
-        }
-        return details;
+//        final PermissionDetails details;
+//        if (project == null || project.isEmpty()) {
+//            details = validator.execute(path, method, permissions);
+//        } else {
+//            details = validator.execute(path, method, project, permissions);
+//        }
+        return null;
     }
 
 }

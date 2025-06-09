@@ -19,21 +19,7 @@ public interface PermissionPathMatcher {
      * @param path Path
      * @return Permission Details List Object
      */
-    @SuppressWarnings("ALL")
     List<PermissionDetails> match(String path);
-
-    /**
-     * Matching Path
-     *
-     * @param path Path
-     * @param mode Mode
-     *             Mode -1  Fuzzy Matching
-     *             Mode  1  Perfect Matching
-     *             Mode  0  Complete Matching Followed By Fuzzy Matching
-     * @return Permission Details List Object
-     */
-    @SuppressWarnings("ALL")
-    List<PermissionDetails> match(String path, int mode);
 
     /**
      * Cache Register Path

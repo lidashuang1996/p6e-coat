@@ -9,7 +9,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.pattern.PathPattern;
 import org.springframework.web.util.pattern.PathPatternParser;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -51,25 +54,6 @@ public class PermissionPathMatcherImpl implements PermissionPathMatcher {
         }
         result.sort(Comparator.comparingInt(PermissionDetails::getWeight).reversed());
         return result;
-    }
-
-    @Override
-    public List<PermissionDetails> match(String path, int mode) {
-        System.out.println("pathpathpath >>> " + path);
-        final List<PermissionDetails> list = match(path);
-        if (mode == 1) {
-            list.removeIf(details -> !details.getPath().equals(path));
-            return list;
-        } else if (mode == 0) {
-            final List<PermissionDetails> tmp = new ArrayList<>(list);
-            System.out.println(" p tmp11 >>> " + tmp);
-            list.removeIf(details -> !details.getPath().equals(path));
-            System.out.println(" p tmp12 >>> " + tmp);
-            System.out.println(" p tmp13 >>> " + list);
-            return list.isEmpty() ? tmp : list;
-        } else {
-            return list;
-        }
     }
 
     @Override
