@@ -48,7 +48,9 @@ public class PermissionPathMatcherImpl implements PermissionPathMatcher {
         final List<PermissionDetails> result = new ArrayList<>();
         final PathContainer container = PathContainer.parsePath(path);
         for (final PathPattern pattern : cache.keySet()) {
+            System.out.println("AAAAAAAAA >>> " + pattern);
             if (pattern.matches(container)) {
+                System.out.println("bbbbbbbbbbbbbb >>>> " + pattern.matches(container));
                 result.addAll(cache.get(pattern));
             }
         }

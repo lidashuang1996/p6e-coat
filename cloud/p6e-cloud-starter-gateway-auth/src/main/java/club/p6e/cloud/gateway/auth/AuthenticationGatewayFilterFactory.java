@@ -79,6 +79,8 @@ public class AuthenticationGatewayFilterFactory extends AbstractGatewayFilterFac
 
             @Override
             public String serialize() {
+                System.out.println("11111111111 >>> " + toMap());
+                System.out.println("2222222222 >>>> +" + JsonUtil.toJson(toMap()));
                 return JsonUtil.toJson(toMap());
             }
 

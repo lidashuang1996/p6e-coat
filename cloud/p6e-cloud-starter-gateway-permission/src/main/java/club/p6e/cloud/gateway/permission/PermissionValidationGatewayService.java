@@ -44,6 +44,7 @@ public class PermissionValidationGatewayService {
      */
     public Mono<PermissionDetails> execute(ServerWebExchange exchange) {
         final PermissionDetails details = filter.validate(exchange.getRequest());
+        System.out.println("details >>> " + details);
         if (details == null) {
             return Mono.error(new PermissionException(
                     this.getClass(),
