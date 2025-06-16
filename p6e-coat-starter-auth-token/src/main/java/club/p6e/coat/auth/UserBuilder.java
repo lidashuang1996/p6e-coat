@@ -12,6 +12,7 @@ public interface UserBuilder {
 
     /**
      * Create User Object
+     * String To User Object
      *
      * @param content User Content
      * @return User Object
@@ -20,6 +21,7 @@ public interface UserBuilder {
 
     /**
      * Create User Object
+     * Map To User Object
      *
      * @param content User Content
      * @return User Object

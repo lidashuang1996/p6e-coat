@@ -1,12 +1,11 @@
-package club.p6e.coat.auth.token.web.reactive;
+package club.p6e.coat.auth.token.web;
 
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.UserBuilder;
 import club.p6e.coat.auth.token.JsonWebTokenCodec;
 import club.p6e.coat.common.utils.SpringUtil;
-import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Mono;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,16 +54,15 @@ public class LocalStorageJsonWebTokenValidator implements TokenValidator {
     }
 
     @Override
-    public Mono<User> execute(ServerWebExchange context) {
-        final ServerHttpRequest request = context.getRequest();
-        final List<String> hList = request.getHeaders().get(AUTHORIZATION_HEADER_NAME);
-        final List<String> pList = request.getQueryParams().get(REQUEST_PARAMETER_NAME);
+    public User execute(HttpServletRequest request, HttpServletResponse response) {
+        final String ht = request.getHeader(AUTHORIZATION_HEADER_NAME);
+        final String qt = request.getParameter(REQUEST_PARAMETER_NAME);
         final List<String> list = new ArrayList<>();
-        if (hList != null) {
-            list.addAll(hList);
+        if (ht != null) {
+            list.add(ht);
         }
-        if (pList != null) {
-            list.addAll(pList);
+        if (qt != null) {
+            list.add(qt);
         }
         if (!list.isEmpty()) {
             String content;
@@ -76,11 +74,11 @@ public class LocalStorageJsonWebTokenValidator implements TokenValidator {
                 }
                 if (content != null) {
                     content = content.substring(content.indexOf("@") + 1);
-                    return Mono.just(SpringUtil.getBean(UserBuilder.class).create(content));
+                    return SpringUtil.getBean(UserBuilder.class).create(content);
                 }
             }
         }
-        return Mono.empty();
+        return null;
     }
 
 }

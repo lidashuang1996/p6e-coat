@@ -1,8 +1,7 @@
-package club.p6e.coat.auth.token.web.reactive;
+package club.p6e.coat.auth.token.web;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
-import reactor.core.publisher.Mono;
 
 import java.io.Serializable;
 import java.util.List;
@@ -69,7 +68,7 @@ public interface UserTokenCache {
      * @param content User Content
      * @return Model Object
      */
-    Mono<Model> set(String uid, String device, String token, String content, long expiration);
+    Model set(String uid, String device, String token, String content, long expiration);
 
     /**
      * Get User
@@ -77,7 +76,7 @@ public interface UserTokenCache {
      * @param uid UID
      * @return User Content
      */
-    Mono<String> getUser(String uid);
+    String getUser(String uid);
 
     /**
      * Get Token
@@ -85,7 +84,7 @@ public interface UserTokenCache {
      * @param token Token
      * @return Model Object
      */
-    Mono<Model> getToken(String token);
+    Model getToken(String token);
 
     /**
      * Clean Token
@@ -93,7 +92,7 @@ public interface UserTokenCache {
      * @param token Token
      * @return Model Object
      */
-    Mono<Model> cleanToken(String token);
+    Model cleanToken(String token);
 
     /**
      * Clean User And User All Token
@@ -101,6 +100,6 @@ public interface UserTokenCache {
      * @param uid UID
      * @return Token List Object
      */
-    Mono<List<String>> cleanUserAll(String uid);
+    List<String> cleanUserAll(String uid);
 
 }

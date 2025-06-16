@@ -3,8 +3,12 @@ package club.p6e.coat.auth.token.web.reactive;
 import club.p6e.coat.auth.User;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import org.springframework.http.ResponseCookie;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+
+import java.time.LocalDateTime;
 
 /**
  * Cookie Cache Token Generator
@@ -22,6 +26,9 @@ public class CookieCacheTokenGenerator implements TokenGenerator {
 
     /**
      * Device Header Name
+     * Request Header Of the Current Device
+     * Request Header Is Customized By The Program And Not Carried By The User Request
+     * When Receiving Requests, It Is Necessary To Clear The Request Header Carried By The User To Ensure Program Security
      */
     @SuppressWarnings("ALL")
     private static final String DEVICE_HEADER_NAME = "P6e-Device";
@@ -43,9 +50,15 @@ public class CookieCacheTokenGenerator implements TokenGenerator {
     @Override
     public Mono<Object> execute(ServerWebExchange exchange, User user) {
         final String token = token();
-        final String device = exchange.getRequest().getHeaders().getFirst(DEVICE_HEADER_NAME);
+        final ServerHttpRequest request = exchange.getRequest();
+        final ServerHttpResponse response = exchange.getResponse();
+        final String device = request.getHeaders().getFirst(DEVICE_HEADER_NAME);
         return cache.set(user.id(), device == null ? "PC" : device, token, user.serialize(), duration())
-                .flatMap(m -> Mono.just(ResponseCookie.from(AUTH_COOKIE_NAME, token).maxAge(duration()).secure(true).build()));
+                .flatMap(m -> Mono.just(ResponseCookie.from(AUTH_COOKIE_NAME, token).maxAge(duration()).httpOnly(true).path("/").build()))
+                .flatMap(c -> {
+                    response.addCookie(c);
+                    return Mono.just(LocalDateTime.now());
+                });
     }
 
     /**

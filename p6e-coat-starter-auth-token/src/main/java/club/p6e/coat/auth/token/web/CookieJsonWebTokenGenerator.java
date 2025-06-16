@@ -1,20 +1,26 @@
-package club.p6e.coat.auth.token.web.reactive;
+package club.p6e.coat.auth.token.web;
 
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.token.JsonWebTokenCodec;
-import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Mono;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
-import java.util.HashMap;
+import java.time.LocalDateTime;
 
 /**
- * Local Storage Json Web Token Generator
+ * Cookie Json Web Token Generator
  *
  * @author lidashuang
  * @version 1.0
  */
 @SuppressWarnings("ALL")
-public class LocalStorageJsonWebTokenGenerator implements TokenGenerator {
+public class CookieJsonWebTokenGenerator implements TokenGenerator {
+
+    /**
+     * Auth Cookie Name
+     */
+    private static final String AUTH_COOKIE_NAME = "P6E_AUTH";
 
     /**
      * Device Header Name
@@ -35,20 +41,21 @@ public class LocalStorageJsonWebTokenGenerator implements TokenGenerator {
      *
      * @param codec Json Web Token Codec Object
      */
-    public LocalStorageJsonWebTokenGenerator(JsonWebTokenCodec codec) {
+    public CookieJsonWebTokenGenerator(JsonWebTokenCodec codec) {
         this.codec = codec;
     }
 
     @Override
-    public Mono<Object> execute(ServerWebExchange exchange, User user) {
+    public Object execute(HttpServletRequest request, HttpServletResponse response, User user) {
         final long duration = duration();
-        final String device = exchange.getRequest().getHeaders().getFirst(DEVICE_HEADER_NAME);
+        final String device = request.getHeader(DEVICE_HEADER_NAME);
         final String content = codec.encryption(user.id(), (device == null ? "PC" : device) + "@" + user.serialize(), duration);
-        return Mono.just(content).map(m -> new HashMap<>() {{
-            put("token", content);
-            put("type", "Bearer");
-            put("expiration", duration);
-        }});
+        final Cookie cookie = new Cookie(AUTH_COOKIE_NAME, content);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge((int) duration);
+        response.addCookie(cookie);
+        return LocalDateTime.now();
     }
 
     /**

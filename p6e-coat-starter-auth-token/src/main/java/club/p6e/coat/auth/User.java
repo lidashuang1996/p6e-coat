@@ -1,42 +1,49 @@
 package club.p6e.coat.auth;
 
-
 import java.util.Map;
 
 /**
+ * User
+ *
  * @author lidashuang
  * @version 1.0
  */
 public interface User {
 
     /**
-     * 获取序号
+     * Get User ID
      *
-     * @return 序号
+     * @return User ID
      */
-    public String id();
+    String id();
 
     /**
-     * 获取密码
+     * Get User Password
      *
-     * @return 密码
+     * @return User Password
      */
-    public String password();
-
-    public User password(String password);
+    String password();
 
     /**
-     * 序列化方法
+     * Serialize User Object
      *
-     * @return 序列化后的字符串内容
+     * @return Serialize String
      */
-    public String serialize();
+    String serialize();
 
     /**
-     * 转换为 MAP 对象
+     * User Object To Map Object
      *
-     * @return MAP 对象
+     * @return Map Object
      */
-    public Map<String, Object> toMap();
+    Map<String, Object> toMap();
+
+    /**
+     * Set User Password
+     *
+     * @param password Password
+     * @return User Object
+     */
+    User password(String password);
 
 }

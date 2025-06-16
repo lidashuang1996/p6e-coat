@@ -48,6 +48,7 @@ public class CookieJsonWebTokenValidator implements TokenValidator {
                     for (final HttpCookie cookie : cookies.get(key)) {
                         String content = codec.decryption(cookie.getValue());
                         if (content != null) {
+                            content = content.substring(content.indexOf("@") + 1);
                             return Mono.just(SpringUtil.getBean(UserBuilder.class).create(content));
                         }
                     }

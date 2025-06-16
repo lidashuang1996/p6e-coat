@@ -19,14 +19,14 @@ import java.util.Date;
 public class JsonWebTokenCodec {
 
     /**
+     * Is Init
+     */
+    private final boolean init;
+
+    /**
      * Json Web Token Secret
      */
     private final String secret;
-
-    /**
-     * Is Init Status
-     */
-    private final boolean status;
 
     /**
      * Init
@@ -34,7 +34,7 @@ public class JsonWebTokenCodec {
      * @param secret Json Web Token Secret
      */
     public JsonWebTokenCodec(String secret) {
-        this.status = true;
+        this.init = true;
         this.secret = secret;
     }
 
@@ -47,17 +47,19 @@ public class JsonWebTokenCodec {
      * @return Encryption Content
      */
     public String encryption(String id, String content, long expiration) {
-        if (!status) {
+        if (!init) {
             throw new JsonWebTokenSecretException(
                     this.getClass(),
                     "fun decryption(String token).",
                     "json web token encryption secret not init exception."
             );
         }
-        return JWT.create().withAudience(id)
-                .withExpiresAt(Date.from(LocalDateTime.now()
-                        .plusSeconds(expiration).atZone(ZoneId.systemDefault()).toInstant()))
-                .withSubject(content).sign(Algorithm.HMAC256(secret));
+        final LocalDateTime localDateTime = LocalDateTime.now().plusSeconds(expiration);
+        return JWT.create()
+                .withAudience(id)
+                .withSubject(content)
+                .withExpiresAt(Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant()))
+                .sign(Algorithm.HMAC256(secret));
     }
 
     /**
@@ -67,7 +69,7 @@ public class JsonWebTokenCodec {
      * @return Decryption Content
      */
     public String decryption(String token) {
-        if (!status) {
+        if (!init) {
             throw new JsonWebTokenSecretException(
                     this.getClass(),
                     "fun decryption(String token).",

@@ -1,9 +1,9 @@
-package club.p6e.coat.auth.token.web.reactive;
+package club.p6e.coat.auth.token.web;
 
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.token.JsonWebTokenCodec;
-import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Mono;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.HashMap;
 
@@ -40,15 +40,15 @@ public class LocalStorageJsonWebTokenGenerator implements TokenGenerator {
     }
 
     @Override
-    public Mono<Object> execute(ServerWebExchange exchange, User user) {
+    public Object execute(HttpServletRequest request, HttpServletResponse response, User user) {
         final long duration = duration();
-        final String device = exchange.getRequest().getHeaders().getFirst(DEVICE_HEADER_NAME);
+        final String device = request.getHeader(DEVICE_HEADER_NAME);
         final String content = codec.encryption(user.id(), (device == null ? "PC" : device) + "@" + user.serialize(), duration);
-        return Mono.just(content).map(m -> new HashMap<>() {{
+        return new HashMap<>() {{
             put("token", content);
             put("type", "Bearer");
             put("expiration", duration);
-        }});
+        }};
     }
 
     /**

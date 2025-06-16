@@ -9,8 +9,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Cookie Cache Token Validator
@@ -47,7 +47,7 @@ public class CookieCacheTokenValidator implements TokenValidator {
         if (!cookies.isEmpty()) {
             for (final String key : cookies.keySet()) {
                 if (AUTH_COOKIE_NAME.equalsIgnoreCase(key)) {
-                    return execute(new CopyOnWriteArrayList<>(cookies.get(key)))
+                    return execute(new ArrayList<>(cookies.get(key)))
                             .flatMap(m -> cache.getUser(m.getUid()))
                             .flatMap(content -> Mono.just(SpringUtil.getBean(UserBuilder.class).create(content)));
                 }

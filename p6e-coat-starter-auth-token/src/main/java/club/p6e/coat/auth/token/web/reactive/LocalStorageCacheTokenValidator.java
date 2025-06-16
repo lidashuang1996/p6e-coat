@@ -7,8 +7,8 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Local Storage Cache Token Validator
@@ -56,21 +56,17 @@ public class LocalStorageCacheTokenValidator implements TokenValidator {
     @Override
     public Mono<User> execute(ServerWebExchange context) {
         final ServerHttpRequest request = context.getRequest();
-        final List<String> list = new CopyOnWriteArrayList<>();
+        final List<String> list = new ArrayList<>();
         final List<String> hList = request.getHeaders().get(AUTHORIZATION_HEADER_NAME);
         final List<String> pList = request.getQueryParams().get(REQUEST_PARAMETER_NAME);
-        System.out.println("1111111111111111111" + list);
         if (hList != null) {
             list.addAll(hList);
         }
-        System.out.println("2222222222222222222222222222222" + list);
         if (pList != null) {
             list.addAll(pList);
         }
-        System.out.println("333333333333333333333333333333333333333333333333" + list);
         if (!list.isEmpty()) {
-            System.out.println("listlistlistlistlistlistlist >>> " + list);
-            return execute(new CopyOnWriteArrayList<>(list))
+            return execute(new ArrayList<>(list))
                     .flatMap(m -> cache.getUser(m.getUid()))
                     .flatMap(content -> Mono.just(SpringUtil.getBean(UserBuilder.class).create(content)));
         }
@@ -95,7 +91,6 @@ public class LocalStorageCacheTokenValidator implements TokenValidator {
                     break;
                 }
             }
-            System.out.println("kkkkkkkkkkkkkk  >>>>  " + token);
             return token == null ? Mono.empty() : cache.getToken(token).switchIfEmpty(execute(list));
         }
     }
