@@ -79,22 +79,22 @@ public class LocalStorageCacheTokenValidator implements TokenValidator {
      * @return User String Object
      */
     public String execute(List<String> list) {
-        UserTokenCache.Model model = null;
+        String result = null;
         for (final String item : list) {
+            final UserTokenCache.Model model;
             if (item.startsWith(AUTHORIZATION_PREFIX)) {
                 model = cache.getToken(item.substring(AUTHORIZATION_PREFIX.length()));
             } else {
                 model = cache.getToken(item);
             }
             if (model != null) {
+                result = cache.getUser(model.getUid());
+            }
+            if (result != null) {
                 break;
             }
         }
-        if (model == null) {
-            return null;
-        } else {
-            return cache.getUser(model.getUid());
-        }
+        return result;
     }
 
 }

@@ -66,9 +66,7 @@ public class LocalStorageCacheTokenValidator implements TokenValidator {
             list.addAll(pList);
         }
         if (!list.isEmpty()) {
-            return execute(new ArrayList<>(list))
-                    .flatMap(m -> cache.getUser(m.getUid()))
-                    .flatMap(content -> Mono.just(SpringUtil.getBean(UserBuilder.class).create(content)));
+            return execute(new ArrayList<>(list)).flatMap(content -> Mono.just(SpringUtil.getBean(UserBuilder.class).create(content)));
         }
         return Mono.empty();
     }
@@ -77,21 +75,17 @@ public class LocalStorageCacheTokenValidator implements TokenValidator {
      * Execute Token Content
      *
      * @param list Token List Object
-     * @return User Token Cache Model Object
+     * @return User String Object
      */
-    public Mono<UserTokenCache.Model> execute(List<String> list) {
+    public Mono<String> execute(List<String> list) {
         if (list == null || list.isEmpty()) {
             return Mono.empty();
         } else {
-            String token = null;
-            while (!list.isEmpty()) {
-                token = list.remove(0);
-                if (token != null && token.startsWith(AUTHORIZATION_PREFIX)) {
-                    token = token.substring(AUTHORIZATION_PREFIX.length());
-                    break;
-                }
+            String token = list.remove(0);
+            if (token.startsWith(AUTHORIZATION_PREFIX)) {
+                token = token.substring(AUTHORIZATION_PREFIX.length());
             }
-            return token == null ? Mono.empty() : cache.getToken(token).switchIfEmpty(execute(list));
+            return (token == null || token.isEmpty()) ? execute(list) : cache.getToken(token).flatMap(m -> cache.getUser(m.getUid())).switchIfEmpty(execute(list));
         }
     }
 

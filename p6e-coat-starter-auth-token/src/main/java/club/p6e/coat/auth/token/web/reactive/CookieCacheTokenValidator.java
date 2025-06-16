@@ -47,9 +47,7 @@ public class CookieCacheTokenValidator implements TokenValidator {
         if (!cookies.isEmpty()) {
             for (final String key : cookies.keySet()) {
                 if (AUTH_COOKIE_NAME.equalsIgnoreCase(key)) {
-                    return execute(new ArrayList<>(cookies.get(key)))
-                            .flatMap(m -> cache.getUser(m.getUid()))
-                            .flatMap(content -> Mono.just(SpringUtil.getBean(UserBuilder.class).create(content)));
+                    return execute(new ArrayList<>(cookies.get(key))).flatMap(content -> Mono.just(SpringUtil.getBean(UserBuilder.class).create(content)));
                 }
             }
         }
@@ -60,14 +58,14 @@ public class CookieCacheTokenValidator implements TokenValidator {
      * Execute Token Content
      *
      * @param list Http Cookie List Object
-     * @return User Token Cache Model Object
+     * @return User String Object
      */
-    public Mono<UserTokenCache.Model> execute(List<HttpCookie> list) {
+    public Mono<String> execute(List<HttpCookie> list) {
         if (list == null || list.isEmpty()) {
             return Mono.empty();
         } else {
             final HttpCookie cookie = list.remove(0);
-            return cache.getToken(cookie.getValue()).switchIfEmpty(execute(list));
+            return cookie == null ? execute(list) : cache.getToken(cookie.getValue()).flatMap(m -> cache.getUser(m.getUid())).switchIfEmpty(execute(list));
         }
     }
 
