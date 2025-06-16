@@ -37,10 +37,11 @@ public class Base64EncoderHeaderGatewayFilterFactory extends AbstractGatewayFilt
             final HttpHeaders httpHeaders = request.getHeaders();
             final ServerHttpRequest.Builder builder = request.mutate();
             for (final String name : httpHeaders.keySet()) {
-                System.out.println("name >>> " + name + " ::: " + httpHeaders.get(name));
+                // all request headers starting from p6e-
                 if (name != null && name.toLowerCase().startsWith("p6e-")) {
                     final String value = httpHeaders.getFirst(name.toLowerCase());
                     if (value != null) {
+                        // base64 encoder
                         builder.header(name, Base64.getEncoder().encodeToString(value.getBytes(StandardCharsets.UTF_8)));
                     }
                 }

@@ -23,6 +23,9 @@ public class InjectVoucherGatewayFilterFactory extends AbstractGatewayFilterFact
 
     /**
      * Voucher Header Name
+     * Request Header For Downstream Service Voucher
+     * Request Header Is Customized By The Program And Not Carried By The User Request
+     * When Receiving Requests, It Is Necessary To Clear The Request Header Carried By The User To Ensure Program Security
      */
     private static final String VOUCHER_HEADER = "P6e-Voucher";
 

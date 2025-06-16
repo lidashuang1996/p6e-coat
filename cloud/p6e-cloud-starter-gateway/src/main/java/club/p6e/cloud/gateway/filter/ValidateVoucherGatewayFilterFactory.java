@@ -26,18 +26,21 @@ public class ValidateVoucherGatewayFilterFactory extends AbstractGatewayFilterFa
 
     /**
      * Voucher Request Parameter
+     * Request To Carry Voucher Parameter
      */
     @SuppressWarnings("ALL")
     private static final String V_PARAMETER = "v";
 
     /**
      * Voucher Request Parameter
+     * Request To Carry Voucher Parameter
      */
     @SuppressWarnings("ALL")
     private static final String VOUCHER_PARAMETER = "voucher";
 
     /**
      * Voucher Header Name
+     * Request To Carry Voucher Request Header
      */
     @SuppressWarnings("ALL")
     private static final String X_VOUCHER_HEADER = "X-Voucher";
@@ -97,7 +100,7 @@ public class ValidateVoucherGatewayFilterFactory extends AbstractGatewayFilterFa
             return Mono.error(new VoucherException(
                     this.getClass(),
                     "fun filter(ServerWebExchange exchange, GatewayFilterChain chain).",
-                    "request voucher exception"
+                    "request voucher exception."
             ));
         }
 

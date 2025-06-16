@@ -2,7 +2,8 @@ package club.p6e.cloud.gateway;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.gateway.event.RefreshRoutesEvent;
-import org.springframework.cloud.gateway.route.*;
+import org.springframework.cloud.gateway.route.RouteDefinition;
+import org.springframework.cloud.gateway.route.RouteDefinitionRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -12,16 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Custom Route Locator
+ * Route Locator
  *
  * @author lidashuang
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(
-        value = RouteLocator.class,
-        ignored = RouteLocator.class
-)
+@ConditionalOnMissingBean(RouteLocator.class)
 public class RouteLocator implements RouteDefinitionRepository {
 
     /**
@@ -70,7 +68,7 @@ public class RouteLocator implements RouteDefinitionRepository {
     public Mono<Void> delete(Mono<String> ms) {
         return ms.map(r -> {
             for (final RouteDefinition item : routeDefinitions) {
-                if (item.getId().equals(r)) {
+                if (item.getId().equalsIgnoreCase(r)) {
                     routeDefinitions.remove(item);
                     break;
                 }

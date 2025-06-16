@@ -43,10 +43,7 @@ import java.util.Map;
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(
-        value = BasicWebFilter.class,
-        ignored = BasicWebFilter.class
-)
+@ConditionalOnMissingBean(BasicWebFilter.class)
 public class BasicWebFilter implements WebFilter, Ordered {
 
     /**
@@ -145,15 +142,43 @@ public class BasicWebFilter implements WebFilter, Ordered {
     private static class CustomServerHttpRequestDecorator extends ServerHttpRequestDecorator {
 
         /**
+         * IP Request Header
+         */
+        @SuppressWarnings("ALL")
+        private static final String LOCAL_IP = "127.0.0.1";
+        /**
+         * IP Request Header
+         */
+        @SuppressWarnings("ALL")
+        private final static String IP_UNKNOWN = "unknown";
+        /**
+         * IP Request Header
+         */
+        @SuppressWarnings("ALL")
+        private static final String IP_HEADER_X_REQUEST_IP = "x-request-ip";
+        /**
+         * IP Request Header
+         */
+        @SuppressWarnings("ALL")
+        private static final String IP_HEADER_X_FORWARDED_FOR = "x-forwarded-for";
+        /**
+         * IP Request Header
+         */
+        @SuppressWarnings("ALL")
+        private static final String IP_HEADER_PROXY_CLIENT_IP = "proxy-client-ip";
+        /**
+         * IP Request Header
+         */
+        @SuppressWarnings("ALL")
+        private static final String IP_HEADER_WL_PROXY_CLIENT_IP = "wl-proxy-client-ip";
+        /**
          * Log Mode Object
          */
         private final Model model;
-
         /**
          * Properties Object
          */
         private final Properties properties;
-
         /**
          * Server Http Request Object
          */
@@ -173,7 +198,7 @@ public class BasicWebFilter implements WebFilter, Ordered {
             this.request = exchange.getRequest();
 
             // request header is used internally for calling
-            // Prohibit sending requests that carry this request header to downstream services
+            // prohibit sending requests that carry this request header to downstream services
             for (final String key : this.getHeaders().keySet()) {
                 if (key.toLowerCase().startsWith("p6e-")) {
                     this.getHeaders().remove(key);
@@ -234,42 +259,6 @@ public class BasicWebFilter implements WebFilter, Ordered {
                 return super.getBody();
             }
         }
-
-        /**
-         * IP Request Header
-         */
-        @SuppressWarnings("ALL")
-        private static final String LOCAL_IP = "127.0.0.1";
-
-        /**
-         * IP Request Header
-         */
-        @SuppressWarnings("ALL")
-        private final static String IP_UNKNOWN = "unknown";
-
-        /**
-         * IP Request Header
-         */
-        @SuppressWarnings("ALL")
-        private static final String IP_HEADER_X_REQUEST_IP = "x-request-ip";
-
-        /**
-         * IP Request Header
-         */
-        @SuppressWarnings("ALL")
-        private static final String IP_HEADER_X_FORWARDED_FOR = "x-forwarded-for";
-
-        /**
-         * IP Request Header
-         */
-        @SuppressWarnings("ALL")
-        private static final String IP_HEADER_PROXY_CLIENT_IP = "proxy-client-ip";
-
-        /**
-         * IP Request Header
-         */
-        @SuppressWarnings("ALL")
-        private static final String IP_HEADER_WL_PROXY_CLIENT_IP = "wl-proxy-client-ip";
 
         /**
          * IP

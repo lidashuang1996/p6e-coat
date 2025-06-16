@@ -20,22 +20,22 @@ public class PropertiesRefresher {
     private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesRefresher.class);
 
     /**
+     * Route Locator Object
+     */
+    private final RouteLocator locator;
+
+    /**
      * Properties Object
      */
     private final Properties properties;
 
     /**
-     * Custom Route Locator Object
-     */
-    private final RouteLocator locator;
-
-    /**
      * Constructor Initialization
      *
+     * @param locator    Route Locator Object
      * @param properties Properties Object
-     * @param locator    Custom Route Locator Object
      */
-    public PropertiesRefresher(Properties properties, RouteLocator locator) {
+    public PropertiesRefresher(RouteLocator locator, Properties properties) {
         this.locator = locator;
         this.properties = properties;
         this.locator.refresh(this.properties.getRoutes());

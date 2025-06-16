@@ -19,21 +19,26 @@ public class InjectLanguageGatewayFilterFactory extends AbstractGatewayFilterFac
 
     /**
      * Language Param Name
+     * Request To Carry Language Parameter
      */
     @SuppressWarnings("ALL")
     private static final String LANGUAGE_PARAM = "language";
 
     /**
      * Language Header Name
-     */
-    @SuppressWarnings("ALL")
-    private static final String LANGUAGE_HEADER = "P6e-Language";
-
-    /**
-     * Language Header Name
+     * Request To Carry Language Request Header
      */
     @SuppressWarnings("ALL")
     private static final String X_LANGUAGE_HEADER = "X-Language";
+
+    /**
+     * Language Header Name
+     * Request Header For The User Current Language
+     * Request Header Is Customized By The Program And Not Carried By The User Request
+     * When Receiving Requests, It Is Necessary To Clear The Request Header Carried By The User To Ensure Program Security
+     */
+    @SuppressWarnings("ALL")
+    private static final String LANGUAGE_HEADER = "P6e-Language";
 
     @Override
     public GatewayFilter apply(Object object) {

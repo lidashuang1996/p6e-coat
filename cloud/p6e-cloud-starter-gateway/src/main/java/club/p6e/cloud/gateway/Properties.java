@@ -14,7 +14,10 @@ import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Properties
@@ -27,6 +30,16 @@ import java.util.*;
 @Component("club.p6e.cloud.gateway.Properties")
 @ConfigurationProperties(prefix = "p6e.cloud.gateway")
 public class Properties implements Serializable {
+
+    /**
+     * Log
+     */
+    private Log log = new Log();
+
+    /**
+     * Route Definition List
+     */
+    private List<RouteDefinition> routes = new ArrayList<>();
 
     /**
      * INIT BASE
@@ -189,7 +202,6 @@ public class Properties implements Serializable {
         return content.substring(0, mark) + (num == null ? "" : "." + num);
     }
 
-
     /**
      * Log
      */
@@ -208,15 +220,5 @@ public class Properties implements Serializable {
         private boolean details = false;
 
     }
-
-    /**
-     * Log
-     */
-    private Log log = new Log();
-
-    /**
-     * Route Definition List
-     */
-    private List<RouteDefinition> routes = new ArrayList<>();
 
 }
