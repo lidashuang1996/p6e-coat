@@ -5,7 +5,6 @@ import club.p6e.coat.permission.matcher.PermissionPathMatcher;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Component;
 
-import java.sql.SQLOutput;
 import java.util.List;
 
 /**
@@ -15,10 +14,7 @@ import java.util.List;
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(
-        value = PermissionValidator.class,
-        ignored = PermissionValidatorImpl.class
-)
+@ConditionalOnMissingBean(PermissionValidator.class)
 public class PermissionValidatorImpl implements PermissionValidator {
 
     /**
@@ -50,7 +46,6 @@ public class PermissionValidatorImpl implements PermissionValidator {
         PermissionDetails vague = null;
         if (groups != null) {
             final List<PermissionDetails> permissions = matcher.match(path);
-            System.out.println("path <<<< " + path + " ::: " + permissions);
             if (permissions != null && !permissions.isEmpty()) {
                 for (final PermissionDetails permission : permissions) {
                     final String pp = permission.getPath();
@@ -59,8 +54,6 @@ public class PermissionValidatorImpl implements PermissionValidator {
                     final String pg = String.valueOf(permission.getGid());
                     final boolean gv = groups.contains(pg) || pk.toUpperCase().endsWith(IGNORE_MARK);
                     final boolean mv = COMMON_MARK.equalsIgnoreCase(pm) || method.equalsIgnoreCase(pm);
-                    System.out.println("gv >> " + gv);
-                    System.out.println("mv >> " + mv);
                     if (gv && mv) {
                         if (pp.contains("*")) {
                             switch (mode) {
@@ -77,7 +70,6 @@ public class PermissionValidatorImpl implements PermissionValidator {
                 }
             }
         }
-        System.out.println("vague  >>> " + vague);
         return vague;
     }
 

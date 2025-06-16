@@ -17,8 +17,8 @@ public interface PermissionValidator {
      *
      * @param mode   Validator Mode
      *               -1  Fuzzy Matching
-     *               1  Perfect Matching
-     *               0  Complete Matching Followed By Fuzzy Matching
+     *               1   Perfect Matching
+     *               0   Complete Matching Followed By Fuzzy Matching
      * @param path   Request Path
      * @param method Request Method
      * @param groups Permission Group

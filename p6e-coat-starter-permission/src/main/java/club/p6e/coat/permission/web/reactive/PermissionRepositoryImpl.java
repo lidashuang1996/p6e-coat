@@ -19,10 +19,7 @@ import java.util.List;
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(
-        value = PermissionRepository.class,
-        ignored = PermissionRepositoryImpl.class
-)
+@ConditionalOnMissingBean(PermissionRepository.class)
 @ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
 public class PermissionRepositoryImpl implements PermissionRepository {
 

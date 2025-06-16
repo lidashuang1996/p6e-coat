@@ -1,7 +1,6 @@
 package club.p6e.coat.permission.matcher;
 
 import club.p6e.coat.permission.PermissionDetails;
-import org.springframework.web.util.pattern.PathPattern;
 
 import java.util.List;
 
@@ -14,7 +13,7 @@ import java.util.List;
 public interface PermissionPathMatcher {
 
     /**
-     * Matching Path
+     * Matching Path To Permission Details List Object
      *
      * @param path Path
      * @return Permission Details List Object
@@ -22,22 +21,16 @@ public interface PermissionPathMatcher {
     List<PermissionDetails> match(String path);
 
     /**
-     * Cache Register Path
+     * Path Permission Details Register To Cache
      *
      * @param model Permission Details List Object
      */
     void register(PermissionDetails model);
 
     /**
-     * Cache Unregister Path
+     * Clean Expired Version Data
      *
-     * @param path Path Pattern Object
-     */
-    @SuppressWarnings("ALL")
-    void unregister(PathPattern path);
-
-    /**
-     * Clean Expired Data
+     * @param version Version ( Current Version )
      */
     void cleanExpiredVersionData(long version);
 

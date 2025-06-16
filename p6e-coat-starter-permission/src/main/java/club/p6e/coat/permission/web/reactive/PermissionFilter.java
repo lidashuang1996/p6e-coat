@@ -23,9 +23,21 @@ import java.util.List;
  */
 public class PermissionFilter implements WebFilter, Ordered {
 
+    /**
+     * Permission Header
+     * Save The Request Header Of The Permission Information Used In The Current Request
+     * Request Header Is Customized By The Program And Not Carried By The User Request
+     * When Receiving Requests, It Is Necessary To Clear The Request Header Carried By The User To Ensure Program Security
+     */
     @SuppressWarnings("ALL")
     private static final String PERMISSION_HEADER = "P6e-Permission";
 
+    /**
+     * User Permission Header
+     * Request Header For Saving User Owned Permission Group
+     * Request Header Is Customized By The Program And Not Carried By The User Request
+     * When Receiving Requests, It Is Necessary To Clear The Request Header Carried By The User To Ensure Program Security
+     */
     @SuppressWarnings("ALL")
     private static final String USER_PERMISSION_HEADER = "P6e-User-Permission";
 
@@ -66,6 +78,12 @@ public class PermissionFilter implements WebFilter, Ordered {
         }
     }
 
+    /**
+     * Validate Request Permission
+     *
+     * @param request Server Http Request Object
+     * @return Permission Details Object
+     */
     public PermissionDetails validate(ServerHttpRequest request) {
         final List<String> permissions = new ArrayList<>();
         final String path = request.getPath().value();
@@ -79,7 +97,6 @@ public class PermissionFilter implements WebFilter, Ordered {
                 }
             }
         }
-        System.out.println("permissions >> " + permissions + "  " + path + "  " + method);
         return validator.execute("0", path, method, permissions);
     }
 

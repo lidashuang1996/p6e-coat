@@ -6,14 +6,11 @@ import club.p6e.coat.permission.PermissionDetails;
 import club.p6e.coat.permission.validator.PermissionValidator;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 import org.springframework.core.Ordered;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 
 /**
  * Permission Filter
@@ -21,16 +18,23 @@ import java.util.List;
  * @author lidashuang
  * @version 1.0
  */
-@Component
-@ConditionalOnClass(name = "org.springframework.web.servlet.package-info")
 public class PermissionFilter implements Filter, Ordered {
 
-    @SuppressWarnings("ALL")
-    private static final String PROJECT_HEADER = "P6e-Project";
-
+    /**
+     * Permission Header
+     * Save The Request Header Of The Permission Information Used In The Current Request
+     * Request Header Is Customized By The Program And Not Carried By The User Request
+     * When Receiving Requests, It Is Necessary To Clear The Request Header Carried By The User To Ensure Program Security
+     */
     @SuppressWarnings("ALL")
     private static final String PERMISSION_HEADER = "P6e-Permission";
 
+    /**
+     * User Permission Header
+     * Request Header For Saving User Owned Permission Group
+     * Request Header Is Customized By The Program And Not Carried By The User Request
+     * When Receiving Requests, It Is Necessary To Clear The Request Header Carried By The User To Ensure Program Security
+     */
     @SuppressWarnings("ALL")
     private static final String USER_PERMISSION_HEADER = "P6e-User-Permission";
 
@@ -55,7 +59,8 @@ public class PermissionFilter implements Filter, Ordered {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws ServletException, IOException {
-        final PermissionDetails details = validate((HttpServletRequest) servletRequest);
+        final HttpServletRequest request = (HttpServletRequest) servletRequest;
+        final PermissionDetails details = validate(request);
         if (details == null) {
             throw new PermissionException(
                     this.getClass(),
@@ -63,31 +68,86 @@ public class PermissionFilter implements Filter, Ordered {
                     "request permission exception."
             );
         } else {
-            filterChain.doFilter(servletRequest, servletResponse);
+            filterChain.doFilter(new MyHttpServletRequestWrapper(request, details), servletResponse);
         }
     }
 
-    private PermissionDetails validate(HttpServletRequest request) {
+    /**
+     * Validate Request Permission
+     *
+     * @param request Http Servlet Request Object
+     * @return Permission Details Object
+     */
+    public PermissionDetails validate(HttpServletRequest request) {
         final List<String> permissions = new ArrayList<>();
-        final String path = request.getServletPath();
         final String method = request.getMethod().toUpperCase();
-        final String project = request.getHeader(PROJECT_HEADER);
-        final Enumeration<String> list = request.getHeaders(USER_PERMISSION_HEADER);
-        if (list != null) {
-            while (list.hasMoreElements()) {
-                final List<String> data = JsonUtil.fromJsonToList(list.nextElement(), String.class);
-                if (data != null) {
-                    permissions.addAll(data);
-                }
+        final String user = request.getHeader(USER_PERMISSION_HEADER);
+        final String path = request.getContextPath() + request.getServletPath();
+        if (user != null) {
+            final List<String> data = JsonUtil.fromJsonToList(user, String.class);
+            if (data != null) {
+                permissions.addAll(data);
             }
         }
-//        final PermissionDetails details;
-//        if (project == null || project.isEmpty()) {
-//            details = validator.execute(path, method, permissions);
-//        } else {
-//            details = validator.execute(path, method, project, permissions);
-//        }
-        return null;
+        return validator.execute("0", path, method, permissions);
+    }
+
+    /**
+     * My Http Servlet Request Wrapper
+     */
+    private static class MyHttpServletRequestWrapper extends HttpServletRequestWrapper {
+
+        /**
+         * Header Data Object
+         */
+        private final Map<String, String> headers = new HashMap<>();
+
+        /**
+         * @param request Http Servlet Request Object
+         * @param details Permission Details Object
+         */
+        public MyHttpServletRequestWrapper(HttpServletRequest request, PermissionDetails details) {
+            super(request);
+            this.headers.put(PERMISSION_HEADER, JsonUtil.toJson(details));
+        }
+
+        @Override
+        public String getHeader(String name) {
+            final String value = headers.get(name);
+            if (value == null) {
+                return super.getHeader(name);
+            } else {
+                return value;
+            }
+        }
+
+        @Override
+        public Enumeration<String> getHeaders(String name) {
+            final List<String> values = new ArrayList<>();
+            if (headers.containsKey(name)) {
+                values.add(headers.get(name));
+            }
+            final Enumeration<String> originalHeaders = super.getHeaders(name);
+            if (originalHeaders != null) {
+                while (originalHeaders.hasMoreElements()) {
+                    values.add(originalHeaders.nextElement());
+                }
+            }
+            return Collections.enumeration(values);
+        }
+
+        @Override
+        public Enumeration<String> getHeaderNames() {
+            final Set<String> names = new HashSet<>(headers.keySet());
+            final Enumeration<String> originalNames = super.getHeaderNames();
+            if (originalNames != null) {
+                while (originalNames.hasMoreElements()) {
+                    names.add(originalNames.nextElement());
+                }
+            }
+            return Collections.enumeration(names);
+        }
+
     }
 
 }
