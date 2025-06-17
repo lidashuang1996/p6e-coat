@@ -5,16 +5,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.stereotype.Component;
 
 /**
- * 认证接口
+ * Auth Service Impl
  *
  * @author lidashuang
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(
-        value = AuthServiceImpl.class,
-        ignored = AuthServiceImpl.class
-)
+@ConditionalOnMissingBean(AuthService.class)
 public class AuthServiceImpl implements AuthService {
 
     @Override

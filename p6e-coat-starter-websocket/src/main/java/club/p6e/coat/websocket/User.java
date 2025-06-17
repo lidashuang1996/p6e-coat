@@ -3,7 +3,7 @@ package club.p6e.coat.websocket;
 import java.io.Serializable;
 
 /**
- * 用户对象
+ * User
  *
  * @author lidashuang
  * @version 1.0
@@ -11,9 +11,9 @@ import java.io.Serializable;
 public interface User extends Serializable {
 
     /**
-     * 用户编号
+     * User ID
      *
-     * @return 用户编号
+     * @return User ID
      */
     String id();
 

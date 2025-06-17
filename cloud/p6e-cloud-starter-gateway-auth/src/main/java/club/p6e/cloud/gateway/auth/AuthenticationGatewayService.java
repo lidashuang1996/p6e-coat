@@ -3,7 +3,6 @@ package club.p6e.cloud.gateway.auth;
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.token.web.reactive.TokenValidator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -13,11 +12,7 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
-@Component
-@ConditionalOnMissingBean(
-        value = AuthenticationGatewayService.class,
-        ignored = AuthenticationGatewayService.class
-)
+@ConditionalOnMissingBean(AuthenticationGatewayService.class)
 public class AuthenticationGatewayService {
 
     /**

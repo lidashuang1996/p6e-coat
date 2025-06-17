@@ -28,87 +28,35 @@ import java.util.concurrent.atomic.AtomicLong;
 public abstract class RedisPropertiesRefresher {
 
     /**
-     * Spring Init Event Listener
-     */
-    public static class ReadyEventListener implements ApplicationListener<ApplicationReadyEvent> {
-
-        /**
-         * RedisPropertiesRefresher object
-         */
-        private final RedisPropertiesRefresher refresher;
-
-        /**
-         * Constructor initializers
-         *
-         * @param refresher RedisPropertiesRefresher object
-         */
-        public ReadyEventListener(RedisPropertiesRefresher refresher) {
-            this.refresher = refresher;
-        }
-
-        @Override
-        public void onApplicationEvent(@Nonnull ApplicationReadyEvent event) {
-            refresher.init();
-        }
-
-    }
-
-    /**
-     * Spring Close Event Listener
-     */
-    public static class ContextClosedEventListener implements ApplicationListener<ContextClosedEvent> {
-
-        /**
-         * RedisPropertiesRefresher object
-         */
-        private final RedisPropertiesRefresher refresher;
-
-        /**
-         * Constructor initializers
-         *
-         * @param refresher RedisPropertiesRefresher object
-         */
-        public ContextClosedEventListener(RedisPropertiesRefresher refresher) {
-            this.refresher = refresher;
-        }
-
-        @Override
-        public void onApplicationEvent(@Nonnull ContextClosedEvent event) {
-            refresher.close();
-        }
-
-    }
-
-    /**
      * TOPIC
      */
     private static String CONFIG_TOPIC = "p6e-cloud-config";
 
     /**
-     * TIMESTAMP
+     * Timestamp
      */
     private final AtomicLong timestamp = new AtomicLong(0);
 
     /**
-     * reactor.core.Disposable object
+     * reactor.core.Disposable Object
      */
     private reactor.core.Disposable subscription;
 
     /**
-     * org.springframework.data.redis.core.StringRedisTemplate
+     * org.springframework.data.redis.core.StringRedisTemplate Object
      */
     private org.springframework.data.redis.core.StringRedisTemplate stringRedisTemplate;
 
     /**
-     * org.springframework.data.redis.core.ReactiveStringRedisTemplate
+     * org.springframework.data.redis.core.ReactiveStringRedisTemplate Object
      */
     private org.springframework.data.redis.core.ReactiveStringRedisTemplate reactiveStringRedisTemplate;
 
     /**
      * Constructor initializers
      *
-     * @param template  org.springframework.data.redis.core.StringRedisTemplate objcet
-     * @param refresher ConfigurableApplicationContext object
+     * @param template org.springframework.data.redis.core.StringRedisTemplate Object
+     * @param context  Configurable Application Context Object
      */
     public RedisPropertiesRefresher(org.springframework.data.redis.core.StringRedisTemplate template, ConfigurableApplicationContext context) {
         this.stringRedisTemplate = template;
@@ -117,10 +65,10 @@ public abstract class RedisPropertiesRefresher {
     }
 
     /**
-     * Constructor initializers
+     * Constructor Initializers
      *
-     * @param template  org.springframework.data.redis.core.ReactiveStringRedisTemplate objcet
-     * @param refresher ConfigurableApplicationContext object
+     * @param template org.springframework.data.redis.core.ReactiveStringRedisTemplate Object
+     * @param context  Configurable Application Context Object
      */
     public RedisPropertiesRefresher(org.springframework.data.redis.core.ReactiveStringRedisTemplate template, ConfigurableApplicationContext context) {
         this.reactiveStringRedisTemplate = template;
@@ -131,7 +79,7 @@ public abstract class RedisPropertiesRefresher {
     /**
      * Set Config Topic
      *
-     * @param topic Topic object
+     * @param topic Topic Object
      */
     public static void setConfigTopic(String topic) {
         CONFIG_TOPIC = topic;
@@ -153,11 +101,9 @@ public abstract class RedisPropertiesRefresher {
                     afterPropertiesSet();
                     start();
                 }};
-                executor.scheduleAtFixedRate(() -> {
-                    stringRedisTemplate.convertAndSend(CONFIG_TOPIC, JsonUtil.toJson(new HashMap<>() {{
-                        put("type", "heartbeat");
-                    }}));
-                }, 5, 30, TimeUnit.SECONDS);
+                executor.scheduleAtFixedRate(() -> stringRedisTemplate.convertAndSend(CONFIG_TOPIC, JsonUtil.toJson(new HashMap<>() {{
+                    put("type", "heartbeat");
+                }})), 5, 30, TimeUnit.SECONDS);
                 return;
             }
         } catch (Exception e) {
@@ -170,11 +116,9 @@ public abstract class RedisPropertiesRefresher {
                         .listenTo(ChannelTopic.of(CONFIG_TOPIC))
                         .map(message -> JsonUtil.fromJsonToMap(message.getMessage(), String.class, String.class))
                         .subscribe(this::execute);
-                executor.scheduleAtFixedRate(() -> {
-                    reactiveStringRedisTemplate.convertAndSend(CONFIG_TOPIC, JsonUtil.toJson(new HashMap<>() {{
-                        put("type", "heartbeat");
-                    }})).subscribe();
-                }, 5, 30, TimeUnit.SECONDS);
+                executor.scheduleAtFixedRate(() -> reactiveStringRedisTemplate.convertAndSend(CONFIG_TOPIC, JsonUtil.toJson(new HashMap<>() {{
+                    put("type", "heartbeat");
+                }})).subscribe(), 5, 30, TimeUnit.SECONDS);
             }
         } catch (Exception e) {
             // ignore exception
@@ -235,8 +179,7 @@ public abstract class RedisPropertiesRefresher {
                         }
                     }
                 }
-            } else if ("config".equalsIgnoreCase(message.get("type"))
-                    && message.get("format") != null && message.get("content") != null) {
+            } else if ("config".equalsIgnoreCase(message.get("type")) && message.get("format") != null && message.get("content") != null) {
                 synchronized (this) {
                     // refresh timestamp
                     timestamp.set(System.currentTimeMillis());
@@ -250,5 +193,57 @@ public abstract class RedisPropertiesRefresher {
      * Config
      */
     protected abstract void config(String format, String content);
+
+    /**
+     * Spring Init Event Listener
+     */
+    public static class ReadyEventListener implements ApplicationListener<ApplicationReadyEvent> {
+
+        /**
+         * RedisPropertiesRefresher Object
+         */
+        private final RedisPropertiesRefresher refresher;
+
+        /**
+         * Constructor Initializers
+         *
+         * @param refresher RedisPropertiesRefresher Object
+         */
+        public ReadyEventListener(RedisPropertiesRefresher refresher) {
+            this.refresher = refresher;
+        }
+
+        @Override
+        public void onApplicationEvent(@Nonnull ApplicationReadyEvent event) {
+            refresher.init();
+        }
+
+    }
+
+    /**
+     * Spring Close Event Listener
+     */
+    public static class ContextClosedEventListener implements ApplicationListener<ContextClosedEvent> {
+
+        /**
+         * RedisPropertiesRefresher Object
+         */
+        private final RedisPropertiesRefresher refresher;
+
+        /**
+         * Constructor Initializers
+         *
+         * @param refresher RedisPropertiesRefresher Object
+         */
+        public ContextClosedEventListener(RedisPropertiesRefresher refresher) {
+            this.refresher = refresher;
+        }
+
+        @Override
+        public void onApplicationEvent(@Nonnull ContextClosedEvent event) {
+            refresher.close();
+        }
+
+    }
 
 }

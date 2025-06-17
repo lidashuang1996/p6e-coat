@@ -1,4 +1,3 @@
-
 package club.p6e.coat.common.controller.config;
 
 import club.p6e.coat.common.context.ResultContext;

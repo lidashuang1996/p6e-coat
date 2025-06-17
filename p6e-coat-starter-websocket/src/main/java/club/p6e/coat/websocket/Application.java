@@ -1,0 +1,127 @@
+package club.p6e.coat.websocket;
+
+import club.p6e.coat.common.utils.SpringUtil;
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+
+/**
+ * WebSocket Main
+ *
+ * @author lidashuang
+ * @version 1.0
+ */
+public class Application {
+
+    /**
+     * Constructor Initialization
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(Application.class);
+
+    /**
+     * Config Reset
+     */
+    @SuppressWarnings("ALL")
+    public synchronized void reset(Config config) {
+        SessionManager.init(config.getManagerThreadPoolLength());
+        for (final Config.Channel channel : config.getChannels()) {
+            AuthService auth = null;
+            final List<Callback> callbacks = new ArrayList<>();
+            final Map<String, Callback> cBeans = SpringUtil.getBeans(Callback.class);
+            final Map<String, AuthService> aBeans = SpringUtil.getBeans(AuthService.class);
+            for (final String bn : channel.getCallbacks()) {
+                for (final Callback item : cBeans.values()) {
+                    if (bn.equalsIgnoreCase(item.getClass().getName())) {
+                        callbacks.add(item);
+                    }
+                }
+            }
+            for (final AuthService item : aBeans.values()) {
+                if (channel.getAuth().equalsIgnoreCase(item.getClass().getName())) {
+                    auth = item;
+                    break;
+                }
+            }
+            run(channel.getPort(), channel.getName(), channel.getType(), auth, callbacks);
+        }
+    }
+
+    /**
+     * Push Message
+     *
+     * @param filter Filter Object
+     * @param name   Channel Name
+     * @param bytes  Message Content
+     */
+    public void push(Function<User, Boolean> filter, String name, byte[] bytes) {
+        SessionManager.pushBinary(filter, name, bytes);
+    }
+
+    /**
+     * Push Message
+     *
+     * @param filter  Filter Object
+     * @param name    Channel Name
+     * @param content Message Content
+     */
+    @SuppressWarnings("ALL")
+    public void push(Function<User, Boolean> filter, String name, String content) {
+        SessionManager.pushText(filter, name, content);
+    }
+
+    /**
+     * Netty Web Socket Server
+     *
+     * @param port      Channel Port
+     * @param name      Channel Name
+     * @param type      Channel Type
+     * @param auth      Auth Service Object
+     * @param callbacks Callback List Object
+     */
+    private void run(int port, String name, String type, AuthService auth, List<Callback> callbacks) {
+        final EventLoopGroup boss = new NioEventLoopGroup();
+        final EventLoopGroup work = new NioEventLoopGroup();
+        try {
+            final ServerBootstrap bootstrap = new ServerBootstrap();
+            bootstrap.group(boss, work);
+            bootstrap.channel(NioServerSocketChannel.class);
+            bootstrap.childHandler(new ChannelInitializer<>() {
+                @Override
+                protected void initChannel(io.netty.channel.Channel channel) {
+                    // HTTP
+                    channel.pipeline().addLast(new HttpServerCodec());
+                    channel.pipeline().addLast(new HttpObjectAggregator(65536));
+                    // WEB SOCKET
+                    channel.pipeline().addLast(new WebSocketServerProtocolHandler(
+                            "/ws", null, true,
+                            65536, false, true
+                    ));
+                    // CHANNEL
+                    channel.pipeline().addLast(new Channel(name, type, auth, callbacks));
+                }
+            });
+            final io.netty.channel.Channel channel = bootstrap.bind(port).sync().channel();
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                boss.shutdownGracefully();
+                work.shutdownGracefully();
+            }));
+            LOGGER.info("[ WEBSOCKET SERVICE ] ({} : {}) ==> START SUCCESSFULLY... BIND ( {} )", name, type, port);
+            channel.closeFuture();
+        } catch (Exception e) {
+            LOGGER.error("[ WEBSOCKET SERVICE ]", e);
+        }
+    }
+
+}

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 基础的上下文对象
+ * Base Context
  *
  * @author lidashuang
  * @version 1.0
@@ -18,12 +18,18 @@ import java.util.Map;
 @SuppressWarnings("ALL")
 public class BaseContext implements Serializable {
 
+    /**
+     * Base Context Extension Param
+     */
     @Data
     @Accessors(chain = true)
     public static class ExtensionParam implements Serializable {
         private List<String> extension;
     }
 
+    /**
+     * Base Context Paging Param
+     */
     @Data
     @Accessors(chain = true)
     public static class PagingParam implements Serializable {
@@ -31,11 +37,19 @@ public class BaseContext implements Serializable {
         private Integer size;
         private Integer page;
 
+        /**
+         * Get Pageable Context Object
+         *
+         * @return Pageable Context Object
+         */
         public PageableContext getPageable() {
             return PageableContext.build(this.all, this.page, this.size, this.getClass());
         }
     }
 
+    /**
+     * Base Context Paging Extension Param
+     */
     @Data
     @Accessors(chain = true)
     public static class PagingExtensionParam implements Serializable {
@@ -44,19 +58,30 @@ public class BaseContext implements Serializable {
         private Integer page;
         private List<String> extension;
 
+        /**
+         * Get Pageable Context Object
+         *
+         * @return Pageable Context Object
+         */
         public PageableContext getPageable() {
             return PageableContext.build(this.all, this.page, this.size, this.getClass());
         }
     }
 
+    /**
+     * Base Context Paging Extension List Result
+     */
     @Data
     @Accessors(chain = true)
     public static class ListResult implements Serializable {
+        private Long total;
         private Integer size;
         private Integer page;
-        private Long total;
     }
 
+    /**
+     * Base Context Paging Extension Result
+     */
     @Data
     @Accessors(chain = true)
     public static class ExtensionResult implements Serializable {

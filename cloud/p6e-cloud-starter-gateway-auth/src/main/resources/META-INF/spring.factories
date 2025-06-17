@@ -1,5 +1,5 @@
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-club.p6e.cloud.gateway.auth.AuthenticationGatewayFilterFactory,\
+club.p6e.cloud.gateway.auth.AuthenticationGlobalFilter,\
 club.p6e.cloud.gateway.auth.AuthenticationGatewayService,\
-club.p6e.cloud.gateway.auth.AuthenticationGlobalFilter
+club.p6e.cloud.gateway.auth.AuthenticationGatewayFilterFactory

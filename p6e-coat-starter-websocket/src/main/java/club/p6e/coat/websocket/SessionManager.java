@@ -156,11 +156,9 @@ public final class SessionManager {
      *
      * @param filter  过滤器对象
      * @param name    服务名称
-     * @param id      消息编号
-     * @param type    消息类型
      * @param content 消息内容
      */
-    public static void pushText(Function<User, Boolean> filter, String name, String id, String type, String content) {
+    public static void pushText(Function<User, Boolean> filter, String name, String content) {
         final List<List<Session>> list = getChannel();
         final Map<String, String> data = new HashMap<>();
         data.put("id", id);

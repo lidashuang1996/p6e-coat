@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -24,7 +23,6 @@ import java.util.Map;
 @Primary
 @EqualsAndHashCode(callSuper = true)
 @ConfigurationProperties(prefix = "p6e.cloud.common")
-@Component(value = "club.p6e.cloud.common.Properties")
 public class Properties extends club.p6e.coat.common.Properties implements Serializable {
 
     /**

@@ -2,5 +2,5 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 club.p6e.coat.websocket.controller.WebController,\
 club.p6e.coat.websocket.controller.WebFluxController,\
-club.p6e.coat.websocket.WebSocketMain,\
+club.p6e.coat.websocket.Application,\
 club.p6e.coat.websocket.AuthServiceImpl

@@ -16,15 +16,6 @@
 
     <dependencies>
 
-        <!-- Spring Reactive Redis [START] -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis-reactive</artifactId>
-            <!-- scope provided dependency -->
-            <scope>provided</scope>
-        </dependency>
-        <!-- Spring Reactive Redis [END] -->
-
         <!-- Spring Cloud Gateway [START] -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -34,20 +25,23 @@
         </dependency>
         <!-- Spring Cloud Gateway [END] -->
 
-        <!-- P6e Coat Common [START] -->
-        <dependency>
-            <groupId>club.p6e.coat</groupId>
-            <artifactId>p6e-coat-starter-common</artifactId>
-            <!-- scope provided dependency -->
-            <scope>provided</scope>
-        </dependency>
-        <!-- P6e Coat Common [END] -->
-
+        <!-- P6e Coat Auth Token [START] -->
         <dependency>
             <groupId>club.p6e.coat</groupId>
             <artifactId>p6e-coat-starter-auth-token</artifactId>
-            <version>3.4.2</version>
+            <!-- scope provided dependency -->
+            <scope>provided</scope>
         </dependency>
+        <!-- P6e Coat Auth Token [END] -->
+
+        <!-- P6e Cloud Common [START] -->
+        <dependency>
+            <groupId>club.p6e.cloud</groupId>
+            <artifactId>p6e-cloud-starter-common</artifactId>
+            <!-- scope provided dependency -->
+            <scope>provided</scope>
+        </dependency>
+        <!-- P6e Cloud Common [END] -->
 
     </dependencies>
 </project>

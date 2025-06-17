@@ -40,8 +40,14 @@ public class PermissionValidationGatewayFilterFactory extends AbstractGatewayFil
      *
      * @param service Permission Validation Gateway Service Object
      */
-    private record CustomGatewayFilter(PermissionValidationGatewayService service) implements GatewayFilter {
+    public record CustomGatewayFilter(PermissionValidationGatewayService service) implements GatewayFilter {
 
+        /**
+         * Permission Header
+         * Save The Request Header Of The Permission Information Used In The Current Request
+         * Request Header Is Customized By The Program And Not Carried By The User Request
+         * When Receiving Requests, It Is Necessary To Clear The Request Header Carried By The User To Ensure Program Security
+         */
         @SuppressWarnings("ALL")
         private static final String PERMISSION_HEADER = "P6e-Permission";
 

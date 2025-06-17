@@ -8,10 +8,8 @@ import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-
 /**
- * 会话
+ * Session
  *
  * @author lidashuang
  * @version 1.0
@@ -19,25 +17,33 @@ import java.util.Collections;
 @Getter
 public final class Session {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Session.class);
     /**
-     * 消息类型
+     * Inject Log Object
      */
-    private final Type type;
+    private static final Logger LOGGER = LoggerFactory.getLogger(Session.class);
+
     /**
-     * 用户对象
+     * User Object
      */
     private final User user;
+
     /**
-     * 服务名称
+     * Channel Name
      */
-    private final String name;
+    private final String channelName;
+
     /**
-     * 上下文对象
+     * Channel Type
+     */
+    private final String channelType;
+
+    /**
+     * Channel Handler Context Object
      */
     private final ChannelHandlerContext context;
+
     /**
-     * 时间
+     * Date Object
      */
     private volatile long date;
 
@@ -49,24 +55,26 @@ public final class Session {
      * @param user    用户对象
      * @param context 上下文对象
      */
-    public Session(String name, Type type, User user, ChannelHandlerContext context) {
-        this.name = name;
-        this.type = type;
+    public Session(String name, String type, User user, ChannelHandlerContext context) {
         this.user = user;
         this.context = context;
+        this.channelName = name;
+        this.channelType = type;
         this.date = System.currentTimeMillis();
     }
 
     /**
-     * 刷新时间
+     * Refresh Session
      */
+    @SuppressWarnings("ALL")
     public void refresh() {
         this.date = System.currentTimeMillis();
     }
 
     /**
-     * 关闭会话
+     * Close Session
      */
+    @SuppressWarnings("ALL")
     public void close() {
         if (context != null && !context.isRemoved()) {
             context.close();
@@ -74,35 +82,19 @@ public final class Session {
     }
 
     /**
-     * 推送消息
+     * Push Message
      *
-     * @param data 消息内容
+     * @param data Message Content
      */
     public void push(Object data) {
         if (context != null && !context.isRemoved()) {
-            if (type == Type.TEXT && data instanceof String content) {
-                LOGGER.info("[ SESSION PUSH TEST MESSAGE ] >>> {}", content);
+            if (DataType.TEXT.name().equalsIgnoreCase(this.channelType) && data instanceof String content) {
                 context.writeAndFlush(new TextWebSocketFrame(content));
             }
-            if (type == Type.BINARY && data instanceof byte[] bytes) {
-                LOGGER.info("[ SESSION PUSH BINARY MESSAGE ] >>> {}", Collections.singletonList(bytes));
+            if (DataType.BINARY.name().equalsIgnoreCase(this.channelType) && data instanceof byte[] bytes) {
                 context.writeAndFlush(new BinaryWebSocketFrame(Unpooled.wrappedBuffer(bytes)));
             }
         }
-    }
-
-    /**
-     * 类型
-     */
-    public enum Type {
-        /**
-         * 文本
-         */
-        TEXT,
-        /**
-         * 字节码
-         */
-        BINARY
     }
 
 }

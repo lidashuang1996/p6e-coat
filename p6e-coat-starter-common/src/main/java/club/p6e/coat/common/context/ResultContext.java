@@ -6,7 +6,7 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 
 /**
- * 请求结果的封装
+ * Result Context
  *
  * @author lidashuang
  * @version 1.0
@@ -16,77 +16,77 @@ import java.io.Serializable;
 public final class ResultContext implements Serializable {
 
     /**
-     * 默认的状态码
+     * Default Code
      */
     private static final int DEFAULT_CODE = 0;
 
     /**
-     * 默认的消息内容
-     */
-    private static final String DEFAULT_MESSAGE = "SUCCESS";
-
-    /**
-     * 默认的数据内容
+     * Default Data
      */
     private static final String DEFAULT_DATA = null;
 
     /**
-     * 状态码
+     * Default Message
+     */
+    private static final String DEFAULT_MESSAGE = "SUCCESS";
+
+    /**
+     * Code
      */
     private Integer code;
 
     /**
-     * 消息
-     */
-    private String message;
-
-    /**
-     * 数据的对象
+     * Data
      */
     private Object data;
 
     /**
-     * 编译方法
+     * Message
+     */
+    private String message;
+
+    /**
+     * Constructor Initialization
      *
-     * @return 结果上下文对象
+     * @param code    Code Object
+     * @param data    Data Object
+     * @param message Message Object
+     */
+    private ResultContext(Integer code, String message, Object data) {
+        this.code = code;
+        this.data = data;
+        this.message = message;
+    }
+
+    /**
+     * Build Result Context Object
+     *
+     * @return Result Context Object
      */
     public static ResultContext build() {
         return new ResultContext(DEFAULT_CODE, DEFAULT_MESSAGE, DEFAULT_DATA);
     }
 
     /**
-     * 编译方法
+     * Build Result Context Object
      *
-     * @param data 数据的对象
-     * @return 结果上下文对象
+     * @param data Data Object
+     * @return Result Context Object
      */
     public static ResultContext build(Object data) {
         return new ResultContext(DEFAULT_CODE, DEFAULT_MESSAGE, data);
     }
 
     /**
-     * 编译方法
+     * Build Result Context Object
      *
-     * @param code    消息状态码
-     * @param message 消息内容
-     * @param data    数据的对象
-     * @return 结果上下文对象
+     * @param code    Code Object
+     * @param data    Data Object
+     * @param message Message Object
+     * @return Result Context Object
      */
     public static ResultContext build(Integer code, String message, Object data) {
         return new ResultContext(code, message, data);
-    }
-
-    /**
-     * 构造方法初始化
-     *
-     * @param code    状态码
-     * @param message 消息
-     * @param data    数据的对象
-     */
-    private ResultContext(Integer code, String message, Object data) {
-        this.code = code;
-        this.message = message;
-        this.data = data;
     }
 
 }

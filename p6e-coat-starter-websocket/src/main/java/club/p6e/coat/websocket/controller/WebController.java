@@ -4,9 +4,8 @@ import club.p6e.coat.common.context.ResultContext;
 import club.p6e.coat.common.error.ParameterException;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.NumberUtil;
-import club.p6e.coat.websocket.WebSocketMain;
+import club.p6e.coat.websocket.Application;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,12 +14,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * WEB CONTROLLER
+ * Web Controller
  *
  * @author lidashuang
  * @version 1.0
  */
-@Component
 @RestController
 @ConditionalOnClass(name = "org.springframework.web.servlet.package-info")
 public class WebController extends Controller {
@@ -28,14 +26,14 @@ public class WebController extends Controller {
     /**
      * WebSocket Main 对象
      */
-    private final WebSocketMain webSocketMain;
+    private final Application webSocketMain;
 
     /**
      * 构造方法初始化
      *
      * @param webSocketMain WebSocket Main 对象
      */
-    public WebController(WebSocketMain webSocketMain) {
+    public WebController(Application webSocketMain) {
         this.webSocketMain = webSocketMain;
     }
 

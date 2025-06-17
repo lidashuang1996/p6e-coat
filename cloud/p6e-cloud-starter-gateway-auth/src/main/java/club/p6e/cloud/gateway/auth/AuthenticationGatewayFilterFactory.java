@@ -5,7 +5,6 @@ import club.p6e.coat.common.utils.JsonUtil;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -17,7 +16,6 @@ import java.util.Map;
  * @author lidashuang
  * @version 1.0
  */
-@Component
 public class AuthenticationGatewayFilterFactory extends AbstractGatewayFilterFactory<Object> {
 
     /**
@@ -44,16 +42,22 @@ public class AuthenticationGatewayFilterFactory extends AbstractGatewayFilterFac
      *
      * @param service Authentication Gateway Service Object
      */
-    private record CustomGatewayFilter(AuthenticationGatewayService service) implements GatewayFilter {
+    public record CustomGatewayFilter(AuthenticationGatewayService service) implements GatewayFilter {
 
         /**
          * User Info Header Name
+         * Request Header For User Information
+         * Request Header Is Customized By The Program And Not Carried By The User Request
+         * When Receiving Requests, It Is Necessary To Clear The Request Header Carried By The User To Ensure Program Security
          */
         @SuppressWarnings("ALL")
         private static final String USER_INFO_HEADER = "P6e-User-Info";
 
         /**
          * Authentication Header Name
+         * Request Header For Authentication
+         * Request Header Is Customized By The Program And Not Carried By The User Request
+         * When Receiving Requests, It Is Necessary To Clear The Request Header Carried By The User To Ensure Program Security
          */
         @SuppressWarnings("ALL")
         private static final String AUTHENTICATION_HEADER = "P6e-Authentication";
@@ -74,13 +78,11 @@ public class AuthenticationGatewayFilterFactory extends AbstractGatewayFilterFac
 
             @Override
             public User password(String password) {
-                return null;
+                return this;
             }
 
             @Override
             public String serialize() {
-                System.out.println("11111111111 >>> " + toMap());
-                System.out.println("2222222222 >>>> +" + JsonUtil.toJson(toMap()));
                 return JsonUtil.toJson(toMap());
             }
 
@@ -94,10 +96,12 @@ public class AuthenticationGatewayFilterFactory extends AbstractGatewayFilterFac
         public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
             return service
                     .execute(exchange)
+                    // if the user is not logged in, the default is anonymous
                     .defaultIfEmpty(ANONYMOUS)
                     .flatMap(u -> chain.filter(exchange.mutate().request(
                             exchange.getRequest().mutate()
                                     .header(USER_INFO_HEADER, u.serialize())
+                                    // mark user 0: anonymous, 1: login
                                     .header(AUTHENTICATION_HEADER, ANONYMOUS == u ? "0" : "1")
                                     .build()
                     ).build()));

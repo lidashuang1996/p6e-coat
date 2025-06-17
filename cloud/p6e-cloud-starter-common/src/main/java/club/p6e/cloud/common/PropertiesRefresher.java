@@ -3,7 +3,6 @@ package club.p6e.cloud.common;
 import club.p6e.coat.common.utils.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 /**
  * Properties Refresher
@@ -11,23 +10,22 @@ import org.springframework.stereotype.Component;
  * @author lidashuang
  * @version 1.0
  */
-@Component(value = "club.p6e.cloud.common.PropertiesRefresher")
 public class PropertiesRefresher {
 
     /**
-     * Inject log objects
+     * Inject Log Object
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesRefresher.class);
 
     /**
-     * Properties object
+     * Properties Object
      */
     private final Properties properties;
 
     /**
-     * Constructor initializers
+     * Constructor Initializers
      *
-     * @param properties Properties object
+     * @param properties Properties Object
      */
     public PropertiesRefresher(Properties properties) {
         this.properties = properties;
@@ -36,7 +34,7 @@ public class PropertiesRefresher {
     /**
      * Execute Refresh
      *
-     * @param properties Properties object
+     * @param properties Properties Object
      */
     @SuppressWarnings("ALL")
     public void execute(Properties properties) {

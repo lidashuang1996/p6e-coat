@@ -18,6 +18,11 @@ import org.springframework.context.ApplicationListener;
 public class NacosPropertiesRefresher implements ApplicationListener<ApplicationReadyEvent> {
 
     /**
+     * Nacos Config Manager Object
+     */
+    protected final NacosConfigManager manager;
+
+    /**
      * spring.profiles.active
      */
     @Value(value = "${spring.profiles.active}")
@@ -42,14 +47,9 @@ public class NacosPropertiesRefresher implements ApplicationListener<Application
     protected String fileExtension;
 
     /**
-     * NacosConfigManager object
-     */
-    protected final NacosConfigManager manager;
-
-    /**
-     * Constructor initializers
+     * Constructor Initializers
      *
-     * @param manager NacosConfigManager object
+     * @param manager Nacos Config Manager Object
      */
     public NacosPropertiesRefresher(NacosConfigManager manager) {
         this.manager = manager;
@@ -97,8 +97,8 @@ public class NacosPropertiesRefresher implements ApplicationListener<Application
     /**
      * Config
      *
-     * @param format  Format object
-     * @param content Content object
+     * @param format  Format Object
+     * @param content Content Object
      */
     protected void config(String format, String content) {
     }
