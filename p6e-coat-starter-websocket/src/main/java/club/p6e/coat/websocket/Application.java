@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * WebSocket Main
+ * Application
  *
  * @author lidashuang
  * @version 1.0
@@ -102,6 +102,7 @@ public class Application {
                 protected void initChannel(io.netty.channel.Channel channel) {
                     // HTTP
                     channel.pipeline().addLast(new HttpServerCodec());
+                    // HTTP OBJECT AGGREGATOR
                     channel.pipeline().addLast(new HttpObjectAggregator(65536));
                     // WEB SOCKET
                     channel.pipeline().addLast(new WebSocketServerProtocolHandler(

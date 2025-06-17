@@ -5,8 +5,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Session
@@ -15,12 +13,7 @@ import org.slf4j.LoggerFactory;
  * @version 1.0
  */
 @Getter
-public final class Session {
-
-    /**
-     * Inject Log Object
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(Session.class);
+public class Session {
 
     /**
      * User Object
@@ -48,12 +41,12 @@ public final class Session {
     private volatile long date;
 
     /**
-     * 构造方法初始化
+     * Constructor Initialization
      *
-     * @param name    服务名称
-     * @param type    消息类型
-     * @param user    用户对象
-     * @param context 上下文对象
+     * @param name    Channel Name
+     * @param type    Channel Type
+     * @param user    User Object
+     * @param context Channel Handler Context Object
      */
     public Session(String name, String type, User user, ChannelHandlerContext context) {
         this.user = user;

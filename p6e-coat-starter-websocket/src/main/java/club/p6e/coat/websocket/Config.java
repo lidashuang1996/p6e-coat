@@ -18,14 +18,14 @@ import java.util.List;
 public class Config {
 
     /**
-     * Channel Config List Object
-     */
-    private final List<Channel> channels = new ArrayList<>();
-
-    /**
      * Manager Thread Pool Length
      */
     private int managerThreadPoolLength = 15;
+
+    /**
+     * Channel Config List Object
+     */
+    private final List<Channel> channels = new ArrayList<>();
 
     /**
      * Channel
