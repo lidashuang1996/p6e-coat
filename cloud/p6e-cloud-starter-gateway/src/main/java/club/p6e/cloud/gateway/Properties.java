@@ -10,7 +10,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.gateway.filter.FilterDefinition;
 import org.springframework.cloud.gateway.handler.predicate.PredicateDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinition;
-import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.net.URI;
@@ -27,7 +26,6 @@ import java.util.Map;
  */
 @Data
 @Accessors(chain = true)
-@Component("club.p6e.cloud.gateway.Properties")
 @ConfigurationProperties(prefix = "p6e.cloud.gateway")
 public class Properties implements Serializable {
 

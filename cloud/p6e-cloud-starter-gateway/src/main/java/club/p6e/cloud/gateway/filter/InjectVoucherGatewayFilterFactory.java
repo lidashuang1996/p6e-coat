@@ -6,7 +6,6 @@ import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -18,7 +17,6 @@ import java.io.Serializable;
  * @author lidashuang
  * @version 1.0
  */
-@Component
 public class InjectVoucherGatewayFilterFactory extends AbstractGatewayFilterFactory<InjectVoucherGatewayFilterFactory.Config> {
 
     /**

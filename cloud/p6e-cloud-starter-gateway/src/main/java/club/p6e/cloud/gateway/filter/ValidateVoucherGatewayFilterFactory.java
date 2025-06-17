@@ -7,7 +7,6 @@ import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -21,7 +20,6 @@ import java.util.List;
  * @author lidashuang
  * @version 1.0
  */
-@Component
 public class ValidateVoucherGatewayFilterFactory extends AbstractGatewayFilterFactory<ValidateVoucherGatewayFilterFactory.Config> {
 
     /**

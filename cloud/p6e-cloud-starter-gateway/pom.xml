@@ -34,7 +34,6 @@
         <dependency>
             <groupId>club.p6e.cloud</groupId>
             <artifactId>p6e-cloud-starter-common</artifactId>
-            <version>3.4.2</version>
         </dependency>
         <!-- P6e Coat Common [END] -->
 

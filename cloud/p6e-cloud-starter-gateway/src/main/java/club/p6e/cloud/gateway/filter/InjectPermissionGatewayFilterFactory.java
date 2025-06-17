@@ -5,7 +5,6 @@ import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -17,7 +16,7 @@ import java.util.ArrayList;
  * @author lidashuang
  * @version 1.0
  */
-@Component
+@SuppressWarnings("ALL")
 public class InjectPermissionGatewayFilterFactory extends AbstractGatewayFilterFactory<Object> {
 
     @Override
@@ -32,6 +31,9 @@ public class InjectPermissionGatewayFilterFactory extends AbstractGatewayFilterF
 
         /**
          * Premission Header Name
+         * Request Header For User Permissions
+         * Request Header Is Customized By The Program And Not Carried By The User Request
+         * When Receiving Requests, It Is Necessary To Clear The Request Header Carried By The User To Ensure Program Security
          */
         @SuppressWarnings("ALL")
         private static final String USER_PERMISSION_HEADER = "P6e-User-Permission";

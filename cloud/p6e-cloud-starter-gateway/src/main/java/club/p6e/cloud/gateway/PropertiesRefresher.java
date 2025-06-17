@@ -3,7 +3,6 @@ package club.p6e.cloud.gateway;
 import club.p6e.coat.common.utils.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 /**
  * Properties Refresher
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Component;
  * @author lidashuang
  * @version 1.0
  */
-@Component("club.p6e.cloud.gateway.PropertiesRefresher")
 public class PropertiesRefresher {
 
     /**
