@@ -82,8 +82,10 @@ public class Channel implements ChannelInboundHandler {
     /**
      * Constructor Initialization
      *
-     * @param name Channel Name
-     * @param type Channel Type
+     * @param name      Channel Name
+     * @param type      Channel Type
+     * @param auth      Auth Service Object
+     * @param callbacks Callback List Object
      */
     public Channel(String name, String type, AuthService auth, List<Callback> callbacks) {
         this.id = GeneratorUtil.uuid() + GeneratorUtil.random();

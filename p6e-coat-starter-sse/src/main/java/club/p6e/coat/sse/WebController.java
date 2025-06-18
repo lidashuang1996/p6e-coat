@@ -3,8 +3,6 @@ package club.p6e.coat.sse;
 import club.p6e.coat.common.context.ResultContext;
 import club.p6e.coat.common.error.ParameterException;
 import club.p6e.coat.common.utils.GeneratorUtil;
-import club.p6e.coat.websocket.Application;
-import club.p6e.coat.websocket.controller.Controller;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

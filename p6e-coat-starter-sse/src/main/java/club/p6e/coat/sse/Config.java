@@ -18,14 +18,13 @@ import java.util.List;
 public class Config {
 
     /**
-     * Manager Thread Pool Length
-     */
-    private int managerThreadPoolLength = 15;
-
-    /**
      * Channel Config List Object
      */
     private final List<Channel> channels = new ArrayList<>();
+    /**
+     * Manager Thread Pool Length
+     */
+    private int managerThreadPoolLength = 15;
 
     /**
      * Channel
@@ -52,12 +51,7 @@ public class Config {
         /**
          * Channel Auth Bean Name
          */
-        private String auth;
-
-        /**
-         * Channel Callback Bean Name List
-         */
-        private List<String> callbacks;
+        private String auth = "club.p6e.coat.sse.AuthServiceImpl";
 
     }
 }

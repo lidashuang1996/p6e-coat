@@ -1,12 +1,10 @@
 package club.p6e.coat.sse;
 
 import club.p6e.coat.common.utils.GeneratorUtil;
-import club.p6e.coat.websocket.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandler;
-import io.netty.handler.codec.http.websocketx.*;
 import io.netty.util.AttributeKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,30 +18,6 @@ import java.util.List;
  * @version 1.0
  */
 public class Channel implements ChannelInboundHandler {
-
-    /**
-     * LOGIN SUCCESS CONTENT TEXT
-     */
-    private static final String LOGIN_CONTENT_TEXT = "{\"type\":\"login\"}";
-
-    /**
-     * LOGIN SUCCESS CONTENT BYTES
-     */
-    private static final byte[] LOGIN_CONTENT_BYTES = new byte[]{
-            16, 0, 0, 0, 16, 0, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0
-    };
-
-    /**
-     * LOGOUT SUCCESS CONTENT TEXT
-     */
-    private static final String LOGOUT_CONTENT_TEXT = "{\"type\":\"logout\"}";
-
-    /**
-     * LOGOUT SUCCESS CONTENT BYTES
-     */
-    private static final byte[] LOGOUT_CONTENT_BYTES = new byte[]{
-            16, 0, 0, 0, 16, 0, 1, 0, 0, 0, 0, 0, 6, 0, 0, 0
-    };
 
     /**
      * Inject Log Object
@@ -66,37 +40,25 @@ public class Channel implements ChannelInboundHandler {
     private final String name;
 
     /**
-     * Channel Type
-     */
-    private final String type;
-
-    /**
      * Auth Service Object
      */
-    private final club.p6e.coat.websocket.AuthService auth;
+    private final AuthService auth;
 
-    /**
-     * Callback List Object
-     */
-    private final List<Callback> callbacks;
 
     /**
      * Constructor Initialization
      *
      * @param name Channel Name
-     * @param type Channel Type
      */
-    public Channel(String name, String type, AuthService auth, List<Callback> callbacks) {
+    public Channel(String name, AuthService auth) {
         this.id = GeneratorUtil.uuid() + GeneratorUtil.random();
         this.name = name;
-        this.type = type;
         this.auth = auth;
-        this.callbacks = callbacks;
     }
 
     @Override
     public void channelRead(ChannelHandlerContext context, Object o) {
-        if (o instanceof final TextWebSocketFrame textWebSocketFrame) {
+        if (o instanceof final FullHttpRequest  textWebSocketFrame) {
             executeCallbackMessage(club.p6e.coat.websocket.SessionManager.get(context.channel().attr(SESSION_ID).get()), textWebSocketFrame.text());
         } else if (o instanceof final BinaryWebSocketFrame binaryWebSocketFrame) {
             final ByteBuf byteBuf = binaryWebSocketFrame.content();
@@ -115,28 +77,7 @@ public class Channel implements ChannelInboundHandler {
         }
     }
 
-    @Override
-    public void userEventTriggered(ChannelHandlerContext context, Object o) {
-        if (o instanceof final WebSocketServerProtocolHandler.HandshakeComplete complete) {
-            final User user = this.auth.validate(this.name, complete.requestUri());
-            if (user == null) {
-                context.close();
-            } else {
-                if (DataType.TEXT.name().equalsIgnoreCase(this.type)) {
-                    final String id = GeneratorUtil.uuid() + GeneratorUtil.random();
-                    final club.p6e.coat.websocket.Session session = new club.p6e.coat.websocket.Session(this.name, this.type, user, context);
-                    context.writeAndFlush(new TextWebSocketFrame(LOGIN_CONTENT_TEXT));
-                    club.p6e.coat.websocket.SessionManager.register(id, session);
-                    executeCallbackOpen(session);
-                } else if (DataType.BINARY.name().equalsIgnoreCase(this.type)) {
-                    final club.p6e.coat.websocket.Session session = new club.p6e.coat.websocket.Session(this.name, this.type, user, context);
-                    context.writeAndFlush(new BinaryWebSocketFrame(Unpooled.wrappedBuffer(LOGIN_CONTENT_BYTES)));
-                    club.p6e.coat.websocket.SessionManager.register(this.id, session);
-                    executeCallbackOpen(session);
-                }
-            }
-        }
-    }
+
 
     @Override
     public void handlerRemoved(ChannelHandlerContext context) {
@@ -182,6 +123,10 @@ public class Channel implements ChannelInboundHandler {
 
     @Override
     public void channelWritabilityChanged(ChannelHandlerContext context) {
+    }
+
+    @Override
+    public void userEventTriggered(ChannelHandlerContext context, Object o) {
     }
 
     private void executeCallbackOpen(club.p6e.coat.websocket.Session session) {

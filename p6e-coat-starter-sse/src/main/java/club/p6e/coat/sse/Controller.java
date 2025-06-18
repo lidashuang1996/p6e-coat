@@ -21,36 +21,25 @@ import java.util.Map;
 public class Controller {
 
     /**
-     * Controller Push Param
-     */
-    @Data
-    @Accessors(chain = true)
-    public static class PushParam implements Serializable {
-        private String name;
-        private String content;
-        private List<String> users;
-    }
-
-    /**
-     * 时间格式化对象
+     * Date Time Formatter Object
      */
     public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
     /**
-     * 请求参数名称
+     * Voucher Param Name 1
      */
     private static final String V_PARAM_NAME = "v";
 
     /**
-     * 请求参数名称
+     * Voucher Param Name 2
      */
     private static final String VOUCHER_PARAM_NAME = "voucher";
 
     /**
-     * 获取 URL 参数
+     * Get Uri Param Object
      *
-     * @param uri 请求的 URL
-     * @return 参数
+     * @param uri Request Uri
+     * @return Uri Param Object
      */
     public static Map<String, List<String>> getParams(String uri) {
         final int index = uri.indexOf("?");
@@ -74,10 +63,10 @@ public class Controller {
     }
 
     /**
-     * 获取凭证参数
+     * Get Uri Voucher
      *
-     * @param uri 请求的 URI 地址
-     * @return 凭证参数
+     * @param uri Request Uri
+     * @return Voucher
      */
     public static String getVoucher(String uri) {
         String voucher;
@@ -92,6 +81,17 @@ public class Controller {
             voucher = params.get(V_PARAM_NAME).get(0);
         }
         return voucher;
+    }
+
+    /**
+     * Controller Push Param
+     */
+    @Data
+    @Accessors(chain = true)
+    public static class PushParam implements Serializable {
+        private String name;
+        private String content;
+        private List<String> users;
     }
 
 }

@@ -1,7 +1,5 @@
 package club.p6e.coat.sse;
 
-import club.p6e.coat.websocket.User;
-
 /**
  * Auth Service
  *
