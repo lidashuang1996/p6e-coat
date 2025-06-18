@@ -5,34 +5,16 @@
     <parent>
         <groupId>club.p6e.coat</groupId>
         <artifactId>p6e-coat-starter-parent</artifactId>
-        <version>3.1.0</version>
+        <version>3.4.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <artifactId>p6e-coat-starter-sse</artifactId>
-    <version>3.1.0</version>
+    <version>3.4.2</version>
     <name>p6e-coat-starter-sse</name>
     <description>p6e-coat-starter-sse</description>
 
     <dependencies>
-
-        <!-- Spring Web [ START ] -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <!-- scope provided dependency -->
-            <scope>provided</scope>
-        </dependency>
-        <!-- Spring Web [ END ] -->
-
-        <!-- Spring Web Flux [ START ] -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webflux</artifactId>
-            <!-- scope provided dependency -->
-            <scope>provided</scope>
-        </dependency>
-        <!-- Spring Web Flux [ END ] -->
 
         <!-- Netty All [ START ] -->
         <dependency>
@@ -51,6 +33,24 @@
             <scope>provided</scope>
         </dependency>
         <!-- P6e Coat Common [ END ] -->
+
+        <!-- Spring Web [ START ] -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <!-- scope provided dependency -->
+            <scope>provided</scope>
+        </dependency>
+        <!-- Spring Web [ END ] -->
+
+        <!-- Spring Web Flux [ START ] -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+            <!-- scope provided dependency -->
+            <scope>provided</scope>
+        </dependency>
+        <!-- Spring Web Flux [ END ] -->
 
     </dependencies>
 </project>

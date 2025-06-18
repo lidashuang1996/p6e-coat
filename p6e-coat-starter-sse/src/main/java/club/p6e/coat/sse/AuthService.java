@@ -1,7 +1,9 @@
 package club.p6e.coat.sse;
 
+import club.p6e.coat.websocket.User;
+
 /**
- * 认证接口
+ * Auth Service
  *
  * @author lidashuang
  * @version 1.0
@@ -9,12 +11,12 @@ package club.p6e.coat.sse;
 public interface AuthService {
 
     /**
-     * 验证令牌
+     * Validate
      *
-     * @param channel 通道名称
-     * @param voucher 请求令牌
-     * @return 验证的结果
+     * @param name Channel Name
+     * @param uri  Request Uri
+     * @return User Object
      */
-    User validate(String channel, String voucher);
+    User validate(String name, String uri);
 
 }

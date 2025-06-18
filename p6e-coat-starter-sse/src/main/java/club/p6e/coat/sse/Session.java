@@ -1,79 +1,72 @@
 package club.p6e.coat.sse;
 
-import club.p6e.coat.common.utils.GeneratorUtil;
-import club.p6e.coat.common.utils.JsonUtil;
+import club.p6e.coat.websocket.DataType;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.HttpVersion;
+import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.Getter;
 
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-
 /**
- * 会话
+ * Session
  *
  * @author lidashuang
  * @version 1.0
  */
 @Getter
-public final class Session {
+public class Session {
 
     /**
-     * 时间格式化对象
-     */
-    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-
-    /**
-     * 用户对象
+     * User Object
      */
     private final User user;
 
     /**
-     * 服务名称
+     * Channel Name
      */
-    private final String name;
+    private final String channelName;
 
     /**
-     * 上下文对象
+     * Channel Type
+     */
+    private final String channelType;
+
+    /**
+     * Channel Handler Context Object
      */
     private final ChannelHandlerContext context;
 
     /**
-     * 时间
+     * Date Object
      */
     private volatile long date;
 
     /**
-     * 构造方法初始化
+     * Constructor Initialization
      *
-     * @param name    服务名称
-     * @param user    用户对象
-     * @param context 上下文对象
+     * @param name    Channel Name
+     * @param type    Channel Type
+     * @param user    User Object
+     * @param context Channel Handler Context Object
      */
-    public Session(String name, User user, ChannelHandlerContext context) {
-        this.name = name;
+    public Session(String name, String type, User user, ChannelHandlerContext context) {
         this.user = user;
         this.context = context;
+        this.channelName = name;
+        this.channelType = type;
         this.date = System.currentTimeMillis();
     }
 
     /**
-     * 刷新
+     * Refresh Session
      */
+    @SuppressWarnings("ALL")
     public void refresh() {
         this.date = System.currentTimeMillis();
-        push(null, JsonUtil.toJson(new HashMap<>() {{
-            put("type", "heartbeat");
-            put("content", String.valueOf(System.currentTimeMillis()));
-        }}));
     }
 
     /**
-     * 关闭
+     * Close Session
      */
     @SuppressWarnings("ALL")
     public void close() {
@@ -83,23 +76,18 @@ public final class Session {
     }
 
     /**
-     * 推送消息
+     * Push Message
      *
-     * @param data 消息内容
+     * @param data Message Content
      */
-    public void push(String id, String data) {
-        if (id == null) {
-            id = DATE_TIME_FORMATTER.format(LocalDateTime.now()) + GeneratorUtil.uuid();
-        }
-        final String content = "id: " + id + "\ntype: message" + "\ndata: " + data + "\n\n";
-        if (context != null && context.channel().isOpen()) {
-            context.channel().writeAndFlush(
-                    new DefaultFullHttpResponse(
-                            HttpVersion.HTTP_1_1,
-                            HttpResponseStatus.OK,
-                            context.alloc().buffer().writeBytes(content.getBytes(StandardCharsets.UTF_8))
-                    )
-            );
+    public void push(Object data) {
+        if (context != null && !context.isRemoved()) {
+            if (DataType.TEXT.name().equalsIgnoreCase(this.channelType) && data instanceof String content) {
+                context.writeAndFlush(new TextWebSocketFrame(content));
+            }
+            if (DataType.BINARY.name().equalsIgnoreCase(this.channelType) && data instanceof byte[] bytes) {
+                context.writeAndFlush(new BinaryWebSocketFrame(Unpooled.wrappedBuffer(bytes)));
+            }
         }
     }
 

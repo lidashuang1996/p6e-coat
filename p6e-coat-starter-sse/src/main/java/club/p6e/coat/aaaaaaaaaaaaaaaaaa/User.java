@@ -3,7 +3,7 @@ package club.p6e.coat.sse;
 import java.io.Serializable;
 
 /**
- * User
+ * 用户对象
  *
  * @author lidashuang
  * @version 1.0
@@ -11,9 +11,9 @@ import java.io.Serializable;
 public interface User extends Serializable {
 
     /**
-     * User ID
+     * 用户编号
      *
-     * @return User ID
+     * @return 用户编号
      */
     String id();
 

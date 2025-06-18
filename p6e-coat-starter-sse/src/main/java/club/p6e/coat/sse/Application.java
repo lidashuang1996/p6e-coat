@@ -1,4 +1,4 @@
-package club.p6e.coat.websocket;
+package club.p6e.coat.sse;
 
 import club.p6e.coat.common.utils.SpringUtil;
 import io.netty.bootstrap.ServerBootstrap;

@@ -1,4 +1,4 @@
-package club.p6e.coat.websocket.controller;
+package club.p6e.coat.sse;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -7,21 +7,26 @@ import java.io.Serializable;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
- * 接口控制器
+ * Controller
  *
  * @author lidashuang
  * @version 1.0
  */
 public class Controller {
 
+    /**
+     * Controller Push Param
+     */
     @Data
     @Accessors(chain = true)
     public static class PushParam implements Serializable {
         private String name;
-        private String type;
         private String content;
         private List<String> users;
     }

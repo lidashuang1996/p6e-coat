@@ -4,7 +4,6 @@ import club.p6e.coat.common.context.ResultContext;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.JsonUtil;
 import club.p6e.coat.common.utils.SpringUtil;
-import club.p6e.coat.sse.controller.Controller;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandler;
