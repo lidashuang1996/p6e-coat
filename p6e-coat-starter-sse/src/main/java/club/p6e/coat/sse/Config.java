@@ -53,5 +53,10 @@ public class Config {
          */
         private String auth = "club.p6e.coat.sse.AuthServiceImpl";
 
+        /**
+         * Channel Callback Bean Name List
+         */
+        private List<String> callbacks = new ArrayList<>();
+
     }
 }

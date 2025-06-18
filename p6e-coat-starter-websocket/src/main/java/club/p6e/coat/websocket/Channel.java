@@ -146,14 +146,16 @@ public class Channel implements ChannelInboundHandler {
         } else if (DataType.BINARY.name().equalsIgnoreCase(this.type)) {
             context.writeAndFlush(new BinaryWebSocketFrame(Unpooled.wrappedBuffer(LOGOUT_CONTENT_BYTES)));
         }
-        executeCallbackClose(SessionManager.get(context.channel().attr(SESSION_ID).get()));
-        SessionManager.unregister(this.id);
+        final String id = context.channel().attr(SESSION_ID).get();
+        executeCallbackClose(SessionManager.get(id));
+        SessionManager.unregister(id);
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext context, Throwable e) {
         LOGGER.error("[ CHANNEL ERROR ] {} => {}", this.id, e.getMessage(), e);
-        executeCallbackError(SessionManager.get(context.channel().attr(SESSION_ID).get()), e);
+        final String id = context.channel().attr(SESSION_ID).get();
+        executeCallbackError(SessionManager.get(id), e);
         context.close();
     }
 

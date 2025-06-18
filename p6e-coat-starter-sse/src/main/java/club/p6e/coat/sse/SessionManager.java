@@ -1,6 +1,5 @@
 package club.p6e.coat.sse;
 
-import club.p6e.coat.websocket.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,17 +24,17 @@ public class SessionManager {
     /**
      * Session Cache Object
      */
-    private static final Map<String, club.p6e.coat.websocket.Session> SESSIONS = new ConcurrentHashMap<>();
+    private static final Map<String, Session> SESSIONS = new ConcurrentHashMap<>();
 
     /**
      * Slot Cache Object
      */
-    private static final Map<String, Map<String, club.p6e.coat.websocket.Session>> SLOTS = new ConcurrentHashMap<>();
+    private static final Map<String, Map<String, Session>> SLOTS = new ConcurrentHashMap<>();
 
     /**
      * Channel Name Cache Object
      */
-    private static final Map<String, Map<String, club.p6e.coat.websocket.Session>> CHANNELS = new ConcurrentHashMap<>();
+    private static final Map<String, Map<String, Session>> CHANNELS = new ConcurrentHashMap<>();
 
     /**
      * Slot Number
@@ -71,7 +70,7 @@ public class SessionManager {
      * @param id      Session ID
      * @param session Session Object
      */
-    public static void register(String id, club.p6e.coat.websocket.Session session) {
+    public static void register(String id, Session session) {
         synchronized (SessionManager.class) {
             SESSIONS.put(id, session);
             final String name = session.getChannelName();
@@ -89,15 +88,15 @@ public class SessionManager {
      */
     public static void unregister(String id) {
         synchronized (SessionManager.class) {
-            final club.p6e.coat.websocket.Session session = SESSIONS.get(id);
+            final Session session = SESSIONS.get(id);
             if (session != null) {
                 SESSIONS.remove(id);
                 final String index = String.valueOf(Math.abs(id.hashCode() % SLOTS_NUM));
-                final Map<String, club.p6e.coat.websocket.Session> slot = SLOTS.get(index);
+                final Map<String, Session> slot = SLOTS.get(index);
                 if (slot != null) {
                     slot.remove(id);
                 }
-                final Map<String, club.p6e.coat.websocket.Session> channel = CHANNELS.get(session.getChannelName());
+                final Map<String, Session> channel = CHANNELS.get(session.getChannelName());
                 if (channel != null) {
                     channel.remove(id);
                 }
@@ -112,7 +111,7 @@ public class SessionManager {
      * @param id Session ID
      * @return Session Object
      */
-    public static club.p6e.coat.websocket.Session get(String id) {
+    public static club.p6e.coat.sse.Session get(String id) {
         return SESSIONS.get(id);
     }
 
@@ -122,7 +121,7 @@ public class SessionManager {
      * @return Session List Object
      */
     @SuppressWarnings("ALL")
-    public static List<club.p6e.coat.websocket.Session> all() {
+    public static List<Session> all() {
         return new ArrayList<>(SESSIONS.values());
     }
 
@@ -141,8 +140,8 @@ public class SessionManager {
      *
      * @return Slot List Object
      */
-    private static List<List<club.p6e.coat.websocket.Session>> getSlotList() {
-        final List<List<club.p6e.coat.websocket.Session>> list = new ArrayList<>();
+    private static List<List<Session>> getSlotList() {
+        final List<List<Session>> list = new ArrayList<>();
         SLOTS.forEach((k, v) -> {
             if (!v.isEmpty()) {
                 list.add(new ArrayList<>(v.values()));
@@ -157,7 +156,7 @@ public class SessionManager {
      * @return Channel List Object
      */
     @SuppressWarnings("ALL")
-    public static List<club.p6e.coat.websocket.Session> getChannelList(String name) {
+    public static List<Session> getChannelList(String name) {
         return new ArrayList<>(CHANNELS.get(name).values());
     }
 
@@ -169,8 +168,8 @@ public class SessionManager {
      * @param bytes  Message Content
      */
     public static void pushBinary(Function<User, Boolean> filter, String name, byte[] bytes) {
-        final List<List<club.p6e.coat.websocket.Session>> list = getSlotList();
-        for (final List<club.p6e.coat.websocket.Session> slot : list) {
+        final List<List<Session>> list = getSlotList();
+        for (final List<Session> slot : list) {
             if (slot != null && !slot.isEmpty()) {
                 LOGGER.info("[ PUSH BINARY SESSION CHANNEL ] {} >>> {}", name, Collections.singletonList(bytes));
                 submit(slot, filter, name, bytes);
@@ -186,8 +185,8 @@ public class SessionManager {
      * @param content Message Content
      */
     public static void pushText(Function<User, Boolean> filter, String name, String content) {
-        final List<List<club.p6e.coat.websocket.Session>> list = getSlotList();
-        for (final List<club.p6e.coat.websocket.Session> slot : list) {
+        final List<List<Session>> list = getSlotList();
+        for (final List<Session> slot : list) {
             if (slot != null && !slot.isEmpty()) {
                 LOGGER.info("[ PUSH TEXT SESSION CHANNEL ] {} >>> {}", name, content);
                 submit(slot, filter, name, content);
@@ -203,7 +202,7 @@ public class SessionManager {
      * @param name    Channel Name
      * @param content Content Data
      */
-    private static void submit(List<club.p6e.coat.websocket.Session> slot, Function<User, Boolean> filter, String name, Object content) {
+    private static void submit(List<Session> slot, Function<User, Boolean> filter, String name, Object content) {
         EXECUTOR.submit(() -> {
             for (final Session session : slot) {
                 LOGGER.info("[ SUBMIT TASK EXECUTE ] >>> NAME CHECK >>> CHANNEL NAME:{}/SESSION CHANNEL NAME:{} ? {}", name, session.getChannelName(), name.equalsIgnoreCase(session.getChannelName()));

@@ -22,16 +22,6 @@ public class Session {
     private final User user;
 
     /**
-     * Channel Name
-     */
-    private final String channelName;
-
-    /**
-     * Channel Type
-     */
-    private final String channelType;
-
-    /**
      * Channel Handler Context Object
      */
     private final ChannelHandlerContext context;
@@ -44,16 +34,12 @@ public class Session {
     /**
      * Constructor Initialization
      *
-     * @param name    Channel Name
-     * @param type    Channel Type
      * @param user    User Object
      * @param context Channel Handler Context Object
      */
-    public Session(String name, String type, User user, ChannelHandlerContext context) {
+    public Session(User user, ChannelHandlerContext context) {
         this.user = user;
         this.context = context;
-        this.channelName = name;
-        this.channelType = type;
         this.date = System.currentTimeMillis();
     }
 
@@ -82,12 +68,7 @@ public class Session {
      */
     public void push(Object data) {
         if (context != null && !context.isRemoved()) {
-            if (DataType.TEXT.name().equalsIgnoreCase(this.channelType) && data instanceof String content) {
-                context.writeAndFlush(new TextWebSocketFrame(content));
-            }
-            if (DataType.BINARY.name().equalsIgnoreCase(this.channelType) && data instanceof byte[] bytes) {
-                context.writeAndFlush(new BinaryWebSocketFrame(Unpooled.wrappedBuffer(bytes)));
-            }
+            context.writeAndFlush(new TextWebSocketFrame(content));
         }
     }
 

@@ -1,14 +1,17 @@
 package club.p6e.coat.sse;
 
+import club.p6e.coat.common.context.ResultContext;
 import club.p6e.coat.common.utils.GeneratorUtil;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
+import club.p6e.coat.common.utils.JsonUtil;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandler;
+import io.netty.handler.codec.http.*;
 import io.netty.util.AttributeKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -35,65 +38,73 @@ public class Channel implements ChannelInboundHandler {
     private final String id;
 
     /**
-     * Channel Name
-     */
-    private final String name;
-
-    /**
      * Auth Service Object
      */
     private final AuthService auth;
 
+    /**
+     * Callback List Object
+     */
+    private final List<Callback> callbacks;
 
     /**
      * Constructor Initialization
      *
-     * @param name Channel Name
+     * @param auth      Auth Service Object
+     * @param callbacks Callback List Object
      */
-    public Channel(String name, AuthService auth) {
+    public Channel(AuthService auth, List<Callback> callbacks) {
         this.id = GeneratorUtil.uuid() + GeneratorUtil.random();
-        this.name = name;
         this.auth = auth;
+        this.callbacks = callbacks;
     }
 
     @Override
     public void channelRead(ChannelHandlerContext context, Object o) {
-        if (o instanceof final FullHttpRequest  textWebSocketFrame) {
-            executeCallbackMessage(club.p6e.coat.websocket.SessionManager.get(context.channel().attr(SESSION_ID).get()), textWebSocketFrame.text());
-        } else if (o instanceof final BinaryWebSocketFrame binaryWebSocketFrame) {
-            final ByteBuf byteBuf = binaryWebSocketFrame.content();
-            try {
-                final int readableBytesLength = byteBuf.readableBytes();
-                final byte[] readableByteArray = new byte[readableBytesLength];
-                byteBuf.readBytes(readableByteArray);
-                executeCallbackMessage(club.p6e.coat.websocket.SessionManager.get(context.channel().attr(SESSION_ID).get()), readableByteArray);
-            } finally {
-                byteBuf.release();
+        if (o instanceof final FullHttpRequest request) {
+            final FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
+            final String origin = request.headers().get(HttpHeaderNames.ORIGIN);
+            response.headers().set(HttpHeaderNames.ACCESS_CONTROL_MAX_AGE, "3600");
+            response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_HEADERS, "Content-Type");
+            response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN, origin == null ? "*" : origin);
+            response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_METHODS, "GET,POST,DELETE,PUT,OPTIONS");
+            if (HttpMethod.OPTIONS.equals(request.method())) {
+                context.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+            } else {
+                final User user = this.auth.validate(null, Controller.getVoucher(request.uri()));
+                if (user == null) {
+                    response.content().writeBytes(context.alloc().buffer().writeBytes(JsonUtil.toJson(
+                            ResultContext.build(500, "AUTH_ERROR", "AUTH_ERROR")
+                    ).getBytes(StandardCharsets.UTF_8)));
+                } else {
+                    response.headers().set(HttpHeaderNames.EXPIRES, "0");
+                    response.headers().set(HttpHeaderNames.PRAGMA, "no-cache");
+                    response.headers().set(HttpHeaderNames.CONNECTION, "keep-alive");
+                    response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/event-stream; charset=UTF-8");
+                    response.headers().set(HttpHeaderNames.CACHE_CONTROL, "no-cache, no-store, must-revalidate");
+                    final String id = GeneratorUtil.uuid() + GeneratorUtil.random();
+                    final Session session = new Session(user, context);
+                    context.writeAndFlush(response);
+                    SessionManager.register(id, session);
+                    executeCallbackOpen(session);
+                }
             }
-        } else if (o instanceof PingWebSocketFrame) {
-            context.writeAndFlush(new PongWebSocketFrame());
-        } else if (o instanceof PongWebSocketFrame) {
-            context.writeAndFlush(new PingWebSocketFrame());
         }
     }
 
 
-
     @Override
     public void handlerRemoved(ChannelHandlerContext context) {
-        if (DataType.TEXT.name().equalsIgnoreCase(this.type)) {
-            context.writeAndFlush(new TextWebSocketFrame(LOGOUT_CONTENT_TEXT));
-        } else if (DataType.BINARY.name().equalsIgnoreCase(this.type)) {
-            context.writeAndFlush(new BinaryWebSocketFrame(Unpooled.wrappedBuffer(LOGOUT_CONTENT_BYTES)));
-        }
-        executeCallbackClose(club.p6e.coat.websocket.SessionManager.get(context.channel().attr(SESSION_ID).get()));
-        club.p6e.coat.websocket.SessionManager.unregister(this.id);
+        final String id = context.channel().attr(SESSION_ID).get();
+        executeCallbackClose(SessionManager.get(id));
+        SessionManager.unregister(id);
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext context, Throwable e) {
         LOGGER.error("[ CHANNEL ERROR ] {} => {}", this.id, e.getMessage(), e);
-        executeCallbackError(SessionManager.get(context.channel().attr(SESSION_ID).get()), e);
+        final String id = context.channel().attr(SESSION_ID).get();
+        executeCallbackError(SessionManager.get(id), e);
         context.close();
     }
 
@@ -129,7 +140,7 @@ public class Channel implements ChannelInboundHandler {
     public void userEventTriggered(ChannelHandlerContext context, Object o) {
     }
 
-    private void executeCallbackOpen(club.p6e.coat.websocket.Session session) {
+    private void executeCallbackOpen(Session session) {
         for (Callback callback : this.callbacks) {
             try {
                 callback.onOpen(session);
@@ -139,7 +150,7 @@ public class Channel implements ChannelInboundHandler {
         }
     }
 
-    private void executeCallbackClose(club.p6e.coat.websocket.Session session) {
+    private void executeCallbackClose(Session session) {
         for (Callback callback : this.callbacks) {
             try {
                 callback.onClose(session);
@@ -149,32 +160,12 @@ public class Channel implements ChannelInboundHandler {
         }
     }
 
-    private void executeCallbackError(club.p6e.coat.websocket.Session session, Throwable throwable) {
+    private void executeCallbackError(Session session, Throwable throwable) {
         for (Callback callback : this.callbacks) {
             try {
                 callback.onError(session, throwable);
             } catch (Exception e) {
                 LOGGER.error("[ CALLBACK ERROR ] ERROR => {}", e.getMessage(), e);
-            }
-        }
-    }
-
-    private void executeCallbackMessage(club.p6e.coat.websocket.Session session, String text) {
-        for (Callback callback : this.callbacks) {
-            try {
-                callback.onMessage(session, text);
-            } catch (Exception e) {
-                LOGGER.error("[ CALLBACK ERROR ] MESSAGE TEXT => {}", e.getMessage(), e);
-            }
-        }
-    }
-
-    private void executeCallbackMessage(Session session, byte[] bytes) {
-        for (Callback callback : this.callbacks) {
-            try {
-                callback.onMessage(session, bytes);
-            } catch (Exception e) {
-                LOGGER.error("[ CALLBACK ERROR ] MESSAGE BYTES => {}", e.getMessage(), e);
             }
         }
     }
