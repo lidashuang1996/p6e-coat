@@ -16,21 +16,10 @@
 
     <dependencies>
 
-        <!-- Spring Cloud Gateway [START] -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-gateway</artifactId>
-            <!-- scope provided dependency -->
-            <scope>provided</scope>
-        </dependency>
-        <!-- Spring Cloud Gateway [END] -->
-
         <!-- P6e Coat Auth Token [START] -->
         <dependency>
             <groupId>club.p6e.coat</groupId>
             <artifactId>p6e-coat-starter-auth-token</artifactId>
-            <!-- scope provided dependency -->
-            <scope>provided</scope>
         </dependency>
         <!-- P6e Coat Auth Token [END] -->
 
@@ -42,6 +31,15 @@
             <scope>provided</scope>
         </dependency>
         <!-- P6e Cloud Common [END] -->
+
+        <!-- Spring Cloud Gateway [START] -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-gateway</artifactId>
+            <!-- scope provided dependency -->
+            <scope>provided</scope>
+        </dependency>
+        <!-- Spring Cloud Gateway [END] -->
 
     </dependencies>
 </project>
