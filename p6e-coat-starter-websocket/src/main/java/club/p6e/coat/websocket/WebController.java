@@ -6,6 +6,7 @@ import club.p6e.coat.common.utils.GeneratorUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ import java.util.HexFormat;
  * @version 1.0
  */
 @RestController
+@RequestMapping
 @ConditionalOnClass(name = "org.springframework.web.servlet.package-info")
 public class WebController extends Controller {
 
@@ -42,10 +44,7 @@ public class WebController extends Controller {
 
     @PostMapping("/push/text")
     public ResultContext pushText(@RequestBody PushParam param) {
-        if (param == null
-                || param.getUsers() == null
-                || param.getContent() == null
-                || param.getUsers().isEmpty()) {
+        if (param == null || param.getContent() == null) {
             throw new ParameterException(
                     this.getClass(),
                     "fun pushText(PushParam param).",
@@ -60,10 +59,7 @@ public class WebController extends Controller {
 
     @PostMapping("/push/hex")
     public ResultContext pushHex(@RequestBody PushParam param) {
-        if (param == null
-                || param.getUsers() == null
-                || param.getContent() == null
-                || param.getUsers().isEmpty()) {
+        if (param == null || param.getContent() == null) {
             throw new ParameterException(
                     this.getClass(),
                     "fun pushHex(PushParam param).",
@@ -77,13 +73,13 @@ public class WebController extends Controller {
     }
 
     @SuppressWarnings("ALL")
-    private void pushHexMessage(PushParam param, String name, String id) {
+    public void pushHexMessage(PushParam param, String name, String id) {
         final String content = param.getContent();
         application.push(user -> true, name, HexFormat.of().parseHex(content));
     }
 
     @SuppressWarnings("ALL")
-    private void pushTextMessage(PushParam param, String name, String id) {
+    public void pushTextMessage(PushParam param, String name, String id) {
         final String content = param.getContent();
         application.push(user -> true, name, content);
     }

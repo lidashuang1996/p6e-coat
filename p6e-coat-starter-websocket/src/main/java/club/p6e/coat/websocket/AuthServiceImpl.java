@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 public class AuthServiceImpl implements AuthService {
 
     @Override
-    public User validate(String channel, String voucher) {
+    public User validate(String channel, String uri) {
         return GeneratorUtil::uuid;
     }
 

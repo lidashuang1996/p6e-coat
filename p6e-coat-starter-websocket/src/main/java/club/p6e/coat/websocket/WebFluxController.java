@@ -6,6 +6,7 @@ import club.p6e.coat.common.utils.GeneratorUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
@@ -19,6 +20,7 @@ import java.util.HexFormat;
  * @version 1.0
  */
 @RestController
+@RequestMapping
 @ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
 public class WebFluxController extends Controller {
 
@@ -78,13 +80,13 @@ public class WebFluxController extends Controller {
     }
 
     @SuppressWarnings("ALL")
-    private void pushHexMessage(PushParam param, String name, String id) {
+    public void pushHexMessage(PushParam param, String name, String id) {
         final String content = param.getContent();
         application.push(user -> true, name, HexFormat.of().parseHex(content));
     }
 
     @SuppressWarnings("ALL")
-    private void pushTextMessage(PushParam param, String name, String id) {
+    public void pushTextMessage(PushParam param, String name, String id) {
         final String content = param.getContent();
         application.push(user -> true, name, content);
     }

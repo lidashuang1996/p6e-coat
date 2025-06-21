@@ -125,6 +125,7 @@ public class Channel implements ChannelInboundHandler {
             } else {
                 if (DataType.TEXT.name().equalsIgnoreCase(this.type)) {
                     final String id = GeneratorUtil.uuid() + GeneratorUtil.random();
+                    context.channel().attr(SESSION_ID).set(id);
                     final Session session = new Session(this.name, this.type, user, context);
                     context.writeAndFlush(new TextWebSocketFrame(LOGIN_CONTENT_TEXT));
                     SessionManager.register(id, session);

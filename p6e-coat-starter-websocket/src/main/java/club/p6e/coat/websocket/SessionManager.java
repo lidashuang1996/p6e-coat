@@ -157,7 +157,11 @@ public class SessionManager {
      */
     @SuppressWarnings("ALL")
     public static List<Session> getChannelList(String name) {
-        return new ArrayList<>(CHANNELS.get(name).values());
+        if (CHANNELS.get(name) == null) {
+            return new ArrayList<>();
+        } else {
+            return new ArrayList<>(CHANNELS.get(name).values());
+        }
     }
 
     /**
