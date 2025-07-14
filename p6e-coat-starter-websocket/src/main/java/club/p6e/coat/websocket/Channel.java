@@ -55,7 +55,7 @@ public class Channel implements ChannelInboundHandler {
     private static final AttributeKey<String> SESSION_ID = AttributeKey.valueOf("id");
 
     /**
-     * Channel ID
+     * Session ID
      */
     private final String id;
 
@@ -123,18 +123,14 @@ public class Channel implements ChannelInboundHandler {
             if (user == null) {
                 context.close();
             } else {
+                final Session session = new Session(this.name, this.type, user, context);
+                context.channel().attr(SESSION_ID).set(this.id);
+                SessionManager.register(this.id, session);
+                executeCallbackOpen(session);
                 if (DataType.TEXT.name().equalsIgnoreCase(this.type)) {
-                    final String id = GeneratorUtil.uuid() + GeneratorUtil.random();
-                    context.channel().attr(SESSION_ID).set(id);
-                    final Session session = new Session(this.name, this.type, user, context);
                     context.writeAndFlush(new TextWebSocketFrame(LOGIN_CONTENT_TEXT));
-                    SessionManager.register(id, session);
-                    executeCallbackOpen(session);
                 } else if (DataType.BINARY.name().equalsIgnoreCase(this.type)) {
-                    final Session session = new Session(this.name, this.type, user, context);
                     context.writeAndFlush(new BinaryWebSocketFrame(Unpooled.wrappedBuffer(LOGIN_CONTENT_BYTES)));
-                    SessionManager.register(this.id, session);
-                    executeCallbackOpen(session);
                 }
             }
         }
@@ -147,16 +143,14 @@ public class Channel implements ChannelInboundHandler {
         } else if (DataType.BINARY.name().equalsIgnoreCase(this.type)) {
             context.writeAndFlush(new BinaryWebSocketFrame(Unpooled.wrappedBuffer(LOGOUT_CONTENT_BYTES)));
         }
-        final String id = context.channel().attr(SESSION_ID).get();
-        executeCallbackClose(SessionManager.get(id));
-        SessionManager.unregister(id);
+        executeCallbackClose(SessionManager.get(this.id));
+        SessionManager.unregister(this.id);
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext context, Throwable e) {
         LOGGER.error("[ CHANNEL ERROR ] {} => {}", this.id, e.getMessage(), e);
-        final String id = context.channel().attr(SESSION_ID).get();
-        executeCallbackError(SessionManager.get(id), e);
+        executeCallbackError(SessionManager.get(this.id), e);
         context.close();
     }
 

@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
-import java.util.List;
+import java.util.Map;
 
 /**
  * Handler
@@ -33,9 +33,14 @@ public class Channel implements ChannelInboundHandler {
     private static final AttributeKey<String> SESSION_ID = AttributeKey.valueOf("id");
 
     /**
-     * Channel ID
+     * Session ID
      */
     private final String id;
+
+    /**
+     * Channel Name
+     */
+    private final String name;
 
     /**
      * Auth Service Object
@@ -43,20 +48,15 @@ public class Channel implements ChannelInboundHandler {
     private final AuthService auth;
 
     /**
-     * Callback List Object
-     */
-    private final List<Callback> callbacks;
-
-    /**
      * Constructor Initialization
      *
-     * @param auth      Auth Service Object
-     * @param callbacks Callback List Object
+     * @param name Channel Name
+     * @param auth Auth Service Object
      */
-    public Channel(AuthService auth, List<Callback> callbacks) {
+    public Channel(String name, AuthService auth) {
         this.id = GeneratorUtil.uuid() + GeneratorUtil.random();
+        this.name = name;
         this.auth = auth;
-        this.callbacks = callbacks;
     }
 
     @Override
@@ -71,40 +71,40 @@ public class Channel implements ChannelInboundHandler {
             if (HttpMethod.OPTIONS.equals(request.method())) {
                 context.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
             } else {
-                final User user = this.auth.validate(null, Controller.getVoucher(request.uri()));
+                final User user = this.auth.validate(this.name, Controller.getVoucher(request.uri()));
                 if (user == null) {
                     response.content().writeBytes(context.alloc().buffer().writeBytes(JsonUtil.toJson(
                             ResultContext.build(500, "AUTH_ERROR", "AUTH_ERROR")
                     ).getBytes(StandardCharsets.UTF_8)));
+                    context.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
                 } else {
                     response.headers().set(HttpHeaderNames.EXPIRES, "0");
                     response.headers().set(HttpHeaderNames.PRAGMA, "no-cache");
                     response.headers().set(HttpHeaderNames.CONNECTION, "keep-alive");
                     response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/event-stream; charset=UTF-8");
                     response.headers().set(HttpHeaderNames.CACHE_CONTROL, "no-cache, no-store, must-revalidate");
-                    final String id = GeneratorUtil.uuid() + GeneratorUtil.random();
-                    final Session session = new Session(user, context);
+                    final Session session = new Session(this.name, user, context);
+                    context.channel().attr(SESSION_ID).set(this.id);
+                    SessionManager.register(this.id, session);
                     context.writeAndFlush(response);
-                    SessionManager.register(id, session);
-                    executeCallbackOpen(session);
+                    session.push("LOGIN", JsonUtil.toJson(Map.of("type", "LOGIN", "data", "SUCCESS")));
                 }
             }
         }
     }
 
-
     @Override
     public void handlerRemoved(ChannelHandlerContext context) {
-        final String id = context.channel().attr(SESSION_ID).get();
-        executeCallbackClose(SessionManager.get(id));
-        SessionManager.unregister(id);
+        final Session session = SessionManager.get(this.id);
+        if (session != null) {
+            session.push("LOGOUT", JsonUtil.toJson(Map.of("type", "LOGOUT", "data", "SUCCESS")));
+        }
+        SessionManager.unregister(this.id);
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext context, Throwable e) {
         LOGGER.error("[ CHANNEL ERROR ] {} => {}", this.id, e.getMessage(), e);
-        final String id = context.channel().attr(SESSION_ID).get();
-        executeCallbackError(SessionManager.get(id), e);
         context.close();
     }
 
@@ -138,36 +138,6 @@ public class Channel implements ChannelInboundHandler {
 
     @Override
     public void userEventTriggered(ChannelHandlerContext context, Object o) {
-    }
-
-    private void executeCallbackOpen(Session session) {
-        for (Callback callback : this.callbacks) {
-            try {
-                callback.onOpen(session);
-            } catch (Exception e) {
-                LOGGER.error("[ CALLBACK ERROR ] OPEN => {}", e.getMessage(), e);
-            }
-        }
-    }
-
-    private void executeCallbackClose(Session session) {
-        for (Callback callback : this.callbacks) {
-            try {
-                callback.onClose(session);
-            } catch (Exception e) {
-                LOGGER.error("[ CALLBACK ERROR ] CLOSE => {}", e.getMessage(), e);
-            }
-        }
-    }
-
-    private void executeCallbackError(Session session, Throwable throwable) {
-        for (Callback callback : this.callbacks) {
-            try {
-                callback.onError(session, throwable);
-            } catch (Exception e) {
-                LOGGER.error("[ CALLBACK ERROR ] ERROR => {}", e.getMessage(), e);
-            }
-        }
     }
 
 }

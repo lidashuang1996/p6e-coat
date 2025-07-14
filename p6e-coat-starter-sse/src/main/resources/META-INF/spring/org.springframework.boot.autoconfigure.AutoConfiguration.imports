@@ -1,4 +1,4 @@
 club.p6e.coat.sse.WebController
-club.p6e.coat.sse.controller.WebFluxController
-club.p6e.coat.sse.Server
+club.p6e.coat.sse.WebFluxController
+club.p6e.coat.sse.Application
 club.p6e.coat.sse.AuthServiceImpl

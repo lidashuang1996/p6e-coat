@@ -55,6 +55,8 @@ public class HeartbeatCallback implements Callback {
 
     /**
      * Register
+     *
+     * @param name Channel Name
      */
     @SuppressWarnings("ALL")
     public static void register(String name) {
@@ -65,6 +67,8 @@ public class HeartbeatCallback implements Callback {
 
     /**
      * Unregister
+     *
+     * @param name Channel Name
      */
     @SuppressWarnings("ALL")
     public static void unregister(String name) {

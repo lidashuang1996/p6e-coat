@@ -11,8 +11,6 @@ import io.netty.handler.codec.http.HttpServerCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -37,23 +35,14 @@ public class Application {
         SessionManager.init(config.getManagerThreadPoolLength());
         for (final Config.Channel channel : config.getChannels()) {
             AuthService auth = null;
-            final List<Callback> callbacks = new ArrayList<>();
-            final Map<String, Callback> cBeans = SpringUtil.getBeans(Callback.class);
             final Map<String, AuthService> aBeans = SpringUtil.getBeans(AuthService.class);
-            for (final String bn : channel.getCallbacks()) {
-                for (final Callback item : cBeans.values()) {
-                    if (bn.equalsIgnoreCase(item.getClass().getName())) {
-                        callbacks.add(item);
-                    }
-                }
-            }
             for (final AuthService item : aBeans.values()) {
                 if (channel.getAuth().equalsIgnoreCase(item.getClass().getName())) {
                     auth = item;
                     break;
                 }
             }
-            run(channel.getPort(), channel.getName(), channel.getType(), auth, callbacks);
+            run(channel.getPort(), channel.getName(), channel.getType(), auth);
         }
     }
 
@@ -87,9 +76,8 @@ public class Application {
      * @param name      Channel Name
      * @param type      Channel Type
      * @param auth      Auth Service Object
-     * @param callbacks Callback List Object
      */
-    private void run(int port, String name, String type, AuthService auth, List<Callback> callbacks) {
+    private void run(int port, String name, String type, AuthService auth) {
         final EventLoopGroup boss = new NioEventLoopGroup();
         final EventLoopGroup work = new NioEventLoopGroup();
         try {
@@ -104,7 +92,7 @@ public class Application {
                     // HTTP OBJECT AGGREGATOR
                     channel.pipeline().addLast(new HttpObjectAggregator(65536));
                     // CHANNEL
-                    channel.pipeline().addLast(new Channel(auth, callbacks));
+                    channel.pipeline().addLast(new Channel(name, auth));
                 }
             });
             final io.netty.channel.Channel channel = bootstrap.bind(port).sync().channel();
