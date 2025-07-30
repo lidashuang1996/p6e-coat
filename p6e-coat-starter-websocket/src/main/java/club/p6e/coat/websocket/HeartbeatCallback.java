@@ -31,11 +31,6 @@ public class HeartbeatCallback implements Callback {
     };
 
     /**
-     * Interval Time
-     */
-    private static final long INTERVAL = 50;
-
-    /**
      * Channel Name List
      */
     private static final List<String> CHANNEL_NAME_LIST = new ArrayList<>();
@@ -47,10 +42,25 @@ public class HeartbeatCallback implements Callback {
             1, r -> new Thread(r, "P6E-WS-HEARTBEAT-THREAD-" + r.hashCode()));
 
     /**
+     * Interval Time
+     */
+    private long interval;
+
+    /**
      * Constructor Initialization
      */
     public HeartbeatCallback() {
-        EXECUTOR.scheduleAtFixedRate(new Task(), INTERVAL, INTERVAL, TimeUnit.SECONDS);
+        this(60L);
+    }
+
+    /**
+     * Constructor Initialization
+     *
+     * @param interval Interval Time
+     */
+    public HeartbeatCallback(long interval) {
+        this.interval = interval <= 0 ? 60L : interval;
+        EXECUTOR.scheduleAtFixedRate(new Task(this.interval), this.interval, this.interval, TimeUnit.SECONDS);
     }
 
     /**
@@ -120,6 +130,20 @@ public class HeartbeatCallback implements Callback {
          */
         private static final Logger LOGGER = LoggerFactory.getLogger(Task.class);
 
+        /**
+         * Interval Time
+         */
+        private final long interval;
+
+        /**
+         * Constructor Initialization
+         *
+         * @param interval Interval Time
+         */
+        public Task(long interval) {
+            this.interval = interval;
+        }
+
         @Override
         public void run() {
             try {
@@ -128,7 +152,7 @@ public class HeartbeatCallback implements Callback {
                     final List<Session> list = SessionManager.getChannelList(name);
                     for (final Session session : list) {
                         try {
-                            if (now - session.getDate() > INTERVAL * 3000L) {
+                            if (now - session.getDate() > this.interval * 2 * 1000L) {
                                 session.close();
                             }
                         } catch (Exception e) {

@@ -6,7 +6,6 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,11 +18,6 @@ import java.util.Map;
  * @version 1.0
  */
 public class Controller {
-
-    /**
-     * Date Time Formatter Object
-     */
-    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
     /**
      * Voucher Param Name 1
@@ -53,7 +47,7 @@ public class Controller {
                     final String kv = param.substring(pi, i == param.length() - 1 ? i + 1 : i);
                     final String[] kvs = kv.split("=");
                     if (kvs.length == 2) {
-                        result.computeIfAbsent(kvs[0], k -> new ArrayList<>()).add(URLDecoder.decode(kvs[1], StandardCharsets.UTF_8));
+                        result.computeIfAbsent(URLDecoder.decode(kvs[0], StandardCharsets.UTF_8), k -> new ArrayList<>()).add(URLDecoder.decode(kvs[1], StandardCharsets.UTF_8));
                     }
                     pi = i + 1;
                 }
@@ -68,6 +62,7 @@ public class Controller {
      * @param uri Request Uri
      * @return Voucher
      */
+    @SuppressWarnings("ALL")
     public static String getVoucher(String uri) {
         String voucher;
         final Map<String, List<String>> params = getParams(uri);

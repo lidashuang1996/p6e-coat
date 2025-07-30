@@ -18,14 +18,24 @@ import java.util.List;
 public class Config {
 
     /**
+     * Channel Config List Object
+     */
+    private final List<Channel> channels = new ArrayList<>();
+
+    /**
      * Manager Thread Pool Length
      */
     private int managerThreadPoolLength = 15;
 
     /**
-     * Channel Config List Object
+     * Boss Threads
      */
-    private final List<Channel> channels = new ArrayList<>();
+    private int bossThreads = 1;
+
+    /**
+     * Worker Threads
+     */
+    private int workerThreads = Runtime.getRuntime().availableProcessors() * 2;
 
     /**
      * Channel
@@ -48,6 +58,16 @@ public class Config {
          * Channel Type
          */
         private String type;
+
+        /**
+         * Channel Frame
+         */
+        private int frame = 65536;
+
+        /**
+         * Channel Path
+         */
+        private String path = "/ws";
 
         /**
          * Channel Auth Bean Name

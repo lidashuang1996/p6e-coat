@@ -59,7 +59,6 @@ public class Session {
     /**
      * Refresh Session
      */
-    @SuppressWarnings("ALL")
     public void refresh() {
         this.date = System.currentTimeMillis();
     }
@@ -67,7 +66,6 @@ public class Session {
     /**
      * Close Session
      */
-    @SuppressWarnings("ALL")
     public void close() {
         if (context != null && !context.isRemoved()) {
             context.close();

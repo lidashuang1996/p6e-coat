@@ -97,15 +97,16 @@ public class Channel implements ChannelInboundHandler {
 
     @Override
     public void channelRead(ChannelHandlerContext context, Object o) {
+        final Session session = SessionManager.get(context.channel().attr(SESSION_ID).get());
         if (o instanceof final TextWebSocketFrame textWebSocketFrame) {
-            executeCallbackMessage(SessionManager.get(context.channel().attr(SESSION_ID).get()), textWebSocketFrame.text());
+            executeCallbackMessage(session, textWebSocketFrame.text());
         } else if (o instanceof final BinaryWebSocketFrame binaryWebSocketFrame) {
             final ByteBuf byteBuf = binaryWebSocketFrame.content();
             try {
                 final int readableBytesLength = byteBuf.readableBytes();
                 final byte[] readableByteArray = new byte[readableBytesLength];
                 byteBuf.readBytes(readableByteArray);
-                executeCallbackMessage(SessionManager.get(context.channel().attr(SESSION_ID).get()), readableByteArray);
+                executeCallbackMessage(session, readableByteArray);
             } finally {
                 byteBuf.release();
             }
@@ -182,6 +183,11 @@ public class Channel implements ChannelInboundHandler {
     public void channelWritabilityChanged(ChannelHandlerContext context) {
     }
 
+    /**
+     * Execute Callback Open
+     *
+     * @param session Session Object
+     */
     private void executeCallbackOpen(Session session) {
         for (Callback callback : this.callbacks) {
             try {
@@ -192,6 +198,11 @@ public class Channel implements ChannelInboundHandler {
         }
     }
 
+    /**
+     * Execute Callback Close
+     *
+     * @param session Session Object
+     */
     private void executeCallbackClose(Session session) {
         for (Callback callback : this.callbacks) {
             try {
@@ -202,6 +213,12 @@ public class Channel implements ChannelInboundHandler {
         }
     }
 
+    /**
+     * Execute Callback Error
+     *
+     * @param session   Session Object
+     * @param throwable Throwable Object
+     */
     private void executeCallbackError(Session session, Throwable throwable) {
         for (Callback callback : this.callbacks) {
             try {
@@ -212,6 +229,12 @@ public class Channel implements ChannelInboundHandler {
         }
     }
 
+    /**
+     * Execute Callback Message
+     *
+     * @param session Session Object
+     * @param text    String Object
+     */
     private void executeCallbackMessage(Session session, String text) {
         for (Callback callback : this.callbacks) {
             try {
@@ -222,6 +245,12 @@ public class Channel implements ChannelInboundHandler {
         }
     }
 
+    /**
+     * Execute Callback Message
+     *
+     * @param session Session Object
+     * @param bytes   Bytes Object
+     */
     private void executeCallbackMessage(Session session, byte[] bytes) {
         for (Callback callback : this.callbacks) {
             try {
