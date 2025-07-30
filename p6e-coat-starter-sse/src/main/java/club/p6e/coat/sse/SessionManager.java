@@ -111,7 +111,7 @@ public class SessionManager {
      * @param id Session ID
      * @return Session Object
      */
-    public static club.p6e.coat.sse.Session get(String id) {
+    public static Session get(String id) {
         return SESSIONS.get(id);
     }
 

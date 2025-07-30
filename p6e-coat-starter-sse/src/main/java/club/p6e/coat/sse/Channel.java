@@ -71,7 +71,7 @@ public class Channel implements ChannelInboundHandler {
             if (HttpMethod.OPTIONS.equals(request.method())) {
                 context.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
             } else {
-                final User user = this.auth.validate(this.name, Controller.getVoucher(request.uri()));
+                final User user = this.auth.validate(this.name, request.uri());
                 if (user == null) {
                     response.content().writeBytes(context.alloc().buffer().writeBytes(JsonUtil.toJson(
                             ResultContext.build(500, "AUTH_ERROR", "AUTH_ERROR")

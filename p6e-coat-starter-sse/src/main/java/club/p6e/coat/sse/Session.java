@@ -1,6 +1,7 @@
 package club.p6e.coat.sse;
 
 import club.p6e.coat.common.utils.GeneratorUtil;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
@@ -116,7 +117,8 @@ public class Session {
             final FullHttpResponse response = new DefaultFullHttpResponse(
                     HttpVersion.HTTP_1_1,
                     HttpResponseStatus.OK,
-                    io.netty.buffer.Unpooled.copiedBuffer("id: " + id + "\nevent: " + event + "\ndata: " + data + "\n\n", CharsetUtil.UTF_8));
+                    Unpooled.copiedBuffer("id: " + id + "\nevent: " + event + "\ndata: " + data + "\n\n", CharsetUtil.UTF_8)
+            );
             response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/event-stream; charset=UTF-8");
             response.headers().set(HttpHeaderNames.CACHE_CONTROL, "no-cache");
             response.headers().set(HttpHeaderNames.CONNECTION, "keep-alive");

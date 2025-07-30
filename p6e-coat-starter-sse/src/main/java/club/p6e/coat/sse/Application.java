@@ -28,12 +28,50 @@ public class Application {
     private static final Logger LOGGER = LoggerFactory.getLogger(Application.class);
 
     /**
+     * Event Loop Group Boss
+     */
+    private EventLoopGroup boss;
+
+    /**
+     * Event Loop Group Worker
+     */
+    private EventLoopGroup work;
+
+    /**
+     * Constructor Initialization
+     */
+    public Application() {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            if (this.boss != null) {
+                this.boss.shutdownGracefully();
+            }
+            if (this.work != null) {
+                this.work.shutdownGracefully();
+            }
+        }));
+    }
+
+    /**
      * Config Reset
+     *
+     * @param config Config Object
      */
     @SuppressWarnings("ALL")
     public synchronized void reset(Config config) {
+        LOGGER.info("[ SSE SERVICE ] RESET CONFIG >>> {}", config);
+        if (this.boss != null) {
+            this.boss.shutdownGracefully();
+            this.boss = null;
+        }
+        if (this.work != null) {
+            this.work.shutdownGracefully();
+            this.work = null;
+        }
         SessionManager.init(config.getManagerThreadPoolLength());
+        this.boss = new NioEventLoopGroup(config.getBossThreads());
+        this.work = new NioEventLoopGroup(config.getWorkerThreads());
         for (final Config.Channel channel : config.getChannels()) {
+            LOGGER.info("[ SSE SERVICE ] RESET CHANNEL >>> {}", channel);
             AuthService auth = null;
             final Map<String, AuthService> aBeans = SpringUtil.getBeans(AuthService.class);
             for (final AuthService item : aBeans.values()) {
@@ -42,7 +80,7 @@ public class Application {
                     break;
                 }
             }
-            run(channel.getPort(), channel.getName(), channel.getType(), auth);
+            run(channel.getPort(), channel.getName(), channel.getFrame(), auth);
         }
     }
 
@@ -64,7 +102,6 @@ public class Application {
      * @param name    Channel Name
      * @param content Message Content
      */
-    @SuppressWarnings("ALL")
     public void push(Function<User, Boolean> filter, String name, String content) {
         SessionManager.pushText(filter, name, content);
     }
@@ -72,12 +109,12 @@ public class Application {
     /**
      * Netty Web Socket Server
      *
-     * @param port      Channel Port
-     * @param name      Channel Name
-     * @param type      Channel Type
-     * @param auth      Auth Service Object
+     * @param port  Channel Port
+     * @param name  Channel Name
+     * @param frame Channel Frame
+     * @param auth  Auth Service Object
      */
-    private void run(int port, String name, String type, AuthService auth) {
+    private void run(int port, String name, int frame, AuthService auth) {
         final EventLoopGroup boss = new NioEventLoopGroup();
         final EventLoopGroup work = new NioEventLoopGroup();
         try {
@@ -90,20 +127,15 @@ public class Application {
                     // HTTP
                     channel.pipeline().addLast(new HttpServerCodec());
                     // HTTP OBJECT AGGREGATOR
-                    channel.pipeline().addLast(new HttpObjectAggregator(65536));
+                    channel.pipeline().addLast(new HttpObjectAggregator(frame));
                     // CHANNEL
                     channel.pipeline().addLast(new Channel(name, auth));
                 }
             });
-            final io.netty.channel.Channel channel = bootstrap.bind(port).sync().channel();
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                boss.shutdownGracefully();
-                work.shutdownGracefully();
-            }));
-            LOGGER.info("[ WEBSOCKET SERVICE ] ({} : {}) ==> START SUCCESSFULLY... BIND ( {} )", name, type, port);
-            channel.closeFuture();
+            bootstrap.bind(port).sync().channel();
+            LOGGER.info("[ SSE SERVICE ] ({}) ==> START SUCCESSFULLY... BIND ( {} )", name, port);
         } catch (Exception e) {
-            LOGGER.error("[ WEBSOCKET SERVICE ]", e);
+            LOGGER.error("[ SSE SERVICE ]", e);
         }
     }
 

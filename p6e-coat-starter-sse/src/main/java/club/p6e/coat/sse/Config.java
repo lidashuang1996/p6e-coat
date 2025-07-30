@@ -28,6 +28,16 @@ public class Config {
     private final List<Channel> channels = new ArrayList<>();
 
     /**
+     * Boss Threads
+     */
+    private int bossThreads = 1;
+
+    /**
+     * Worker Threads
+     */
+    private int workerThreads = Runtime.getRuntime().availableProcessors() * 2;
+
+    /**
      * Channel
      */
     @Data
@@ -45,9 +55,9 @@ public class Config {
         private Integer port;
 
         /**
-         * Channel Type
+         * Channel Frame
          */
-        private String type;
+        private int frame = 65536;
 
         /**
          * Channel Auth Bean Name

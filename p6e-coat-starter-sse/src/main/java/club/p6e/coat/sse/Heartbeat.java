@@ -25,31 +25,31 @@ public class Heartbeat {
     private static final List<String> CHANNEL_NAME_LIST = new ArrayList<>();
 
     /**
-     * Interval Time
-     */
-    private static long INTERVAL = 50;
-
-    /**
      * Scheduled Executor Service Object
      */
-    private static ScheduledExecutorService EXECUTOR;
+    private static ScheduledExecutorService EXECUTOR = new ScheduledThreadPoolExecutor(
+            1, r -> new Thread(r, "P6E-SSE-HEARTBEAT-THREAD-" + r.hashCode()));
 
     /**
-     * Run
+     * Interval Time
      */
-    @SuppressWarnings("ALL")
-    public static void run() {
-        EXECUTOR = new ScheduledThreadPoolExecutor(
-                1, r -> new Thread(r, "P6E-SSE-HEARTBEAT-THREAD-" + r.hashCode()));
-        EXECUTOR.submit(new Task());
+    private long interval;
+
+    /**
+     * Constructor Initialization
+     */
+    public Heartbeat() {
+        this(60L);
     }
 
     /**
-     * Run
+     * Constructor Initialization
+     *
+     * @param interval Interval Time
      */
-    @SuppressWarnings("ALL")
-    public static void stop() {
-        EXECUTOR.shutdownNow();
+    public Heartbeat(long interval) {
+        this.interval = interval <= 0 ? 60L : interval;
+        EXECUTOR.submit(new Task(this.interval));
     }
 
     /**
@@ -77,16 +77,6 @@ public class Heartbeat {
     }
 
     /**
-     * Set Interval
-     *
-     * @param interval Interval Data
-     */
-    @SuppressWarnings("ALL")
-    public static void setInterval(long interval) {
-        Heartbeat.INTERVAL = interval;
-    }
-
-    /**
      * Task
      */
     private static class Task implements Runnable {
@@ -95,6 +85,20 @@ public class Heartbeat {
          * Inject Log Object
          */
         private static final Logger LOGGER = LoggerFactory.getLogger(Task.class);
+
+        /**
+         * Interval Time
+         */
+        private final long interval;
+
+        /**
+         * Constructor Initialization
+         *
+         * @param interval Interval Time
+         */
+        public Task(long interval) {
+            this.interval = interval;
+        }
 
         @SuppressWarnings("ALL")
         @Override
@@ -113,7 +117,7 @@ public class Heartbeat {
                             }
                         }
                     }
-                    Thread.sleep(INTERVAL * 1000L);
+                    Thread.sleep(interval * 1000L);
                 }
             } catch (Exception e) {
                 LOGGER.error("[ HEARTBEAT TASK ] ERROR => {} ", e.getMessage(), e);

@@ -56,19 +56,23 @@ public class Application {
 
     /**
      * Config Reset
+     *
+     * @param config Config Object
      */
     @SuppressWarnings("ALL")
     public synchronized void reset(Config config) {
         LOGGER.info("[ WEBSOCKET SERVICE ] RESET CONFIG >>> {}", config);
-        if (this.boss != null || this.work != null) {
+        if (this.boss != null) {
             this.boss.shutdownGracefully();
-            this.work.shutdownGracefully();
             this.boss = null;
+        }
+        if (this.work != null) {
+            this.work.shutdownGracefully();
             this.work = null;
         }
         SessionManager.init(config.getManagerThreadPoolLength());
         this.boss = new NioEventLoopGroup(config.getBossThreads());
-        this.work = new NioEventLoopGroup(config.getBossThreads());
+        this.work = new NioEventLoopGroup(config.getWorkerThreads());
         for (final Config.Channel channel : config.getChannels()) {
             LOGGER.info("[ WEBSOCKET SERVICE ] RESET CHANNEL >>> {}", channel);
             AuthService auth = null;
@@ -147,7 +151,7 @@ public class Application {
                 }
             });
             bootstrap.bind(port).sync();
-            LOGGER.info("[ WEBSOCKET SERVICE ] ({} : {}) ==> START SUCCESSFULLY... BIND ( {} )", name, type, port);
+            LOGGER.info("[ WEBSOCKET SERVICE ] ({} : {}) ==> START SUCCESSFULLY... BIND ( {} : {} )", name, type, port, path);
         } catch (Exception e) {
             LOGGER.error("[ WEBSOCKET SERVICE ]", e);
         }

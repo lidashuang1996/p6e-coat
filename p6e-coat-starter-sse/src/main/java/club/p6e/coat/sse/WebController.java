@@ -2,13 +2,11 @@ package club.p6e.coat.sse;
 
 import club.p6e.coat.common.context.ResultContext;
 import club.p6e.coat.common.error.ParameterException;
-import club.p6e.coat.common.utils.GeneratorUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
 import java.util.HexFormat;
 
 /**
@@ -42,50 +40,48 @@ public class WebController extends Controller {
 
     @PostMapping("/push/text")
     public ResultContext pushText(@RequestBody PushParam param) {
-        if (param == null
-                || param.getUsers() == null
-                || param.getContent() == null
-                || param.getUsers().isEmpty()) {
+        if (param == null || param.getContent() == null) {
             throw new ParameterException(
                     this.getClass(),
                     "fun pushText(PushParam param).",
                     "request parameter exception."
             );
         }
-        final String id = DATE_TIME_FORMATTER.format(LocalDateTime.now()) + GeneratorUtil.uuid();
-        final String name = param.getName() == null ? "DEFAULT" : param.getName();
-        pushTextMessage(param, name, id);
-        return ResultContext.build(id);
+        pushTextMessage(param.getName() == null ? "DEFAULT" : param.getName(), param);
+        return ResultContext.build("SUCCESS");
     }
 
     @PostMapping("/push/hex")
     public ResultContext pushHex(@RequestBody PushParam param) {
-        if (param == null
-                || param.getUsers() == null
-                || param.getContent() == null
-                || param.getUsers().isEmpty()) {
+        if (param == null || param.getContent() == null) {
             throw new ParameterException(
                     this.getClass(),
                     "fun pushHex(PushParam param).",
                     "request parameter exception."
             );
         }
-        final String id = DATE_TIME_FORMATTER.format(LocalDateTime.now()) + GeneratorUtil.uuid();
-        final String name = param.getName() == null ? "DEFAULT" : param.getName();
-        pushHexMessage(param, name, id);
-        return ResultContext.build(id);
+        pushHexMessage(param.getName() == null ? "DEFAULT" : param.getName(), param);
+        return ResultContext.build("SUCCESS");
     }
 
-    @SuppressWarnings("ALL")
-    private void pushHexMessage(PushParam param, String name, String id) {
-        final String content = param.getContent();
-        application.push(user -> true, name, HexFormat.of().parseHex(content));
+    /**
+     * Controller Push Hex Message
+     *
+     * @param name  Channel Name
+     * @param param Push Param Object
+     */
+    protected void pushHexMessage(String name, PushParam param) {
+        application.push(user -> true, name, HexFormat.of().parseHex(param.getContent()));
     }
 
-    @SuppressWarnings("ALL")
-    private void pushTextMessage(PushParam param, String name, String id) {
-        final String content = param.getContent();
-        application.push(user -> true, name, content);
+    /**
+     * Controller Push Text Message
+     *
+     * @param name  Channel Name
+     * @param param Push Param Object
+     */
+    protected void pushTextMessage(String name, PushParam param) {
+        application.push(user -> true, name, param.getContent());
     }
 
 }
