@@ -27,15 +27,15 @@ import java.util.Map;
  */
 @Component
 @ConditionalOnMissingBean(
-        value = DataSourceRepository.class,
-        ignored = DataSourceRepository.class
+        value = PgSQLDataSourceRepository.class,
+        ignored = PgSQLDataSourceRepository.class
 )
-public class DataSourceRepository {
+public class PgSQLDataSourceRepository {
 
     /**
      * 注入日志对象
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(DataSourceRepository.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PgSQLDataSourceRepository.class);
 
     /**
      * 配置的查询 SQL
@@ -221,7 +221,7 @@ public class DataSourceRepository {
      * @param dataSource 数据源对象
      */
     @SuppressWarnings("ALL")
-    public DataSourceRepository(DataSource dataSource) {
+    public PgSQLDataSourceRepository(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 

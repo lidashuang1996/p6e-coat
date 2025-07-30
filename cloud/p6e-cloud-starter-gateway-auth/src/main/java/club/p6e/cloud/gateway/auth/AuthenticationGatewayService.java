@@ -25,7 +25,6 @@ public class AuthenticationGatewayService {
      *
      * @param validator Token Validator Object
      */
-    @SuppressWarnings("ALL")
     public AuthenticationGatewayService(TokenValidator validator) {
         this.validator = validator;
     }

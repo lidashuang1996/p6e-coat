@@ -9,19 +9,19 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <artifactId>p6e-cloud-starter-websocket</artifactId>
+    <artifactId>p6e-cloud-starter-sse</artifactId>
     <version>3.4.2</version>
-    <name>p6e-cloud-starter-websocket</name>
-    <description>p6e-cloud-starter-websocket</description>
+    <name>p6e-cloud-starter-sse</name>
+    <description>p6e-cloud-starter-sse</description>
 
     <dependencies>
 
-        <!-- P6e Coat Web Socket [START] -->
+        <!-- P6e Coat SSE [START] -->
         <dependency>
             <groupId>club.p6e.coat</groupId>
-            <artifactId>p6e-coat-starter-websocket</artifactId>
+            <artifactId>p6e-coat-starter-sse</artifactId>
         </dependency>
-        <!-- P6e Coat Web Socket [END] -->
+        <!-- P6e Coat SSE [END] -->
 
     </dependencies>
 </project>

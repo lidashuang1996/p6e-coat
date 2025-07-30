@@ -7,21 +7,15 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * ExternalSourceClassLoader
+ *
  * @author lidashuang
  * @version 1.0
  */
 public final class ExternalSourceClassLoader extends ClassLoader {
 
-    /**
-     * 实列对象
-     */
     private static final ExternalSourceClassLoader INSTANCE = new ExternalSourceClassLoader();
 
-    /**
-     * 获取单例的实列对象
-     *
-     * @return 实列对象
-     */
     public static ExternalSourceClassLoader getInstance() {
         return INSTANCE;
     }

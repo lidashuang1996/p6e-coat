@@ -71,14 +71,12 @@ public class AuthenticationGlobalFilter implements GlobalFilter, Ordered {
                 // current access permission is required
                 return chain.filter(exchange);
             }
-            return Mono.error(new AuthException(
-                    this.getClass(),
-                    "fun filter(ServerWebExchange exchange, GatewayFilterChain chain).",
-                    "request authentication exception."
-            ));
-        } else {
-            return chain.filter(exchange);
         }
+        return Mono.error(new AuthException(
+                this.getClass(),
+                "fun filter(ServerWebExchange exchange, GatewayFilterChain chain).",
+                "request authentication exception."
+        ));
     }
 
 }

@@ -5,7 +5,6 @@ import club.p6e.coat.common.error.ParameterException;
 import club.p6e.coat.common.utils.FileUtil;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.JsonUtil;
-import club.p6e.coat.message.center.service.TransmitterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -40,14 +39,14 @@ public class Controller {
     /**
      * 发报机服务对象
      */
-    private final TransmitterService transmitterService;
+    private final MessageCenterService transmitterService;
 
     /**
      * 构造方法初始化
      *
      * @param transmitterService 发报机服务对象
      */
-    public Controller(TransmitterService transmitterService) {
+    public Controller(MessageCenterService transmitterService) {
         this.transmitterService = transmitterService;
     }
 
@@ -83,7 +82,9 @@ public class Controller {
                 pRecipients.addAll(l);
             }
             if (m != null) {
-                pData.putAll(toMapParameter(m));
+                for (final String key : m.keySet()) {
+                    pData.put(key, String.valueOf(m.get(key)));
+                }
             }
             if (files != null) {
                 int attachmentIndex = 0;
@@ -122,22 +123,6 @@ public class Controller {
         LOGGER.info("recipients ::: {}", pRecipients);
         LOGGER.info(">>>>> push() <<<<<");
         return ResultContext.build(transmitterService.push(id, language, pRecipients, pData, pFiles));
-    }
-
-    private Map<String, String> toMapParameter(Map<?, ?> data) {
-        final Map<String, String> result = new HashMap<>();
-        for (final Object key : data.keySet()) {
-            final Object value = data.get(key);
-            if (value instanceof Map<?, ?> map) {
-                final Map<String, String> tm = toMapParameter(map);
-                for (final String k : tm.keySet()) {
-                    result.put(key + "." + k, tm.get(k));
-                }
-            } else {
-                result.put(String.valueOf(key), String.valueOf(value));
-            }
-        }
-        return result;
     }
 
 }
