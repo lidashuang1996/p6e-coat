@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>club.p6e.coat</groupId>
+        <artifactId>p6e-coat-starter-parent</artifactId>
+        <version>3.1.0</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <artifactId>p6e-coat-starter-resource</artifactId>
+    <version>3.1.0</version>
+    <name>p6e-coat-starter-resource</name>
+    <description>p6e-coat-starter-resource</description>
+
+    <dependencies>
+
+        <!--  R2DBC POOL [START]  -->
+        <dependency>
+            <groupId>io.r2dbc</groupId>
+            <artifactId>r2dbc-pool</artifactId>
+        </dependency>
+        <!--  R2DBC POOL [END]  -->
+
+        <!--  R2DBC PostGreSQL [START]  -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>r2dbc-postgresql</artifactId>
+        </dependency>
+        <!--  R2DBC PostGreSQL [END]  -->
+
+        <!-- Spring R2DBC [ START ] -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-r2dbc</artifactId>
+        </dependency>
+        <!-- Spring R2DBC [ END ] -->
+
+        <!--  Spring Boot Web Flux [START]  -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+        <!--  Spring Boot Web Flux [END]  -->
+
+        <!--  Spring Common [START]  -->
+        <dependency>
+            <groupId>club.p6e.coat</groupId>
+            <artifactId>p6e-coat-starter-common</artifactId>
+        </dependency>
+        <!--  Spring Common [END]  -->
+
+    </dependencies>
+</project>

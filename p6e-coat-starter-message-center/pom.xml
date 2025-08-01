@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>club.p6e.coat</groupId>
+        <artifactId>p6e-coat-starter-parent</artifactId>
+        <version>3.4.2</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <artifactId>p6e-coat-starter-message-center</artifactId>
+    <version>3.4.2</version>
+    <name>p6e-coat-starter-message-center</name>
+    <description>p6e-coat-starter-message-center</description>
+
+    <properties>
+        <aliyun.version>2.0.24</aliyun.version>
+        <telegram.version>6.0.1</telegram.version>
+        <firebase.version>9.2.0</firebase.version>
+        <javax.mail.version>1.4.7</javax.mail.version>
+    </properties>
+
+    <dependencies>
+
+        <!-- PostGre SQL [START] -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- PostGre SQL [END] -->
+
+        <!-- Spring Boot Web [START] -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <!-- Spring Boot Web [END] -->
+
+        <!-- Spring Boot Data Jdbc [START] -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jdbc</artifactId>
+        </dependency>
+        <!-- Spring Boot Data Jdbc [END] -->
+
+        <!-- P6e Coat Common [START] -->
+        <dependency>
+            <groupId>club.p6e.coat</groupId>
+            <artifactId>p6e-coat-starter-common</artifactId>
+        </dependency>
+        <!-- P6e Coat Common [END] -->
+
+        <!-- Telegram [START] -->
+        <!-- Telegram Bots [START] -->
+        <dependency>
+            <groupId>org.telegram</groupId>
+            <artifactId>telegrambots</artifactId>
+            <version>${telegram.version}</version>
+        </dependency>
+        <!-- Telegram Bots [END] -->
+        <!-- Telegram [END] -->
+
+        <!-- Mail [START] -->
+        <!-- Java Mail Javax Mail [START] -->
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>${javax.mail.version}</version>
+        </dependency>
+        <!-- Java Mail Javax Mail [END] -->
+        <!-- Mail [END] -->
+
+        <!-- SMS [START] -->
+        <!-- Java SMS A_Li_YU_SMS [START] -->
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>dysmsapi20170525</artifactId>
+            <version>${aliyun.version}</version>
+        </dependency>
+        <!-- Java SMS A_Li_YU_SMS [END] -->
+        <!-- SMS [END] -->
+
+        <!-- Firebase [START] -->
+        <!-- Java MOBILE GOOGLE FIREBASE [START] -->
+        <dependency>
+            <groupId>com.google.firebase</groupId>
+            <artifactId>firebase-admin</artifactId>
+            <version>${firebase.version}</version>
+        </dependency>
+        <!-- Java MOBILE GOOGLE FIREBASE [END] -->
+        <!-- Firebase [END] -->
+
+    </dependencies>
+
+</project>

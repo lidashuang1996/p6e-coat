@@ -27,7 +27,7 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 @Component("club.p6e.cloud.file.Properties")
 @ConfigurationProperties(prefix = "p6e.cloud.file")
-public class Properties extends club.p6e.coat.file.Properties implements Serializable {
+public class Properties extends club.p6e.coat.resource.Properties implements Serializable {
 
     /**
      * Secret
@@ -53,12 +53,12 @@ public class Properties extends club.p6e.coat.file.Properties implements Seriali
     /**
      * INIT UPLOADS
      */
-    private static Map<String, club.p6e.coat.file.Properties.Upload> initUploads(Map<String, Object> data) {
-        final Map<String, club.p6e.coat.file.Properties.Upload> result = new HashMap<>();
+    private static Map<String, club.p6e.coat.resource.Properties.Upload> initUploads(Map<String, Object> data) {
+        final Map<String, club.p6e.coat.resource.Properties.Upload> result = new HashMap<>();
         for (final String key : data.keySet()) {
             final Map<String, Object> map = TransformationUtil.objectToMap(data.get(key));
             if (map != null) {
-                final club.p6e.coat.file.Properties.Upload upload = new club.p6e.coat.file.Properties.Upload();
+                final club.p6e.coat.resource.Properties.Upload upload = new club.p6e.coat.resource.Properties.Upload();
                 final String type = TransformationUtil.objectToString(map.get("type"));
                 final String path = TransformationUtil.objectToString(map.get("path"));
                 final Map<String, Object> extend = TransformationUtil.objectToMap(map.get("extend"));
@@ -82,12 +82,12 @@ public class Properties extends club.p6e.coat.file.Properties implements Seriali
     /**
      * INIT DOWNLOADS
      */
-    private static Map<String, club.p6e.coat.file.Properties.Download> initDownloads(Map<String, Object> downloads) {
-        final Map<String, club.p6e.coat.file.Properties.Download> result = new HashMap<>();
+    private static Map<String, club.p6e.coat.resource.Properties.Download> initDownloads(Map<String, Object> downloads) {
+        final Map<String, club.p6e.coat.resource.Properties.Download> result = new HashMap<>();
         for (final String key : downloads.keySet()) {
             final Map<String, Object> value = TransformationUtil.objectToMap(downloads.get(key));
             if (value != null) {
-                final club.p6e.coat.file.Properties.Download download = new club.p6e.coat.file.Properties.Download();
+                final club.p6e.coat.resource.Properties.Download download = new club.p6e.coat.resource.Properties.Download();
                 final Map<String, Object> extend = TransformationUtil.objectToMap(value.get("extend"));
                 if (extend != null) {
                     final Map<String, String> tmp = new HashMap<>();
@@ -111,12 +111,12 @@ public class Properties extends club.p6e.coat.file.Properties implements Seriali
     /**
      * INIT RESOURCES
      */
-    private static Map<String, club.p6e.coat.file.Properties.Resource> initResources(Map<String, Object> resources) {
-        final Map<String, club.p6e.coat.file.Properties.Resource> result = new HashMap<>();
+    private static Map<String, club.p6e.coat.resource.Properties.Resource> initResources(Map<String, Object> resources) {
+        final Map<String, club.p6e.coat.resource.Properties.Resource> result = new HashMap<>();
         for (final String key : resources.keySet()) {
             final Map<String, Object> value = TransformationUtil.objectToMap(resources.get(key));
             if (value != null) {
-                final club.p6e.coat.file.Properties.Resource resource = new club.p6e.coat.file.Properties.Resource();
+                final club.p6e.coat.resource.Properties.Resource resource = new club.p6e.coat.resource.Properties.Resource();
                 final String type = TransformationUtil.objectToString(value.get("type"));
                 final Map<String, Object> extend = TransformationUtil.objectToMap(value.get("extend"));
                 final String path = TransformationUtil.objectToString(value.get("path"));

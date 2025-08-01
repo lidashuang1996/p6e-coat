@@ -28,8 +28,6 @@
         <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
-            <!-- scope provided dependency -->
-            <scope>provided</scope>
         </dependency>
         <!-- Java JWT [END] -->
 
@@ -38,8 +36,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <!-- scope provided dependency -->
-            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
         <!-- Spring Web [END] -->
 
@@ -47,8 +44,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
-            <!-- scope provided dependency -->
-            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
         <!-- Spring Redis [END] -->
         <!-- Web [END] -->
@@ -58,8 +54,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
-            <!-- scope provided dependency -->
-            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
         <!-- Spring Web Flux [END] -->
 
@@ -67,12 +62,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis-reactive</artifactId>
-            <!-- scope provided dependency -->
-            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
         <!-- Spring Reactive Redis [END] -->
         <!-- Reactive [END] -->
-
 
         <!-- P6e Coat Common [ START ] -->
         <dependency>

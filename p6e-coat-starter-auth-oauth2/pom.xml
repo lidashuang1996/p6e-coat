@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>club.p6e.coat</groupId>
+        <artifactId>p6e-coat-starter-parent</artifactId>
+        <version>3.4.2</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <artifactId>p6e-coat-starter-auth-oauth2</artifactId>
+    <version>3.4.2</version>
+    <name>p6e-coat-starter-auth-oauth2</name>
+    <description>p6e-coat-starter-auth-oauth2</description>
+
+    <dependencies>
+
+        <!-- Spring Aop [START] -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <!-- Spring Aop [END] -->
+
+        <!-- Web [ START ] -->
+        <!-- Spring Web [START] -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <!-- scope provided dependency -->
+            <scope>provided</scope>
+        </dependency>
+        <!-- Spring Web [END] -->
+
+        <!-- Spring Data [ START ] -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <!-- scope provided dependency -->
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Spring JDBC [ START ] -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+            <!-- scope provided dependency -->
+            <scope>provided</scope>
+        </dependency>
+        <!-- Spring JDBC [ END ] -->
+
+        <!-- Spring Redis [START] -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+            <!-- scope provided dependency -->
+            <scope>provided</scope>
+        </dependency>
+        <!-- Spring Redis [END] -->
+        <!-- Web [END] -->
+
+        <!-- Reactive [START] -->
+        <!-- Spring Web Flux [START] -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+        <!-- Spring Web Flux [END] -->
+
+        <!-- Spring Data [ START ] -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>r2dbc-postgresql</artifactId>
+            <!-- scope provided dependency -->
+            <scope>provided</scope>
+        </dependency>
+        <!-- Spring Data [ END ] -->
+
+        <!-- Spring R2DBC [ START ] -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-r2dbc</artifactId>
+        </dependency>
+        <!-- Spring R2DBC [ END ] -->
+
+        <!-- Spring Reactive Redis [START] -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis-reactive</artifactId>
+        </dependency>
+        <!-- Spring Reactive Redis [END] -->
+        <!-- Reactive [END] -->
+
+        <!-- P6e Coat Auth Token [ START ] -->
+        <dependency>
+            <groupId>club.p6e.coat</groupId>
+            <artifactId>p6e-coat-starter-auth-token</artifactId>
+        </dependency>
+        <!-- P6e Coat Auth Token [ END ] -->
+
+        <!-- P6e Coat Common [ START ] -->
+        <dependency>
+            <groupId>club.p6e.coat</groupId>
+            <artifactId>p6e-coat-starter-common</artifactId>
+        </dependency>
+        <!-- P6e Coat Common [ END ] -->
+
+    </dependencies>
+</project>
