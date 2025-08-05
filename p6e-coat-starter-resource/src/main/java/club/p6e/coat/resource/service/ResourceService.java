@@ -1,5 +1,6 @@
 package club.p6e.coat.resource.service;
 
+import club.p6e.coat.resource.FileReader;
 import club.p6e.coat.resource.actuator.FileReadActuator;
 import club.p6e.coat.resource.context.ResourceContext;
 import reactor.core.publisher.Mono;
@@ -18,6 +19,6 @@ public interface ResourceService {
      * @param context 资源查看上下文对象
      * @return 结果对象
      */
-    public Mono<FileReadActuator> execute(ResourceContext context);
+    Mono<FileReader> execute(ResourceContext context);
 
 }

@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 配置文件
+ * Properties
  *
  * @author lidashuang
  * @version 1.0
@@ -20,124 +20,134 @@ import java.util.Map;
 @Data
 @Component
 @Accessors(chain = true)
-@ConditionalOnMissingBean(
-        value = Properties.class,
-        ignored = Properties.class
-)
-@ConfigurationProperties(prefix = "p6e.coat.file")
+@ConditionalOnMissingBean(Properties.class)
+@ConfigurationProperties(prefix = "p6e.coat.resource")
 public class Properties implements Serializable {
 
     /**
-     * 分片上传
-     */
-    private SliceUpload sliceUpload = new SliceUpload();
-
-    /**
-     * 分片上传类
-     */
-    @Data
-    @Accessors(chain = true)
-    public static class SliceUpload implements Serializable {
-
-        /**
-         * 基础的文件路径
-         */
-        private String path = "/opt/data/p6e/file/slice";
-
-        /**
-         * 允许上传的文件大小的最大值
-         */
-        private long maxSize = 1024 * 1024 * 30;
-
-    }
-
-    /**
-     * 上传
+     * Uploads
      */
     private Map<String, Upload> uploads = new HashMap<>();
 
     /**
-     * 上传
+     * Downloads
+     */
+    private Map<String, Download> downloads = new HashMap<>();
+
+    /**
+     * Resources
+     */
+    private Map<String, Resource> resources = new HashMap<>();
+
+    /**
+     * Upload
      */
     @Data
     @Accessors(chain = true)
     public static class Upload implements Serializable {
 
         /**
-         * 资源类型
+         * Type
+         * DISK
+         * QI_NIU_CLOUD_OBJECT_STORAGE
+         * ALIBABA_CLOUD_OBJECT_STORAGE
+         * TENCENT_CLOUD_OBJECT_STORAGE
          */
         private String type = "DISK";
 
         /**
-         * 基础的文件路径
+         * File Path
          */
         private String path;
 
         /**
-         * 扩展参数
+         * File Max Size
          */
-        private Map<String, String> extend = new HashMap<>();
+        private long max = 1024 * 1024 * 30;
+
+        /**
+         * Other Parameters
+         */
+        private Map<String, String> other = new HashMap<>();
+
+        /**
+         * Slice
+         */
+        private Slice slice = new Slice();
+
+        /**
+         * Slice
+         */
+        @Data
+        @Accessors(chain = true)
+        public static class Slice implements Serializable {
+
+            /**
+             * File Path
+             */
+            private String path;
+
+        }
 
     }
 
     /**
-     * 下载
-     */
-    private Map<String, Download> downloads = new HashMap<>();
-
-    /**
-     * 下载
+     * Download
      */
     @Data
     @Accessors(chain = true)
     public static class Download implements Serializable {
 
         /**
-         * 资源类型
+         * Type
+         * DISK
+         * QI_NIU_CLOUD_OBJECT_STORAGE
+         * ALIBABA_CLOUD_OBJECT_STORAGE
+         * TENCENT_CLOUD_OBJECT_STORAGE
          */
         private String type = "DISK";
 
         /**
-         * 基础的文件路径
+         * File Path
          */
         private String path;
 
         /**
-         * 扩展参数
+         * Other Parameters
          */
-        private Map<String, String> extend = new HashMap<>();
+        private Map<String, String> other = new HashMap<>();
 
     }
 
     /**
-     * 资源配置
-     */
-    private Map<String, Resource> resources = new HashMap<>();
-
-    /**
-     * 资源
+     * Resource
      */
     @Data
     @Accessors(chain = true)
     public static class Resource implements Serializable {
 
         /**
-         * 资源类型
+         * Type
+         * DISK
+         * QI_NIU_CLOUD_OBJECT_STORAGE
+         * ALIBABA_CLOUD_OBJECT_STORAGE
+         * TENCENT_CLOUD_OBJECT_STORAGE
          */
         private String type = "DISK";
 
         /**
-         * 基础的文件路径
+         * File Path
          */
         private String path;
 
         /**
-         * 扩展参数
+         * Other Parameters
          */
-        private Map<String, String> extend = new HashMap<>();
+        private Map<String, String> other = new HashMap<>();
 
         /**
-         * 允许的文件后缀以及对应的媒体类型
+         * Suffixes / File Suffixes / File Media Types
+         * file suffixes and corresponding media types allowed for preview
          */
         private Map<String, MediaType> suffixes = new HashMap<>();
 
