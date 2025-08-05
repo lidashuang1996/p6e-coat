@@ -1,7 +1,7 @@
 package club.p6e.coat.resource;
 
 /**
- * 文件夹的本地存储路径服务
+ * Folder Storage Location Path Service
  *
  * @author lidashuang
  * @version 1.0
@@ -9,10 +9,10 @@ package club.p6e.coat.resource;
 public interface FolderStorageLocationPathService {
 
     /**
-     * 获取文件保存的路径
+     * Execute Get Folder Storage Location Path
      *
-     * @return 文件保存的路径
+     * @return Folder Storage Location Path
      */
-    public String path();
+    String execute();
 
 }
