@@ -7,9 +7,9 @@ import club.p6e.coat.resource.FileReadWriteService;
 import club.p6e.coat.resource.Properties;
 import club.p6e.coat.resource.actuator.FileWriteActuator;
 import club.p6e.coat.resource.context.CloseUploadContext;
-import club.p6e.coat.resource.model.UploadModel;
+import club.p6e.coat.resource.model.UploadLogModel;
 import club.p6e.coat.resource.repository.UploadRepository;
-import club.p6e.coat.resource.service.CloseUploadService;
+import club.p6e.coat.resource.service.SliceUploadCloseService;
 import club.p6e.coat.resource.utils.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +30,10 @@ import java.util.Map;
  */
 @Component
 @ConditionalOnMissingBean(
-        value = CloseUploadService.class,
+        value = SliceUploadCloseService.class,
         ignored = CloseUploadServiceImpl.class
 )
-public class CloseUploadServiceImpl implements CloseUploadService {
+public class CloseUploadServiceImpl implements SliceUploadCloseService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CloseUploadServiceImpl.class);
 
@@ -127,9 +127,9 @@ public class CloseUploadServiceImpl implements CloseUploadService {
                                                 putAll(context);
                                                 putAll(upload.getExtend());
                                             }}, new CustomFileWriteActuator(files, upload))
-                                            .flatMap(fm -> repository.update(new UploadModel().setId(m.getId()).setSize(fm.getLength()).setStorageType(fm.getType()).setStorageLocation(fm.getPath())))
+                                            .flatMap(fm -> repository.update(new UploadLogModel().setId(m.getId()).setSize(fm.getLength()).setStorageType(fm.getType()).setStorageLocation(fm.getPath())))
                                             .flatMap(rl -> repository.findById(m.getId()))
-                                            .map(UploadModel::toMap);
+                                            .map(UploadLogModel::toMap);
                                 });
                     } else {
                         return Mono.error(new ResourceException(

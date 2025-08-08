@@ -11,6 +11,8 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
 /**
+ * Resource Service Object
+ *
  * @author lidashuang
  * @version 1.0
  */
@@ -19,14 +21,14 @@ import reactor.core.publisher.Mono;
 public class ResourceController extends BaseController {
 
     /**
-     * 资源查看服务对象
+     * Resource Service Object
      */
     private final ResourceService service;
 
     /**
-     * 构造函数初始化
+     * Constructor Initializers
      *
-     * @param service 资源查看服务对象
+     * @param service Resource Service Object
      */
     public ResourceController(ResourceService service) {
         this.service = service;
@@ -37,7 +39,7 @@ public class ResourceController extends BaseController {
         return RequestParameterMapper
                 .execute(request, ResourceContext.class)
                 .flatMap(service::execute)
-                .flatMap(fr -> getHttpRangeResourceServerResponse(request.headers().range(), fr));
+                .flatMap(fr -> getResourceServerResponse(request, fr));
     }
 
 }

@@ -8,7 +8,7 @@ import club.p6e.coat.resource.FileReadWriteService;
 import club.p6e.coat.resource.Properties;
 import club.p6e.coat.resource.actuator.FileWriteActuator;
 import club.p6e.coat.resource.context.SimpleUploadContext;
-import club.p6e.coat.resource.model.UploadModel;
+import club.p6e.coat.resource.model.UploadLogModel;
 import club.p6e.coat.resource.repository.UploadRepository;
 import club.p6e.coat.resource.service.SimpleUploadService;
 import club.p6e.coat.resource.utils.FileUtil;
@@ -107,7 +107,7 @@ public class SimpleUploadServiceImpl implements SimpleUploadService {
                                 );
                             }
                             LOGGER.info("name >>> {}", name);
-                            final UploadModel pum = new UploadModel();
+                            final UploadLogModel pum = new UploadLogModel();
                             final Object operator = context.get("$operator");
                             if (operator instanceof final String content) {
                                 pum.setOwner(content);
@@ -123,7 +123,7 @@ public class SimpleUploadServiceImpl implements SimpleUploadService {
                                         putAll(context);
                                         putAll(upload.getExtend());
                                     }}, new CustomFileWriteActuator(filePart, upload)).map(fam -> {
-                                        final UploadModel rum = new UploadModel();
+                                        final UploadLogModel rum = new UploadLogModel();
                                         rum.setId(m.getId());
                                         rum.setSize(fam.getLength());
                                         rum.setStorageType(fam.getType());
@@ -133,7 +133,7 @@ public class SimpleUploadServiceImpl implements SimpleUploadService {
                                             .flatMap(l -> repository.closeLock(m.getId()))
                                             .flatMap(l -> repository.update(m))
                                             .flatMap(l -> repository.findById(m.getId()))
-                                    ).map(UploadModel::toMap);
+                                    ).map(UploadLogModel::toMap);
                         });
                     } else {
                         return Mono.error(new ResourceException(

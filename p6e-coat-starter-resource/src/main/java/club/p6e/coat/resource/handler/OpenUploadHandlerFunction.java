@@ -3,7 +3,7 @@ package club.p6e.coat.resource.handler;
 import club.p6e.coat.resource.aspect.OpenUploadAspect;
 import club.p6e.coat.resource.context.OpenUploadContext;
 import club.p6e.coat.resource.mapper.RequestParameterMapper;
-import club.p6e.coat.resource.service.OpenUploadService;
+import club.p6e.coat.resource.service.SliceUploadOpenService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
@@ -30,7 +30,7 @@ public class OpenUploadHandlerFunction extends AspectHandlerFunction implements 
     /**
      * 打开分片上传服务对象
      */
-    private final OpenUploadService service;
+    private final SliceUploadOpenService service;
 
     /**
      * 打开分片上传切面列表对象
@@ -43,7 +43,7 @@ public class OpenUploadHandlerFunction extends AspectHandlerFunction implements 
      * @param service 打开分片上传服务对象
      * @param aspects 打开分片上传切面对象
      */
-    public OpenUploadHandlerFunction(OpenUploadService service, List<OpenUploadAspect> aspects) {
+    public OpenUploadHandlerFunction(SliceUploadOpenService service, List<OpenUploadAspect> aspects) {
         this.service = service;
         this.aspects = aspects;
     }

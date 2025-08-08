@@ -2,9 +2,9 @@ package club.p6e.coat.resource.service.impl;
 
 import club.p6e.coat.common.error.ParameterException;
 import club.p6e.coat.resource.context.OpenUploadContext;
-import club.p6e.coat.resource.model.UploadModel;
+import club.p6e.coat.resource.model.UploadLogModel;
 import club.p6e.coat.resource.repository.UploadRepository;
-import club.p6e.coat.resource.service.OpenUploadService;
+import club.p6e.coat.resource.service.SliceUploadOpenService;
 import club.p6e.coat.resource.utils.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,10 +23,10 @@ import java.util.Map;
  */
 @Component
 @ConditionalOnMissingBean(
-        value = OpenUploadService.class,
+        value = SliceUploadOpenService.class,
         ignored = OpenUploadServiceImpl.class
 )
-public class OpenUploadServiceImpl implements OpenUploadService {
+public class OpenUploadServiceImpl implements SliceUploadOpenService {
 
     /**
      * 源
@@ -51,7 +51,7 @@ public class OpenUploadServiceImpl implements OpenUploadService {
 
     @Override
     public Mono<Map<String, Object>> execute(OpenUploadContext context) {
-        final UploadModel model = new UploadModel();
+        final UploadLogModel model = new UploadLogModel();
         final Object operator = context.get("$operator");
         if (operator instanceof final String content) {
             model.setOwner(content);
@@ -70,7 +70,7 @@ public class OpenUploadServiceImpl implements OpenUploadService {
         model.setName(name);
         model.setSource(SOURCE);
         LOGGER.info("OpenUploadServiceImpl >>>>>>>>> NAME >>>> {}", name);
-        return repository.create(model).map(UploadModel::toMap);
+        return repository.create(model).map(UploadLogModel::toMap);
     }
 
 }

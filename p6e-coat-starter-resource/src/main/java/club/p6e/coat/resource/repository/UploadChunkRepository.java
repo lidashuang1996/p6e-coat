@@ -3,7 +3,7 @@ package club.p6e.coat.resource.repository;
 import club.p6e.DatabaseConfig;
 import club.p6e.coat.common.error.DataBaseException;
 import club.p6e.coat.common.utils.TransformationUtil;
-import club.p6e.coat.resource.model.UploadChunkModel;
+import club.p6e.coat.resource.model.UploadChunkLogModel;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Component;
@@ -100,7 +100,7 @@ public class UploadChunkRepository {
      * @param model 模型对象
      * @return Mono<UploadChunkModel> 模型对象
      */
-    public Mono<UploadChunkModel> create(UploadChunkModel model) {
+    public Mono<UploadChunkLogModel> create(UploadChunkLogModel model) {
         if (model == null) {
             return Mono.error(new DataBaseException(
                     this.getClass(),
@@ -167,7 +167,7 @@ public class UploadChunkRepository {
      * @param localDateTime 终止时间
      * @return Mono<UploadChunkModel> 模型对象
      */
-    public Mono<UploadChunkModel> selectExpireData(Integer id, LocalDateTime localDateTime) {
+    public Mono<UploadChunkLogModel> selectExpireData(Integer id, LocalDateTime localDateTime) {
         return client
                 .sql(EXPIRE_SELECT_SQL)
                 .bind("ID", id)
@@ -175,7 +175,7 @@ public class UploadChunkRepository {
                 .fetch()
                 .first()
                 .map(row -> {
-                    final UploadChunkModel model = new UploadChunkModel();
+                    final UploadChunkLogModel model = new UploadChunkLogModel();
                     model.setId(TransformationUtil.objectToInteger(row.get("id")));
                     model.setFid(TransformationUtil.objectToInteger(row.get("fid")));
                     model.setName(TransformationUtil.objectToString(row.get("name")));

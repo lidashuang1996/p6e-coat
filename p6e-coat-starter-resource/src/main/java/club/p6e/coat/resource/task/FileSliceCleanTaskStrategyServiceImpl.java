@@ -1,7 +1,7 @@
 package club.p6e.coat.resource.task;
 
 import club.p6e.coat.resource.Properties;
-import club.p6e.coat.resource.model.UploadChunkModel;
+import club.p6e.coat.resource.model.UploadChunkLogModel;
 import club.p6e.coat.resource.repository.UploadChunkRepository;
 import club.p6e.coat.resource.repository.UploadRepository;
 import club.p6e.coat.resource.utils.FileUtil;
@@ -81,7 +81,7 @@ public class FileSliceCleanTaskStrategyServiceImpl implements FileSliceCleanTask
             final AtomicInteger index = new AtomicInteger(0);
             final Properties.SliceUpload sliceUpload = properties.getSliceUpload();
             while (true) {
-                final UploadChunkModel model = uploadChunkRepository
+                final UploadChunkLogModel model = uploadChunkRepository
                         .selectExpireData(index.get(), LocalDateTime.now().minusDays(30)).block();
                 if (model == null || model.getId() == null || model.getFid() == null) {
                     break;

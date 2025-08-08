@@ -3,7 +3,7 @@ package club.p6e.coat.resource.handler;
 import club.p6e.coat.resource.aspect.CloseUploadAspect;
 import club.p6e.coat.resource.context.CloseUploadContext;
 import club.p6e.coat.resource.mapper.RequestParameterMapper;
-import club.p6e.coat.resource.service.CloseUploadService;
+import club.p6e.coat.resource.service.SliceUploadCloseService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
@@ -30,7 +30,7 @@ public class CloseUploadHandlerFunction extends AspectHandlerFunction implements
     /**
      * 关闭分片上传服务对象
      */
-    private final CloseUploadService service;
+    private final SliceUploadCloseService service;
 
     /**
      * 关闭分片上传切面列表对象
@@ -43,7 +43,7 @@ public class CloseUploadHandlerFunction extends AspectHandlerFunction implements
      * @param service 关闭分片上传服务对象
      * @param aspects 关闭分片上传切面列表对象
      */
-    public CloseUploadHandlerFunction(CloseUploadService service, List<CloseUploadAspect> aspects) {
+    public CloseUploadHandlerFunction(SliceUploadCloseService service, List<CloseUploadAspect> aspects) {
         this.service = service;
         this.aspects = aspects;
     }

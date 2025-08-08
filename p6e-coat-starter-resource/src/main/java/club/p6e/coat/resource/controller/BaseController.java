@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRange;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
@@ -59,16 +60,16 @@ public class BaseController {
         CLEAN_REQUEST_PARAM_NAME.remove(name);
     }
 
-    public static Mono<ServerResponse> getHttpRangeDownloadServerResponse(List<HttpRange> httpRangeList, FileReader fileReader) {
-        return getHttpRangeServerResponse(httpRangeList, fileReader, headers ->
+    public static Mono<ServerResponse> getDownloadServerResponse(ServerRequest request, FileReader fileReader) {
+        return getHttpRangeServerResponse(request.headers().range(), fileReader, headers ->
                 headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="
                         + URLEncoder.encode(fileReader.getFileAttribute().getName(), StandardCharsets.UTF_8)
                 )
         );
     }
 
-    public static Mono<ServerResponse> getHttpRangeResourceServerResponse(List<HttpRange> httpRangeList, FileReader fileReader) {
-        return getHttpRangeServerResponse(httpRangeList, fileReader, headers -> {
+    public static Mono<ServerResponse> getResourceServerResponse(ServerRequest request, FileReader fileReader) {
+        return getHttpRangeServerResponse(request.headers().range(), fileReader, headers -> {
         });
     }
 

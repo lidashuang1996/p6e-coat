@@ -17,6 +17,6 @@ public interface FilePermissionService {
      * @param context 权限参数
      * @return 是否具备权限
      */
-    public Mono<Boolean> execute(String type, Map<String, Object> context);
+    public Mono<Boolean> execute(FilePermissionType type, String voucher);
 
 }

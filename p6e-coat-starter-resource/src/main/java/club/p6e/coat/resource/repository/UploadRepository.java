@@ -4,7 +4,7 @@ import club.p6e.DatabaseConfig;
 import club.p6e.coat.common.error.DataBaseException;
 import club.p6e.coat.common.utils.CopyUtil;
 import club.p6e.coat.common.utils.TransformationUtil;
-import club.p6e.coat.resource.model.UploadModel;
+import club.p6e.coat.resource.model.UploadLogModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -162,7 +162,7 @@ public class UploadRepository {
      * @param model 模型对象
      * @return Mono<UploadModel> 模型对象
      */
-    public Mono<UploadModel> create(UploadModel model) {
+    public Mono<UploadLogModel> create(UploadLogModel model) {
         if (model == null) {
             return Mono.error(new DataBaseException(
                     this.getClass(),
@@ -469,14 +469,14 @@ public class UploadRepository {
      * @param id 模型 ID
      * @return Mono<UploadModel> 模型对象
      */
-    public Mono<UploadModel> findById(int id) {
+    public Mono<UploadLogModel> findById(int id) {
         return client
                 .sql(SELECT_SQL)
                 .bind("ID", id)
                 .fetch()
                 .first()
                 .map(row -> {
-                    final UploadModel model = new UploadModel();
+                    final UploadLogModel model = new UploadLogModel();
                     model.setId(TransformationUtil.objectToInteger(row.get("id")));
                     model.setName(TransformationUtil.objectToString(row.get("name")));
                     model.setSize(TransformationUtil.objectToLong(row.get("size")));
@@ -506,7 +506,7 @@ public class UploadRepository {
      * @return Mono<UploadModel> 修改的数据条数
      */
     @SuppressWarnings("ALL")
-    public Mono<UploadModel> update(UploadModel model) {
+    public Mono<UploadLogModel> update(UploadLogModel model) {
         if (model == null) {
             return Mono.error(new DataBaseException(
                     this.getClass(),

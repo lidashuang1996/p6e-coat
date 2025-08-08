@@ -1,5 +1,6 @@
 package club.p6e.coat.resource.context;
 
+import lombok.Data;
 import lombok.Getter;
 import org.springframework.http.codec.multipart.FilePart;
 
@@ -63,13 +64,14 @@ public class SliceUploadContext extends HashMap<String, Object> implements Seria
         }
     }
 
-    public void setId(Integer id) {
+    public SliceUploadContext setId(Integer id) {
         this.id = id;
         if (id == null) {
             remove("id");
         } else {
             this.put("id", id);
         }
+        return this;
     }
 
     public void setIndex(Integer index) {
@@ -96,6 +98,100 @@ public class SliceUploadContext extends HashMap<String, Object> implements Seria
             remove("filePart");
         } else {
             this.put("filePart", filePart);
+        }
+    }
+
+
+
+    public static class Open {
+        @Getter
+        @Data
+        public static class Request extends HashMap<String, Object> implements Serializable {
+
+            /**
+             * 上传文件名称
+             */
+            private String name;
+            private String operator;
+            /**
+             * 无参数构造
+             */
+            public OpenUploadContext() {
+            }
+
+            /**
+             * 构造函数初始化
+             *
+             * @param map 初始化对象
+             */
+            public OpenUploadContext(Map<String, Object> map) {
+                this.putAll(map);
+                if (map.get("name") != null && map.get("name") instanceof final String content) {
+                    this.setName(content);
+                }
+            }
+
+            public void setName(String name) {
+                this.name = name;
+                if (name == null) {
+                    remove("name");
+                } else {
+                    this.put("name", name);
+                }
+            }
+
+        }
+
+        @Data
+        public static class Dto implements Serializable {
+        }
+    }
+
+
+    public static class Close {
+        @Getter
+        @Data
+        public static class Request extends HashMap<String, Object> implements Serializable {
+
+            /**
+             * 上传文件名称
+             */
+            private String name;
+            private String node;
+            private String operator;
+            private String voucher;
+            private Integer id;
+            /**
+             * 无参数构造
+             */
+            public OpenUploadContext() {
+            }
+
+            /**
+             * 构造函数初始化
+             *
+             * @param map 初始化对象
+             */
+            public OpenUploadContext(Map<String, Object> map) {
+                this.putAll(map);
+                if (map.get("name") != null && map.get("name") instanceof final String content) {
+                    this.setName(content);
+                }
+            }
+
+            public void setName(String name) {
+                this.name = name;
+                if (name == null) {
+                    remove("name");
+                } else {
+                    this.put("name", name);
+                }
+            }
+
+        }
+
+        @Data
+        public static class Dto implements Serializable {
         }
     }
 
