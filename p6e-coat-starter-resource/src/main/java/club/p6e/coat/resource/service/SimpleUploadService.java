@@ -3,10 +3,8 @@ package club.p6e.coat.resource.service;
 import club.p6e.coat.resource.context.SimpleUploadContext;
 import reactor.core.publisher.Mono;
 
-import java.util.Map;
-
 /**
- * 简单（小文件）上传
+ * Simple Upload Service
  *
  * @author lidashuang
  * @version 1.0
@@ -14,11 +12,11 @@ import java.util.Map;
 public interface SimpleUploadService {
 
     /**
-     * 执行简单（小文件）上传操作
+     * Execute Simple Upload Service
      *
-     * @param context 简单（小文件）上传上下文对象
-     * @return 结果对象
+     * @param request Simple Upload Context Request Object
+     * @return Simple Upload Context Dto Object
      */
-    public Mono<Map<String, Object>> execute(SimpleUploadContext context);
+    Mono<SimpleUploadContext.Dto> execute(SimpleUploadContext.Request request);
 
 }

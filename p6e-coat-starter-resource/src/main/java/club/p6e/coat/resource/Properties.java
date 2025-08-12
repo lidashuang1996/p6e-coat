@@ -66,14 +66,14 @@ public class Properties implements Serializable {
         private long max = 1024 * 1024 * 30;
 
         /**
-         * Other Parameters
-         */
-        private Map<String, String> other = new HashMap<>();
-
-        /**
          * Slice
          */
         private Slice slice = new Slice();
+
+        /**
+         * Other Parameters
+         */
+        private Map<String, String> other = new HashMap<>();
 
         /**
          * Slice

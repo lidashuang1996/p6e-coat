@@ -1,102 +1,110 @@
 package club.p6e.coat.resource.service.impl;
 
-import club.p6e.coat.common.error.DownloadNodeException;
-import club.p6e.coat.common.error.ResourceException;
-import club.p6e.coat.resource.FilePermissionService;
-import club.p6e.coat.resource.FileReadWriteService;
-import club.p6e.coat.resource.Properties;
-import club.p6e.coat.resource.actuator.FileReadActuator;
+import club.p6e.coat.common.error.ParameterException;
+import club.p6e.coat.resource.*;
 import club.p6e.coat.resource.context.DownloadContext;
+import club.p6e.coat.resource.error.NodeException;
+import club.p6e.coat.resource.error.NodePermissionException;
 import club.p6e.coat.resource.service.DownloadService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import club.p6e.coat.resource.utils.FileUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+import java.io.File;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
- * 下载文件服务
+ * Download Service Impl
  *
  * @author lidashuang
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(
-        value = DownloadService.class,
-        ignored = DownloadServiceImpl.class
-)
+@ConditionalOnMissingBean(DownloadService.class)
 public class DownloadServiceImpl implements DownloadService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DownloadServiceImpl.class);
-
     /**
-     * 配置文件对象
+     * Properties Object
      */
     private final Properties properties;
 
     /**
-     * 文件读写服务对象
+     * File Reader Builder Object
      */
-    private final FileReadWriteService fileReadWriteService;
+    private final FileReaderBuilder fileReaderBuilder;
 
     /**
-     * 文件权限服务对象
+     * File Permission Service Object
      */
     private final FilePermissionService filePermissionService;
 
     /**
-     * 构造方法初始化
+     * Constructor Initializers
      *
-     * @param properties            配置文件对象
-     * @param fileReadWriteService  文件读写服务对象
-     * @param filePermissionService 文件权限服务对象
+     * @param properties            Properties Object
+     * @param fileReaderBuilder     File Reader Builder Object
+     * @param filePermissionService File Permission Service Object
      */
     public DownloadServiceImpl(
             Properties properties,
-            FileReadWriteService fileReadWriteService,
+            FileReaderBuilder fileReaderBuilder,
             FilePermissionService filePermissionService
     ) {
         this.properties = properties;
-        this.fileReadWriteService = fileReadWriteService;
+        this.fileReaderBuilder = fileReaderBuilder;
         this.filePermissionService = filePermissionService;
     }
 
     @Override
-    public Mono<FileReadActuator> execute(DownloadContext context) {
-        final Properties.Download download = properties.getDownloads().get(context.getNode());
-        if (download == null) {
-            return Mono.error(new DownloadNodeException(
+    public Mono<FileReader> execute(DownloadContext.Request request) {
+        final String node = request.getNode();
+        final String path = request.getPath();
+        final String voucher = request.getVoucher();
+        if (node == null) {
+            return Mono.error(new ParameterException(
                     this.getClass(),
-                    "fun execute(DownloadContext context). ==> " +
-                            "execute(...) unable to find corresponding resource context node.",
-                    "execute(...) unable to find corresponding resource context node.")
-            );
+                    "fun execute(DownloadContext.Request request) => request parameter <node> exception",
+                    "request parameter <node> exception"
+            ));
+        }
+        if (path == null) {
+            return Mono.error(new ParameterException(
+                    this.getClass(),
+                    "fun execute(DownloadContext.Request request) => request parameter <path> exception",
+                    "request parameter <path> exception"
+            ));
+        }
+        if (voucher == null) {
+            return Mono.error(new ParameterException(
+                    this.getClass(),
+                    "fun execute(DownloadContext.Request request) => request parameter <voucher> exception",
+                    "request parameter <voucher> exception"
+            ));
+        }
+        final Properties.Download dc = properties.getDownloads().get(node);
+        final Map<String, Object> attributes = new HashMap<>(request.getOther());
+        if (dc == null) {
+            return Mono.error(new NodeException(
+                    this.getClass(),
+                    "fun execute(DownloadContext.Request request) => request node mapper config does not exist exception",
+                    "request node mapper config does not exist exception"
+            ));
         } else {
+            attributes.putAll(dc.getOther());
+            final File file = new File(FileUtil.convertAbsolutePath(FileUtil.composePath(dc.getPath(), path)));
             return filePermissionService
-                    .execute("D", context)
+                    .execute(FilePermissionType.DOWNLOAD, voucher)
                     .flatMap(b -> {
-                        LOGGER.info("permission >>> {}", b);
                         if (b) {
-                            LOGGER.info("fileReadWriteService.read()");
-                            return fileReadWriteService.read(
-                                    download.getType(),
-                                    download.getPath(),
-                                    context.getPath(),
-                                    MediaType.APPLICATION_OCTET_STREAM,
-                                    new HashMap<>() {{
-                                        putAll(context);
-                                        putAll(download.getExtend());
-                                    }}
-                            );
+                            return Mono.just(fileReaderBuilder.of(file).fileMediaType(MediaType.APPLICATION_OCTET_STREAM).attributes(attributes).build());
                         } else {
-                            return Mono.error(new ResourceException(
+                            return Mono.error(new NodePermissionException(
                                     this.getClass(),
-                                    "fun execute(DownloadContext context). ==> " +
-                                            "execute(...) exception without permission for this node.",
-                                    "execute(...) exception without permission for this node.")
+                                    "fun execute(DownloadContext.Request request) => request node file operation permission exception",
+                                    "request node file operation permission exception")
                             );
                         }
                     });

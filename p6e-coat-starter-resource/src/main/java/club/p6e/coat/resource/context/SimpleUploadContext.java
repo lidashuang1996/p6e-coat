@@ -1,14 +1,18 @@
 package club.p6e.coat.resource.context;
 
+import lombok.Data;
 import lombok.Getter;
+import lombok.experimental.Accessors;
 import org.springframework.http.codec.multipart.FilePart;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 简单（小文件）上传上下文对象
+ * Simple Upload Context
  *
  * @author lidashuang
  * @version 1.0
@@ -16,53 +20,48 @@ import java.util.Map;
 @Getter
 public class SimpleUploadContext extends HashMap<String, Object> implements Serializable {
 
-    /**
-     * 节点
-     */
-    private String node;
 
     /**
-     * 文件对象
+     * Simple Upload Context Request
      */
-    private FilePart filePart;
+    @Data
+    @Accessors(chain = true)
+    public static class Request implements Serializable {
 
-    /**
-     * 无参数构造
-     */
-    public SimpleUploadContext() {
+        /**
+         * Node
+         */
+        private String node;
+
+        /**
+         * Voucher
+         */
+        private String voucher;
+
+        /**
+         * File
+         */
+        private MultipartFile file;
+
+        /**
+         * Other
+         */
+        private Map<String, Object> other = new HashMap<>();
+
     }
 
     /**
-     * 构造函数初始化
-     *
-     * @param map 初始化对象
+     * Simple Upload Context Request
      */
-    public SimpleUploadContext(Map<String, Object> map) {
-        this.putAll(map);
-        if (map.get("node") != null && map.get("node") instanceof final String content) {
-            this.setNode(content);
-        }
-        if (map.get("filePart") != null && map.get("filePart") instanceof final FilePart fp) {
-            this.setFilePart(fp);
-        }
-    }
+    @Data
+    @Accessors(chain = true)
+    public static class Dto implements Serializable {
 
-    public void setNode(String node) {
-        this.node = node;
-        if (node == null) {
-            remove("node");
-        } else {
-            this.put("node", node);
-        }
-    }
+        private Long size;
+        private String name;
+        private String storageType;
+        private String storageLocation;
 
-    public void setFilePart(FilePart filePart) {
-        this.filePart = filePart;
-        if (filePart == null) {
-            remove("filePart");
-        } else {
-            this.put("filePart", filePart);
-        }
     }
 
 }

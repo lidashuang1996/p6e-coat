@@ -1,30 +1,30 @@
 package club.p6e.coat.resource;
 
-import com.sun.tools.sjavac.Util;
+import org.springframework.http.MediaType;
 
 import java.io.File;
+import java.util.Map;
 
 /**
  * @author lidashuang
  * @version 1.0
  */
-public class FileReaderBuilder {
+public interface FileReaderBuilder {
 
-    public static FileReaderBuilder of(File file) {
-        return new FileReaderBuilder();
-    }
+    FileReader build();
 
-    public static FileReaderBuilder of(File[] files) {
-        return new FileReaderBuilder();
-    }
+    FileReaderBuilder fileName(String fileName);
 
-    public FileReader build() {
+    FileReaderBuilder fileMediaType(MediaType fileMediaType);
 
-    }
 
-    public FileReaderBuilder fileName(String fileName) {
-    }
+    FileReaderBuilder attributes(Map<String, Object> attributes);
 
-    public FileReaderBuilder fileSuffix(String fileName) {
-    }
+    FileReaderBuilder fileSuffix(String fileSuffix);
+
+    FileReaderBuilder filePath(String filePath);
+
+    FileReaderBuilder of(File file);
+
+    FileReaderBuilder of();
 }

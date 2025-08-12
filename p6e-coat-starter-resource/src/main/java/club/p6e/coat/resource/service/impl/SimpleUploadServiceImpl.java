@@ -1,22 +1,18 @@
 package club.p6e.coat.resource.service.impl;
 
 import club.p6e.coat.common.error.ParameterException;
-import club.p6e.coat.common.error.ResourceException;
-import club.p6e.coat.common.error.ResourceNodeException;
-import club.p6e.coat.resource.FilePermissionService;
-import club.p6e.coat.resource.FileReadWriteService;
-import club.p6e.coat.resource.Properties;
-import club.p6e.coat.resource.actuator.FileWriteActuator;
+import club.p6e.coat.common.utils.CopyUtil;
+import club.p6e.coat.resource.*;
 import club.p6e.coat.resource.context.SimpleUploadContext;
+import club.p6e.coat.resource.error.NodeException;
+import club.p6e.coat.resource.error.NodePermissionException;
 import club.p6e.coat.resource.model.UploadLogModel;
 import club.p6e.coat.resource.repository.UploadRepository;
 import club.p6e.coat.resource.service.SimpleUploadService;
 import club.p6e.coat.resource.utils.FileUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
 
 import java.io.File;
@@ -24,154 +20,156 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 简单（小文件）上传服务
+ * Simple Upload Service Impl
  *
  * @author lidashuang
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(
-        value = SimpleUploadService.class,
-        ignored = SimpleUploadServiceImpl.class
-)
+@ConditionalOnMissingBean(SimpleUploadService.class)
 public class SimpleUploadServiceImpl implements SimpleUploadService {
 
     /**
-     * 源
+     * Source
      */
     private static final String SOURCE = "SIMPLE_UPLOAD";
-    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleUploadServiceImpl.class);
+
     /**
-     * 配置文件对象
+     * Properties Object
      */
     private final Properties properties;
+
     /**
-     * 上传存储库对象
+     * Upload Repository Object
      */
     private final UploadRepository repository;
+
     /**
-     * 文件读取写入服务对象
+     * File Writer Builder Object
      */
-    private final FileReadWriteService fileReadWriteService;
+    private final FileWriterBuilder fileWriterBuilder;
+
     /**
-     * 文件权限服务对象
+     * File Permission Service Object
      */
     private final FilePermissionService filePermissionService;
 
     /**
-     * 构造方法初始化
+     * Folder Storage Location Path Service Object
+     */
+    private final FolderStorageLocationPathService folderStorageLocationPathService;
+
+    /**
+     * Constructor Initializers
      *
-     * @param properties            配置文件对象
-     * @param repository            上传存储库对象
-     * @param fileReadWriteService  文件读取写入服务对象
-     * @param filePermissionService 文件权限服务对象
+     * @param properties                       Properties Object
+     * @param repository                       Upload Repository Object
+     * @param fileWriterBuilder                File Writer Builder Object
+     * @param filePermissionService            File Permission Service Object
+     * @param folderStorageLocationPathService Folder Storage Location Path Service Object
      */
     public SimpleUploadServiceImpl(
             Properties properties,
             UploadRepository repository,
-            FileReadWriteService fileReadWriteService,
-            FilePermissionService filePermissionService
+            FileWriterBuilder fileWriterBuilder,
+            FilePermissionService filePermissionService,
+            FolderStorageLocationPathService folderStorageLocationPathService
     ) {
         this.properties = properties;
         this.repository = repository;
-        this.fileReadWriteService = fileReadWriteService;
+        this.fileWriterBuilder = fileWriterBuilder;
         this.filePermissionService = filePermissionService;
+        this.folderStorageLocationPathService = folderStorageLocationPathService;
     }
 
     @Override
-    public Mono<Map<String, Object>> execute(SimpleUploadContext context) {
-        final Properties.Upload upload = properties.getUploads().get(context.getNode());
-        if (upload == null) {
-            return Mono.error(new ResourceNodeException(
+    public Mono<SimpleUploadContext.Dto> execute(SimpleUploadContext.Request request) {
+        final String node = request.getNode();
+        final String voucher = request.getVoucher();
+        final MultipartFile multipartFile = request.getFile();
+        if (node == null) {
+            return Mono.error(new ParameterException(
                     this.getClass(),
-                    "fun execute(SimpleUploadContext context). ==> " +
-                            "execute(...) unable to find corresponding resource context node.",
-                    "execute(...) unable to find corresponding resource context node.")
-            );
+                    "fun execute(SimpleUploadContext.Request request) => request parameter <node> exception",
+                    "request parameter <node> exception"
+            ));
         }
-        return filePermissionService
-                .execute("U", context)
-                .flatMap(b -> {
-                    LOGGER.info("permission >>> {}", b);
-                    if (b) {
-                        return Mono.defer(() -> {
-                            final FilePart filePart = context.getFilePart();
-                            context.setFilePart(null);
-                            final String name = FileUtil.name(filePart.filename());
-                            if (name == null) {
-                                return Mono.error(new ParameterException(
-                                        this.getClass(),
-                                        "fun execute(SimpleUploadContext context). ==> " +
-                                                "execute(...) request parameter <name> exception.",
-                                        "execute(...) request parameter <name> exception.")
-                                );
-                            }
-                            LOGGER.info("name >>> {}", name);
-                            final UploadLogModel pum = new UploadLogModel();
-                            final Object operator = context.get("$operator");
-                            if (operator instanceof final String content) {
-                                pum.setOwner(content);
-                                pum.setCreator(content);
-                                pum.setModifier(content);
-                            }
-                            pum.setName(name);
-                            pum.setSource(SOURCE);
-                            LOGGER.info("SAVE DATA >>> {}", pum);
-                            return repository
-                                    .create(pum)
-                                    .flatMap(m -> fileReadWriteService.write(name, new HashMap<>() {{
-                                        putAll(context);
-                                        putAll(upload.getExtend());
-                                    }}, new CustomFileWriteActuator(filePart, upload)).map(fam -> {
-                                        final UploadLogModel rum = new UploadLogModel();
-                                        rum.setId(m.getId());
-                                        rum.setSize(fam.getLength());
-                                        rum.setStorageType(fam.getType());
-                                        rum.setStorageLocation(fam.getPath());
-                                        return rum;
-                                    })).flatMap(m -> Mono.just(m)
-                                            .flatMap(l -> repository.closeLock(m.getId()))
-                                            .flatMap(l -> repository.update(m))
-                                            .flatMap(l -> repository.findById(m.getId()))
-                                    ).map(UploadLogModel::toMap);
-                        });
-                    } else {
-                        return Mono.error(new ResourceException(
-                                this.getClass(),
-                                "fun execute(SimpleUploadContext context). ==> " +
-                                        "execute(...) exception without permission for this node.",
-                                "execute(...) exception without permission for this node.")
-                        );
-                    }
-                });
-    }
-
-    /**
-     * 自定义的文件写入执行器
-     *
-     * @param filePart   文件写入对象
-     * @param properties 上传配置对象
-     */
-    private record CustomFileWriteActuator(
-            FilePart filePart,
-            Properties.Upload properties
-    ) implements FileWriteActuator {
-
-        @Override
-        public String type() {
-            return properties.getType();
+        if (voucher == null) {
+            return Mono.error(new ParameterException(
+                    this.getClass(),
+                    "fun execute(SimpleUploadContext.Request request) => request parameter <voucher> exception",
+                    "request parameter <voucher> exception"
+            ));
         }
-
-        @Override
-        public String path() {
-            return properties.getPath();
+        if (multipartFile == null) {
+            return Mono.error(new ParameterException(
+                    this.getClass(),
+                    "fun execute(SimpleUploadContext.Request request) => request parameter <file> exception",
+                    "request parameter <file> exception"
+            ));
         }
-
-        @Override
-        public Mono<File> execute(File file) {
-            return filePart.transferTo(file).then(Mono.just(file));
+        if (multipartFile.getOriginalFilename() == null) {
+            return Mono.error(new ParameterException(
+                    this.getClass(),
+                    "fun execute(SimpleUploadContext.Request request) => request parameter <file/name> exception",
+                    "request parameter <file/name> exception"
+            ));
         }
-
+        final Properties.Upload uc = properties.getUploads().get(node);
+        final Map<String, Object> attributes = new HashMap<>(request.getOther());
+        if (uc == null) {
+            return Mono.error(new NodeException(
+                    this.getClass(),
+                    "fun execute(SimpleUploadContext.Request request) => request node mapper config does not exist exception",
+                    "request node mapper config does not exist exception"
+            ));
+        } else {
+            request.setFile(null);
+            attributes.putAll(uc.getOther());
+            final long fileLength = multipartFile.getSize();
+            final String fileName = FileUtil.name(multipartFile.getOriginalFilename());
+            final String fileSuffix = FileUtil.getSuffix(fileName);
+            final String fileContent = FileUtil.composeFile(fileName, fileSuffix);
+            if (fileLength > uc.getMax()) {
+                return Mono.error(new ParameterException(
+                        this.getClass(),
+                        "fun execute(SimpleUploadContext.Request request) => request parameter <file/size> exception",
+                        "request parameter <file/size> exception"
+                ));
+            } else {
+                final String fileRelativePath = FileUtil.composePath(folderStorageLocationPathService.execute(), fileContent);
+                final String fileAbsolutePath = FileUtil.composePath(uc.getPath(), fileRelativePath);
+                if (fileRelativePath == null || fileAbsolutePath == null) {
+                    return Mono.error(new ParameterException(
+                            this.getClass(),
+                            "fun execute(SimpleUploadContext.Request request) => request parameter <file/path> exception",
+                            "request parameter <file/path> exception"
+                    ));
+                } else {
+                    final UploadLogModel model = new UploadLogModel();
+                    model.setName(fileName);
+                    model.setSource(SOURCE);
+                    final String target = FileUtil.convertAbsolutePath(fileAbsolutePath);
+                    final FileWriter fileWriter = fileWriterBuilder.execute(uc.getType(), attributes, multipartFile, target);
+                    return filePermissionService
+                            .execute(FilePermissionType.UPLOAD, voucher)
+                            .flatMap(b -> {
+                                if (b) {
+                                    return repository.create(model)
+                                            .flatMap(m -> fileWriter.execute().then(Mono.just(m)))
+                                            .flatMap(m -> repository.closeLock(m.getId()))
+                                            .map(m -> CopyUtil.run(m, SimpleUploadContext.Dto.class));
+                                } else {
+                                    return Mono.error(new NodePermissionException(
+                                            this.getClass(),
+                                            "fun execute(SimpleUploadContext.Request request) => request node file operation permission exception",
+                                            "request node file operation permission exception")
+                                    );
+                                }
+                            });
+                }
+            }
+        }
     }
 
 }

@@ -1,67 +1,48 @@
 package club.p6e.coat.resource.context;
 
-import lombok.Getter;
+import lombok.Data;
+import lombok.experimental.Accessors;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 下载文件上下文对象
+ * Download Context
  *
  * @author lidashuang
  * @version 1.0
  */
-@Getter
-public class DownloadContext extends HashMap<String, Object> implements Serializable {
+public class DownloadContext implements Serializable {
 
     /**
-     * 下载的文件节点
+     * Download Context Request
      */
-    private String node;
+    @Data
+    @Accessors(chain = true)
+    public static class Request implements Serializable {
 
-    /**
-     * 下载的文件路径
-     */
-    private String path;
+        /**
+         * Node
+         */
+        private String node;
 
-    /**
-     * 无参数构造
-     */
-    public DownloadContext() {
-    }
+        /**
+         * Path
+         */
+        private String path;
 
-    /**
-     * 构造函数初始化
-     *
-     * @param map 初始化对象
-     */
-    public DownloadContext(Map<String, Object> map) {
-        this.putAll(map);
-        if (map.get("node") != null && map.get("node") instanceof final String content) {
-            this.setNode(content);
-        }
-        if (map.get("path") != null && map.get("path") instanceof final String content) {
-            this.setPath(content);
-        }
-    }
+        /**
+         * Voucher
+         */
+        private String voucher;
 
-    public void setNode(String node) {
-        this.node = node;
-        if (node == null) {
-            remove("node");
-        } else {
-            this.put("node", node);
-        }
-    }
+        /**
+         * Other
+         */
+        private Map<String, Object> other = new HashMap<>();
 
-    public void setPath(String path) {
-        this.path = path;
-        if (path == null) {
-            remove("path");
-        } else {
-            this.put("path", path);
-        }
     }
 
 }

@@ -3,11 +3,11 @@ package club.p6e.coat.resource.service.impl;
 import club.p6e.coat.common.error.FileException;
 import club.p6e.coat.common.error.ParameterException;
 import club.p6e.coat.common.error.ResourceException;
-import club.p6e.coat.common.error.ResourceNodeException;
 import club.p6e.coat.common.utils.CopyUtil;
 import club.p6e.coat.common.utils.SpringUtil;
 import club.p6e.coat.resource.*;
 import club.p6e.coat.resource.context.SliceUploadContext;
+import club.p6e.coat.resource.error.NodeException;
 import club.p6e.coat.resource.model.UploadChunkLogModel;
 import club.p6e.coat.resource.model.UploadLogModel;
 import club.p6e.coat.resource.repository.UploadChunkRepository;
@@ -34,6 +34,8 @@ import java.util.Map;
 @Component
 @ConditionalOnMissingBean(SliceUploadService.class)
 public class SliceUploadServiceImpl implements SliceUploadService {
+
+    private static final String SOURCE = "SLICE_UPLOAD";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SliceUploadServiceImpl.class);
     /**
@@ -88,13 +90,12 @@ public class SliceUploadServiceImpl implements SliceUploadService {
         if (name == null) {
             return Mono.error(new ParameterException(
                     this.getClass(),
-                    "fun execute(SliceUploadContext.OpenRequest context) => " +
-                            "execute(...) request parameter <name> exception.",
-                    "request parameter <name> exception.")
+                    "fun execute(SliceUploadContext.Open.Request request) => request parameter <name> exception",
+                    "request parameter <name> exception")
             );
         } else {
             model.setName(name);
-            model.setSource("SLICE_UPLOAD");
+            model.setSource(SOURCE);
             return uploadRepository.create(model).map(m -> CopyUtil.run(m, SliceUploadContext.Open.Dto.class));
         }
     }
@@ -181,28 +182,36 @@ public class SliceUploadServiceImpl implements SliceUploadService {
     @Override
     public Mono<SliceUploadContext.Close.Dto> close(SliceUploadContext.Close.Request request) {
         final Integer id = request.getId();
+        final String node = request.getNode();
         final String voucher = request.getVoucher();
-        final Properties.Upload uc = properties.getUploads().get(request.getNode());
-        if (uc == null) {
-            return Mono.error(new ResourceNodeException(
+        if (id == null) {
+            return Mono.error(new ParameterException(
                     this.getClass(),
-                    "fun execute(CloseUploadContext context) => request parameter <node> exception",
-                    "request parameter <node> exception")
+                    "fun execute(SliceUploadContext.Close.Request request) => request parameter <id> exception",
+                    "request parameter <id> exception")
             );
         }
-        if (id == null) {
-            return Mono.error(new ResourceNodeException(
+        if (node == null) {
+            return Mono.error(new ParameterException(
                     this.getClass(),
-                    "fun execute(CloseUploadContext context) => request parameter <id> exception",
+                    "fun execute(SliceUploadContext.Close.Request request) => request parameter <node> exception",
                     "request parameter <id> exception")
             );
         }
         if (voucher == null) {
-            return Mono.error(new ResourceNodeException(
+            return Mono.error(new ParameterException(
                     this.getClass(),
-                    "fun execute(CloseUploadContext context) => request parameter <voucher> exception",
+                    "fun execute(SliceUploadContext.Close.Request request) => request parameter <voucher> exception",
                     "request parameter <voucher> exception")
             );
+        }
+        final Properties.Upload uc = properties.getUploads().get(node);
+        if (uc == null) {
+            return Mono.error(new NodeException(
+                    this.getClass(),
+                    "fun execute(SliceUploadContext.Close.Request request) => request node mapper config does not exist exception",
+                    "request node mapper config does not exist exception"
+            ));
         }
         return filePermissionService
                 .execute(FilePermissionType.UPLOAD, voucher)
@@ -212,17 +221,10 @@ public class SliceUploadServiceImpl implements SliceUploadService {
                                 .closeLock(id)
                                 .flatMap(l -> uploadRepository.findById(id))
                                 .flatMap(m -> {
-                                    final Object operator = context.get("$operator");
-                                    if (operator instanceof final String content) {
-                                        m.setModifier(content);
-                                    }
-                                    LOGGER.info("operator >>> {}", operator);
-                                    // 文件夹绝对路径
                                     final String fileName = m.getName();
                                     final String fileSuffix = FileUtil.getSuffix(fileName);
                                     final String absolutePath = FileUtil.convertAbsolutePath(
                                             FileUtil.composePath(uc.getPath(), String.valueOf(m.getId())));
-                                    LOGGER.info("absolutePath >>> {}", absolutePath);
                                     final File[] files = FileUtil.readFolder(absolutePath);
                                     for (int i = 0; i < files.length; i++) {
                                         for (int j = i; j < files.length; j++) {
@@ -237,7 +239,7 @@ public class SliceUploadServiceImpl implements SliceUploadService {
                                             }
                                         }
                                     }
-                                    return Mono.just(FileReaderBuilder.of(files).fileName(fileName).fileSuffix(fileSuffix).build())
+                                    return Mono.just(DiskFileReaderBuilder.of(files).fileName(fileName).fileSuffix(fileSuffix).build())
                                             .flatMap(fr -> {
                                                 uploadRepository.update(new UploadLogModel()
                                                         .setId(m.getId())
@@ -251,7 +253,7 @@ public class SliceUploadServiceImpl implements SliceUploadService {
                     } else {
                         return Mono.error(new ResourceException(
                                 this.getClass(),
-                                "fun execute(CloseUploadContext context). ==> " +
+                                "fun execute(SliceUploadContext.Close.Request request). ==> " +
                                         "execute(...) exception without permission for this node.",
                                 "execute(...) exception without permission for this node.")
                         );

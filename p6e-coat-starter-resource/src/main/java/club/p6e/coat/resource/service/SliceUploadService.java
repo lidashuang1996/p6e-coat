@@ -14,26 +14,26 @@ import java.util.Map;
 public interface SliceUploadService {
 
     /**
-     * 执行分片上传操作
+     * Open Slice Upload
      *
-     * @param context 分片上传上下文对象
-     * @return 结果对象
+     * @param request Slice Upload Context Open Request Object
+     * @return Slice Upload Context Open Dto Object
      */
     Mono<SliceUploadContext.Open.Dto> open(SliceUploadContext.Open.Request request);
 
     /**
      * 执行分片上传操作
      *
-     * @param context 分片上传上下文对象
+     * @param request Slice Upload Context Open Request Object
      * @return 结果对象
      */
     Mono<Map<String, Object>> chunk(SliceUploadContext.OpenRequest request);
 
     /**
-     * 执行分片上传操作
+     * Close Slice Upload
      *
-     * @param context 分片上传上下文对象
-     * @return 结果对象
+     * @param request Slice Upload Context Close Request Object
+     * @return Slice Upload Context Close Dto Object
      */
     Mono<SliceUploadContext.Close.Dto> close(SliceUploadContext.Close.Request request);
 

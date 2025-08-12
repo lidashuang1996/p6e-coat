@@ -1,67 +1,71 @@
 package club.p6e.coat.resource.context;
 
-import lombok.Getter;
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 资源查看上下文对象
+ * Resource Context
  *
  * @author lidashuang
  * @version 1.0
  */
-@Getter
-public class ResourceContext extends HashMap<String, Object> implements Serializable {
+public class ResourceContext implements Serializable {
 
     /**
-     * 下载的文件节点
+     * Download Context Request
      */
-    private String node;
+    @Data
+    @Accessors(chain = true)
+    public static class Request implements Serializable {
 
-    /**
-     * 下载的文件路径
-     */
-    private String path;
+        /**
+         * Node
+         */
+        private String node;
 
-    /**
-     * 无参数构造
-     */
-    public ResourceContext() {
+        /**
+         * Path
+         */
+        private String path;
+
+        /**
+         * Voucher
+         */
+        private String voucher;
+
+        /**
+         * Other
+         */
+        private Map<String, Object> other = new HashMap<>();
+
     }
 
     /**
-     * 构造函数初始化
-     *
-     * @param map 初始化对象
+     * Download Context Request
      */
-    public ResourceContext(Map<String, Object> map) {
-        this.putAll(map);
-        if (map.get("node") != null && map.get("node") instanceof final String content) {
-            this.setNode(content);
-        }
-        if (map.get("path") != null && map.get("path") instanceof final String content) {
-            this.setPath(content);
-        }
-    }
+    @Data
+    @Accessors(chain = true)
+    public static class Dto implements Serializable {
 
-    public void setNode(String node) {
-        this.node = node;
-        if (node == null) {
-            remove("node");
-        } else {
-            this.put("node", node);
-        }
-    }
+        /**
+         * Node
+         */
+        private String node;
 
-    public void setPath(String path) {
-        this.path = path;
-        if (path == null) {
-            remove("path");
-        } else {
-            this.put("path", path);
-        }
+        /**
+         * Path
+         */
+        private String path;
+
+        /**
+         * Voucher
+         */
+        private String voucher;
+
     }
 
 }
