@@ -4,10 +4,8 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.springframework.http.codec.multipart.FilePart;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,7 +39,7 @@ public class SimpleUploadContext extends HashMap<String, Object> implements Seri
         /**
          * File
          */
-        private MultipartFile file;
+        private FilePart file;
 
         /**
          * Other
@@ -51,15 +49,59 @@ public class SimpleUploadContext extends HashMap<String, Object> implements Seri
     }
 
     /**
-     * Simple Upload Context Request
+     * Simple Upload Context Vo
+     */
+    @Data
+    @Accessors(chain = true)
+    public static class Vo implements Serializable {
+
+        /**
+         * Size
+         */
+        private Long size;
+
+        /**
+         * Name
+         */
+        private String name;
+
+        /**
+         * Storage Type
+         */
+        private String storageType;
+
+        /**
+         * Storage Location
+         */
+        private String storageLocation;
+
+    }
+
+    /**
+     * Simple Upload Context Dto
      */
     @Data
     @Accessors(chain = true)
     public static class Dto implements Serializable {
 
+        /**
+         * Size
+         */
         private Long size;
+
+        /**
+         * Name
+         */
         private String name;
+
+        /**
+         * Storage Type
+         */
         private String storageType;
+
+        /**
+         * Storage Location
+         */
         private String storageLocation;
 
     }

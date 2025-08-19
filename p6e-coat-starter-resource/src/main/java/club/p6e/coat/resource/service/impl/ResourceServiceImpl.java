@@ -40,6 +40,11 @@ public class ResourceServiceImpl implements ResourceService {
     private final FileReaderBuilder fileReaderBuilder;
 
     /**
+     * File Attribute Builder Object
+     */
+    private final FileAttributeBuilder fileAttributeBuilder;
+
+    /**
      * File Permission Service Object
      */
     private final FilePermissionService filePermissionService;
@@ -49,11 +54,13 @@ public class ResourceServiceImpl implements ResourceService {
      *
      * @param properties            Properties Object
      * @param fileReaderBuilder     File Reader Builder Object
+     * @param fileAttributeBuilder  File Attribute Builder Object
      * @param filePermissionService File Permission Service Object
      */
     public ResourceServiceImpl(
             Properties properties,
             FileReaderBuilder fileReaderBuilder,
+            FileAttributeBuilder fileAttributeBuilder,
             FilePermissionService filePermissionService
     ) {
         this.properties = properties;
@@ -111,7 +118,7 @@ public class ResourceServiceImpl implements ResourceService {
                         .execute(FilePermissionType.RESOURCE, voucher)
                         .flatMap(b -> {
                             if (b) {
-                                return Mono.just(fileReaderBuilder.of(file).fileMediaType(mt).attributes(attributes).build());
+                                return Mono.just(fileReaderBuilder.of(rc.getType(), attributes).build(file, fileAttributeBuilder.build(file, mt)));
                             } else {
                                 return Mono.error(new NodePermissionException(
                                         this.getClass(),

@@ -1,7 +1,7 @@
 package club.p6e.coat.resource.context;
 
 import lombok.Data;
-import lombok.Getter;
+import lombok.experimental.Accessors;
 import org.springframework.http.codec.multipart.FilePart;
 
 import java.io.Serializable;
@@ -9,190 +9,197 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 分片上传上下文对象
+ * Slice Upload Context
  *
  * @author lidashuang
  * @version 1.0
  */
-@Getter
 public class SliceUploadContext extends HashMap<String, Object> implements Serializable {
 
     /**
-     * 上传编号
+     * Slice Upload Context Open
      */
-    private Integer id;
+    public static class Open implements Serializable {
 
-    /**
-     * 分片索引
-     */
-    private Integer index;
-
-    /**
-     * 分片签名
-     */
-    private String signature;
-
-    /**
-     * 文件对象
-     */
-    private FilePart filePart;
-
-    /**
-     * 无参数构造
-     */
-    public SliceUploadContext() {
-    }
-
-    /**
-     * 构造函数初始化
-     *
-     * @param map 初始化对象
-     */
-    public SliceUploadContext(Map<String, Object> map) {
-        this.putAll(map);
-        if (map.get("id") != null && map.get("id") instanceof final Integer content) {
-            this.setId(content);
-        }
-        if (map.get("index") != null && map.get("index") instanceof final Integer content) {
-            this.setIndex(content);
-        }
-        if (map.get("filePart") != null && map.get("filePart") instanceof final FilePart fp) {
-            this.setFilePart(fp);
-        }
-        if (map.get("signature") != null && map.get("signature") instanceof final String content) {
-            this.setSignature(content);
-        }
-    }
-
-    public SliceUploadContext setId(Integer id) {
-        this.id = id;
-        if (id == null) {
-            remove("id");
-        } else {
-            this.put("id", id);
-        }
-        return this;
-    }
-
-    public void setIndex(Integer index) {
-        this.index = index;
-        if (index == null) {
-            remove("index");
-        } else {
-            this.put("index", index);
-        }
-    }
-
-    public void setSignature(String signature) {
-        this.signature = signature;
-        if (signature == null) {
-            remove("signature");
-        } else {
-            this.put("signature", signature);
-        }
-    }
-
-    public void setFilePart(FilePart filePart) {
-        this.filePart = filePart;
-        if (filePart == null) {
-            remove("filePart");
-        } else {
-            this.put("filePart", filePart);
-        }
-    }
-
-
-
-    public static class Open {
-        @Getter
+        /**
+         * Slice Upload Context Open Request
+         */
         @Data
-        public static class Request extends HashMap<String, Object> implements Serializable {
+        @Accessors(chain = true)
+        public static class Request implements Serializable {
 
             /**
-             * 上传文件名称
+             * Name
              */
             private String name;
-            private String operator;
-            /**
-             * 无参数构造
-             */
-            public OpenUploadContext() {
-            }
 
             /**
-             * 构造函数初始化
-             *
-             * @param map 初始化对象
+             * Voucher
              */
-            public OpenUploadContext(Map<String, Object> map) {
-                this.putAll(map);
-                if (map.get("name") != null && map.get("name") instanceof final String content) {
-                    this.setName(content);
-                }
-            }
-
-            public void setName(String name) {
-                this.name = name;
-                if (name == null) {
-                    remove("name");
-                } else {
-                    this.put("name", name);
-                }
-            }
-
-        }
-
-        @Data
-        public static class Dto implements Serializable {
-        }
-    }
-
-
-    public static class Close {
-        @Getter
-        @Data
-        public static class Request extends HashMap<String, Object> implements Serializable {
-
-            /**
-             * 上传文件名称
-             */
-            private String name;
-            private String node;
-            private String operator;
             private String voucher;
-            private Integer id;
-            /**
-             * 无参数构造
-             */
-            public OpenUploadContext() {
-            }
 
             /**
-             * 构造函数初始化
-             *
-             * @param map 初始化对象
+             * Other
              */
-            public OpenUploadContext(Map<String, Object> map) {
-                this.putAll(map);
-                if (map.get("name") != null && map.get("name") instanceof final String content) {
-                    this.setName(content);
-                }
-            }
-
-            public void setName(String name) {
-                this.name = name;
-                if (name == null) {
-                    remove("name");
-                } else {
-                    this.put("name", name);
-                }
-            }
+            private Map<String, Object> other = new HashMap<>();
 
         }
 
+        /**
+         * Slice Upload Context Open Vo
+         */
+        @Data
+        public static class Vo implements Serializable {
+
+            /**
+             * ID
+             */
+            private Integer id;
+
+            /**
+             * Name
+             */
+            private String name;
+
+        }
+
+        /**
+         * Slice Upload Context Open Dto
+         */
         @Data
         public static class Dto implements Serializable {
+
+            /**
+             * ID
+             */
+            private Integer id;
+
+            /**
+             * Name
+             */
+            private String name;
+
         }
+
+    }
+
+    /**
+     * Slice Upload Context Close
+     */
+    public static class Close implements Serializable {
+
+        /**
+         * Slice Upload Context Close Request
+         */
+        @Data
+        @Accessors(chain = true)
+        public static class Request implements Serializable {
+
+            /**
+             * ID
+             */
+            private Integer id;
+
+            /**
+             * Node
+             */
+            private String node;
+
+            /**
+             * Voucher
+             */
+            private String voucher;
+
+            /**
+             * Other
+             */
+            private Map<String, Object> other = new HashMap<>();
+
+        }
+
+        /**
+         * Slice Upload Context Close Vo
+         */
+        @Data
+        public static class Vo implements Serializable {
+            private Integer id;
+        }
+
+        /**
+         * Slice Upload Context Close Dto
+         */
+        @Data
+        public static class Dto implements Serializable {
+            private Integer id;
+        }
+
+    }
+
+    /**
+     * Slice Upload Context Chunk
+     */
+    public static class Chunk implements Serializable {
+
+        /**
+         * Slice Upload Context Chunk Request
+         */
+        @Data
+        @Accessors(chain = true)
+        public static class Request implements Serializable {
+
+            /**
+             * ID
+             */
+            private Integer id;
+
+            /**
+             * Node
+             */
+            private String node;
+
+            /**
+             * Voucher
+             */
+            private String voucher;
+
+            /**
+             * Index
+             */
+            private Integer index;
+
+            /**
+             * Signature
+             */
+            private String signature;
+
+            /**
+             * File Part
+             */
+            private FilePart filePart;
+
+            /**
+             * Other
+             */
+            private Map<String, Object> other = new HashMap<>();
+
+        }
+
+        /**
+         * Slice Upload Context Chunk Vo
+         */
+        @Data
+        public static class Vo implements Serializable {
+            private Integer id;
+        }
+
+        /**
+         * Slice Upload Context Chunk Dto
+         */
+        @Data
+        public static class Dto implements Serializable {
+            private Integer id;
+        }
+
     }
 
 }

@@ -44,29 +44,5 @@ public class ResourceContext implements Serializable {
 
     }
 
-    /**
-     * Download Context Request
-     */
-    @Data
-    @Accessors(chain = true)
-    public static class Dto implements Serializable {
-
-        /**
-         * Node
-         */
-        private String node;
-
-        /**
-         * Path
-         */
-        private String path;
-
-        /**
-         * Voucher
-         */
-        private String voucher;
-
-    }
-
 }
 

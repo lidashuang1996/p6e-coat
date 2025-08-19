@@ -239,7 +239,7 @@ public class SliceUploadServiceImpl implements SliceUploadService {
                                             }
                                         }
                                     }
-                                    return Mono.just(DiskFileReaderBuilder.of(files).fileName(fileName).fileSuffix(fileSuffix).build())
+                                    return Mono.just(SimpleFileReaderBuilder.of(files).fileName(fileName).fileSuffix(fileSuffix).build())
                                             .flatMap(fr -> {
                                                 uploadRepository.update(new UploadLogModel()
                                                         .setId(m.getId())

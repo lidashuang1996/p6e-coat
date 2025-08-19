@@ -383,7 +383,7 @@ public class UploadRepository {
      * @param id 模型 ID
      * @return Mono<UploadModel> 修改的数据条数
      */
-    public Mono<Long> closeLock(int id) {
+    public Mono<UploadLogModel> closeLock(int id) {
         return closeLock(id, 0);
     }
 

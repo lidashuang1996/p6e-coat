@@ -1,7 +1,6 @@
 package club.p6e.coat.resource.controller;
 
 import club.p6e.coat.resource.context.DownloadContext;
-import club.p6e.coat.resource.mapper.RequestParameterMapper;
 import club.p6e.coat.resource.service.DownloadService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,11 +34,8 @@ public class DownloadController extends BaseController {
     }
 
     @GetMapping
-    public Mono<ServerResponse> def(ServerRequest request) {
-        return RequestParameterMapper
-                .execute(request, DownloadContext.class)
-                .flatMap(service::execute)
-                .flatMap(fr -> getDownloadServerResponse(request, fr));
+    public Mono<ServerResponse> def(ServerRequest request, DownloadContext.Request dcr) {
+        return service.execute(dcr).flatMap(fr -> getDownloadServerResponse(request, fr));
     }
 
 }

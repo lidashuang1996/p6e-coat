@@ -11,8 +11,8 @@ import club.p6e.coat.resource.repository.UploadRepository;
 import club.p6e.coat.resource.service.SimpleUploadService;
 import club.p6e.coat.resource.utils.FileUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
 
 import java.io.File;
@@ -86,7 +86,7 @@ public class SimpleUploadServiceImpl implements SimpleUploadService {
     public Mono<SimpleUploadContext.Dto> execute(SimpleUploadContext.Request request) {
         final String node = request.getNode();
         final String voucher = request.getVoucher();
-        final MultipartFile multipartFile = request.getFile();
+        final FilePart filePart = request.getFile();
         if (node == null) {
             return Mono.error(new ParameterException(
                     this.getClass(),
@@ -101,18 +101,11 @@ public class SimpleUploadServiceImpl implements SimpleUploadService {
                     "request parameter <voucher> exception"
             ));
         }
-        if (multipartFile == null) {
+        if (filePart == null) {
             return Mono.error(new ParameterException(
                     this.getClass(),
                     "fun execute(SimpleUploadContext.Request request) => request parameter <file> exception",
                     "request parameter <file> exception"
-            ));
-        }
-        if (multipartFile.getOriginalFilename() == null) {
-            return Mono.error(new ParameterException(
-                    this.getClass(),
-                    "fun execute(SimpleUploadContext.Request request) => request parameter <file/name> exception",
-                    "request parameter <file/name> exception"
             ));
         }
         final Properties.Upload uc = properties.getUploads().get(node);
@@ -126,48 +119,62 @@ public class SimpleUploadServiceImpl implements SimpleUploadService {
         } else {
             request.setFile(null);
             attributes.putAll(uc.getOther());
-            final long fileLength = multipartFile.getSize();
-            final String fileName = FileUtil.name(multipartFile.getOriginalFilename());
+            final String fileName = FileUtil.name(filePart.filename());
             final String fileSuffix = FileUtil.getSuffix(fileName);
             final String fileContent = FileUtil.composeFile(fileName, fileSuffix);
-            if (fileLength > uc.getMax()) {
+//            if (fileLength > uc.getMax()) {
+//                return Mono.error(new ParameterException(
+//                        this.getClass(),
+//                        "fun execute(SimpleUploadContext.Request request) => request parameter <file/size> exception",
+//                        "request parameter <file/size> exception"
+//                ));
+            final String fileRelativePath = FileUtil.composePath(folderStorageLocationPathService.execute(), fileContent);
+            final String fileAbsolutePath = FileUtil.composePath(uc.getPath(), fileRelativePath);
+            final UploadLogModel model = new UploadLogModel();
+            model.setSize(0L);
+            model.setSource(SOURCE);
+            model.setName(fileName);
+            model.setStorageType(uc.getType());
+            model.setStorageLocation(fileRelativePath);
+            final String targetPath = FileUtil.convertAbsolutePath(fileAbsolutePath);
+            if (targetPath == null) {
                 return Mono.error(new ParameterException(
                         this.getClass(),
-                        "fun execute(SimpleUploadContext.Request request) => request parameter <file/size> exception",
-                        "request parameter <file/size> exception"
+                        "fun execute(SimpleUploadContext.Request request) => request parameter <file/path> exception",
+                        "request parameter <file/path> exception"
                 ));
             } else {
-                final String fileRelativePath = FileUtil.composePath(folderStorageLocationPathService.execute(), fileContent);
-                final String fileAbsolutePath = FileUtil.composePath(uc.getPath(), fileRelativePath);
-                if (fileRelativePath == null || fileAbsolutePath == null) {
-                    return Mono.error(new ParameterException(
-                            this.getClass(),
-                            "fun execute(SimpleUploadContext.Request request) => request parameter <file/path> exception",
-                            "request parameter <file/path> exception"
-                    ));
-                } else {
-                    final UploadLogModel model = new UploadLogModel();
-                    model.setName(fileName);
-                    model.setSource(SOURCE);
-                    final String target = FileUtil.convertAbsolutePath(fileAbsolutePath);
-                    final FileWriter fileWriter = fileWriterBuilder.execute(uc.getType(), attributes, multipartFile, target);
-                    return filePermissionService
-                            .execute(FilePermissionType.UPLOAD, voucher)
-                            .flatMap(b -> {
-                                if (b) {
-                                    return repository.create(model)
-                                            .flatMap(m -> fileWriter.execute().then(Mono.just(m)))
-                                            .flatMap(m -> repository.closeLock(m.getId()))
-                                            .map(m -> CopyUtil.run(m, SimpleUploadContext.Dto.class));
-                                } else {
-                                    return Mono.error(new NodePermissionException(
-                                            this.getClass(),
-                                            "fun execute(SimpleUploadContext.Request request) => request node file operation permission exception",
-                                            "request node file operation permission exception")
-                                    );
-                                }
-                            });
-                }
+                final File targetFile = new File(targetPath);
+                final FileWriter fileWriter = fileWriterBuilder.of(uc.getType(), attributes)
+                        .build(Mono.just(targetFile).flatMap(f -> filePart.transferTo(f).then(Mono.just(f))));
+                return filePermissionService
+                        .execute(FilePermissionType.UPLOAD, voucher)
+                        .flatMap(b -> {
+                            if (b) {
+                                return repository.create(model)
+                                        .flatMap(m -> fileWriter.execute().then(Mono.just(m)))
+                                        .flatMap(m -> repository.closeLock(m.getId()))
+                                        .flatMap(m -> {
+                                            if (targetFile.length() > uc.getMax()) {
+                                                FileUtil.deleteFile(targetFile);
+                                                return Mono.error(new ParameterException(
+                                                        this.getClass(),
+                                                        "fun execute(SimpleUploadContext.Request request) => request parameter <file/size> exception",
+                                                        "request parameter <file/size> exception"
+                                                ));
+                                            } else {
+                                                return repository.update(m.setSize(targetFile.length()));
+                                            }
+                                        })
+                                        .map(m -> CopyUtil.run(m, SimpleUploadContext.Dto.class));
+                            } else {
+                                return Mono.error(new NodePermissionException(
+                                        this.getClass(),
+                                        "fun execute(SimpleUploadContext.Request request) => request node file operation permission exception",
+                                        "request node file operation permission exception")
+                                );
+                            }
+                        });
             }
         }
     }

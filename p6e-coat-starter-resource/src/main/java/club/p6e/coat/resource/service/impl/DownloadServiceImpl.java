@@ -8,7 +8,6 @@ import club.p6e.coat.resource.error.NodePermissionException;
 import club.p6e.coat.resource.service.DownloadService;
 import club.p6e.coat.resource.utils.FileUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -37,6 +36,11 @@ public class DownloadServiceImpl implements DownloadService {
     private final FileReaderBuilder fileReaderBuilder;
 
     /**
+     * File Attribute Builder Object
+     */
+    private final FileAttributeBuilder fileAttributeBuilder;
+
+    /**
      * File Permission Service Object
      */
     private final FilePermissionService filePermissionService;
@@ -46,15 +50,18 @@ public class DownloadServiceImpl implements DownloadService {
      *
      * @param properties            Properties Object
      * @param fileReaderBuilder     File Reader Builder Object
+     * @param fileAttributeBuilder  File Attribute Builder Object
      * @param filePermissionService File Permission Service Object
      */
     public DownloadServiceImpl(
             Properties properties,
             FileReaderBuilder fileReaderBuilder,
+            FileAttributeBuilder fileAttributeBuilder,
             FilePermissionService filePermissionService
     ) {
         this.properties = properties;
         this.fileReaderBuilder = fileReaderBuilder;
+        this.fileAttributeBuilder = fileAttributeBuilder;
         this.filePermissionService = filePermissionService;
     }
 
@@ -99,13 +106,13 @@ public class DownloadServiceImpl implements DownloadService {
                     .execute(FilePermissionType.DOWNLOAD, voucher)
                     .flatMap(b -> {
                         if (b) {
-                            return Mono.just(fileReaderBuilder.of(file).fileMediaType(MediaType.APPLICATION_OCTET_STREAM).attributes(attributes).build());
+                            return Mono.just(fileReaderBuilder.build(dc.getType(), attributes,file, fileAttributeBuilder.build(file)));
                         } else {
                             return Mono.error(new NodePermissionException(
                                     this.getClass(),
                                     "fun execute(DownloadContext.Request request) => request node file operation permission exception",
-                                    "request node file operation permission exception")
-                            );
+                                    "request node file operation permission exception"
+                            ));
                         }
                     });
         }

@@ -2,21 +2,21 @@ package club.p6e.coat.resource;
 
 import reactor.core.publisher.Mono;
 
-import java.util.Map;
-
 /**
+ * File Permission Service
+ *
  * @author lidashuang
  * @version 1.0
  */
 public interface FilePermissionService {
 
     /**
-     * 权限验证的执行
+     * Execute Permission Type Service
      *
-     * @param type    权限类型
-     * @param context 权限参数
-     * @return 是否具备权限
+     * @param type    File Permission Type Object
+     * @param voucher Voucher Content Object
+     * @return Permission Result Object
      */
-    public Mono<Boolean> execute(FilePermissionType type, String voucher);
+    Mono<Boolean> execute(FilePermissionType type, String voucher);
 
 }

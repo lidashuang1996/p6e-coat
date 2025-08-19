@@ -3,8 +3,6 @@ package club.p6e.coat.resource.service;
 import club.p6e.coat.resource.context.SliceUploadContext;
 import reactor.core.publisher.Mono;
 
-import java.util.Map;
-
 /**
  * Slice Upload Service
  *
@@ -22,12 +20,12 @@ public interface SliceUploadService {
     Mono<SliceUploadContext.Open.Dto> open(SliceUploadContext.Open.Request request);
 
     /**
-     * 执行分片上传操作
+     * Chunk Upload
      *
-     * @param request Slice Upload Context Open Request Object
-     * @return 结果对象
+     * @param request Slice Upload Context Chunk Request Object
+     * @return Slice Upload Context Chunk Dto Object
      */
-    Mono<Map<String, Object>> chunk(SliceUploadContext.OpenRequest request);
+    Mono<SliceUploadContext.Chunk.Dto> chunk(SliceUploadContext.Chunk.Request request);
 
     /**
      * Close Slice Upload

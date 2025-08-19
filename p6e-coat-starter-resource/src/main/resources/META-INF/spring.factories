@@ -35,8 +35,9 @@ club.p6e.coat.resource.service.impl.SimpleUploadServiceImpl,\
 club.p6e.coat.resource.service.impl.SliceUploadServiceImpl,\
 club.p6e.coat.resource.task.FileSliceCleanTask,\
 club.p6e.coat.resource.task.FileSliceCleanTaskStrategyServiceImpl,\
-  club.p6e.coat.resource.FilePermissionServiceImpl,\
+club.p6e.coat.resource.FilePermissionServiceImpl,\
 club.p6e.coat.resource.FileReadWriteServiceImpl,\
 club.p6e.coat.resource.FileSignatureServiceImpl,\
 club.p6e.coat.resource.FolderStorageLocationPathServiceImpl,\
-club.p6e.coat.resource.Properties
+club.p6e.coat.resource.Properties,\
+club.p6e.coat.resource.SimpleFileAttributeBuilder
