@@ -1,12 +1,12 @@
 package club.p6e.coat.auth.web.reactive.service;
 
-import club.p6e.coat.auth.web.reactive.ServerHttpRequest;
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.web.reactive.cache.VerificationCodeLoginCache;
 import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.web.reactive.repository.UserRepository;
+import club.p6e.coat.common.utils.TransformationUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -63,9 +63,8 @@ public class VerificationCodeLoginServiceImpl implements VerificationCodeLoginSe
 
     @Override
     public Mono<User> execute(ServerWebExchange exchange, LoginContext.VerificationCode.Request param) {
-        final ServerHttpRequest request = (ServerHttpRequest) exchange.getRequest();
         final String code = param.getCode();
-        final String account = request.getAccount();
+        final String account = TransformationUtil.objectToString(exchange.getRequest().getAttributes().get("xxx"));
         System.out.println("code >>> {}" + code);
         System.out.println("account >>> {}" + account);
         return cache

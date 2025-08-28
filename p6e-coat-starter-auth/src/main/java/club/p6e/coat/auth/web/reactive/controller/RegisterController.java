@@ -1,8 +1,8 @@
 package club.p6e.coat.auth.web.reactive.controller;
 
-import club.p6e.coat.auth.error.GlobalExceptionContext;
-import club.p6e.coat.auth.web.reactive.ServerHttpRequestParameterValidator;
 import club.p6e.coat.auth.context.RegisterContext;
+import club.p6e.coat.auth.error.GlobalExceptionContext;
+import club.p6e.coat.auth.web.reactive.RequestParameterValidator;
 import club.p6e.coat.auth.web.reactive.service.RegisterService;
 import club.p6e.coat.common.utils.SpringUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -34,19 +34,13 @@ public class RegisterController {
      */
     private Mono<RegisterContext.Request> validate(
             ServerWebExchange exchange, RegisterContext.Request request) {
-        return ServerHttpRequestParameterValidator.execute(exchange, request)
-                .flatMap(o -> {
-                    if (o instanceof RegisterContext.Request oRequest) {
-                        return Mono.just(oRequest);
-                    } else {
-                        return Mono.error(GlobalExceptionContext.executeParameterException(
-                                this.getClass(),
-                                "fun Mono<RegisterContext.Request> validate(" +
-                                        "ServerWebExchange exchange, RegisterContext.Request request).",
-                                "request parameter validation exception."
-                        ));
-                    }
-                });
+        return RequestParameterValidator.run(exchange, request)
+                .switchIfEmpty(Mono.error(GlobalExceptionContext.executeParameterException(
+                        this.getClass(),
+                        "fun Mono<RegisterContext.Request> validate(" +
+                                "ServerWebExchange exchange, RegisterContext.Request request).",
+                        "request parameter validation exception."
+                )));
     }
 
     @PostMapping("/register")

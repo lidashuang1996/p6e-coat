@@ -2,7 +2,6 @@ package club.p6e.coat.auth.web.reactive.service;
 
 import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.event.PushMessageEvent;
-import club.p6e.coat.auth.web.reactive.ServerHttpRequest;
 import club.p6e.coat.auth.web.reactive.cache.VerificationCodeForgotPasswordCache;
 import club.p6e.coat.auth.context.ForgotPasswordContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
@@ -93,9 +92,9 @@ public class VerificationCodeForgotPasswordAcquisitionServiceImpl implements Ver
         final String code = GeneratorUtil.random();
         final boolean pb = VerificationUtil.validationPhone(account);
         final boolean mb = VerificationUtil.validationMailbox(account);
-        final ServerHttpRequest request = (ServerHttpRequest) exchange.getRequest();
+//        final RequestVoucher request = (RequestVoucher) exchange.getRequest();
         if (pb || mb) {
-            request.setAccount(account);
+//            request.setAccount(account);
             return cache
                     .set(account, code)
                     .switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(

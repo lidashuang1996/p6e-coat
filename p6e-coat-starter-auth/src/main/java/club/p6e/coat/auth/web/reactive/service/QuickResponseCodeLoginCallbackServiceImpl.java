@@ -1,11 +1,11 @@
 package club.p6e.coat.auth.web.reactive.service;
 
-import club.p6e.coat.auth.web.reactive.ServerHttpRequest;
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.web.reactive.cache.QuickResponseCodeLoginCache;
 import club.p6e.coat.auth.web.reactive.repository.UserRepository;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
+import club.p6e.coat.common.utils.TransformationUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -47,8 +47,7 @@ public class QuickResponseCodeLoginCallbackServiceImpl implements QuickResponseC
 
     @Override
     public Mono<User> execute(ServerWebExchange exchange, LoginContext.QuickResponseCodeCallback.Request param) {
-        final ServerHttpRequest request = (ServerHttpRequest) exchange.getRequest();
-        final String mark = request.getQuickResponseCodeLoginMark();
+        final String mark = TransformationUtil.objectToString(exchange.getRequest().getAttributes().get("xxx"));
         return cache
                 .get(mark)
                 .switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(

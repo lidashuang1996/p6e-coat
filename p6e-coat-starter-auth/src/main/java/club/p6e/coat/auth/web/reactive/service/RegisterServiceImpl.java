@@ -5,9 +5,9 @@ import club.p6e.coat.auth.context.RegisterContext;
 import club.p6e.coat.auth.password.PasswordEncryptor;
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.web.reactive.repository.UserRepository;
-import club.p6e.coat.auth.web.reactive.ServerHttpRequest;
 import club.p6e.coat.common.utils.SpringUtil;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
+import club.p6e.coat.common.utils.TransformationUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.reactive.TransactionalOperator;
@@ -53,8 +53,7 @@ public class RegisterServiceImpl implements RegisterService {
 
     @Override
     public Mono<RegisterContext.Dto> execute(ServerWebExchange exchange, RegisterContext.Request param) {
-        final ServerHttpRequest request = (ServerHttpRequest) exchange.getRequest();
-        final String account = request.getAccount();
+        final String account = TransformationUtil.objectToString(exchange.getRequest().getAttributes().get("xxx"));
         return (switch (Properties.getInstance().getMode()) {
             case PHONE -> executePhoneMode(account, param);
             case MAILBOX -> executeMailboxMode(account, param);

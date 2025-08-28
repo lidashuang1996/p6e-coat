@@ -2,7 +2,7 @@ package club.p6e.coat.auth.web.reactive.controller;
 
 import club.p6e.coat.auth.context.ForgotPasswordContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
-import club.p6e.coat.auth.web.reactive.ServerHttpRequestParameterValidator;
+import club.p6e.coat.auth.web.reactive.RequestParameterValidator;
 import club.p6e.coat.auth.web.reactive.service.VerificationCodeForgotPasswordAcquisitionService;
 import club.p6e.coat.common.utils.SpringUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -33,19 +33,13 @@ public class VerificationCodeForgotPasswordAcquisitionController {
      */
     private Mono<ForgotPasswordContext.VerificationCodeAcquisition.Request> validate(
             ServerWebExchange exchange, ForgotPasswordContext.VerificationCodeAcquisition.Request request) {
-        return ServerHttpRequestParameterValidator.execute(exchange, request)
-                .flatMap(o -> {
-                    if (o instanceof ForgotPasswordContext.VerificationCodeAcquisition.Request oRequest) {
-                        return Mono.just(oRequest);
-                    } else {
-                        return Mono.error(GlobalExceptionContext.executeParameterException(
-                                this.getClass(),
-                                "fun Mono<ForgotPasswordContext.VerificationCodeAcquisition.Request> validate(" +
-                                        "ServerWebExchange exchange, ForgotPasswordContext.VerificationCodeAcquisition.Request request).",
-                                "request parameter validation exception."
-                        ));
-                    }
-                });
+        return RequestParameterValidator.run(exchange, request)
+                .switchIfEmpty(Mono.error(GlobalExceptionContext.executeParameterException(
+                        this.getClass(),
+                        "fun Mono<ForgotPasswordContext.VerificationCodeAcquisition.Request> validate(" +
+                                "ServerWebExchange exchange, ForgotPasswordContext.VerificationCodeAcquisition.Request request).",
+                        "request parameter validation exception."
+                )));
     }
 
     @GetMapping(value = "/forgot/password/code")

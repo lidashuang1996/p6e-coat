@@ -1,10 +1,10 @@
 package club.p6e.coat.auth.web.reactive.service;
 
 import club.p6e.coat.auth.password.PasswordEncryptor;
-import club.p6e.coat.auth.web.reactive.ServerHttpRequest;
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.web.reactive.cache.VerificationCodeForgotPasswordCache;
 import club.p6e.coat.auth.context.ForgotPasswordContext;
+import club.p6e.coat.common.utils.TransformationUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -62,7 +62,7 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
 
     @Override
     public Mono<ForgotPasswordContext.Dto> execute(ServerWebExchange exchange, ForgotPasswordContext.Request param) {
-        final String account = ((ServerHttpRequest) exchange.getRequest()).getAccount();
+        final String account = TransformationUtil.objectToString(exchange.getRequest().getAttributes().get("xxx"));
         return Mono.just(new ForgotPasswordContext.Dto());
 //        return cache
 //                .get(account)

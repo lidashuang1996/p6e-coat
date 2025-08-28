@@ -19,6 +19,6 @@ public interface ForgotPasswordService {
      * @param param    Forgot Password Context Request Object
      * @return Forgot Password Context Dto Object
      */
-    Mono<ForgotPasswordContext.Dto> execute(ServerWebExchange exchange, ForgotPasswordContext.Request param);
+    ForgotPasswordContext.Dto execute(ServerWebExchange exchange, ForgotPasswordContext.Request param);
 
 }

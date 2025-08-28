@@ -1,16 +1,16 @@
 package club.p6e.coat.auth.web.reactive.service;
 
-import club.p6e.coat.auth.*;
-import club.p6e.coat.auth.password.PasswordEncryptor;
+import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.User;
+import club.p6e.coat.auth.context.LoginContext;
+import club.p6e.coat.auth.error.GlobalExceptionContext;
+import club.p6e.coat.auth.password.PasswordEncryptor;
+import club.p6e.coat.auth.web.reactive.cache.PasswordSignatureCache;
 import club.p6e.coat.auth.web.reactive.repository.UserRepository;
-import club.p6e.coat.auth.web.reactive.ServerHttpRequest;
 import club.p6e.coat.common.utils.JsonUtil;
 import club.p6e.coat.common.utils.RsaUtil;
 import club.p6e.coat.common.utils.SpringUtil;
-import club.p6e.coat.auth.web.reactive.cache.PasswordSignatureCache;
-import club.p6e.coat.auth.context.LoginContext;
-import club.p6e.coat.auth.error.GlobalExceptionContext;
+import club.p6e.coat.common.utils.TransformationUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -90,8 +90,7 @@ public class AccountPasswordLoginServiceImpl implements AccountPasswordLoginServ
                                 "handle bean[" + PasswordSignatureCache.class + "] not exist exception."
                 ));
             }
-            final ServerHttpRequest request = (ServerHttpRequest) exchange.getRequest();
-            final String mark = request.getAccountPasswordSignatureMark();
+            final String mark = TransformationUtil.objectToString(exchange.getRequest().getAttributes().get("xxx"));
             return cache.get(mark)
                     .switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(
                             this.getClass(),

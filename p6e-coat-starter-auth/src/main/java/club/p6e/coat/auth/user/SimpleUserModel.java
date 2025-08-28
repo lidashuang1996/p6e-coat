@@ -35,10 +35,20 @@ public class SimpleUserModel implements User, Serializable {
     private String description;
     private String password;
 
+    /**
+     * Constructor Initialization
+     *
+     * @param content JSON String Object
+     */
     public SimpleUserModel(String content) {
         this(JsonUtil.fromJsonToMap(content, String.class, Object.class));
     }
 
+    /**
+     * Constructor Initialization
+     *
+     * @param content Map Data Object
+     */
     public SimpleUserModel(Map<String, Object> content) {
         this.id = TransformationUtil.objectToInteger(content.get("id"));
         this.status = TransformationUtil.objectToInteger(content.get("status"));
@@ -55,6 +65,24 @@ public class SimpleUserModel implements User, Serializable {
         this.description = TransformationUtil.objectToString(content.get("description"));
     }
 
+    /**
+     * Constructor Initialization
+     *
+     * @param id            ID
+     * @param status        Status
+     * @param enabled       Enabled
+     * @param internal      Internal
+     * @param administrator Administrator
+     * @param account       Account
+     * @param phone         Phone
+     * @param mailbox       Mailbox
+     * @param name          Name
+     * @param nickname      Nickname
+     * @param language      Language
+     * @param avatar        Avatar
+     * @param description   Description
+     */
+    @SuppressWarnings("ALL")
     public SimpleUserModel(
             Integer id,
             Integer status,

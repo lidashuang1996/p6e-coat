@@ -1,0 +1,242 @@
+package club.p6e.coat.auth.web.aspect;
+
+import club.p6e.coat.auth.error.GlobalExceptionContext;
+import club.p6e.coat.auth.web.cache.VoucherCache;
+import club.p6e.coat.common.utils.SpringUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpServletResponse;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.stereotype.Component;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
+/**
+ * Voucher Aspect
+ *
+ * @author lidashuang
+ * @version 1.0
+ */
+@Aspect
+@Component
+@ConditionalOnMissingBean(VoucherAspect.class)
+@ConditionalOnClass(name = "org.springframework.web.package-info")
+public class VoucherAspect {
+
+    /**
+     * White Path List Object
+     */
+    private static final List<String> WHITE_LIST = List.of(
+            "club.p6e.coat.auth.web.controller.IndexController.def1()",
+            "club.p6e.coat.auth.web.controller.IndexController.def2()",
+            "club.p6e.coat.auth.web.controller.IndexController.def3()"
+    );
+
+    @Pointcut("execution(* club.p6e.coat.auth.web.controller.*.*(..))")
+    public void pointcut() {
+    }
+
+    @Around("pointcut()")
+    public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
+        HttpServletResponse response = null;
+        MyHttpServletRequestWrapper request = null;
+        final String methodName = joinPoint.getSignature().getName();
+        final String targetClassName = joinPoint.getTarget().getClass().getName();
+        final String path = targetClassName + "." + methodName + "()";
+        if (WHITE_LIST.contains(path)) {
+            return joinPoint.proceed();
+        } else {
+            final Object[] args = joinPoint.getArgs();
+            for (final Object arg : args) {
+                if (arg instanceof HttpServletRequest hsr) {
+                    request = new MyHttpServletRequestWrapper(hsr);
+                }
+                if (arg instanceof HttpServletResponse hsr) {
+                    response = hsr;
+                }
+            }
+            final Object result = joinPoint.proceed(args);
+            if (request != null && response != null && result != null) {
+                request.save();
+            }
+            return result;
+        }
+    }
+
+    /**
+     * My Http Servlet Request Wrapper
+     */
+    public static class MyHttpServletRequestWrapper extends HttpServletRequestWrapper {
+
+        /**
+         * Cache Key [ACCOUNT]
+         */
+        @SuppressWarnings("ALL")
+        public static final String ACCOUNT = "ACCOUNT";
+
+        /**
+         * Cache Key [QUICK_RESPONSE_CODE_LOGIN_MARK]
+         */
+        @SuppressWarnings("ALL")
+        public static final String QUICK_RESPONSE_CODE_LOGIN_MARK = "QUICK_RESPONSE_CODE_LOGIN_MARK";
+
+        /**
+         * Cache Key [ACCOUNT_PASSWORD_SIGNATURE_MARK]
+         */
+        @SuppressWarnings("ALL")
+        public static final String ACCOUNT_PASSWORD_SIGNATURE_MARK = "ACCOUNT_PASSWORD_SIGNATURE_MARK";
+
+        /**
+         * Http Request Header Voucher Name
+         */
+        @SuppressWarnings("ALL")
+        private static final String VOUCHER_HEADER = "X-Voucher";
+
+        /**
+         * Http Request Param V
+         */
+        private static final String V_REQUEST_PARAM = "v";
+
+        /**
+         * Http Request Param Voucher
+         */
+        private static final String VOUCHER_REQUEST_PARAM = "voucher";
+
+        /**
+         * Server Http Request Attributes Object
+         */
+        private final Map<String, Object> attributes = new ConcurrentHashMap<>();
+
+        /**
+         * Http Servlet Request Object
+         */
+        private final HttpServletRequest request;
+
+        /**
+         * Mark
+         */
+        private String mark;
+
+        /**
+         * Constructor Initialization
+         *
+         * @param request Http Servlet Request Object
+         */
+        public MyHttpServletRequestWrapper(HttpServletRequest request) {
+            super(request);
+            this.request = request;
+            init();
+        }
+
+        /**
+         * Get Voucher Data
+         *
+         * @param vouchers Voucher List Object
+         * @return Map Data Object
+         */
+        private Map<String, String> getVoucher(LinkedList<String> vouchers) {
+            if (vouchers == null || vouchers.isEmpty()) {
+                return new HashMap<>();
+            }
+            final String voucher = vouchers.poll();
+            final Map<String, String> result = SpringUtil.getBean(VoucherCache.class).get(voucher);
+            if (result == null) {
+                return getVoucher(vouchers);
+            } else {
+                this.mark = voucher;
+                return result;
+            }
+        }
+
+        /**
+         * Init Voucher Data
+         */
+        public void init() {
+            final LinkedList<String> vouchers = new LinkedList<>();
+            final String vouchers1 = this.request.getHeader(VOUCHER_HEADER);
+            final String vouchers2 = this.request.getParameter(V_REQUEST_PARAM);
+            final String vouchers3 = this.request.getParameter(VOUCHER_REQUEST_PARAM);
+            if (vouchers1 != null) {
+                vouchers.add(vouchers1);
+            }
+            if (vouchers2 != null) {
+                vouchers.add(vouchers2);
+            }
+            if (vouchers3 != null) {
+                vouchers.add(vouchers3);
+            }
+            if (vouchers.isEmpty()) {
+                throw GlobalExceptionContext.executeVoucherException(
+                        this.getClass(),
+                        "fun init()",
+                        "request voucher does not exist"
+                );
+            } else {
+                final Map<String, String> data = getVoucher(vouchers);
+                if (data.isEmpty()) {
+                    throw GlobalExceptionContext.executeVoucherException(
+                            this.getClass(),
+                            "fun init()",
+                            "request voucher does not exist or has expired"
+                    );
+                } else {
+                    data.forEach(this::setAttribute);
+                }
+            }
+        }
+
+        /**
+         * Save Cache Voucher Data
+         */
+        public void save() {
+            final Map<String, String> content = new HashMap<>();
+            this.attributes.forEach((k, v) -> content.put(k, String.valueOf(v)));
+            SpringUtil.getBean(VoucherCache.class).set(this.mark, content);
+        }
+
+        /**
+         * Delete Voucher Data
+         */
+        @SuppressWarnings("ALL")
+        public void delete() {
+            SpringUtil.getBean(VoucherCache.class).del(this.mark);
+        }
+
+        @Override
+        public Object getAttribute(String key) {
+            return this.attributes.get(key);
+        }
+
+        @Override
+        public void setAttribute(String key, Object value) {
+            this.attributes.put(key, value);
+        }
+
+        @Override
+        public Enumeration<String> getAttributeNames() {
+            final List<String> names = new ArrayList<>();
+            final Enumeration<String> enumeration = super.getAttributeNames();
+            if (enumeration != null) {
+                while (enumeration.hasMoreElements()) {
+                    names.add(enumeration.nextElement());
+                }
+            }
+            names.addAll(this.attributes.keySet());
+            return Collections.enumeration(names);
+        }
+
+        @Override
+        public void removeAttribute(String name) {
+            super.removeAttribute(name);
+            this.attributes.remove(name);
+        }
+
+    }
+
+}

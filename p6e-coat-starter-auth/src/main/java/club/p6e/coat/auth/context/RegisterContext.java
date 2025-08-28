@@ -16,7 +16,7 @@ import java.util.Map;
 public class RegisterContext implements Serializable {
 
     /**
-     * Request
+     * Register Context Request
      */
     @Data
     @Accessors(chain = true)
@@ -40,7 +40,7 @@ public class RegisterContext implements Serializable {
     }
 
     /**
-     * Dto
+     * Register Context Dto
      */
     @Data
     @Accessors(chain = true)
@@ -59,7 +59,7 @@ public class RegisterContext implements Serializable {
     public static class VerificationCodeAcquisition implements Serializable {
 
         /**
-         * Request
+         * Register Context / Verification Code Acquisition Request
          */
         @Data
         @Accessors(chain = true)
@@ -83,7 +83,7 @@ public class RegisterContext implements Serializable {
         }
 
         /**
-         * Dto
+         * Register Context / Verification Code Acquisition Dto
          */
         @Data
         @Accessors(chain = true)

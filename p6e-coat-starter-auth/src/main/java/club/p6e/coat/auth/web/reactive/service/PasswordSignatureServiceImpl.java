@@ -1,7 +1,6 @@
 package club.p6e.coat.auth.web.reactive.service;
 
 import club.p6e.coat.auth.context.PasswordSignatureContext;
-import club.p6e.coat.auth.web.reactive.ServerHttpRequest;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.JsonUtil;
 import club.p6e.coat.auth.web.reactive.cache.PasswordSignatureCache;
@@ -55,8 +54,8 @@ public class PasswordSignatureServiceImpl implements PasswordSignatureService {
         final String finalPublicKey = publicKey;
         final String finalPrivateKey = privateKey;
         final String mark = GeneratorUtil.uuid() + GeneratorUtil.random();
-        final ServerHttpRequest request = (ServerHttpRequest) exchange.getRequest();
-        request.setAccountPasswordSignatureMark(mark);
+//        final RequestVoucher request = (RequestVoucher) exchange.getRequest();
+//        request.setAccountPasswordSignatureMark(mark);
         final String content = JsonUtil.toJson(new HashMap<>() {{
             put("mark", mark);
             put("public", finalPublicKey);

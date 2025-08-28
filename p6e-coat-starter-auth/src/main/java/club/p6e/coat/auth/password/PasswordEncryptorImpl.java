@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
  * @author lidashuang
  * @version 1.0
  */
+@SuppressWarnings("ALL")
 public class PasswordEncryptorImpl implements PasswordEncryptor {
 
     /**
@@ -103,13 +104,6 @@ public class PasswordEncryptorImpl implements PasswordEncryptor {
             if (bool) {
                 return false;
             } else {
-                System.out.println(
-                        "PasswordEncryptorImpl.validate(String pwdOriginal, String pwdEncryption) " +
-                                "pwdOriginal = " + pwdOriginal + ", " +
-                                "pwdEncryption = " + pwdEncryption + ", " +
-                                "random = " + random.toString() + ", " +
-                                "execute(random, format(pwdOriginal)) = " + execute(random.toString(), format(pwdOriginal))
-                );
                 return execute(random.toString(), format(pwdOriginal)).equals(pwdEncryption);
             }
         }

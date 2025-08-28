@@ -1,12 +1,14 @@
 package club.p6e.coat.auth.web.reactive.controller;
 
-import club.p6e.coat.auth.error.GlobalExceptionContext;
-import club.p6e.coat.auth.web.reactive.ServerHttpRequestParameterValidator;
 import club.p6e.coat.auth.context.ForgotPasswordContext;
+import club.p6e.coat.auth.error.GlobalExceptionContext;
+import club.p6e.coat.auth.web.reactive.RequestParameterValidator;
 import club.p6e.coat.auth.web.reactive.service.ForgotPasswordService;
 import club.p6e.coat.common.utils.SpringUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -32,19 +34,13 @@ public class ForgotPasswordController {
      */
     private Mono<ForgotPasswordContext.Request> validate(
             ServerWebExchange exchange, ForgotPasswordContext.Request request) {
-        return ServerHttpRequestParameterValidator.execute(exchange, request)
-                .flatMap(o -> {
-                    if (o instanceof ForgotPasswordContext.Request oRequest) {
-                        return Mono.just(oRequest);
-                    } else {
-                        return Mono.error(GlobalExceptionContext.executeParameterException(
-                                this.getClass(),
-                                "fun Mono<ForgotPasswordContext.Request> validate(" +
-                                        "ServerWebExchange exchange, ForgotPasswordContext.Request request).",
-                                "request parameter validation exception."
-                        ));
-                    }
-                });
+        return RequestParameterValidator.run(exchange, request)
+                .switchIfEmpty(Mono.error(GlobalExceptionContext.executeParameterException(
+                        this.getClass(),
+                        "fun Mono<ForgotPasswordContext.Request> validate(" +
+                                "ServerWebExchange exchange, ForgotPasswordContext.Request request).",
+                        "request parameter validation exception."
+                )));
     }
 
     @PostMapping("/forgot/password")

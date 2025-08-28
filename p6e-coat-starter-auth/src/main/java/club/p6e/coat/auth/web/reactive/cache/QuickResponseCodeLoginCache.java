@@ -18,7 +18,7 @@ public interface QuickResponseCodeLoginCache {
     /**
      * Empty Content
      */
-    String EMPTY_CONTENT = "__null__";
+    String EMPTY_CONTENT = "__NULL__";
 
     /**
      * Cache Prefix

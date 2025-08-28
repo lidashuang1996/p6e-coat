@@ -2,11 +2,12 @@ package club.p6e.coat.auth.web.reactive.controller;
 
 import club.p6e.coat.auth.context.PasswordSignatureContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
-import club.p6e.coat.auth.web.reactive.ServerHttpRequestParameterValidator;
+import club.p6e.coat.auth.web.reactive.RequestParameterValidator;
 import club.p6e.coat.auth.web.reactive.service.PasswordSignatureService;
 import club.p6e.coat.common.utils.SpringUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -32,19 +33,13 @@ public class PasswordSignatureController {
      */
     private Mono<PasswordSignatureContext.Request> validate(
             ServerWebExchange exchange, PasswordSignatureContext.Request request) {
-        return ServerHttpRequestParameterValidator.execute(exchange, request)
-                .flatMap(o -> {
-                    if (o instanceof PasswordSignatureContext.Request oRequest) {
-                        return Mono.just(oRequest);
-                    } else {
-                        return Mono.error(GlobalExceptionContext.executeParameterException(
-                                this.getClass(),
-                                "fun Mono<PasswordSignatureContext.Request> validate(" +
-                                        "ServerWebExchange exchange, PasswordSignatureContext.Request request).",
-                                "request parameter validation exception."
-                        ));
-                    }
-                });
+        return RequestParameterValidator.run(exchange, request)
+                .switchIfEmpty(Mono.error(GlobalExceptionContext.executeParameterException(
+                        this.getClass(),
+                        "fun Mono<PasswordSignatureContext.Request> validate(" +
+                                "ServerWebExchange exchange, PasswordSignatureContext.Request request).",
+                        "request parameter validation exception."
+                )));
     }
 
     @GetMapping("/password/signature")

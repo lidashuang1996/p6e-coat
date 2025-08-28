@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
@@ -26,6 +25,36 @@ public class Properties implements Serializable {
      * Properties Instance Object
      */
     private static Properties INSTANCE = new Properties();
+    /**
+     * Token
+     */
+    private Token token = new Token();
+    /**
+     * Enable
+     */
+    private boolean enable = true;
+    /**
+     * Authentication Mode
+     */
+    private Mode mode = Mode.PHONE_OR_MAILBOX;
+    /**
+     * Login
+     */
+    private Login login = new Login();
+    /**
+     * Register
+     */
+    private Register register = new Register();
+    /**
+     * Forgot Password
+     */
+    private ForgotPassword forgotPassword = new ForgotPassword();
+
+    /**
+     * Private Constructors
+     */
+    private Properties() {
+    }
 
     /**
      * Get Properties Instance
@@ -35,36 +64,6 @@ public class Properties implements Serializable {
     public static Properties getInstance() {
         return INSTANCE;
     }
-
-    /**
-     * Private Constructors
-     */
-    private Properties() {
-    }
-
-    /**
-     * Token
-     */
-    @Data
-    @Accessors(chain = true)
-    public static class Token {
-
-        /**
-         * Token Duration -> Default Value 3600 (S) * 3
-         */
-        private Duration duration = Duration.ofSeconds(3600 * 3L);
-
-    }
-
-    /**
-     * Token
-     */
-    private Token token = new Token();
-
-    /**
-     * Enable
-     */
-    private boolean enable = true;
 
     /**
      * Mode
@@ -111,9 +110,18 @@ public class Properties implements Serializable {
     }
 
     /**
-     * Authentication Mode
+     * Token
      */
-    private Mode mode = Mode.PHONE_OR_MAILBOX;
+    @Data
+    @Accessors(chain = true)
+    public static class Token {
+
+        /**
+         * Token Duration -> Default Value 3600 (S) * 3
+         */
+        private Duration duration = Duration.ofSeconds(3600 * 3L);
+
+    }
 
     @Data
     @Accessors(chain = true)
@@ -137,75 +145,25 @@ public class Properties implements Serializable {
          */
         private Page page = new Page(
                 "application/javascript",
-                "window.p6e_v='@{VOUCHER}';"
+                "window.voucher='@{VOUCHER}';"
         );
 
         /**
          * 账号密码登录的配置
          */
         private AccountPassword accountPassword = new AccountPassword();
-
-
-        @Data
-        @Accessors(chain = true)
-        public static class AccountPassword implements Serializable {
-            /**
-             * 是否开启账号密码登录功能
-             */
-            private boolean enable = true;
-
-            /**
-             * 开启账号密码登录时候是否对密码进行加密
-             */
-            private boolean enableTransmissionEncryption = true;
-        }
-
         /**
          * 验证码登录的配置
          */
         private VerificationCode verificationCode = new VerificationCode();
-
-        @Data
-        @Accessors(chain = true)
-        public static class VerificationCode implements Serializable {
-            /**
-             * 是否开启验证码登录功能
-             * 开启验证码登录功能，账号模式需要为手机模式或邮箱模式或手机或者邮箱模式
-             */
-            private boolean enable = true;
-        }
-
         /**
          * 二维码登录的配置
          */
         private QuickResponseCode quickResponseCode = new QuickResponseCode();
-
-        @Data
-        @Accessors(chain = true)
-        public static class QuickResponseCode implements Serializable {
-            /**
-             * 是否开启二维码扫码登录功能
-             */
-            private boolean enable = true;
-        }
-
         /**
          * 其它第三方登录的配置
          */
         private Map<String, Other> others = new HashMap<>();
-
-        @Data
-        public static class Other implements Serializable {
-            /**
-             * 是否开启此第三方登录功能
-             */
-            private boolean enable = false;
-
-            /**
-             * 此第三方登录需要的配置对象
-             */
-            private Map<String, String> config = new HashMap<>();
-        }
 
         public Login() {
             final Map<String, String> map = new HashMap<>();
@@ -237,12 +195,53 @@ public class Properties implements Serializable {
             map.put("@info", "https://graph.qq.com/user/get_user_info?oauth_consumer_key=@{#info_oauth_consumer_key}");
             others.put("QQ", new Other().setEnable(false).setConfig(map));
         }
-    }
 
-    /**
-     * Login
-     */
-    private Login login = new Login();
+        @Data
+        @Accessors(chain = true)
+        public static class AccountPassword implements Serializable {
+            /**
+             * 是否开启账号密码登录功能
+             */
+            private boolean enable = true;
+
+            /**
+             * 开启账号密码登录时候是否对密码进行加密
+             */
+            private boolean enableTransmissionEncryption = true;
+        }
+
+        @Data
+        @Accessors(chain = true)
+        public static class VerificationCode implements Serializable {
+            /**
+             * 是否开启验证码登录功能
+             * 开启验证码登录功能，账号模式需要为手机模式或邮箱模式或手机或者邮箱模式
+             */
+            private boolean enable = true;
+        }
+
+        @Data
+        @Accessors(chain = true)
+        public static class QuickResponseCode implements Serializable {
+            /**
+             * 是否开启二维码扫码登录功能
+             */
+            private boolean enable = true;
+        }
+
+        @Data
+        public static class Other implements Serializable {
+            /**
+             * 是否开启此第三方登录功能
+             */
+            private boolean enable = false;
+
+            /**
+             * 此第三方登录需要的配置对象
+             */
+            private Map<String, String> config = new HashMap<>();
+        }
+    }
 
     @Data
     @Accessors(chain = true)
@@ -262,11 +261,6 @@ public class Properties implements Serializable {
 
     }
 
-    /**
-     * Register
-     */
-    private Register register = new Register();
-
     @Data
     @Accessors(chain = true)
     public static class ForgotPassword implements Serializable {
@@ -277,10 +271,5 @@ public class Properties implements Serializable {
         private boolean enable = false;
 
     }
-
-    /**
-     * Forgot Password
-     */
-    private ForgotPassword forgotPassword = new ForgotPassword();
 
 }
