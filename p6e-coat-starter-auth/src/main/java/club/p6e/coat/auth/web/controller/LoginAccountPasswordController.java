@@ -72,7 +72,7 @@ public class LoginAccountPasswordController {
         if (properties.isEnable() && properties.getLogin().isEnable() && properties.getLogin().getAccountPassword().isEnable()) {
             return service.execute(httpServletRequest, httpServletResponse, validate(httpServletRequest, httpServletResponse, request));
         } else {
-            throw GlobalExceptionContext.executeNoEnableException(
+            throw GlobalExceptionContext.exceptionServiceNoEnabledException(
                     this.getClass(),
                     "fun Object def(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, LoginContext.AccountPassword.Request request)",
                     "login account password is not enabled"

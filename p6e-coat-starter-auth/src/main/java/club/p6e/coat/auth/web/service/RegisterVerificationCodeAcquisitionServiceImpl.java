@@ -3,7 +3,7 @@ package club.p6e.coat.auth.web.service;
 import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.RegisterContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
-import club.p6e.coat.auth.event.PushVerificationCodeEvent;
+import club.p6e.coat.auth.web.event.PushVerificationCodeEvent;
 import club.p6e.coat.auth.web.aspect.VoucherAspect;
 import club.p6e.coat.auth.web.cache.RegisterVerificationCodeCache;
 import club.p6e.coat.auth.web.repository.UserRepository;
@@ -12,6 +12,7 @@ import club.p6e.coat.common.utils.SpringUtil;
 import club.p6e.coat.common.utils.VerificationUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -20,13 +21,14 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Register Acquisition Service Impl
+ * Register Verification Code Acquisition Service Impl
  *
  * @author lidashuang
  * @version 1.0
  */
 @Component
 @ConditionalOnMissingBean(RegisterVerificationCodeAcquisitionService.class)
+@ConditionalOnClass(name = "org.springframework.web.package-info")
 public class RegisterVerificationCodeAcquisitionServiceImpl implements RegisterVerificationCodeAcquisitionService {
 
     /**
@@ -56,7 +58,11 @@ public class RegisterVerificationCodeAcquisitionServiceImpl implements RegisterV
     }
 
     @Override
-    public RegisterContext.VerificationCodeAcquisition.Dto execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, RegisterContext.VerificationCodeAcquisition.Request param) {
+    public RegisterContext.VerificationCodeAcquisition.Dto execute(
+            HttpServletRequest httpServletRequest,
+            HttpServletResponse httpServletResponse,
+            RegisterContext.VerificationCodeAcquisition.Request param
+    ) {
         validate(param.getAccount());
         return execute(httpServletRequest, param.getAccount(), param.getLanguage());
     }
@@ -73,7 +79,7 @@ public class RegisterVerificationCodeAcquisitionServiceImpl implements RegisterV
             case ACCOUNT -> repository.findByAccount(account);
             case PHONE_OR_MAILBOX -> repository.findByPhoneOrMailbox(account);
         } == null) {
-            throw GlobalExceptionContext.exceptionAccountNotExistException(
+            throw GlobalExceptionContext.exceptionAccountNoExistException(
                     this.getClass(),
                     "fun validate(String account)",
                     "register verification code acquisition account does not exist exception"

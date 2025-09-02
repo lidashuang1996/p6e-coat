@@ -14,19 +14,21 @@ import club.p6e.coat.common.utils.SpringUtil;
 import club.p6e.coat.common.utils.TransformationUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 /**
- * Account Password Login Service Implementation
+ * Login Account Password Login Service Impl
  *
  * @author lidashuang
  * @version 1.0
  */
 @Component
 @ConditionalOnMissingBean(LoginAccountPasswordService.class)
+@ConditionalOnClass(name = "org.springframework.web.package-info")
 public class LoginAccountPasswordServiceImpl implements LoginAccountPasswordService {
 
     /**
@@ -67,7 +69,7 @@ public class LoginAccountPasswordServiceImpl implements LoginAccountPasswordServ
             throw GlobalExceptionContext.exceptionAccountPasswordLoginAccountOrPasswordException(
                     this.getClass(),
                     "fun getUser(String account)",
-                    "account password login account or password exception"
+                    "login account password account or password exception"
             );
         } else {
             return user;
@@ -89,28 +91,35 @@ public class LoginAccountPasswordServiceImpl implements LoginAccountPasswordServ
                 throw GlobalExceptionContext.exceptionBeanException(
                         this.getClass(),
                         "fun executePasswordTransmissionDecryption(HttpServletRequest request, String password)",
-                        "account password login password transmission decryption cache handle bean[" + PasswordSignatureCache.class + "] not exist exception"
+                        "login account password password transmission decryption cache handle bean[" + PasswordSignatureCache.class + "] not exist exception"
                 );
             }
             final String mark = TransformationUtil.objectToString(request.getAttribute(VoucherAspect.MyHttpServletRequestWrapper.ACCOUNT_PASSWORD_SIGNATURE_MARK));
-            final String content = cache.get(mark);
-            if (content == null || content.isEmpty()) {
-                throw GlobalExceptionContext.executeCacheException(
-                        this.getClass(),
-                        "fun executePasswordTransmissionDecryption(HttpServletRequest request, String password)",
-                        "account password login password transmission decryption cache data does not exist or expire exception"
-                );
-            } else {
-                try {
-                    final Map<String, String> data = JsonUtil.fromJsonToMap(content, String.class, String.class);
-                    if (data != null && data.get("private") != null && !data.get("private").isEmpty()) {
-                        return RsaUtil.privateKeyDecryption(data.get("private"), password);
+            try {
+                final String content = cache.get(mark);
+                if (content == null || content.isEmpty()) {
+                    throw GlobalExceptionContext.executeCacheException(
+                            this.getClass(),
+                            "fun executePasswordTransmissionDecryption(HttpServletRequest request, String password)",
+                            "login account password password transmission decryption cache data does not exist or expire exception"
+                    );
+                } else {
+                    try {
+                        final Map<String, String> data = JsonUtil.fromJsonToMap(content, String.class, String.class);
+                        if (data != null && data.get("private") != null && !data.get("private").isEmpty()) {
+                            return RsaUtil.privateKeyDecryption(data.get("private"), password);
+                        }
+                    } catch (Exception e) {
+                        throw GlobalExceptionContext.exceptionAccountPasswordLoginTransmissionException(
+                                this.getClass(),
+                                "fun executePasswordTransmissionDecryption(HttpServletRequest request, String password) -> " + e.getMessage(),
+                                "login account password password transmission exception"
+                        );
                     }
-                } catch (Exception e) {
-                    // ignore exception
                 }
+            } finally {
+                cache.del(mark);
             }
-            cache.del(mark);
         }
         return password;
     }
@@ -129,7 +138,7 @@ public class LoginAccountPasswordServiceImpl implements LoginAccountPasswordServ
             throw GlobalExceptionContext.exceptionAccountPasswordLoginAccountOrPasswordException(
                     this.getClass(),
                     "fun execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, LoginContext.AccountPassword.Request param)",
-                    "account password login account or password exception"
+                    "login account password account or password exception"
             );
         }
     }

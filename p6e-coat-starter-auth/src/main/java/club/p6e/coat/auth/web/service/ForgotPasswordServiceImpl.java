@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * Forgot Password Service Implementation
+ * Forgot Password Service Impl
  *
  * @author lidashuang
  * @version 1.0
@@ -90,18 +90,17 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
             ForgotPasswordContext.Request param
     ) {
         final String code = param.getCode();
-        final String account = TransformationUtil.objectToString(
-                httpServletRequest.getAttribute(VoucherAspect.MyHttpServletRequestWrapper.ACCOUNT));
+        final String account = TransformationUtil.objectToString(httpServletRequest.getAttribute(VoucherAspect.MyHttpServletRequestWrapper.ACCOUNT));
         final List<String> codes = cache.get(account);
         if (codes != null && !codes.isEmpty() && codes.contains(code)) {
             cache.del(account);
-            repository.updatePassword(getUser(account).password(encryptor.execute(param.getPassword())));
+            repository.updatePassword(Integer.valueOf(getUser(account).id()), encryptor.execute(param.getPassword()));
             return new ForgotPasswordContext.Dto().setAccount(account);
         } else {
-            throw GlobalExceptionContext.exceptionForgotPasswordCodeException(
+            throw GlobalExceptionContext.executeCacheException(
                     this.getClass(),
                     "fun execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, ForgotPasswordContext.Request param)",
-                    "forgot password submit verification code cache data does not exist or expire exception"
+                    "forgot password verification code cache data does not exist or expire exception"
             );
         }
     }

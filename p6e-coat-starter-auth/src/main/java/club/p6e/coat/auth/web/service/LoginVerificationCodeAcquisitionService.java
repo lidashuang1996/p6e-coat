@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Verification Code Acquisition Service
+ * Login Verification Code Acquisition Service
  *
  * @author lidashuang
  * @version 1.0
@@ -13,11 +13,11 @@ import jakarta.servlet.http.HttpServletResponse;
 public interface LoginVerificationCodeAcquisitionService {
 
     /**
-     * Execute Verification Code Acquisition Operation
+     * Execute Login Verification Code Acquisition
      *
      * @param httpServletRequest  Http Servlet Request Object
      * @param httpServletResponse Http Servlet Response Object
-     * @param param    Login Context Verification Code Acquisition Object
+     * @param param               Login Context Verification Code Acquisition Request Object
      * @return Login Context Verification Code Acquisition Dto Object
      */
     LoginContext.VerificationCodeAcquisition.Dto execute(

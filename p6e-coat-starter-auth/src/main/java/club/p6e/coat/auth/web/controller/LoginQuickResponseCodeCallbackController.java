@@ -71,7 +71,7 @@ public class LoginQuickResponseCodeCallbackController {
         if (properties.isEnable() && properties.getLogin().isEnable() && properties.getLogin().getQuickResponseCode().isEnable()) {
             return service.execute(httpServletRequest, httpServletResponse, validate(httpServletRequest, httpServletResponse, request));
         } else {
-            throw GlobalExceptionContext.executeNoEnableException(
+            throw GlobalExceptionContext.exceptionServiceNoEnabledException(
                     this.getClass(),
                     "fun Object def(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, LoginContext.QuickResponseCodeCallback.Request request)",
                     "login quick response code is not enabled"

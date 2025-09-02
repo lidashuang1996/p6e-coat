@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public interface ForgotPasswordVerificationCodeAcquisitionService {
 
     /**
-     * 忘记密码发送验证码
+     * Execute Forgot Password Verification Code Acquisition
      *
      * @param httpServletRequest  Http Servlet Request Object
      * @param httpServletResponse Http Servlet Response Object

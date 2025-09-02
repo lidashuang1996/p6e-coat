@@ -1,9 +1,10 @@
 package club.p6e.coat.auth.web.service;
 
 import club.p6e.coat.auth.Properties;
+import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.context.ForgotPasswordContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
-import club.p6e.coat.auth.event.PushVerificationCodeEvent;
+import club.p6e.coat.auth.web.event.PushVerificationCodeEvent;
 import club.p6e.coat.auth.web.aspect.VoucherAspect;
 import club.p6e.coat.auth.web.cache.ForgotPasswordVerificationCodeCache;
 import club.p6e.coat.auth.web.repository.UserRepository;
@@ -12,6 +13,7 @@ import club.p6e.coat.common.utils.SpringUtil;
 import club.p6e.coat.common.utils.VerificationUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -20,13 +22,14 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Forgot Password Verification Code Acquisition Service Implementation
+ * Forgot Password Verification Code Acquisition Service Impl
  *
  * @author lidashuang
  * @version 1.0
  */
 @Component
 @ConditionalOnMissingBean(ForgotPasswordVerificationCodeAcquisitionService.class)
+@ConditionalOnClass(name = "org.springframework.web.package-info")
 public class ForgotPasswordVerificationCodeAcquisitionServiceImpl implements ForgotPasswordVerificationCodeAcquisitionService {
 
     /**
@@ -64,10 +67,24 @@ public class ForgotPasswordVerificationCodeAcquisitionServiceImpl implements For
             HttpServletResponse httpServletResponse,
             ForgotPasswordContext.VerificationCodeAcquisition.Request param
     ) {
-        if (validate(param.getAccount())) {
-            return execute(httpServletRequest, param.getAccount(), param.getLanguage());
-        } else {
-            throw GlobalExceptionContext.exceptionAccountNotExistException(
+        validate(param.getAccount());
+        return execute(httpServletRequest, param.getAccount(), param.getLanguage());
+    }
+
+    /**
+     * Validate Account Exist Status
+     *
+     * @param account Account Content
+     */
+    private void validate(String account) {
+        final User user = switch (Properties.getInstance().getMode()) {
+            case PHONE -> repository.findByPhone(account);
+            case MAILBOX -> repository.findByMailbox(account);
+            case ACCOUNT -> repository.findByAccount(account);
+            case PHONE_OR_MAILBOX -> repository.findByPhoneOrMailbox(account);
+        };
+        if (user == null) {
+            throw GlobalExceptionContext.exceptionAccountNoExistException(
                     this.getClass(),
                     "fun execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, RegisterContext.Acquisition.Request param)",
                     "forgot password verification code account does not exist exception"
@@ -76,20 +93,13 @@ public class ForgotPasswordVerificationCodeAcquisitionServiceImpl implements For
     }
 
     /**
-     * Validate Account Exist Status
+     * Execute Forgot Password Verification Code Acquisition
      *
-     * @param account Account Content
-     * @return Account Verification Result
+     * @param request  Http Servlet Request Object
+     * @param account  Account
+     * @param language Language
+     * @return Forgot Password Context Verification Code Acquisition Dto Object
      */
-    private boolean validate(String account) {
-        return switch (Properties.getInstance().getMode()) {
-            case PHONE -> repository.findByPhone(account);
-            case MAILBOX -> repository.findByMailbox(account);
-            case ACCOUNT -> repository.findByAccount(account);
-            case PHONE_OR_MAILBOX -> repository.findByPhoneOrMailbox(account);
-        } != null;
-    }
-
     private ForgotPasswordContext.VerificationCodeAcquisition.Dto execute(HttpServletRequest request, String account, String language) {
         final String code = GeneratorUtil.random();
         final boolean pb = VerificationUtil.validationPhone(account);

@@ -69,7 +69,7 @@ public class IndexController {
                 return "";
             }
         } else {
-            throw GlobalExceptionContext.executeNoEnableException(
+            throw GlobalExceptionContext.exceptionServiceNoEnabledException(
                     this.getClass(),
                     "fun Object def(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)",
                     "index is not enabled"

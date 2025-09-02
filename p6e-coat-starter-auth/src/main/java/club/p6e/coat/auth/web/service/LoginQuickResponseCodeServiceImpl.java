@@ -7,17 +7,19 @@ import club.p6e.coat.auth.token.web.TokenValidator;
 import club.p6e.coat.auth.web.cache.LoginQuickResponseCodeCache;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Component;
 
 /**
- * Quick Response Code Callback Service Impl
+ * Login Quick Response Code Service Impl
  *
  * @author lidashuang
  * @version 1.0
  */
 @Component
 @ConditionalOnMissingBean(LoginQuickResponseCodeService.class)
+@ConditionalOnClass(name = "org.springframework.web.package-info")
 public class LoginQuickResponseCodeServiceImpl implements LoginQuickResponseCodeService {
 
     /**
@@ -42,7 +44,7 @@ public class LoginQuickResponseCodeServiceImpl implements LoginQuickResponseCode
     }
 
     @Override
-    public LoginContext.QuickResponseCodeCallback.Dto execute(
+    public LoginContext.QuickResponseCode.Dto execute(
             HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse,
             LoginContext.QuickResponseCode.Request param
@@ -53,7 +55,7 @@ public class LoginQuickResponseCodeServiceImpl implements LoginQuickResponseCode
             throw GlobalExceptionContext.exceptionAuthException(
                     this.getClass(),
                     "fun execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, LoginContext.QuickResponseCodeCallback.Request param)",
-                    "quick response code callback login auth exception"
+                    "login quick response code auth exception"
             );
         } else {
             final String content = cache.get(mark);
@@ -61,15 +63,15 @@ public class LoginQuickResponseCodeServiceImpl implements LoginQuickResponseCode
                 throw GlobalExceptionContext.executeCacheException(
                         this.getClass(),
                         "fun execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, LoginContext.QuickResponseCodeCallback.Request param)",
-                        "quick response code callback login cache data does not exist or expire exception"
+                        "login quick response code cache data does not exist or expire exception"
                 );
             } else if (LoginQuickResponseCodeCache.isEmpty(content)) {
-                return new LoginContext.QuickResponseCodeCallback.Dto().setContent(String.valueOf(System.currentTimeMillis()));
+                return new LoginContext.QuickResponseCode.Dto().setContent(String.valueOf(System.currentTimeMillis()));
             } else {
                 throw GlobalExceptionContext.executeCacheException(
                         this.getClass(),
                         "fun execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, LoginContext.QuickResponseCodeCallback.Request param)",
-                        "quick response code callback login cache other data exists exception"
+                        "login quick response code cache data exist other user exception"
                 );
             }
         }

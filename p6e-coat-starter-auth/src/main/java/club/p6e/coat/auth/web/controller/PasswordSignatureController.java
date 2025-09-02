@@ -71,7 +71,7 @@ public class PasswordSignatureController {
         if (properties.isEnable()) {
             return service.execute(httpServletRequest, httpServletResponse, validate(httpServletRequest, httpServletResponse, request));
         } else {
-            throw GlobalExceptionContext.executeNoEnableException(
+            throw GlobalExceptionContext.exceptionServiceNoEnabledException(
                     this.getClass(),
                     "fun Object def(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, LoginContext.QuickResponseCode.Request request)",
                     "password signature is not enabled"

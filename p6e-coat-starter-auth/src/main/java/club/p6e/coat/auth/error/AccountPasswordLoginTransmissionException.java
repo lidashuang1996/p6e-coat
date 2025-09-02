@@ -3,8 +3,8 @@ package club.p6e.coat.auth.error;
 import club.p6e.coat.common.error.CustomException;
 
 /**
- * 自定义异常
- * 类型不匹配异常
+ * Custom Exception
+ * Account Password Login Transmission Exception
  *
  * @author lidashuang
  * @version 1.0
@@ -12,60 +12,61 @@ import club.p6e.coat.common.error.CustomException;
 public class AccountPasswordLoginTransmissionException extends CustomException {
 
     /**
-     * 默认的代码
+     * Default Code
      */
-    public static final int DEFAULT_CODE = 14000;
+    public static final int DEFAULT_CODE = 11003;
 
     /**
-     * 默认的简述
+     * Default Sketch
      */
     private static final String DEFAULT_SKETCH = "ACCOUNT_PASSWORD_LOGIN_TRANSMISSION_EXCEPTION";
 
     /**
-     * 类型不匹配异常
+     * Constructor Initialization
      *
-     * @param sc      源 class
-     * @param error   异常对象
-     * @param content 描述内容
+     * @param sc      Class Object
+     * @param error   Exception Data
+     * @param content Exception Content
      */
     public AccountPasswordLoginTransmissionException(Class<?> sc, String error, String content) {
         super(sc, AccountPasswordLoginTransmissionException.class, error, DEFAULT_CODE, DEFAULT_SKETCH, content);
     }
 
     /**
-     * 类型不匹配异常
+     * Constructor Initialization
      *
-     * @param sc        源 class
-     * @param throwable 异常对象
-     * @param content   描述内容
+     * @param sc        Class Object
+     * @param throwable Exception Object
+     * @param content   Exception Content
      */
     public AccountPasswordLoginTransmissionException(Class<?> sc, Throwable throwable, String content) {
         super(sc, AccountPasswordLoginTransmissionException.class, throwable, DEFAULT_CODE, DEFAULT_SKETCH, content);
     }
 
     /**
-     * 类型不匹配异常
+     * Constructor Initialization
      *
-     * @param sc      源 class
-     * @param error   异常内容
-     * @param code    代码
-     * @param sketch  简述
-     * @param content 描述内容
+     * @param sc      Class Object
+     * @param error   Exception Data
+     * @param code    Exception Code
+     * @param sketch  Exception Sketch
+     * @param content Exception Content
      */
     public AccountPasswordLoginTransmissionException(Class<?> sc, String error, int code, String sketch, String content) {
         super(sc, AccountPasswordLoginTransmissionException.class, error, code, sketch, content);
     }
 
     /**
-     * 类型不匹配异常
+     * Constructor Initialization
      *
-     * @param sc        源 class
-     * @param throwable 异常对象
-     * @param code      代码
-     * @param sketch    简述
-     * @param content   描述内容
+     * @param sc        Class Object
+     * @param throwable Exception Object
+     * @param code      Exception Code
+     * @param sketch    Exception Sketch
+     * @param content   Exception Content
      */
     public AccountPasswordLoginTransmissionException(Class<?> sc, Throwable throwable, int code, String sketch, String content) {
         super(sc, AccountPasswordLoginTransmissionException.class, throwable, code, sketch, content);
     }
+
 }

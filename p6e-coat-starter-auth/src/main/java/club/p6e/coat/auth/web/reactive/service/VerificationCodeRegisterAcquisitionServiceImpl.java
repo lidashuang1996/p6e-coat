@@ -1,7 +1,7 @@
 package club.p6e.coat.auth.web.reactive.service;
 
 import club.p6e.coat.auth.Properties;
-import club.p6e.coat.auth.event.PushVerificationCodeEvent;
+import club.p6e.coat.auth.web.event.PushVerificationCodeEvent;
 import club.p6e.coat.auth.web.reactive.cache.VerificationCodeRegisterCache;
 import club.p6e.coat.auth.context.RegisterContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;

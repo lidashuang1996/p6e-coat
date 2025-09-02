@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Verification Code Login Service
+ * Login Verification Code Service
  *
  * @author lidashuang
  * @version 1.0
@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public interface LoginVerificationCodeService {
 
     /**
-     * Execute Verification Code Login Operation
+     * Execute Login Verification Code
      *
      * @param httpServletRequest  Http Servlet Request Object
      * @param httpServletResponse Http Servlet Response Object

@@ -73,7 +73,7 @@ public class LoginAuthenticationLoginController {
             service.execute(httpServletRequest, httpServletResponse, validate(httpServletRequest, httpServletResponse, request));
             return "AUTHENTICATION";
         } else {
-            throw GlobalExceptionContext.executeNoEnableException(
+            throw GlobalExceptionContext.exceptionServiceNoEnabledException(
                     this.getClass(),
                     "fun Object def(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, LoginContext.Authentication.Request request)",
                     "login authentication is not enabled"

@@ -63,7 +63,7 @@ public class PasswordSignatureServiceImpl implements PasswordSignatureService {
         }});
         return cache
                 .set(mark, content)
-                .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionCacheWriteException(
+                .switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(
                         this.getClass(),
                         "fun execute(ServerWebExchange exchange, " +
                                 "LoginContext.AccountPasswordSignature.Request param).",

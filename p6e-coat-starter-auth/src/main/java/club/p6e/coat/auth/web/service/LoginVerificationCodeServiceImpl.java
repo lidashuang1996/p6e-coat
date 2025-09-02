@@ -10,35 +10,37 @@ import club.p6e.coat.auth.web.repository.UserRepository;
 import club.p6e.coat.common.utils.TransformationUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 /**
- * Verification Code Login Service Impl
+ * Login Verification Code Service Impl
  *
  * @author lidashuang
  * @version 1.0
  */
 @Component
 @ConditionalOnMissingBean(LoginVerificationCodeService.class)
+@ConditionalOnClass(name = "org.springframework.web.package-info")
 public class LoginVerificationCodeServiceImpl implements LoginVerificationCodeService {
 
     /**
-     * Web Flux User Repository Object
+     * User Repository Object
      */
     private final UserRepository repository;
 
     /**
-     * Web Flux Verification Code Login Cache Object
+     * Login Verification Code Cache Object
      */
     private final LoginVerificationCodeCache cache;
 
     /**
      * Constructor Initialization
      *
-     * @param cache      Verification Code Login Cache Object
+     * @param cache      Login Verification Code Cache Object
      * @param repository User Repository Object
      */
     public LoginVerificationCodeServiceImpl(UserRepository repository, LoginVerificationCodeCache cache) {
@@ -84,7 +86,7 @@ public class LoginVerificationCodeServiceImpl implements LoginVerificationCodeSe
             throw GlobalExceptionContext.executeCacheException(
                     this.getClass(),
                     "fun execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, LoginContext.VerificationCode.Request param)",
-                    "verification code login cache data does not exist or expire exception."
+                    "login verification code cache data does not exist or expire exception"
             );
         }
     }

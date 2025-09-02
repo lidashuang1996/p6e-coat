@@ -1,4 +1,4 @@
-package club.p6e.coat.auth.event;
+package club.p6e.coat.auth.web.event;
 
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;

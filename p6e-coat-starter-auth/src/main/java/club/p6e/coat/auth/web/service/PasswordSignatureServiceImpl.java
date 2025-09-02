@@ -9,6 +9,7 @@ import club.p6e.coat.common.utils.JsonUtil;
 import club.p6e.coat.common.utils.RsaUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +23,7 @@ import java.util.HashMap;
  */
 @Component
 @ConditionalOnMissingBean(PasswordSignatureService.class)
+@ConditionalOnClass(name = "org.springframework.web.package-info")
 public class PasswordSignatureServiceImpl implements PasswordSignatureService {
 
     /**

@@ -13,13 +13,17 @@ import jakarta.servlet.http.HttpServletResponse;
 public interface PasswordSignatureService {
 
     /**
-     * Execute Password Signature Service
+     * Execute Password Signature
      *
      * @param httpServletRequest  Http Servlet Request Object
      * @param httpServletResponse Http Servlet Response Object
      * @param param               Password Signature Context Request Object
      * @return Password Signature Context Dto Object
      */
-    PasswordSignatureContext.Dto execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, PasswordSignatureContext.Request param);
+    PasswordSignatureContext.Dto execute(
+            HttpServletRequest httpServletRequest,
+            HttpServletResponse httpServletResponse,
+            PasswordSignatureContext.Request param
+    );
 
 }

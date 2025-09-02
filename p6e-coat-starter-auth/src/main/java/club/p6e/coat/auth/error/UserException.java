@@ -4,22 +4,22 @@ import club.p6e.coat.common.error.CustomException;
 
 /**
  * Custom Exception
- * Data Base Exception
+ * Cache Exception
  *
  * @author lidashuang
  * @version 1.0
  */
-public class DataBaseException extends CustomException {
+public class UserException extends CustomException {
 
     /**
      * Default Code
      */
-    public static final int DEFAULT_CODE = 9000;
+    public static final int DEFAULT_CODE = 9200;
 
     /**
      * Default Sketch
      */
-    private static final String DEFAULT_SKETCH = "DATA_BASE_EXCEPTION";
+    private static final String DEFAULT_SKETCH = "CACHE_EXCEPTION";
 
     /**
      * Constructor Initialization
@@ -28,8 +28,8 @@ public class DataBaseException extends CustomException {
      * @param error   Exception Data
      * @param content Exception Content
      */
-    public DataBaseException(Class<?> sc, String error, String content) {
-        super(sc, DataBaseException.class, error, DEFAULT_CODE, DEFAULT_SKETCH, content);
+    public UserException(Class<?> sc, String error, String content) {
+        super(sc, UserException.class, error, DEFAULT_CODE, DEFAULT_SKETCH, content);
     }
 
     /**
@@ -39,8 +39,8 @@ public class DataBaseException extends CustomException {
      * @param throwable Exception Object
      * @param content   Exception Content
      */
-    public DataBaseException(Class<?> sc, Throwable throwable, String content) {
-        super(sc, DataBaseException.class, throwable, DEFAULT_CODE, DEFAULT_SKETCH, content);
+    public UserException(Class<?> sc, Throwable throwable, String content) {
+        super(sc, UserException.class, throwable, DEFAULT_CODE, DEFAULT_SKETCH, content);
     }
 
     /**
@@ -52,8 +52,8 @@ public class DataBaseException extends CustomException {
      * @param sketch  Exception Sketch
      * @param content Exception Content
      */
-    public DataBaseException(Class<?> sc, String error, int code, String sketch, String content) {
-        super(sc, DataBaseException.class, error, code, sketch, content);
+    public UserException(Class<?> sc, String error, int code, String sketch, String content) {
+        super(sc, UserException.class, error, code, sketch, content);
     }
 
     /**
@@ -65,8 +65,8 @@ public class DataBaseException extends CustomException {
      * @param sketch    Exception Sketch
      * @param content   Exception Content
      */
-    public DataBaseException(Class<?> sc, Throwable throwable, int code, String sketch, String content) {
-        super(sc, DataBaseException.class, throwable, code, sketch, content);
+    public UserException(Class<?> sc, Throwable throwable, int code, String sketch, String content) {
+        super(sc, UserException.class, throwable, code, sketch, content);
     }
 
 }

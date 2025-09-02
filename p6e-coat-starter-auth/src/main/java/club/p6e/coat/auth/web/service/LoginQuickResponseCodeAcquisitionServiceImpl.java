@@ -7,17 +7,19 @@ import club.p6e.coat.auth.web.reactive.cache.QuickResponseCodeLoginCache;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Component;
 
 /**
- * Quick Response Code Acquisition Service Impl
+ * Login Quick Response Code Acquisition Service Impl
  *
  * @author lidashuang
  * @version 1.0
  */
 @Component
 @ConditionalOnMissingBean(LoginQuickResponseCodeAcquisitionService.class)
+@ConditionalOnClass(name = "org.springframework.web.package-info")
 public class LoginQuickResponseCodeAcquisitionServiceImpl implements LoginQuickResponseCodeAcquisitionService {
 
     /**

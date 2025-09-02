@@ -1,6 +1,6 @@
-package club.p6e.coat.auth.listener;
+package club.p6e.coat.auth.web.listener;
 
-import club.p6e.coat.auth.event.PushVerificationCodeEvent;
+import club.p6e.coat.auth.web.event.PushVerificationCodeEvent;
 import jakarta.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

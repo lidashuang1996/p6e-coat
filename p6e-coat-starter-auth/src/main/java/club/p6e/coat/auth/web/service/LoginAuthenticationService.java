@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Authentication Service
+ * Login Authentication Service
  *
  * @author lidashuang
  * @version 1.0
@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public interface LoginAuthenticationService {
 
     /**
-     * Execute Authorization Verification
+     * Execute Login Authentication
      *
      * @param httpServletRequest  Http Servlet Request Object
      * @param httpServletResponse Http Servlet Response Object

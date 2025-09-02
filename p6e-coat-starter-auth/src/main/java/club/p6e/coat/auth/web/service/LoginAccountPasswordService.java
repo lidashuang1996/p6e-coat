@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Account Password Login Service
+ * Login Account Password Login Service
  *
  * @author lidashuang
  * @version 1.0
@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public interface LoginAccountPasswordService {
 
     /**
-     * Execute Account Password Login
+     * Execute Login Account Password
      *
      * @param httpServletRequest  Http Servlet Request Object
      * @param httpServletResponse Http Servlet Response Object

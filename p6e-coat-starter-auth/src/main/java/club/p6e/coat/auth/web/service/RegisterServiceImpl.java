@@ -12,6 +12,7 @@ import club.p6e.coat.common.utils.SpringUtil;
 import club.p6e.coat.common.utils.TransformationUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @ConditionalOnMissingBean(RegisterService.class)
+@ConditionalOnClass(name = "org.springframework.web.package-info")
 public class RegisterServiceImpl implements RegisterService {
 
     /**
@@ -33,20 +35,17 @@ public class RegisterServiceImpl implements RegisterService {
     /**
      * User Repository Object
      */
-    private final UserRepository userRepository;
+    private final UserRepository repository;
 
     /**
      * Constructor Initialization
      *
-     * @param encryptor      Password Encryptor Object
-     * @param userRepository User Repository Object
+     * @param encryptor  Password Encryptor Object
+     * @param repository User Repository Object
      */
-    public RegisterServiceImpl(
-            PasswordEncryptor encryptor,
-            UserRepository userRepository
-    ) {
+    public RegisterServiceImpl(PasswordEncryptor encryptor, UserRepository repository) {
         this.encryptor = encryptor;
-        this.userRepository = userRepository;
+        this.repository = repository;
     }
 
     @Override
@@ -63,35 +62,33 @@ public class RegisterServiceImpl implements RegisterService {
             case ACCOUNT -> executeAccountMode(account, param);
             case PHONE_OR_MAILBOX -> executePhoneOrMailboxMode(account, param);
         };
-        if (user == null) {
-            return null;
-        } else {
-            final RegisterContext.Dto result = new RegisterContext.Dto();
-            result.getData().putAll(user.toMap());
-            return result;
-        }
+        final RegisterContext.Dto result = new RegisterContext.Dto();
+        result.getData().putAll(user.toMap());
+        return result;
     }
 
     /**
      * Execute Account Register
      *
+     * @param account Account
+     * @param param   Register Context Request Object
      * @return User Object
      */
     protected User executeAccountMode(String account, RegisterContext.Request param) {
-        User user = userRepository.findByAccount(account);
+        User user = repository.findByAccount(account);
         if (user == null) {
             throw GlobalExceptionContext.exceptionAccountExistException(
                     this.getClass(),
                     "fun executeAccountMode(String account, RegisterContext.Request param)",
-                    "create user account [ " + account + "/(exist) ] exception"
+                    "register create user account [ " + account + "/(exist) ] exception"
             );
         } else {
-            user = userRepository.create(SpringUtil.getBean(UserBuilder.class).create(param.getData()));
+            user = repository.create(SpringUtil.getBean(UserBuilder.class).create(param.getData()));
             if (user == null) {
                 throw GlobalExceptionContext.exceptionDataBaseException(
                         this.getClass(),
                         "fun executeAccountMode(String account, RegisterContext.Request param)",
-                        "create user account data exception"
+                        "register create user account data exception"
                 );
             } else {
                 return user;
@@ -102,23 +99,25 @@ public class RegisterServiceImpl implements RegisterService {
     /**
      * Execute Phone Register
      *
+     * @param account Account
+     * @param param   Register Context Request Object
      * @return User Object
      */
     private User executePhoneMode(String account, RegisterContext.Request param) {
-        User user = userRepository.findByPhone(account);
+        User user = repository.findByPhone(account);
         if (user == null) {
             throw GlobalExceptionContext.exceptionAccountExistException(
                     this.getClass(),
                     "fun executePhoneMode(String account, RegisterContext.Request param)",
-                    "create user account [ " + account + "/(exist) ] exception"
+                    "register create user account [ " + account + "/(exist) ] exception"
             );
         } else {
-            user = userRepository.create(SpringUtil.getBean(UserBuilder.class).create(param.getData()));
+            user = repository.create(SpringUtil.getBean(UserBuilder.class).create(param.getData()));
             if (user == null) {
                 throw GlobalExceptionContext.exceptionDataBaseException(
                         this.getClass(),
                         "fun executePhoneMode(String account, RegisterContext.Request param)",
-                        "create user account data exception"
+                        "register create user account data exception"
                 );
             } else {
                 return user;
@@ -129,23 +128,25 @@ public class RegisterServiceImpl implements RegisterService {
     /**
      * Execute Mailbox Register
      *
+     * @param account Account
+     * @param param   Register Context Request Object
      * @return User Object
      */
     private User executeMailboxMode(String account, RegisterContext.Request param) {
-        User user = userRepository.findByMailbox(account);
+        User user = repository.findByMailbox(account);
         if (user == null) {
             throw GlobalExceptionContext.exceptionAccountExistException(
                     this.getClass(),
                     "fun executeMailboxMode(String account, RegisterContext.Request param)",
-                    "create user account [ " + account + "/(exist) ] exception"
+                    "register create user account [ " + account + "/(exist) ] exception"
             );
         } else {
-            user = userRepository.create(SpringUtil.getBean(UserBuilder.class).create(param.getData()));
+            user = repository.create(SpringUtil.getBean(UserBuilder.class).create(param.getData()));
             if (user == null) {
                 throw GlobalExceptionContext.exceptionDataBaseException(
                         this.getClass(),
                         "fun executeMailboxMode(String account, RegisterContext.Request param)",
-                        "create user account data exception"
+                        "register create user account data exception"
                 );
             } else {
                 return user;
@@ -154,25 +155,27 @@ public class RegisterServiceImpl implements RegisterService {
     }
 
     /**
-     * 执行手机号码/邮箱登录
+     * Execute Phone Or Mailbox Register
      *
-     * @return 结果对象
+     * @param account Account
+     * @param param   Register Context Request Object
+     * @return User Object
      */
     protected User executePhoneOrMailboxMode(String account, RegisterContext.Request param) {
-        User user = userRepository.findByPhoneOrMailbox(account);
+        User user = repository.findByPhoneOrMailbox(account);
         if (user == null) {
             throw GlobalExceptionContext.exceptionAccountExistException(
                     this.getClass(),
                     "fun executePhoneOrMailboxMode(String account, RegisterContext.Request param)",
-                    "create user account [ " + account + "/(exist) ] exception"
+                    "register create user account [ " + account + "/(exist) ] exception"
             );
         } else {
-            user = userRepository.create(SpringUtil.getBean(UserBuilder.class).create(param.getData()));
+            user = repository.create(SpringUtil.getBean(UserBuilder.class).create(param.getData()));
             if (user == null) {
                 throw GlobalExceptionContext.exceptionDataBaseException(
                         this.getClass(),
                         "fun executePhoneOrMailboxMode(String account, RegisterContext.Request param)",
-                        "create user account data exception"
+                        "register create user account data exception"
                 );
             } else {
                 return user;

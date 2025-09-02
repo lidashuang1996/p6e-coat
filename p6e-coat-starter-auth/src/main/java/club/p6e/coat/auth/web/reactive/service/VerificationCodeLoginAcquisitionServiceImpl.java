@@ -1,6 +1,6 @@
 package club.p6e.coat.auth.web.reactive.service;
 
-import club.p6e.coat.auth.event.PushVerificationCodeEvent;
+import club.p6e.coat.auth.web.event.PushVerificationCodeEvent;
 import club.p6e.coat.auth.web.reactive.cache.VerificationCodeLoginCache;
 import club.p6e.coat.auth.web.reactive.repository.UserRepository;
 import club.p6e.coat.common.utils.GeneratorUtil;

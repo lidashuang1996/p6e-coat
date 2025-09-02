@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Register Acquisition Service
+ * Register Verification Code Acquisition Service
  *
  * @author lidashuang
  * @version 1.0
@@ -13,12 +13,12 @@ import jakarta.servlet.http.HttpServletResponse;
 public interface RegisterVerificationCodeAcquisitionService {
 
     /**
-     * 注册验证码发送
+     * Execute Register Verification Code Acquisition
      *
      * @param httpServletRequest  Http Servlet Request Object
      * @param httpServletResponse Http Servlet Response Object
-     * @param param    请求对象
-     * @return 结果对象
+     * @param param               Register Context Verification Code Acquisition Request Object
+     * @return Register Context Verification Code Acquisition Dto Object
      */
     RegisterContext.VerificationCodeAcquisition.Dto execute(
             HttpServletRequest httpServletRequest,

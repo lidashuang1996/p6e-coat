@@ -72,7 +72,7 @@ public class RegisterController {
         if (properties.isEnable() && properties.getRegister().isEnable()) {
             return service.execute(httpServletRequest, httpServletResponse, validate(httpServletRequest, httpServletResponse, request));
         } else {
-            throw GlobalExceptionContext.executeNoEnableException(
+            throw GlobalExceptionContext.exceptionServiceNoEnabledException(
                     this.getClass(),
                     "fun Object def(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, RegisterContext.Request request)",
                     "register is not enabled"

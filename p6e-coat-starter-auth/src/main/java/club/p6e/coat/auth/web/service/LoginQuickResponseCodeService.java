@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Quick Response Code Callback Service
+ * Login Quick Response Code Service
  *
  * @author lidashuang
  * @version 1.0
@@ -13,14 +13,14 @@ import jakarta.servlet.http.HttpServletResponse;
 public interface LoginQuickResponseCodeService {
 
     /**
-     * Execute Quick Response Code Callback
+     * Execute Login Quick Response Code
      *
      * @param httpServletRequest  Http Servlet Request Object
      * @param httpServletResponse Http Servlet Response Object
-     * @param param Quick Response Code Callback Request Object
-     * @return Login Context Quick Response Code Callback Dto Object
+     * @param param               Login Context Quick Response Code Request Object
+     * @return Login Context Quick Response Code Dto Object
      */
-    LoginContext.QuickResponseCodeCallback.Dto execute(
+    LoginContext.QuickResponseCode.Dto execute(
             HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse,
             LoginContext.QuickResponseCode.Request param

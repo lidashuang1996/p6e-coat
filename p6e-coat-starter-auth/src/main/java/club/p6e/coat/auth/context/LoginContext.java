@@ -151,9 +151,28 @@ public class LoginContext implements Serializable {
         public static class Request implements Serializable {
 
             /**
+             *Content
+             */
+            private String content;
+
+            /**
              * Custom Data
              */
             private Map<String, Object> data = new HashMap<>();
+
+        }
+
+        /**
+         * Login Context / Quick Response Code / Dto
+         */
+        @Data
+        @Accessors(chain = true)
+        public static class Dto implements Serializable {
+
+            /**
+             * Content
+             */
+            private String content;
 
         }
 
@@ -186,7 +205,7 @@ public class LoginContext implements Serializable {
         public static class Dto implements Serializable {
 
             /**
-             * Quick Response Code Content
+             * Content
              */
             private String content;
 
@@ -210,20 +229,6 @@ public class LoginContext implements Serializable {
              * Custom Data
              */
             private Map<String, Object> data = new HashMap<>();
-
-        }
-
-        /**
-         * Login Context / Quick Response Code Callback / Dto
-         */
-        @Data
-        @Accessors(chain = true)
-        public static class Dto implements Serializable {
-
-            /**
-             * Content
-             */
-            private String content;
 
         }
 

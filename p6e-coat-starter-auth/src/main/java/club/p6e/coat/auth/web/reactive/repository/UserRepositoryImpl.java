@@ -20,10 +20,7 @@ import java.util.HashMap;
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(
-        value = UserRepository.class,
-        ignored = UserRepositoryImpl.class
-)
+@ConditionalOnMissingBean(UserRepository.class)
 public class UserRepositoryImpl implements UserRepository {
 
     private static final String BASE_SELECT_SQL = """

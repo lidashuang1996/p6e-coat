@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Quick Response Code Acquisition Service
+ * Login Quick Response Code Acquisition Service
  *
  * @author lidashuang
  * @version 1.0
@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public interface LoginQuickResponseCodeAcquisitionService {
 
     /**
-     * Execute Quick Response Code Acquisition
+     * Execute Login Quick Response Code Acquisition
      *
      * @param httpServletRequest  Http Servlet Request Object
      * @param httpServletResponse Http Servlet Response Object

@@ -63,9 +63,9 @@ public interface RequestParameterValidator {
     /**
      * Execute Validator
      *
-     * @param param Param Object
-     * @return Result Object
+     * @param param T Param Object
+     * @return T Result Object
      */
-    Object execute(HttpServletRequest request, HttpServletResponse response, Object param);
+    <T> T execute(HttpServletRequest request, HttpServletResponse response, T param);
 
 }

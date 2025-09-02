@@ -3,8 +3,8 @@ package club.p6e.coat.auth.error;
 import club.p6e.coat.common.error.CustomException;
 
 /**
- * 自定义异常
- * 类型不匹配异常
+ * Custom Exception
+ * Qr Code Data Null Exception
  *
  * @author lidashuang
  * @version 1.0
@@ -12,12 +12,12 @@ import club.p6e.coat.common.error.CustomException;
 public class QrCodeDataNullException extends CustomException {
 
     /**
-     * 默认的代码
+     * Default Code
      */
-    public static final int DEFAULT_CODE = 14000;
+    public static final int DEFAULT_CODE = 11010;
 
     /**
-     * 默认的简述
+     * Default Sketch
      */
     private static final String DEFAULT_SKETCH = "QR_CODE_DATA_NULL_EXCEPTION";
 
@@ -68,4 +68,5 @@ public class QrCodeDataNullException extends CustomException {
     public QrCodeDataNullException(Class<?> sc, Throwable throwable, int code, String sketch, String content) {
         super(sc, QrCodeDataNullException.class, throwable, code, sketch, content);
     }
+
 }

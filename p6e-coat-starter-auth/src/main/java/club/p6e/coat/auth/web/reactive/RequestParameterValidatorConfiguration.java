@@ -1,4 +1,4 @@
-package club.p6e.coat.auth.web;
+package club.p6e.coat.auth.web.reactive;
 
 import club.p6e.coat.auth.context.ForgotPasswordContext;
 import club.p6e.coat.auth.context.LoginContext;
@@ -6,6 +6,8 @@ import club.p6e.coat.auth.context.PasswordSignatureContext;
 import club.p6e.coat.auth.context.RegisterContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
 
 /**
  * Request Parameter Validator Configuration
@@ -30,7 +32,7 @@ public class RequestParameterValidatorConfiguration {
             }
 
             @Override
-            public <T> T execute(HttpServletRequest request, HttpServletResponse response, T param) {
+             public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
                 if (param instanceof final ForgotPasswordContext.Request frr) {
                     if (frr.getCode() != null && !frr.getCode().isEmpty()
                             && frr.getPassword() != null && !frr.getPassword().isEmpty()) {
@@ -57,7 +59,7 @@ public class RequestParameterValidatorConfiguration {
             }
 
             @Override
-            public <T> T execute(HttpServletRequest request, HttpServletResponse response, T param) {
+             public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
                 if (param instanceof final ForgotPasswordContext.VerificationCodeAcquisition.Request frr) {
                     if (frr.getAccount() != null && !frr.getAccount().isEmpty()
                             && frr.getLanguage() != null && !frr.getLanguage().isEmpty()) {
@@ -84,7 +86,7 @@ public class RequestParameterValidatorConfiguration {
             }
 
             @Override
-            public <T> T execute(HttpServletRequest request, HttpServletResponse response, T param) {
+             public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
                 if (param instanceof final LoginContext.AccountPassword.Request lrr) {
                     if (lrr.getAccount() != null && !lrr.getAccount().isEmpty()
                             && lrr.getPassword() != null && !lrr.getPassword().isEmpty()) {
@@ -111,7 +113,7 @@ public class RequestParameterValidatorConfiguration {
             }
 
             @Override
-            public <T> T execute(HttpServletRequest request, HttpServletResponse response, T param) {
+             public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
                 if (param instanceof LoginContext.Authentication.Request) {
                     return param;
                 }
@@ -135,7 +137,7 @@ public class RequestParameterValidatorConfiguration {
             }
 
             @Override
-            public <T> T execute(HttpServletRequest request, HttpServletResponse response, T param) {
+             public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
                 if (param instanceof LoginContext.QuickResponseCodeAcquisition.Request) {
                     return param;
                 }
@@ -159,7 +161,7 @@ public class RequestParameterValidatorConfiguration {
             }
 
             @Override
-            public <T> T execute(HttpServletRequest request, HttpServletResponse response, T param) {
+             public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
                 if (param instanceof LoginContext.QuickResponseCodeCallback.Request) {
                     return param;
                 }
@@ -183,7 +185,7 @@ public class RequestParameterValidatorConfiguration {
             }
 
             @Override
-            public <T> T execute(HttpServletRequest request, HttpServletResponse response, T param) {
+             public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
                 if (param instanceof LoginContext.QuickResponseCode.Request) {
                     return param;
                 }
@@ -207,7 +209,7 @@ public class RequestParameterValidatorConfiguration {
             }
 
             @Override
-            public <T> T execute(HttpServletRequest request, HttpServletResponse response, T param) {
+             public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
                 if (param instanceof LoginContext.VerificationCodeAcquisition.Request lrr) {
                     if (lrr.getAccount() != null && !lrr.getAccount().isEmpty()
                             && lrr.getLanguage() != null && !lrr.getLanguage().isEmpty()) {
@@ -234,7 +236,7 @@ public class RequestParameterValidatorConfiguration {
             }
 
             @Override
-            public <T> T execute(HttpServletRequest request, HttpServletResponse response, T param) {
+             public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
                 if (param instanceof LoginContext.VerificationCode.Request lrr) {
                     if (lrr.getCode() != null && !lrr.getCode().isEmpty()) {
                         return param;
@@ -260,7 +262,7 @@ public class RequestParameterValidatorConfiguration {
             }
 
             @Override
-            public <T> T execute(HttpServletRequest request, HttpServletResponse response, T param) {
+             public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
                 if (param instanceof PasswordSignatureContext.Request) {
                     return param;
                 }
@@ -284,7 +286,7 @@ public class RequestParameterValidatorConfiguration {
             }
 
             @Override
-            public <T> T execute(HttpServletRequest request, HttpServletResponse response, T param) {
+             public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
                 if (param instanceof RegisterContext.Request rrr) {
                     if (rrr.getCode() != null && !rrr.getCode().isEmpty()
                             && rrr.getPassword() != null && !rrr.getPassword().isEmpty()) {
@@ -311,7 +313,7 @@ public class RequestParameterValidatorConfiguration {
             }
 
             @Override
-            public <T> T execute(HttpServletRequest request, HttpServletResponse response, T param) {
+            public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
                 if (param instanceof RegisterContext.VerificationCodeAcquisition.Request rrr) {
                     if (rrr.getAccount() != null && !rrr.getAccount().isEmpty()
                             && rrr.getLanguage() != null && !rrr.getLanguage().isEmpty()) {

@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public interface LoginQuickResponseCodeCallbackService {
 
     /**
-     * Execute Quick Response Code Login
+     * Execute Login Quick Response Code Callback
      *
      * @param httpServletRequest  Http Servlet Request Object
      * @param httpServletResponse Http Servlet Response Object
