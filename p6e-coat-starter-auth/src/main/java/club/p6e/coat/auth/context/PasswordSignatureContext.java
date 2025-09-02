@@ -16,7 +16,7 @@ import java.util.Map;
 public class PasswordSignatureContext implements Serializable {
 
     /**
-     * Request
+     * Password Signature Context / Request
      */
     @Data
     @Accessors(chain = true)
@@ -30,7 +30,7 @@ public class PasswordSignatureContext implements Serializable {
     }
 
     /**
-     * Dto
+     * Password Signature Context / Dto
      */
     @Data
     @Accessors(chain = true)

@@ -21,7 +21,7 @@ public class LoginContext implements Serializable {
     public static class Authentication implements Serializable {
 
         /**
-         * Request
+         * Login Context / Authentication / Request
          */
         @Data
         @Accessors(chain = true)
@@ -42,7 +42,7 @@ public class LoginContext implements Serializable {
     public static class AccountPassword implements Serializable {
 
         /**
-         * Request
+         * Login Context / Account Password / Request
          */
         @Data
         @Accessors(chain = true)
@@ -73,7 +73,7 @@ public class LoginContext implements Serializable {
     public static class VerificationCode implements Serializable {
 
         /**
-         * Request
+         * Login Context / Verification Code / Request
          */
         @Data
         @Accessors(chain = true)
@@ -99,7 +99,7 @@ public class LoginContext implements Serializable {
     public static class VerificationCodeAcquisition implements Serializable {
 
         /**
-         * Request
+         * Login Context / Verification Code Acquisition / Request
          */
         @Data
         @Accessors(chain = true)
@@ -123,7 +123,7 @@ public class LoginContext implements Serializable {
         }
 
         /**
-         * Dto
+         * Login Context / Verification Code Acquisition / Dto
          */
         @Data
         @Accessors(chain = true)
@@ -144,7 +144,7 @@ public class LoginContext implements Serializable {
     public static class QuickResponseCode implements Serializable {
 
         /**
-         * Request
+         * Login Context / Quick Response Code / Request
          */
         @Data
         @Accessors(chain = true)
@@ -170,7 +170,7 @@ public class LoginContext implements Serializable {
     public static class QuickResponseCodeAcquisition implements Serializable {
 
         /**
-         * Request
+         * Login Context / Quick Response Code Acquisition / Request
          */
         @Data
         @Accessors(chain = true)
@@ -189,7 +189,7 @@ public class LoginContext implements Serializable {
         }
 
         /**
-         * Dto
+         * Login Context / Quick Response Code Acquisition / Dto
          */
         @Data
         @Accessors(chain = true)
@@ -210,7 +210,7 @@ public class LoginContext implements Serializable {
     public static class QuickResponseCodeCallback implements Serializable {
 
         /**
-         * Request
+         * Login Context / Quick Response Code Callback / Request
          */
         @Data
         @Accessors(chain = true)
@@ -229,7 +229,7 @@ public class LoginContext implements Serializable {
         }
 
         /**
-         * Dto
+         * Login Context / Quick Response Code Callback / Dto
          */
         @Data
         @Accessors(chain = true)

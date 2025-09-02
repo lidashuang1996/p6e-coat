@@ -12,6 +12,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -25,6 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Aspect
 @Component
+@Order(Integer.MIN_VALUE + 10000)
 @ConditionalOnMissingBean(VoucherAspect.class)
 @ConditionalOnClass(name = "org.springframework.web.package-info")
 public class VoucherAspect {

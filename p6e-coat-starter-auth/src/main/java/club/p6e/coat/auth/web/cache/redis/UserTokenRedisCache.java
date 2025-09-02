@@ -1,11 +1,13 @@
 package club.p6e.coat.auth.web.cache.redis;
 
-import club.p6e.coat.auth.token.web.reactive.UserTokenCache;
+import club.p6e.coat.auth.token.web.UserTokenCache;
 import club.p6e.coat.common.utils.JsonUtil;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.data.redis.connection.RedisStringCommands;
-import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.types.Expiration;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -20,24 +22,26 @@ import java.util.concurrent.TimeUnit;
  * @author lidashuang
  * @version 1.0
  */
+@Component
+@ConditionalOnMissingBean(UserTokenRedisCache.class)
 public class UserTokenRedisCache implements UserTokenCache {
 
     /**
-     * Reactive String Redis Template Object
+     * String Redis Template Object
      */
-    private final ReactiveStringRedisTemplate template;
+    private final StringRedisTemplate template;
 
     /**
      * Constructor Initialization
      *
-     * @param template Reactive String Redis Template Object
+     * @param template String Redis Template Object
      */
-    public UserTokenRedisCache(ReactiveStringRedisTemplate template) {
+    public UserTokenRedisCache(StringRedisTemplate template) {
         this.template = template;
     }
 
     @Override
-    public Mono<Model> set(String uid, String device, String token, String content, long expiration) {
+    public Model set(String uid, String device, String token, String content, long expiration) {
         final Model model = new Model().setUid(uid).setDevice(device).setToken(token);
         final String json = JsonUtil.toJson(model);
         if (json == null) {
@@ -65,12 +69,12 @@ public class UserTokenRedisCache implements UserTokenCache {
     }
 
     @Override
-    public Mono<String> getUser(String uid) {
+    public String getUser(String uid) {
         return template.opsForValue().get(ByteBuffer.wrap((USER_CACHE_PREFIX + uid).getBytes(StandardCharsets.UTF_8)));
     }
 
     @Override
-    public Mono<Model> getToken(String token) {
+    public Model getToken(String token) {
         return template
                 .opsForValue()
                 .get(TOKEN_CACHE_PREFIX + token)
@@ -81,7 +85,7 @@ public class UserTokenRedisCache implements UserTokenCache {
     }
 
     @Override
-    public Mono<Model> cleanToken(String content) {
+    public Model cleanToken(String content) {
         return getToken(content).flatMap(m -> template.delete(
                 TOKEN_CACHE_PREFIX + m.getToken(),
                 USER_TOKEN_CACHE_PREFIX + m.getUid() + DELIMITER + m.getToken()
@@ -89,7 +93,7 @@ public class UserTokenRedisCache implements UserTokenCache {
     }
 
     @Override
-    public Mono<List<String>> cleanUserAll(String uid) {
+    public List<String> cleanUserAll(String uid) {
         return getUser(uid).flatMap(s -> Flux.concat(template.scan(
                         ScanOptions.scanOptions().match(TOKEN_CACHE_PREFIX + uid + DELIMITER + "*").build()
                 )).collectList())

@@ -1,9 +1,9 @@
 package club.p6e.coat.auth.web.controller;
 
-import club.p6e.coat.auth.context.ForgotPasswordContext;
+import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.web.RequestParameterValidator;
-import club.p6e.coat.auth.web.service.ForgotPasswordService;
+import club.p6e.coat.auth.web.service.LoginAuthenticationService;
 import club.p6e.coat.common.utils.SpringUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,49 +14,50 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Forgot Password Controller
+ * Authentication Login Controller
  *
  * @author lidashuang
  * @version 1.0
  */
 @RestController
-@ConditionalOnMissingBean(ForgotPasswordController.class)
+@ConditionalOnMissingBean(LoginAuthenticationLoginController.class)
 @ConditionalOnClass(name = "org.springframework.web.package-info")
-public class ForgotPasswordController {
+public class LoginAuthenticationLoginController {
 
     /**
      * Request Parameter Validation
      *
      * @param httpServletRequest  Http Servlet Request Object
      * @param httpServletResponse Http Servlet Response Object
-     * @param request             Forgot Password Context Request Object
-     * @return Forgot Password Context Request Object
+     * @param request             Login Context Authentication Request Object
+     * @return Login Context Authentication Request Object
      */
-    private ForgotPasswordContext.Request validate(
+    private LoginContext.Authentication.Request validate(
             HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse,
-            ForgotPasswordContext.Request request
+            LoginContext.Authentication.Request request
     ) {
-        final ForgotPasswordContext.Request result = RequestParameterValidator.run(httpServletRequest, httpServletResponse, request);
+        final LoginContext.Authentication.Request result = RequestParameterValidator.run(httpServletRequest, httpServletResponse, request);
         if (result == null) {
             throw GlobalExceptionContext.executeParameterException(
                     this.getClass(),
-                    "fun ForgotPasswordContext.Request validate(" +
-                            "HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, ForgotPasswordContext.Request request)",
+                    "fun LoginContext.Authentication.Request validate(" +
+                            "HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, LoginContext.Authentication.Request request)",
                     "request parameter validation exception"
             );
         }
-        return result;
+        return request;
     }
 
-    @PostMapping("/forgot/password")
+    @PostMapping("/login/authentication")
     public Object def(
             HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse,
-            @RequestBody ForgotPasswordContext.Request request
+            @RequestBody LoginContext.Authentication.Request request
     ) {
-        final ForgotPasswordContext.Request r = validate(httpServletRequest, httpServletResponse, request);
-        return SpringUtil.getBean(ForgotPasswordService.class).execute(httpServletRequest, httpServletResponse, r);
+        final LoginContext.Authentication.Request r = validate(httpServletRequest, httpServletResponse, request);
+        SpringUtil.getBean(LoginAuthenticationService.class).execute(httpServletRequest, httpServletResponse, r);
+        return "AUTHENTICATION";
     }
 
 }

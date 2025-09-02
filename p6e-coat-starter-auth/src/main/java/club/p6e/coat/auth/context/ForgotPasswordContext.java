@@ -16,7 +16,7 @@ import java.util.Map;
 public class ForgotPasswordContext implements Serializable {
 
     /**
-     * Request
+     * Forgot Password Context / Request
      */
     @Data
     @Accessors(chain = true)
@@ -40,7 +40,7 @@ public class ForgotPasswordContext implements Serializable {
     }
 
     /**
-     * Dto
+     * Forgot Password Context / Dto
      */
     @Data
     @Accessors(chain = true)
@@ -54,7 +54,7 @@ public class ForgotPasswordContext implements Serializable {
     public static class VerificationCodeAcquisition implements Serializable {
 
         /**
-         * Request
+         * Forgot Password Context / Verification Code Acquisition / Request
          */
         @Data
         @Accessors(chain = true)
@@ -77,7 +77,7 @@ public class ForgotPasswordContext implements Serializable {
         }
 
         /**
-         * Dto
+         * Forgot Password Context / Verification Code Acquisition / Dto
          */
         @Data
         @Accessors(chain = true)

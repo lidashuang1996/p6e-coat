@@ -1,11 +1,11 @@
 package club.p6e.coat.auth.web.service;
 
 import club.p6e.coat.auth.context.PasswordSignatureContext;
-import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Mono;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Account Password Login Signature Service
+ * Password Signature Service
  *
  * @author lidashuang
  * @version 1.0
@@ -13,13 +13,13 @@ import reactor.core.publisher.Mono;
 public interface PasswordSignatureService {
 
     /**
-     * Execute Account Password Login Password Signature
+     * Execute Password Signature Service
      *
      * @param httpServletRequest  Http Servlet Request Object
      * @param httpServletResponse Http Servlet Response Object
-     * @param param    Login Context Account Password Signature.Request Object
-     * @return Login Context Account Password Signature Dto Object
+     * @param param               Password Signature Context Request Object
+     * @return Password Signature Context Dto Object
      */
-    Mono<PasswordSignatureContext.Dto> execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, PasswordSignatureContext.Request param);
+    PasswordSignatureContext.Dto execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, PasswordSignatureContext.Request param);
 
 }

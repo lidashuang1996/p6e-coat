@@ -6,14 +6,14 @@ import club.p6e.coat.auth.UserBuilder;
 import club.p6e.coat.auth.context.RegisterContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.password.PasswordEncryptor;
-import club.p6e.coat.auth.web.reactive.repository.UserRepository;
+import club.p6e.coat.auth.web.aspect.VoucherAspect;
+import club.p6e.coat.auth.web.repository.UserRepository;
 import club.p6e.coat.common.utils.SpringUtil;
 import club.p6e.coat.common.utils.TransformationUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.reactive.TransactionalOperator;
-import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Mono;
 
 /**
  * Register Service Impl
@@ -22,10 +22,7 @@ import reactor.core.publisher.Mono;
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(
-        value = RegisterService.class,
-        ignored = RegisterServiceImpl.class
-)
+@ConditionalOnMissingBean(RegisterService.class)
 public class RegisterServiceImpl implements RegisterService {
 
     /**
@@ -41,8 +38,8 @@ public class RegisterServiceImpl implements RegisterService {
     /**
      * Constructor Initialization
      *
-     * @param encryptor          Password Encryptor Object
-     * @param userRepository     User Repository Object
+     * @param encryptor      Password Encryptor Object
+     * @param userRepository User Repository Object
      */
     public RegisterServiceImpl(
             PasswordEncryptor encryptor,
@@ -53,18 +50,26 @@ public class RegisterServiceImpl implements RegisterService {
     }
 
     @Override
-    public Mono<RegisterContext.Dto> execute(ServerWebExchange exchange, RegisterContext.Request param) {
-        final String account = TransformationUtil.objectToString(exchange.getRequest().getAttributes().get("xxx"));
-        return (switch (Properties.getInstance().getMode()) {
+    public RegisterContext.Dto execute(
+            HttpServletRequest httpServletRequest,
+            HttpServletResponse httpServletResponse,
+            RegisterContext.Request param
+    ) {
+        param.setPassword(encryptor.execute(param.getPassword()));
+        final String account = TransformationUtil.objectToString(httpServletRequest.getAttribute(VoucherAspect.MyHttpServletRequestWrapper.ACCOUNT));
+        final User user = switch (Properties.getInstance().getMode()) {
             case PHONE -> executePhoneMode(account, param);
             case MAILBOX -> executeMailboxMode(account, param);
             case ACCOUNT -> executeAccountMode(account, param);
             case PHONE_OR_MAILBOX -> executePhoneOrMailboxMode(account, param);
-        }).map(u -> {
+        };
+        if (user == null) {
+            return null;
+        } else {
             final RegisterContext.Dto result = new RegisterContext.Dto();
-            result.getData().putAll(u.toMap());
+            result.getData().putAll(user.toMap());
             return result;
-        });
+        }
     }
 
     /**
@@ -72,26 +77,26 @@ public class RegisterServiceImpl implements RegisterService {
      *
      * @return User Object
      */
-    protected Mono<User> executeAccountMode(String account, RegisterContext.Request param) {
-        return userRepository
-                .findByPhone(account)
-                .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionAccountExistException(
+    protected User executeAccountMode(String account, RegisterContext.Request param) {
+        User user = userRepository.findByAccount(account);
+        if (user == null) {
+            throw GlobalExceptionContext.exceptionAccountExistException(
+                    this.getClass(),
+                    "fun executeAccountMode(String account, RegisterContext.Request param)",
+                    "create user account [ " + account + "/(exist) ] exception"
+            );
+        } else {
+            user = userRepository.create(SpringUtil.getBean(UserBuilder.class).create(param.getData()));
+            if (user == null) {
+                throw GlobalExceptionContext.exceptionDataBaseException(
                         this.getClass(),
-                        "fun executeAccountMode(String account, RegisterContext.Request param).",
-                        "create user account [ " + account + "/(exist) ] exception."
-                )))
-                .flatMap(u -> SpringUtil
-                        .getBean(TransactionalOperator.class)
-                        .execute(status -> userRepository
-                                .create(SpringUtil.getBean(UserBuilder.class).create(param.getData()))
-                                .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionDataBaseException(
-                                        this.getClass(),
-                                        "fun executeAccountMode(String account, RegisterContext.Request param).",
-                                        "create user account info data exception."
-                                )))
-                                .flux()
-                        ).collectList().map(list -> list.get(0))
+                        "fun executeAccountMode(String account, RegisterContext.Request param)",
+                        "create user account data exception"
                 );
+            } else {
+                return user;
+            }
+        }
     }
 
     /**
@@ -99,26 +104,26 @@ public class RegisterServiceImpl implements RegisterService {
      *
      * @return User Object
      */
-    private Mono<User> executePhoneMode(String account, RegisterContext.Request param) {
-        return userRepository
-                .findByPhone(account)
-                .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionAccountExistException(
+    private User executePhoneMode(String account, RegisterContext.Request param) {
+        User user = userRepository.findByPhone(account);
+        if (user == null) {
+            throw GlobalExceptionContext.exceptionAccountExistException(
+                    this.getClass(),
+                    "fun executePhoneMode(String account, RegisterContext.Request param)",
+                    "create user account [ " + account + "/(exist) ] exception"
+            );
+        } else {
+            user = userRepository.create(SpringUtil.getBean(UserBuilder.class).create(param.getData()));
+            if (user == null) {
+                throw GlobalExceptionContext.exceptionDataBaseException(
                         this.getClass(),
-                        "fun executePhoneMode(String account, RegisterContext.Request param).",
-                        "create user phone account [ " + account + "/(exist) ] exception."
-                )))
-                .flatMap(u -> SpringUtil
-                        .getBean(TransactionalOperator.class)
-                        .execute(status -> userRepository
-                                .create(SpringUtil.getBean(UserBuilder.class).create(param.getData()))
-                                .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionDataBaseException(
-                                        this.getClass(),
-                                        "fun executePhoneMode(String account, RegisterContext.Request param).",
-                                        "create user phone account info data exception."
-                                )))
-                                .flux()
-                        ).collectList().map(list -> list.get(0))
+                        "fun executePhoneMode(String account, RegisterContext.Request param)",
+                        "create user account data exception"
                 );
+            } else {
+                return user;
+            }
+        }
     }
 
     /**
@@ -126,26 +131,26 @@ public class RegisterServiceImpl implements RegisterService {
      *
      * @return User Object
      */
-    private Mono<User> executeMailboxMode(String account, RegisterContext.Request param) {
-        return userRepository
-                .findByPhone(account)
-                .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionAccountExistException(
+    private User executeMailboxMode(String account, RegisterContext.Request param) {
+        User user = userRepository.findByMailbox(account);
+        if (user == null) {
+            throw GlobalExceptionContext.exceptionAccountExistException(
+                    this.getClass(),
+                    "fun executeMailboxMode(String account, RegisterContext.Request param)",
+                    "create user account [ " + account + "/(exist) ] exception"
+            );
+        } else {
+            user = userRepository.create(SpringUtil.getBean(UserBuilder.class).create(param.getData()));
+            if (user == null) {
+                throw GlobalExceptionContext.exceptionDataBaseException(
                         this.getClass(),
-                        "fun executeMailboxMode(String account, RegisterContext.Request param).",
-                        "create user mailbox account [ " + account + "/(exist) ] exception."
-                )))
-                .flatMap(u -> SpringUtil
-                        .getBean(TransactionalOperator.class)
-                        .execute(status -> userRepository
-                                .create(SpringUtil.getBean(UserBuilder.class).create(param.getData()))
-                                .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionDataBaseException(
-                                        this.getClass(),
-                                        "fun executeMailboxMode(String account, RegisterContext.Request param).",
-                                        "create user mailbox account info data exception."
-                                )))
-                                .flux()
-                        ).collectList().map(list -> list.get(0))
+                        "fun executeMailboxMode(String account, RegisterContext.Request param)",
+                        "create user account data exception"
                 );
+            } else {
+                return user;
+            }
+        }
     }
 
     /**
@@ -153,26 +158,26 @@ public class RegisterServiceImpl implements RegisterService {
      *
      * @return 结果对象
      */
-    protected Mono<User> executePhoneOrMailboxMode(String account, RegisterContext.Request param) {
-        return userRepository
-                .findByPhone(account)
-                .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionAccountExistException(
+    protected User executePhoneOrMailboxMode(String account, RegisterContext.Request param) {
+        User user = userRepository.findByPhoneOrMailbox(account);
+        if (user == null) {
+            throw GlobalExceptionContext.exceptionAccountExistException(
+                    this.getClass(),
+                    "fun executePhoneOrMailboxMode(String account, RegisterContext.Request param)",
+                    "create user account [ " + account + "/(exist) ] exception"
+            );
+        } else {
+            user = userRepository.create(SpringUtil.getBean(UserBuilder.class).create(param.getData()));
+            if (user == null) {
+                throw GlobalExceptionContext.exceptionDataBaseException(
                         this.getClass(),
-                        "fun executePhoneOrMailboxMode(String account, RegisterContext.Request param).",
-                        "create user phone/mailbox account [ " + account + "/(exist) ] exception."
-                )))
-                .flatMap(u -> SpringUtil
-                        .getBean(TransactionalOperator.class)
-                        .execute(status -> userRepository
-                                .create(SpringUtil.getBean(UserBuilder.class).create(param.getData()))
-                                .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionDataBaseException(
-                                        this.getClass(),
-                                        "fun executePhoneOrMailboxMode(String account, RegisterContext.Request param).",
-                                        "create user phone/mailbox account info data exception."
-                                )))
-                                .flux()
-                        ).collectList().map(list -> list.get(0))
+                        "fun executePhoneOrMailboxMode(String account, RegisterContext.Request param)",
+                        "create user account data exception"
                 );
+            } else {
+                return user;
+            }
+        }
     }
 
 }

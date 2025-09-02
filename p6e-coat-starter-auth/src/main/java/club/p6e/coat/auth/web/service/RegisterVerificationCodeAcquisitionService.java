@@ -5,25 +5,25 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Register Service
+ * Register Acquisition Service
  *
  * @author lidashuang
  * @version 1.0
  */
-public interface RegisterService {
+public interface RegisterVerificationCodeAcquisitionService {
 
     /**
-     * Execution Register
+     * 注册验证码发送
      *
      * @param httpServletRequest  Http Servlet Request Object
      * @param httpServletResponse Http Servlet Response Object
-     * @param param               Register Context Request Object
-     * @return Register Context Dto Object
+     * @param param    请求对象
+     * @return 结果对象
      */
-    RegisterContext.Dto execute(
+    RegisterContext.VerificationCodeAcquisition.Dto execute(
             HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse,
-            RegisterContext.Request param
+            RegisterContext.VerificationCodeAcquisition.Request param
     );
 
 }

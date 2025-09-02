@@ -25,26 +25,32 @@ public class Properties implements Serializable {
      * Properties Instance Object
      */
     private static Properties INSTANCE = new Properties();
+
     /**
      * Token
      */
     private Token token = new Token();
+
     /**
      * Enable
      */
     private boolean enable = true;
+
     /**
      * Authentication Mode
      */
     private Mode mode = Mode.PHONE_OR_MAILBOX;
+
     /**
      * Login
      */
     private Login login = new Login();
+
     /**
      * Register
      */
     private Register register = new Register();
+
     /**
      * Forgot Password
      */

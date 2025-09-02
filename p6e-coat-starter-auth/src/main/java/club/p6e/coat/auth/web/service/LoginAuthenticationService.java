@@ -1,29 +1,30 @@
 package club.p6e.coat.auth.web.service;
 
-import club.p6e.coat.auth.context.RegisterContext;
+import club.p6e.coat.auth.User;
+import club.p6e.coat.auth.context.LoginContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Register Service
+ * Authentication Service
  *
  * @author lidashuang
  * @version 1.0
  */
-public interface RegisterService {
+public interface LoginAuthenticationService {
 
     /**
-     * Execution Register
+     * Execute Authorization Verification
      *
      * @param httpServletRequest  Http Servlet Request Object
      * @param httpServletResponse Http Servlet Response Object
-     * @param param               Register Context Request Object
-     * @return Register Context Dto Object
+     * @param param               Login Context Authentication Request Object
+     * @return User Object
      */
-    RegisterContext.Dto execute(
+    User execute(
             HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse,
-            RegisterContext.Request param
+            LoginContext.Authentication.Request param
     );
 
 }

@@ -1,29 +1,29 @@
 package club.p6e.coat.auth.web.service;
 
-import club.p6e.coat.auth.context.RegisterContext;
+import club.p6e.coat.auth.context.LoginContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Register Service
+ * Quick Response Code Callback Service
  *
  * @author lidashuang
  * @version 1.0
  */
-public interface RegisterService {
+public interface LoginQuickResponseCodeService {
 
     /**
-     * Execution Register
+     * Execute Quick Response Code Callback
      *
      * @param httpServletRequest  Http Servlet Request Object
      * @param httpServletResponse Http Servlet Response Object
-     * @param param               Register Context Request Object
-     * @return Register Context Dto Object
+     * @param param Quick Response Code Callback Request Object
+     * @return Login Context Quick Response Code Callback Dto Object
      */
-    RegisterContext.Dto execute(
+    LoginContext.QuickResponseCodeCallback.Dto execute(
             HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse,
-            RegisterContext.Request param
+            LoginContext.QuickResponseCode.Request param
     );
 
 }

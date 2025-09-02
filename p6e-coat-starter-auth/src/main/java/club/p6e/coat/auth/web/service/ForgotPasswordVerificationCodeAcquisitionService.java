@@ -5,25 +5,25 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Forgot Password Service
+ * Forgot Password Verification Code Acquisition Service
  *
  * @author lidashuang
  * @version 1.0
  */
-public interface ForgotPasswordService {
+public interface ForgotPasswordVerificationCodeAcquisitionService {
 
     /**
-     * Execute Forgot Password
+     * 忘记密码发送验证码
      *
      * @param httpServletRequest  Http Servlet Request Object
      * @param httpServletResponse Http Servlet Response Object
-     * @param param               Forgot Password Context Request Object
-     * @return Forgot Password Context Dto Object
+     * @param param               Forgot Password Context Verification Code Acquisition Request Object
+     * @return Forgot Password Context Verification Code Acquisition Dto Object
      */
-    ForgotPasswordContext.Dto execute(
+    ForgotPasswordContext.VerificationCodeAcquisition.Dto execute(
             HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse,
-            ForgotPasswordContext.Request param
+            ForgotPasswordContext.VerificationCodeAcquisition.Request param
     );
 
 }

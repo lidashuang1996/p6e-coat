@@ -16,11 +16,24 @@ import java.util.Map;
  */
 public abstract class AbstractRedisCache {
 
+    /**
+     * Delete Verification Code
+     *
+     * @param template String Redis Template Object
+     * @param key      Key
+     */
     public void delVerificationCode(StringRedisTemplate template, String key) {
         template.delete(key);
     }
 
-    public List<String> getVerificationCode(StringRedisTemplate template, String key, long expiration) {
+    /**
+     * Get Verification Code
+     *
+     * @param template String Redis Template Object
+     * @param key      Key
+     * @return Verification Code List
+     */
+    public List<String> getVerificationCode(StringRedisTemplate template, String key) {
         final long now = System.currentTimeMillis();
         final List<String> list = new ArrayList<>();
         final Map<Object, Object> data = template.opsForHash().entries(key);
@@ -38,6 +51,14 @@ public abstract class AbstractRedisCache {
         return list;
     }
 
+    /**
+     * Set Verification Code
+     *
+     * @param template   String Redis Template Object
+     * @param key        Key
+     * @param value      Value
+     * @param expiration Expiration Time
+     */
     public void setVerificationCode(StringRedisTemplate template, String key, String value, long expiration) {
         final String timestamp = String.valueOf(System.currentTimeMillis() + expiration * 1000L);
         template.opsForHash().put(key, value, timestamp);

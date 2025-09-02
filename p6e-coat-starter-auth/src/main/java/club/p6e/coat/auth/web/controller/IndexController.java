@@ -16,10 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @version 1.0
  */
 @RestController
-@ConditionalOnMissingBean(
-        value = IndexController.class,
-        ignored = IndexController.class
-)
+@ConditionalOnMissingBean(IndexController.class)
 @ConditionalOnClass(name = "org.springframework.web.package-info")
 public class IndexController {
 
@@ -38,6 +35,13 @@ public class IndexController {
         return def(httpServletRequest, httpServletResponse);
     }
 
+    /**
+     * Default Index Content
+     *
+     * @param httpServletRequest  Http Servlet Request Object
+     * @param httpServletResponse Http Servlet Response Object
+     * @return Index Content
+     */
     public Object def(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         final String[] r = SpringUtil.getBean(IndexService.class).execute(httpServletRequest, httpServletResponse);
         if (r.length > 1) {

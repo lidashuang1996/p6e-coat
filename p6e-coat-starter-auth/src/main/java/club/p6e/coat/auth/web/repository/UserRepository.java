@@ -52,4 +52,7 @@ public interface UserRepository {
     User findByPhoneOrMailbox(String content);
 
     User create(User user);
+
+
+    User updatePassword(User user);
 }

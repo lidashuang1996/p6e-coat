@@ -1,6 +1,6 @@
 package club.p6e.coat.auth.web.cache.redis;
 
-import club.p6e.coat.auth.web.cache.ForgotPasswordVerificationCodeCache;
+import club.p6e.coat.auth.web.cache.RegisterVerificationCodeCache;
 import club.p6e.coat.auth.web.cache.redis.support.AbstractRedisCache;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -9,14 +9,14 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * Verification Code Forgot Password Redis Cache
+ * Register Code Redis Cache
  *
  * @author lidashuang
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(ForgotPasswordVerificationCodeCache.class)
-public class VerificationCodeForgotPasswordRedisCache extends AbstractRedisCache implements ForgotPasswordVerificationCodeCache {
+@ConditionalOnMissingBean(RegisterVerificationCodeCache.class)
+public class VerificationCodeRegisterRedisCache extends AbstractRedisCache implements RegisterVerificationCodeCache {
 
     /**
      * String Redis Template Object
@@ -28,7 +28,7 @@ public class VerificationCodeForgotPasswordRedisCache extends AbstractRedisCache
      *
      * @param template String Redis Template Object
      */
-    public VerificationCodeForgotPasswordRedisCache(StringRedisTemplate template) {
+    public VerificationCodeRegisterRedisCache(StringRedisTemplate template) {
         this.template = template;
     }
 
@@ -39,7 +39,7 @@ public class VerificationCodeForgotPasswordRedisCache extends AbstractRedisCache
 
     @Override
     public List<String> get(String key) {
-        return getVerificationCode(template, CACHE_PREFIX + key, EXPIRATION_TIME);
+        return getVerificationCode(template, CACHE_PREFIX + key);
     }
 
     @Override

@@ -1,22 +1,21 @@
 package club.p6e.coat.auth.web.cache.redis;
 
-import club.p6e.coat.auth.web.cache.LoginVerificationCodeCache;
-import club.p6e.coat.auth.web.cache.redis.support.AbstractRedisCache;
+import club.p6e.coat.auth.web.cache.LoginQuickResponseCodeCache;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.time.Duration;
 
 /**
- * Verification Code Login Redis Cache
+ * Quick Response Code Login Redis Cache
  *
  * @author lidashuang
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(LoginVerificationCodeCache.class)
-public class VerificationCodeLoginRedisCache extends AbstractRedisCache implements LoginVerificationCodeCache {
+@ConditionalOnMissingBean(LoginQuickResponseCodeCache.class)
+public class LoginQuickResponseCodeRedisCache implements LoginQuickResponseCodeCache {
 
     /**
      * String Redis Template Object
@@ -28,23 +27,23 @@ public class VerificationCodeLoginRedisCache extends AbstractRedisCache implemen
      *
      * @param template String Redis Template Object
      */
-    public VerificationCodeLoginRedisCache(StringRedisTemplate template) {
+    public LoginQuickResponseCodeRedisCache(StringRedisTemplate template) {
         this.template = template;
     }
 
     @Override
     public void del(String key) {
-        delVerificationCode(template, CACHE_PREFIX + key);
+        template.delete(CACHE_PREFIX + key);
     }
 
     @Override
-    public List<String> get(String key) {
-        return getVerificationCode(template, CACHE_PREFIX + key);
+    public String get(String key) {
+        return template.opsForValue().get(CACHE_PREFIX + key);
     }
 
     @Override
     public void set(String key, String value) {
-        setVerificationCode(template, CACHE_PREFIX + key, value, EXPIRATION_TIME);
+        template.opsForValue().set(CACHE_PREFIX + key, value, Duration.ofSeconds(EXPIRATION_TIME));
     }
 
 }
