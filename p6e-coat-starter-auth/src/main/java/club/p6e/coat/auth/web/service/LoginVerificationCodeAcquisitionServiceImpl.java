@@ -3,7 +3,7 @@ package club.p6e.coat.auth.web.service;
 import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
-import club.p6e.coat.auth.event.PushMessageEvent;
+import club.p6e.coat.auth.event.PushVerificationCodeEvent;
 import club.p6e.coat.auth.web.aspect.VoucherAspect;
 import club.p6e.coat.auth.web.cache.LoginVerificationCodeCache;
 import club.p6e.coat.auth.web.repository.UserRepository;
@@ -94,7 +94,7 @@ public class LoginVerificationCodeAcquisitionServiceImpl implements LoginVerific
         if (pb || mb) {
             httpServletRequest.setAttribute(VoucherAspect.MyHttpServletRequestWrapper.ACCOUNT, account);
             cache.set(account, code);
-            final PushMessageEvent event = new PushMessageEvent(this, List.of(account), VERIFICATION_CODE_LOGIN_TEMPLATE, language, new HashMap<>() {{
+            final PushVerificationCodeEvent event = new PushVerificationCodeEvent(this, List.of(account), VERIFICATION_CODE_LOGIN_TEMPLATE, language, new HashMap<>() {{
                 put("code", code);
             }});
             SpringUtil.getApplicationContext().publishEvent(event);

@@ -3,7 +3,7 @@ package club.p6e.coat.auth.web.service;
 import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.ForgotPasswordContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
-import club.p6e.coat.auth.event.PushMessageEvent;
+import club.p6e.coat.auth.event.PushVerificationCodeEvent;
 import club.p6e.coat.auth.web.aspect.VoucherAspect;
 import club.p6e.coat.auth.web.cache.ForgotPasswordVerificationCodeCache;
 import club.p6e.coat.auth.web.repository.UserRepository;
@@ -97,7 +97,7 @@ public class ForgotPasswordVerificationCodeAcquisitionServiceImpl implements For
         if (pb || mb) {
             request.setAttribute(VoucherAspect.MyHttpServletRequestWrapper.ACCOUNT, account);
             cache.set(account, code);
-            final PushMessageEvent event = new PushMessageEvent(this, List.of(account), FORGOT_PASSWORD_TEMPLATE, language, new HashMap<>() {{
+            final PushVerificationCodeEvent event = new PushVerificationCodeEvent(this, List.of(account), FORGOT_PASSWORD_TEMPLATE, language, new HashMap<>() {{
                 put("code", code);
             }});
             SpringUtil.getBean(ApplicationContext.class).publishEvent(event);

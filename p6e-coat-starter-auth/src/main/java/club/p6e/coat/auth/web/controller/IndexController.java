@@ -1,7 +1,8 @@
 package club.p6e.coat.auth.web.controller;
 
+import club.p6e.coat.auth.Properties;
+import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.web.service.IndexService;
-import club.p6e.coat.common.utils.SpringUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -19,6 +20,20 @@ import org.springframework.web.bind.annotation.RestController;
 @ConditionalOnMissingBean(IndexController.class)
 @ConditionalOnClass(name = "org.springframework.web.package-info")
 public class IndexController {
+
+    /**
+     * Index Service Object
+     */
+    private final IndexService service;
+
+    /**
+     * Constructor Initialization
+     *
+     * @param service Index Service Object
+     */
+    public IndexController(IndexService service) {
+        this.service = service;
+    }
 
     @RequestMapping("")
     public Object def1(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
@@ -43,13 +58,22 @@ public class IndexController {
      * @return Index Content
      */
     public Object def(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        final String[] r = SpringUtil.getBean(IndexService.class).execute(httpServletRequest, httpServletResponse);
-        if (r.length > 1) {
-            httpServletResponse.setContentType(r[0]);
-            httpServletResponse.setCharacterEncoding("UTF-8");
-            return r[1];
+        final Properties properties = Properties.getInstance();
+        if (properties.isEnable()) {
+            final String[] r = service.execute(httpServletRequest, httpServletResponse);
+            if (r.length > 1) {
+                httpServletResponse.setContentType(r[0]);
+                httpServletResponse.setCharacterEncoding("UTF-8");
+                return r[1];
+            } else {
+                return "";
+            }
         } else {
-            return "";
+            throw GlobalExceptionContext.executeNoEnableException(
+                    this.getClass(),
+                    "fun Object def(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)",
+                    "index is not enabled"
+            );
         }
     }
 

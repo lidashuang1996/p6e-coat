@@ -34,11 +34,31 @@ public class VoucherAspect {
     /**
      * White Path List Object
      */
-    private static final List<String> WHITE_LIST = List.of(
+    private static final List<String> WHITE_LIST = new ArrayList<>(List.of(
             "club.p6e.coat.auth.web.controller.IndexController.def1()",
             "club.p6e.coat.auth.web.controller.IndexController.def2()",
             "club.p6e.coat.auth.web.controller.IndexController.def3()"
-    );
+    ));
+
+    /**
+     * Add White Path
+     *
+     * @param path Path
+     */
+    @SuppressWarnings("ALL")
+    public static void addWhitePath(String path) {
+        WHITE_LIST.add(path);
+    }
+
+    /**
+     * Remove White Path
+     *
+     * @param path Path
+     */
+    @SuppressWarnings("ALL")
+    public static void removeWhitePath(String path) {
+        WHITE_LIST.remove(path);
+    }
 
     @Pointcut("execution(* club.p6e.coat.auth.web.controller.*.*(..))")
     public void pointcut() {
@@ -75,6 +95,16 @@ public class VoucherAspect {
      * My Http Servlet Request Wrapper
      */
     public static class MyHttpServletRequestWrapper extends HttpServletRequestWrapper {
+
+        /**
+         * Voucher Mark
+         */
+        public static final String MARK = "__VOUCHER_MARK__";
+
+        /**
+         * Voucher Delete Mark
+         */
+        public static final String DELETE = "__VOUCHER_DELETE__";
 
         /**
          * Cache Key [ACCOUNT]
@@ -152,6 +182,7 @@ public class VoucherAspect {
                 return getVoucher(vouchers);
             } else {
                 this.mark = voucher;
+                result.put(MARK, voucher);
                 return result;
             }
         }
@@ -199,13 +230,16 @@ public class VoucherAspect {
         public void save() {
             final Map<String, String> content = new HashMap<>();
             this.attributes.forEach((k, v) -> content.put(k, String.valueOf(v)));
-            SpringUtil.getBean(VoucherCache.class).set(this.mark, content);
+            if (this.attributes.containsKey(DELETE)) {
+                delete();
+            } else {
+                SpringUtil.getBean(VoucherCache.class).set(this.mark, content);
+            }
         }
 
         /**
          * Delete Voucher Data
          */
-        @SuppressWarnings("ALL")
         public void delete() {
             SpringUtil.getBean(VoucherCache.class).del(this.mark);
         }

@@ -1,10 +1,10 @@
 package club.p6e.coat.auth.web.controller;
 
+import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.PasswordSignatureContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.web.RequestParameterValidator;
 import club.p6e.coat.auth.web.service.PasswordSignatureService;
-import club.p6e.coat.common.utils.SpringUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -24,6 +24,20 @@ import org.springframework.web.bind.annotation.RestController;
 public class PasswordSignatureController {
 
     /**
+     * Password Signature Service Object
+     */
+    private final PasswordSignatureService service;
+
+    /**
+     * Constructor Initialization
+     *
+     * @param service Password Signature Service Object
+     */
+    public PasswordSignatureController(PasswordSignatureService service) {
+        this.service = service;
+    }
+
+    /**
      * Request Parameter Validation
      *
      * @param httpServletRequest  Http Servlet Request Object
@@ -40,8 +54,7 @@ public class PasswordSignatureController {
         if (result == null) {
             throw GlobalExceptionContext.executeParameterException(
                     this.getClass(),
-                    "fun PasswordSignatureContext.Request validate(" +
-                            "HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, PasswordSignatureContext.Request request)",
+                    "fun PasswordSignatureContext.Request validate(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, PasswordSignatureContext.Request request)",
                     "request parameter validation exception"
             );
         }
@@ -54,8 +67,16 @@ public class PasswordSignatureController {
             HttpServletResponse httpServletResponse,
             PasswordSignatureContext.Request request
     ) {
-        final PasswordSignatureContext.Request r = validate(httpServletRequest, httpServletResponse, request);
-        return SpringUtil.getBean(PasswordSignatureService.class).execute(httpServletRequest, httpServletResponse, r);
+        final Properties properties = Properties.getInstance();
+        if (properties.isEnable()) {
+            return service.execute(httpServletRequest, httpServletResponse, validate(httpServletRequest, httpServletResponse, request));
+        } else {
+            throw GlobalExceptionContext.executeNoEnableException(
+                    this.getClass(),
+                    "fun Object def(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, LoginContext.QuickResponseCode.Request request)",
+                    "password signature is not enabled"
+            );
+        }
     }
 
 }

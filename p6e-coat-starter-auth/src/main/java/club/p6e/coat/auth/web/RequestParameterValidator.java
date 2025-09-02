@@ -40,7 +40,7 @@ public interface RequestParameterValidator {
             final AtomicReference<T> result = new AtomicReference<>(param);
             if (!list.isEmpty()) {
                 list.sort(Comparator.comparingInt(RequestParameterValidator::order));
-                list.forEach(v -> result.set(v.execute(request, response, param)));
+                list.forEach(v -> result.set(v.execute(request, response, result.get())));
             }
             return result.get();
         }
@@ -63,9 +63,9 @@ public interface RequestParameterValidator {
     /**
      * Execute Validator
      *
-     * @param param T Param Object
-     * @return T Result Object
+     * @param param Param Object
+     * @return Result Object
      */
-    <T> T execute(HttpServletRequest request, HttpServletResponse response, T param);
+    Object execute(HttpServletRequest request, HttpServletResponse response, Object param);
 
 }

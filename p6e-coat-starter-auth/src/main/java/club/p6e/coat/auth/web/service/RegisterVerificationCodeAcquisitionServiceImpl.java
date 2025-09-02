@@ -3,7 +3,7 @@ package club.p6e.coat.auth.web.service;
 import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.RegisterContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
-import club.p6e.coat.auth.event.PushMessageEvent;
+import club.p6e.coat.auth.event.PushVerificationCodeEvent;
 import club.p6e.coat.auth.web.aspect.VoucherAspect;
 import club.p6e.coat.auth.web.cache.RegisterVerificationCodeCache;
 import club.p6e.coat.auth.web.repository.UserRepository;
@@ -96,7 +96,7 @@ public class RegisterVerificationCodeAcquisitionServiceImpl implements RegisterV
             final String code = GeneratorUtil.random();
             cache.set(account, code);
             request.setAttribute(VoucherAspect.MyHttpServletRequestWrapper.ACCOUNT, account);
-            final PushMessageEvent event = new PushMessageEvent(this, List.of(account), REGISTER_TEMPLATE, language, new HashMap<>() {{
+            final PushVerificationCodeEvent event = new PushVerificationCodeEvent(this, List.of(account), REGISTER_TEMPLATE, language, new HashMap<>() {{
                 put("code", code);
             }});
             SpringUtil.getBean(ApplicationContext.class).publishEvent(event);

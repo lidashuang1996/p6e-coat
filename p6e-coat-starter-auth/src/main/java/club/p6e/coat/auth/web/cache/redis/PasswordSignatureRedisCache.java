@@ -1,6 +1,7 @@
 package club.p6e.coat.auth.web.cache.redis;
 
 import club.p6e.coat.auth.web.cache.PasswordSignatureCache;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
@@ -14,10 +15,8 @@ import java.time.Duration;
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(
-        value = PasswordSignatureCache.class,
-        ignored = PasswordSignatureRedisCache.class
-)
+@ConditionalOnMissingBean(PasswordSignatureCache.class)
+@ConditionalOnClass(name = "org.springframework.web.package-info")
 public class PasswordSignatureRedisCache implements PasswordSignatureCache {
 
     /**

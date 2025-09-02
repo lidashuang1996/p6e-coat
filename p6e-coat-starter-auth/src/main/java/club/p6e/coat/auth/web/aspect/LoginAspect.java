@@ -13,6 +13,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 
 /**
  * Login Aspect
@@ -21,6 +22,7 @@ import org.springframework.core.annotation.Order;
  * @version 1.0
  */
 @Aspect
+@Component
 @Order(Integer.MIN_VALUE + 20000)
 @ConditionalOnMissingBean(LoginAspect.class)
 @ConditionalOnClass(name = "org.springframework.web.package-info")
@@ -46,8 +48,13 @@ public class LoginAspect {
         final Object result = joinPoint.proceed();
         if (request != null && response != null && result != null) {
             if (result instanceof final User ru) {
+                // delete voucher
+                request.setAttribute(VoucherAspect.MyHttpServletRequestWrapper.DELETE, "1");
                 return ResultContext.build(SpringUtil.getBean(TokenGenerator.class).execute(request, response, executeDecorateUser(ru)));
             } else if (result instanceof final String rs && "AUTHENTICATION".equalsIgnoreCase(rs)) {
+                // OAuth2 authentication
+                // delete voucher
+                request.setAttribute(VoucherAspect.MyHttpServletRequestWrapper.DELETE, "1");
                 return ResultContext.build(String.valueOf(System.currentTimeMillis()));
             }
         }
@@ -61,6 +68,7 @@ public class LoginAspect {
      * @return User Result Object
      */
     public User executeDecorateUser(User user) {
+        // decorate user
         return user;
     }
 

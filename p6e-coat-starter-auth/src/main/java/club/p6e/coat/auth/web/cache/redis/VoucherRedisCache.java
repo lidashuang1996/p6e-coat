@@ -1,7 +1,7 @@
 package club.p6e.coat.auth.web.cache.redis;
 
 import club.p6e.coat.auth.web.cache.VoucherCache;
-import club.p6e.coat.auth.web.cache.redis.support.AbstractRedisCache;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
@@ -18,8 +18,9 @@ import java.util.Map;
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(value = VoucherCache.class)
-public class VoucherRedisCache extends AbstractRedisCache implements VoucherCache {
+@ConditionalOnMissingBean(VoucherCache.class)
+@ConditionalOnClass(name = "org.springframework.web.package-info")
+public class VoucherRedisCache implements VoucherCache {
 
     /**
      * String Redis Template Object

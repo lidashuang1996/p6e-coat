@@ -1,7 +1,6 @@
 package club.p6e.coat.auth.web.repository;
 
 import club.p6e.coat.auth.User;
-import reactor.core.publisher.Mono;
 
 /**
  * User Repository
@@ -9,6 +8,7 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
+@SuppressWarnings("ALL")
 public interface UserRepository {
 
     /**
@@ -51,8 +51,21 @@ public interface UserRepository {
      */
     User findByPhoneOrMailbox(String content);
 
+    /**
+     * Create User
+     *
+     * @param user User Object
+     * @return User Object
+     */
     User create(User user);
 
+    /**
+     * Update Password
+     *
+     * @param uid      User ID
+     * @param password Password
+     * @return User Object
+     */
+    User updatePassword(Integer uid, String password);
 
-    User updatePassword(User user);
 }

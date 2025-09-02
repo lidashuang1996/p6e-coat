@@ -3,7 +3,7 @@ package club.p6e.coat.auth.web.cache;
 import java.util.List;
 
 /**
- * Verification Code Register Cache
+ * Register Verification Code Cache
  *
  * @author lidashuang
  * @version 1.0

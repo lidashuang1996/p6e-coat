@@ -3,7 +3,7 @@ package club.p6e.coat.auth.web.cache;
 import java.util.List;
 
 /**
- * Verification Code Forgot Password Cache
+ * Forgot Password Verification Code Cache
  *
  * @author lidashuang
  * @version 1.0

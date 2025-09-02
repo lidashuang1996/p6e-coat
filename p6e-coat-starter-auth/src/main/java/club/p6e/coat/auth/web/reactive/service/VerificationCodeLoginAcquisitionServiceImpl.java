@@ -1,6 +1,6 @@
 package club.p6e.coat.auth.web.reactive.service;
 
-import club.p6e.coat.auth.event.PushMessageEvent;
+import club.p6e.coat.auth.event.PushVerificationCodeEvent;
 import club.p6e.coat.auth.web.reactive.cache.VerificationCodeLoginCache;
 import club.p6e.coat.auth.web.reactive.repository.UserRepository;
 import club.p6e.coat.common.utils.GeneratorUtil;
@@ -108,7 +108,7 @@ public class VerificationCodeLoginAcquisitionServiceImpl implements Verification
                             "Verification code register acquisition, register cache exception."
                     )))
                     .map(s -> {
-                        final PushMessageEvent event = new PushMessageEvent(this, List.of(account), VERIFICATION_CODE_LOGIN_TEMPLATE, language, new HashMap<>() {{
+                        final PushVerificationCodeEvent event = new PushVerificationCodeEvent(this, List.of(account), VERIFICATION_CODE_LOGIN_TEMPLATE, language, new HashMap<>() {{
                             put("code", code);
                         }});
                         SpringUtil.getApplicationContext().publishEvent(event);

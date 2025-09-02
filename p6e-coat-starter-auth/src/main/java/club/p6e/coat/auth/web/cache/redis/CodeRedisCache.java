@@ -1,6 +1,9 @@
-package club.p6e.coat.auth.web.cache.redis.support;
+package club.p6e.coat.auth.web.cache.redis;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -9,31 +12,46 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Abstract Redis Cache
+ * Code Redis Cache
  *
  * @author lidashuang
  * @version 1.0
  */
-public abstract class AbstractRedisCache {
+@Component
+@ConditionalOnMissingBean(CodeRedisCache.class)
+@ConditionalOnClass(name = "org.springframework.web.package-info")
+public class CodeRedisCache {
 
     /**
-     * Delete Verification Code
+     * String Redis Template Object
+     */
+    private final StringRedisTemplate template;
+
+    /**
+     * Constructor Initialization
      *
      * @param template String Redis Template Object
-     * @param key      Key
      */
-    public void delVerificationCode(StringRedisTemplate template, String key) {
+    public CodeRedisCache(StringRedisTemplate template) {
+        this.template = template;
+    }
+
+    /**
+     * Del Code
+     *
+     * @param key Key
+     */
+    public void delVerificationCode(String key) {
         template.delete(key);
     }
 
     /**
-     * Get Verification Code
+     * Get Code
      *
-     * @param template String Redis Template Object
-     * @param key      Key
-     * @return Verification Code List
+     * @param key Key
+     * @return Code List
      */
-    public List<String> getVerificationCode(StringRedisTemplate template, String key) {
+    public List<String> getVerificationCode(String key) {
         final long now = System.currentTimeMillis();
         final List<String> list = new ArrayList<>();
         final Map<Object, Object> data = template.opsForHash().entries(key);
@@ -52,14 +70,13 @@ public abstract class AbstractRedisCache {
     }
 
     /**
-     * Set Verification Code
+     * Set Code
      *
-     * @param template   String Redis Template Object
      * @param key        Key
      * @param value      Value
      * @param expiration Expiration Time
      */
-    public void setVerificationCode(StringRedisTemplate template, String key, String value, long expiration) {
+    public void setVerificationCode(String key, String value, long expiration) {
         final String timestamp = String.valueOf(System.currentTimeMillis() + expiration * 1000L);
         template.opsForHash().put(key, value, timestamp);
         template.expire(key, Duration.of(expiration, ChronoUnit.SECONDS));

@@ -1,10 +1,10 @@
 package club.p6e.coat.auth.web.controller;
 
+import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.RegisterContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.web.RequestParameterValidator;
 import club.p6e.coat.auth.web.service.RegisterVerificationCodeAcquisitionService;
-import club.p6e.coat.common.utils.SpringUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -24,6 +24,20 @@ import org.springframework.web.bind.annotation.RestController;
 public class RegisterVerificationCodeAcquisitionController {
 
     /**
+     * Register Verification Code Acquisition Service Object
+     */
+    private final RegisterVerificationCodeAcquisitionService service;
+
+    /**
+     * Constructor Initialization
+     *
+     * @param service Register Verification Code Acquisition Service Object
+     */
+    public RegisterVerificationCodeAcquisitionController(RegisterVerificationCodeAcquisitionService service) {
+        this.service = service;
+    }
+
+    /**
      * Request Parameter Validation
      *
      * @param httpServletRequest  Http Servlet Request Object
@@ -40,8 +54,7 @@ public class RegisterVerificationCodeAcquisitionController {
         if (result == null) {
             throw GlobalExceptionContext.executeParameterException(
                     this.getClass(),
-                    "fun RegisterContext.VerificationCodeAcquisition.Request validate(" +
-                            "HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, RegisterContext.VerificationCodeAcquisition.Request request)",
+                    "fun RegisterContext.VerificationCodeAcquisition.Request validate(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, RegisterContext.VerificationCodeAcquisition.Request request)",
                     "request parameter validation exception"
             );
         }
@@ -49,11 +62,21 @@ public class RegisterVerificationCodeAcquisitionController {
     }
 
     @GetMapping(value = "/register/code")
-    public Object def(HttpServletRequest httpServletRequest,
-                      HttpServletResponse httpServletResponse,
-                      RegisterContext.VerificationCodeAcquisition.Request request) {
-        final RegisterContext.VerificationCodeAcquisition.Request r = validate(httpServletRequest, httpServletResponse, request);
-        return SpringUtil.getBean(RegisterVerificationCodeAcquisitionService.class).execute(httpServletRequest, httpServletResponse, r);
+    public Object def(
+            HttpServletRequest httpServletRequest,
+            HttpServletResponse httpServletResponse,
+            RegisterContext.VerificationCodeAcquisition.Request request
+    ) {
+        final Properties properties = Properties.getInstance();
+        if (properties.isEnable() && properties.getRegister().isEnable()) {
+            return service.execute(httpServletRequest, httpServletResponse, validate(httpServletRequest, httpServletResponse, request));
+        } else {
+            throw GlobalExceptionContext.executeNoEnableException(
+                    this.getClass(),
+                    "fun Object def(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, RegisterContext.VerificationCodeAcquisition.Request request)",
+                    "register is not enabled"
+            );
+        }
     }
 
 }

@@ -1,7 +1,7 @@
 package club.p6e.coat.auth.web.cache;
 
 /**
- * Quick Response Code Login Cache
+ * Login Quick Response Code Cache
  *
  * @author lidashuang
  * @version 1.0

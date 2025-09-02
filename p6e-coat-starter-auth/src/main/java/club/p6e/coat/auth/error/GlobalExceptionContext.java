@@ -29,6 +29,10 @@ public final class GlobalExceptionContext {
         return new ParameterException(sc, error, content);
     }
 
+    public static ParameterException executeNoEnableException(Class<?> sc, String error, String content) {
+        return new ParameterException(sc, error, content);
+    }
+
     public static ParameterException executeServiceNotSupportException(Class<?> sc, String error, String content) {
         return new ParameterException(sc, error, content);
     }

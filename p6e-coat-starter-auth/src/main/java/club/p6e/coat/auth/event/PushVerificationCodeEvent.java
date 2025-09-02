@@ -8,13 +8,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Push Message Event
+ * Push Verification CodeEvent
  *
  * @author lidashuang
  * @version 1.0
  */
 @Getter
-public class PushMessageEvent extends ApplicationEvent implements Serializable {
+public class PushVerificationCodeEvent extends ApplicationEvent implements Serializable {
 
     /**
      * Recipient List Object
@@ -41,11 +41,11 @@ public class PushMessageEvent extends ApplicationEvent implements Serializable {
      *
      * @param source     Source Object
      * @param recipients Recipient List Object
-     * @param type       Type Content
-     * @param language   Language Content
+     * @param type       Type
+     * @param language   Language
      * @param data       Data Object
      */
-    public PushMessageEvent(Object source, List<String> recipients, String type, String language, Map<String, Object> data) {
+    public PushVerificationCodeEvent(Object source, List<String> recipients, String type, String language, Map<String, Object> data) {
         super(source);
         this.type = type;
         this.data = data;
