@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionCallback;
@@ -122,10 +123,16 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @SuppressWarnings("ALL")
+    protected String findPasswordById(Integer id) {
+        final List<String> list = template.query(TemplateParser.execute("SELECT _user_auth.id, _user_auth.password FROM @{TABLE} AS _user_auth WHERE _user_auth.id = :ID ; ", "TABLE", getUserAuthTableName()), new Object[]{id}, (ResultSetExtractor<List<String>>) rs -> List.of(rs.getString(2)));
+        return (list == null || list.isEmpty()) ? null : list.get(0);
+    }
+
+    @SuppressWarnings("ALL")
     @Override
     public User findById(Integer id) {
         final List<User> list = template.query(TemplateParser.execute(BASE_USER_SELECT_SQL + " WHERE _user.id = ? ORDER BY _user.id ASC LIMIT 1 ; ", "TABLE", getUserTableName()), new Object[]{id}, new BeanPropertyRowMapper<>(User.class));
-        return (list == null || list.isEmpty()) ? null : list.get(0);
+        return (list == null || list.isEmpty()) ? null : list.get(0).password(findPasswordById(id));
     }
 
     @SuppressWarnings("ALL")
@@ -138,7 +145,7 @@ public class UserRepositoryImpl implements UserRepository {
             }
             return result;
         });
-        return (list == null || list.isEmpty()) ? null : list.get(0);
+        return (list == null || list.isEmpty()) ? null : list.get(0).password(findPasswordById(Integer.valueOf(list.get(0).id())));
     }
 
     @SuppressWarnings("ALL")
@@ -151,7 +158,7 @@ public class UserRepositoryImpl implements UserRepository {
             }
             return result;
         });
-        return (list == null || list.isEmpty()) ? null : list.get(0);
+        return (list == null || list.isEmpty()) ? null : list.get(0).password(findPasswordById(Integer.valueOf(list.get(0).id())));
     }
 
     @SuppressWarnings("ALL")
@@ -164,7 +171,7 @@ public class UserRepositoryImpl implements UserRepository {
             }
             return result;
         });
-        return (list == null || list.isEmpty()) ? null : list.get(0);
+        return (list == null || list.isEmpty()) ? null : list.get(0).password(findPasswordById(Integer.valueOf(list.get(0).id())));
     }
 
     @SuppressWarnings("ALL")
@@ -177,7 +184,7 @@ public class UserRepositoryImpl implements UserRepository {
             }
             return result;
         });
-        return (list == null || list.isEmpty()) ? null : list.get(0);
+        return (list == null || list.isEmpty()) ? null : list.get(0).password(findPasswordById(Integer.valueOf(list.get(0).id())));
     }
 
     @SuppressWarnings("ALL")

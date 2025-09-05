@@ -51,7 +51,21 @@ public interface UserRepository {
      */
     Mono<User> findByPhoneOrMailbox(String content);
 
+    /**
+     * Create User
+     *
+     * @param user User Object
+     * @return User Object
+     */
     Mono<User> create(User user);
 
-    Mono<User> updatePassword(Integer integer, String execute);
+    /**
+     * Update Password
+     *
+     * @param uid      User ID
+     * @param password Password
+     * @return User Object
+     */
+    Mono<User> updatePassword(Integer uid, String password);
+
 }
