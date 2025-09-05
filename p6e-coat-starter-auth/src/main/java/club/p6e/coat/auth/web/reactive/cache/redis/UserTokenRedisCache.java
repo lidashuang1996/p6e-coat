@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
  * @author lidashuang
  * @version 1.0
  */
+@SuppressWarnings("ALL")
 public class UserTokenRedisCache implements UserTokenCache {
 
     /**

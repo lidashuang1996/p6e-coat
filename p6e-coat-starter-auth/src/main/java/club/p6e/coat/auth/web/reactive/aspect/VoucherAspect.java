@@ -9,6 +9,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
 import org.springframework.stereotype.Component;
@@ -30,6 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Aspect
 @Component
+@Order(Integer.MIN_VALUE + 10000)
 @ConditionalOnMissingBean(VoucherAspect.class)
 @ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
 public class VoucherAspect {
@@ -42,6 +44,26 @@ public class VoucherAspect {
             "club.p6e.coat.auth.web.reactive.controller.IndexController.def2()",
             "club.p6e.coat.auth.web.reactive.controller.IndexController.def3()"
     );
+
+    /**
+     * Add White Path
+     *
+     * @param path Path
+     */
+    @SuppressWarnings("ALL")
+    public static void addWhitePath(String path) {
+        WHITE_LIST.add(path);
+    }
+
+    /**
+     * Remove White Path
+     *
+     * @param path Path
+     */
+    @SuppressWarnings("ALL")
+    public static void removeWhitePath(String path) {
+        WHITE_LIST.remove(path);
+    }
 
     @Pointcut("execution(* club.p6e.coat.auth.web.reactive.controller.*.*(..))")
     public void pointcut() {
@@ -74,42 +96,49 @@ public class VoucherAspect {
         }
     }
 
+    /**
+     * My Server Http Request Decorator
+     */
     public static class MyServerHttpRequestDecorator extends ServerHttpRequestDecorator {
 
         /**
-         * Http Request Header Voucher Name
+         * Voucher Mark
          */
-        @SuppressWarnings("ALL")
-        private static final String VOUCHER_HEADER = "X-Voucher";
+        public static final String MARK = "__VOUCHER_MARK__";
 
         /**
-         * Http Request Param V
+         * Voucher Delete Mark
          */
-        private static final String V_REQUEST_PARAM = "v";
-
-        /**
-         * Http Request Param Voucher
-         */
-        private static final String VOUCHER_REQUEST_PARAM = "voucher";
+        public static final String DELETE = "__VOUCHER_DELETE__";
 
         /**
          * Cache Key [ACCOUNT]
          */
         @SuppressWarnings("ALL")
         public static final String ACCOUNT = "ACCOUNT";
-
         /**
          * Cache Key [QUICK_RESPONSE_CODE_LOGIN_MARK]
          */
         @SuppressWarnings("ALL")
         public static final String QUICK_RESPONSE_CODE_LOGIN_MARK = "QUICK_RESPONSE_CODE_LOGIN_MARK";
-
         /**
          * Cache Key [ACCOUNT_PASSWORD_SIGNATURE_MARK]
          */
         @SuppressWarnings("ALL")
         public static final String ACCOUNT_PASSWORD_SIGNATURE_MARK = "ACCOUNT_PASSWORD_SIGNATURE_MARK";
-
+        /**
+         * Http Request Header Voucher Name
+         */
+        @SuppressWarnings("ALL")
+        private static final String VOUCHER_HEADER = "X-Voucher";
+        /**
+         * Http Request Param V
+         */
+        private static final String V_REQUEST_PARAM = "v";
+        /**
+         * Http Request Param Voucher
+         */
+        private static final String VOUCHER_REQUEST_PARAM = "voucher";
         /**
          * Server Http Request Attributes Object
          */
@@ -146,6 +175,7 @@ public class VoucherAspect {
                     .switchIfEmpty(getVoucher(vouchers))
                     .map(m -> {
                         this.mark = voucher;
+                        m.put(MARK, voucher);
                         return m;
                     });
         }
@@ -156,10 +186,10 @@ public class VoucherAspect {
          * @return My Server Http Request Decorator Object
          */
         public Mono<MyServerHttpRequestDecorator> init() {
-            final LinkedList<String> vouchers = new LinkedList<>();
             final List<String> vouchers1 = getDelegate().getHeaders().get(VOUCHER_HEADER);
             final List<String> vouchers2 = getDelegate().getQueryParams().get(V_REQUEST_PARAM);
             final List<String> vouchers3 = getDelegate().getQueryParams().get(VOUCHER_REQUEST_PARAM);
+            final LinkedList<String> vouchers = new LinkedList<>();
             if (vouchers1 != null) {
                 vouchers.addAll(vouchers1);
             }
@@ -195,16 +225,20 @@ public class VoucherAspect {
          */
         public Mono<MyServerHttpRequestDecorator> save() {
             final Map<String, String> content = new HashMap<>();
-            this.attributes.forEach((k, v) -> content.put(k, String.valueOf(v)));
-            return SpringUtil
-                    .getBean(VoucherCache.class)
-                    .set(this.mark, content)
-                    .switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(
-                            this.getClass(),
-                            "fun save()",
-                            "request voucher cache data save exception"
-                    )))
-                    .map(b -> this);
+            if (this.attributes.containsKey(DELETE)) {
+                return delete().map(d -> this);
+            } else {
+                this.attributes.forEach((k, v) -> content.put(k, String.valueOf(v)));
+                return SpringUtil
+                        .getBean(VoucherCache.class)
+                        .set(this.mark, content)
+                        .switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(
+                                this.getClass(),
+                                "fun save()",
+                                "request voucher cache data save exception"
+                        )))
+                        .map(b -> this);
+            }
         }
 
         /**
@@ -212,7 +246,6 @@ public class VoucherAspect {
          *
          * @return Server Http Request Object
          */
-        @SuppressWarnings("ALL")
         public Mono<MyServerHttpRequestDecorator> delete() {
             return SpringUtil.getBean(VoucherCache.class).del(this.mark).map(b -> this);
         }

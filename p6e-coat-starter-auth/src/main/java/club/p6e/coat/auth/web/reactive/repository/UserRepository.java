@@ -52,4 +52,6 @@ public interface UserRepository {
     Mono<User> findByPhoneOrMailbox(String content);
 
     Mono<User> create(User user);
+
+    Mono<User> updatePassword(Integer integer, String execute);
 }

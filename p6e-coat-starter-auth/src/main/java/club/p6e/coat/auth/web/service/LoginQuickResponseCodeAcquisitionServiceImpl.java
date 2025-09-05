@@ -3,7 +3,6 @@ package club.p6e.coat.auth.web.service;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.web.aspect.VoucherAspect;
 import club.p6e.coat.auth.web.cache.LoginQuickResponseCodeCache;
-import club.p6e.coat.auth.web.reactive.cache.QuickResponseCodeLoginCache;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -44,7 +43,7 @@ public class LoginQuickResponseCodeAcquisitionServiceImpl implements LoginQuickR
     ) {
         final String code = GeneratorUtil.uuid() + GeneratorUtil.random(8, true, false);
         httpServletRequest.setAttribute(VoucherAspect.MyHttpServletRequestWrapper.QUICK_RESPONSE_CODE_LOGIN_MARK, code);
-        cache.set(code, QuickResponseCodeLoginCache.EMPTY_CONTENT);
+        cache.set(code, LoginQuickResponseCodeCache.EMPTY_CONTENT);
         return new LoginContext.QuickResponseCodeAcquisition.Dto().setContent(code);
     }
 

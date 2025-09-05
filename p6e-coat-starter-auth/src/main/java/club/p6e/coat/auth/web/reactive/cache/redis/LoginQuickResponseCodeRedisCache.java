@@ -1,6 +1,6 @@
 package club.p6e.coat.auth.web.reactive.cache.redis;
 
-import club.p6e.coat.auth.web.reactive.cache.PasswordSignatureCache;
+import club.p6e.coat.auth.web.reactive.cache.LoginQuickResponseCodeCache;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
@@ -10,15 +10,15 @@ import reactor.core.publisher.Mono;
 import java.time.Duration;
 
 /**
- * Password Signature Redis Cache
+ * Login Quick Response Code Redis Cache
  *
  * @author lidashuang
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(PasswordSignatureCache.class)
+@ConditionalOnMissingBean(LoginQuickResponseCodeCache.class)
 @ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
-public class PasswordSignatureRedisCache implements PasswordSignatureCache {
+public class LoginQuickResponseCodeRedisCache implements LoginQuickResponseCodeCache {
 
     /**
      * Reactive String Redis Template Object
@@ -30,7 +30,7 @@ public class PasswordSignatureRedisCache implements PasswordSignatureCache {
      *
      * @param template Reactive String Redis Template Object
      */
-    public PasswordSignatureRedisCache(ReactiveStringRedisTemplate template) {
+    public LoginQuickResponseCodeRedisCache(ReactiveStringRedisTemplate template) {
         this.template = template;
     }
 

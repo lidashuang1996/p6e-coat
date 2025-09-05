@@ -2,15 +2,12 @@ package club.p6e.coat.auth.web.cache.redis;
 
 import club.p6e.coat.auth.token.web.UserTokenCache;
 import club.p6e.coat.common.utils.JsonUtil;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.data.redis.connection.RedisStringCommands;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.types.Expiration;
-import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -23,9 +20,7 @@ import java.util.concurrent.TimeUnit;
  * @author lidashuang
  * @version 1.0
  */
-@Component
-@ConditionalOnMissingBean(UserTokenRedisCache.class)
-@ConditionalOnClass(name = "org.springframework.web.package-info")
+@SuppressWarnings("ALL")
 public class UserTokenRedisCache implements UserTokenCache {
 
     /**

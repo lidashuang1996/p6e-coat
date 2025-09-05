@@ -6,6 +6,7 @@ import club.p6e.coat.common.utils.SpringUtil;
 import club.p6e.coat.common.utils.TemplateParser;
 import club.p6e.coat.common.utils.TransformationUtil;
 import io.r2dbc.spi.Readable;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,7 @@ import java.util.HashMap;
  */
 @Component
 @ConditionalOnMissingBean(UserRepository.class)
+@ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
 public class UserRepositoryImpl implements UserRepository {
 
     private static final String BASE_SELECT_SQL = """

@@ -5,7 +5,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * Account Password Login Signature Service
+ * Password Signature Service
  *
  * @author lidashuang
  * @version 1.0
@@ -13,11 +13,11 @@ import reactor.core.publisher.Mono;
 public interface PasswordSignatureService {
 
     /**
-     * Execute Account Password Login Password Signature
+     * Execute Password Signature
      *
      * @param exchange Server Web Exchange Object
-     * @param param    Login Context Account Password Signature.Request Object
-     * @return Login Context Account Password Signature Dto Object
+     * @param param    Password Signature Context Request Object
+     * @return Password Signature Context Dto Object
      */
     Mono<PasswordSignatureContext.Dto> execute(ServerWebExchange exchange, PasswordSignatureContext.Request param);
 

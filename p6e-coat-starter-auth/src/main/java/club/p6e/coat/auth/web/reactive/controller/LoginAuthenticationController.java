@@ -1,9 +1,9 @@
 package club.p6e.coat.auth.web.reactive.controller;
 
-import club.p6e.coat.auth.context.RegisterContext;
+import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.web.reactive.RequestParameterValidator;
-import club.p6e.coat.auth.web.reactive.service.RegisterService;
+import club.p6e.coat.auth.web.reactive.service.LoginAuthenticationService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,27 +13,27 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * Register Controller
+ * Login Authentication Controller
  *
  * @author lidashuang
  * @version 1.0
  */
 @RestController
-@ConditionalOnMissingBean(RegisterController.class)
+@ConditionalOnMissingBean(LoginAuthenticationController.class)
 @ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
-public class RegisterController {
+public class LoginAuthenticationController {
 
     /**
-     * Register Service Object
+     * Login Authentication Service Object
      */
-    private final RegisterService service;
+    private final LoginAuthenticationService service;
 
     /**
      * Constructor Initialization
      *
-     * @param service Register Service Object
+     * @param service Login Authentication Service Object
      */
-    public RegisterController(RegisterService service) {
+    public LoginAuthenticationController(LoginAuthenticationService service) {
         this.service = service;
     }
 
@@ -41,21 +41,24 @@ public class RegisterController {
      * Request Parameter Validation
      *
      * @param exchange Server Web Exchange Object
-     * @param request  Password Signature Context Request Object
-     * @return Password Signature Context Request Object
+     * @param request  Login Context Authentication Request Object
+     * @return Login Context Authentication Request Object
      */
-    private Mono<RegisterContext.Request> validate(ServerWebExchange exchange, RegisterContext.Request request) {
+    private Mono<LoginContext.Authentication.Request> validate(
+            ServerWebExchange exchange,
+            LoginContext.Authentication.Request request
+    ) {
         return RequestParameterValidator.run(exchange, request)
                 .switchIfEmpty(Mono.error(GlobalExceptionContext.executeParameterException(
                         this.getClass(),
-                        "fun Mono<RegisterContext.Request> validate(ServerWebExchange exchange, RegisterContext.Request request)",
+                        "fun Mono<LoginContext.Authentication.Request> validate(ServerWebExchange exchange, LoginContext.Authentication.Request request)",
                         "request parameter validation exception"
                 )));
     }
 
-    @PostMapping("/register")
-    public Mono<Object> def(ServerWebExchange exchange, @RequestBody RegisterContext.Request request) {
-        return validate(exchange, request).flatMap(r -> service.execute(exchange, r));
+    @PostMapping("/login/authentication")
+    public Mono<Object> def(ServerWebExchange exchange, @RequestBody LoginContext.Authentication.Request request) {
+        return validate(exchange, request).flatMap(r -> service.execute(exchange, r)).map(u -> "AUTHENTICATION");
     }
 
 }

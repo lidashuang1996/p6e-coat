@@ -66,6 +66,7 @@ public class LoginQuickResponseCodeServiceImpl implements LoginQuickResponseCode
                         "login quick response code cache data does not exist or expire exception"
                 );
             } else if (LoginQuickResponseCodeCache.isEmpty(content)) {
+                cache.set(mark, String.valueOf(user.id()));
                 return new LoginContext.QuickResponseCode.Dto().setContent(String.valueOf(System.currentTimeMillis()));
             } else {
                 throw GlobalExceptionContext.executeCacheException(

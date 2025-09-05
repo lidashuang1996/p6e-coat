@@ -5,17 +5,23 @@ import club.p6e.coat.auth.web.reactive.cache.VoucherCache;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.SpringUtil;
 import club.p6e.coat.common.utils.TemplateParser;
-import org.springframework.stereotype.Service;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 
 /**
+ * Index Service Impl
+ *
  * @author lidashuang
  * @version 1.0
  */
-@Service
+@Component
+@ConditionalOnMissingBean(IndexService.class)
+@ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
 public class IndexServiceImpl implements IndexService {
 
     @Override

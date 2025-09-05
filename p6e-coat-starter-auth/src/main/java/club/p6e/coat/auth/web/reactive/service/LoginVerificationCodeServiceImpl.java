@@ -2,11 +2,10 @@ package club.p6e.coat.auth.web.reactive.service;
 
 import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.User;
-import club.p6e.coat.auth.context.ForgotPasswordContext;
+import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
-import club.p6e.coat.auth.password.PasswordEncryptor;
 import club.p6e.coat.auth.web.reactive.aspect.VoucherAspect;
-import club.p6e.coat.auth.web.reactive.cache.ForgotPasswordVerificationCodeCache;
+import club.p6e.coat.auth.web.reactive.cache.LoginVerificationCodeCache;
 import club.p6e.coat.auth.web.reactive.repository.UserRepository;
 import club.p6e.coat.common.utils.TransformationUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -16,15 +15,15 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * Forgot Password Service Impl
+ * Login Verification Code Login Service Impl
  *
  * @author lidashuang
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(ForgotPasswordService.class)
+@ConditionalOnMissingBean(LoginVerificationCodeService.class)
 @ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
-public class ForgotPasswordServiceImpl implements ForgotPasswordService {
+public class LoginVerificationCodeServiceImpl implements LoginVerificationCodeService {
 
     /**
      * User Repository Object
@@ -32,25 +31,18 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
     private final UserRepository repository;
 
     /**
-     * Password Encryptor Object
+     * Login Verification Code Cache Object
      */
-    private final PasswordEncryptor encryptor;
-
-    /**
-     * Forgot Password Verification Code Cache Object
-     */
-    private final ForgotPasswordVerificationCodeCache cache;
+    private final LoginVerificationCodeCache cache;
 
     /**
      * Constructor Initialization
      *
+     * @param cache      Verification Code Login Cache Object
      * @param repository User Repository Object
-     * @param encryptor  Password Encryptor Object
-     * @param cache      Forgot Password Verification Code Cache Object
      */
-    public ForgotPasswordServiceImpl(UserRepository repository, PasswordEncryptor encryptor, ForgotPasswordVerificationCodeCache cache) {
+    public LoginVerificationCodeServiceImpl(UserRepository repository, LoginVerificationCodeCache cache) {
         this.cache = cache;
-        this.encryptor = encryptor;
         this.repository = repository;
     }
 
@@ -70,21 +62,26 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
     }
 
     @Override
-    public Mono<ForgotPasswordContext.Dto> execute(ServerWebExchange exchange, ForgotPasswordContext.Request param) {
-        final String account = TransformationUtil.objectToString(
-                exchange.getRequest().getAttributes().get(VoucherAspect.MyServerHttpRequestDecorator.ACCOUNT));
+    public Mono<User> execute(ServerWebExchange exchange, LoginContext.VerificationCode.Request param) {
+        final String code = param.getCode();
+        final String account = TransformationUtil.objectToString(exchange.getRequest().getAttributes().get(VoucherAspect.MyServerHttpRequestDecorator.ACCOUNT));
         return cache
                 .get(account)
-                .filter(l -> l.contains(param.getCode()))
-                .flatMap(l -> cache.del(account))
                 .switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(
                         this.getClass(),
-                        "fun execute(ServerWebExchange exchange, ForgotPasswordContext.Request param)",
-                        "forgot password verification code cache data does not exist or expire exception"
-                )))
-                .flatMap(v -> getUser(account))
-                .flatMap(u -> repository.updatePassword(Integer.valueOf(u.id()), encryptor.execute(param.getPassword())))
-                .map(u -> new ForgotPasswordContext.Dto().setAccount(account));
+                        "fun execute(ServerWebExchange exchange, LoginContext.VerificationCode.Request param)",
+                        "login verification code cache data does not exist or expire exception"
+                ))).flatMap(list -> {
+                    if (list != null && !list.isEmpty() && list.contains(code)) {
+                        return cache.del(account);
+                    } else {
+                        return Mono.error(GlobalExceptionContext.executeCacheException(
+                                this.getClass(),
+                                "fun execute(ServerWebExchange exchange, LoginContext.VerificationCode.Request param)",
+                                "login verification code cache data does not exist or expire exception"
+                        ));
+                    }
+                }).flatMap(r -> getUser(account));
     }
-
+    
 }
