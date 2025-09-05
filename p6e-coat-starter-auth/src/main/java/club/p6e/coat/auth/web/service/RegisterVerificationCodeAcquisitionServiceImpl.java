@@ -27,8 +27,11 @@ import java.util.List;
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(RegisterVerificationCodeAcquisitionService.class)
-@ConditionalOnClass(name = "org.springframework.web.package-info")
+@ConditionalOnMissingBean(
+        value = RegisterVerificationCodeAcquisitionService.class,
+        ignored = RegisterVerificationCodeAcquisitionServiceImpl.class
+)
+@ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class RegisterVerificationCodeAcquisitionServiceImpl implements RegisterVerificationCodeAcquisitionService {
 
     /**

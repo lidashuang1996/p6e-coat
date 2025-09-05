@@ -25,8 +25,11 @@ import java.util.Map;
 @Aspect
 @Component
 @Order(Integer.MIN_VALUE + 30000)
-@ConditionalOnMissingBean(LoginAspect.class)
-@ConditionalOnClass(name = "org.springframework.web.package-info")
+@ConditionalOnMissingBean(
+        value = LogAspect.class,
+        ignored = LogAspect.class
+)
+@ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class LogAspect {
 
     /**
@@ -52,7 +55,7 @@ public class LogAspect {
             }
         }
         if (request != null) {
-            LOGGER.info("⬇======================================⬇");
+            LOGGER.info("↓======================================↓");
             LOGGER.info("[ {} ] >>> {}", request.getMethod(), request.getRequestURI());
             LOGGER.info("REQUEST PARAMS: {}", JsonUtil.toJson(params));
             final Enumeration<String> enumeration = request.getAttributeNames();

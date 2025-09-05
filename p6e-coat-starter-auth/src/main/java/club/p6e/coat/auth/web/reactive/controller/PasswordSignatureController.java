@@ -18,8 +18,11 @@ import reactor.core.publisher.Mono;
  * @version 1.0
  */
 @RestController
-@ConditionalOnMissingBean(PasswordSignatureController.class)
-@ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
+@ConditionalOnMissingBean(
+        value = PasswordSignatureController.class,
+        ignored = PasswordSignatureController.class
+)
+@ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class PasswordSignatureController {
 
     /**

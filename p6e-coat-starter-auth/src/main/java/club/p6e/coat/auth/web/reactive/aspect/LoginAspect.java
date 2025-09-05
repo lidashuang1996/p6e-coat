@@ -25,8 +25,11 @@ import reactor.core.publisher.Mono;
 @Aspect
 @Component
 @Order(Integer.MIN_VALUE + 20000)
-@ConditionalOnMissingBean(LoginAspect.class)
-@ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
+@ConditionalOnMissingBean(
+        value = LoginAspect.class,
+        ignored = LoginAspect.class
+)
+@ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class LoginAspect {
 
     @Pointcut("execution(* club.p6e.coat.auth.web.reactive.controller.*.*(..))")
@@ -51,28 +54,17 @@ public class LoginAspect {
                 if (r instanceof final User ru) {
                     // delete voucher
                     e.getRequest().getAttributes().put(VoucherAspect.MyHttpServletRequestWrapper.DELETE, "1");
-                    return executeDecorateUser(ru).flatMap(u -> SpringUtil.getBean(TokenGenerator.class).execute(e, ru)).map(ResultContext::build);
+                    return SpringUtil.getBean(TokenGenerator.class).execute(e, ru).map(ResultContext::build);
                 } else if (r instanceof final String rs && "AUTHENTICATION".equalsIgnoreCase(rs)) {
                     // OAuth2 authentication
                     // delete voucher
                     e.getRequest().getAttributes().put(VoucherAspect.MyHttpServletRequestWrapper.DELETE, "1");
                     return Mono.just(ResultContext.build(String.valueOf(System.currentTimeMillis())));
                 }
-                return Mono.just(ResultContext.build(r));
+                return Mono.just(r);
             });
         }
-        return ResultContext.build(result);
-    }
-
-    /**
-     * Execute Decorate User
-     *
-     * @param user User Object
-     * @return User Result Object
-     */
-    public Mono<User> executeDecorateUser(User user) {
-        // decorate user
-        return Mono.just(user);
+        return result;
     }
 
 }

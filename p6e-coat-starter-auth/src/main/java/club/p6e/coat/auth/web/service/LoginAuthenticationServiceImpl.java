@@ -16,8 +16,11 @@ import org.springframework.stereotype.Component;
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(LoginAuthenticationService.class)
-@ConditionalOnClass(name = "org.springframework.web.package-info")
+@ConditionalOnMissingBean(
+        value = LoginAuthenticationService.class,
+        ignored = LoginAuthenticationServiceImpl.class
+)
+@ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class LoginAuthenticationServiceImpl implements LoginAuthenticationService {
 
     /**

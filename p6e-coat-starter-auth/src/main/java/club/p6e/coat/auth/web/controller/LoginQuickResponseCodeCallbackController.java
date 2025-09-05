@@ -19,8 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
  * @version 1.0
  */
 @RestController
-@ConditionalOnMissingBean(LoginQuickResponseCodeCallbackController.class)
-@ConditionalOnClass(name = "org.springframework.web.package-info")
+@ConditionalOnMissingBean(
+        value = LoginQuickResponseCodeCallbackController.class,
+        ignored = LoginQuickResponseCodeCallbackController.class
+)
+@ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class LoginQuickResponseCodeCallbackController {
 
     /**

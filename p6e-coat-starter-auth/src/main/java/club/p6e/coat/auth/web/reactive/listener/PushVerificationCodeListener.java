@@ -4,6 +4,7 @@ import club.p6e.coat.auth.web.reactive.event.PushVerificationCodeEvent;
 import jakarta.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
@@ -16,7 +17,11 @@ import reactor.core.publisher.Mono;
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(PushVerificationCodeListener.class)
+@ConditionalOnMissingBean(
+        value = PushVerificationCodeListener.class,
+        ignored = PushVerificationCodeListener.class
+)
+@ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class PushVerificationCodeListener implements ApplicationListener<PushVerificationCodeEvent> {
 
     /**

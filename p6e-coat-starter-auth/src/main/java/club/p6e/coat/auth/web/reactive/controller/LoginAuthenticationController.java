@@ -19,8 +19,11 @@ import reactor.core.publisher.Mono;
  * @version 1.0
  */
 @RestController
-@ConditionalOnMissingBean(LoginAuthenticationController.class)
-@ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
+@ConditionalOnMissingBean(
+        value = LoginAuthenticationController.class,
+        ignored = LoginAuthenticationController.class
+)
+@ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class LoginAuthenticationController {
 
     /**

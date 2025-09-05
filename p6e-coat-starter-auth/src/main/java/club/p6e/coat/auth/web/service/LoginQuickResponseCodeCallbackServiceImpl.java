@@ -20,8 +20,11 @@ import org.springframework.stereotype.Component;
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(LoginQuickResponseCodeCallbackService.class)
-@ConditionalOnClass(name = "org.springframework.web.package-info")
+@ConditionalOnMissingBean(
+        value = LoginQuickResponseCodeCallbackService.class,
+        ignored = LoginQuickResponseCodeCallbackServiceImpl.class
+)
+@ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class LoginQuickResponseCodeCallbackServiceImpl implements LoginQuickResponseCodeCallbackService {
 
     /**

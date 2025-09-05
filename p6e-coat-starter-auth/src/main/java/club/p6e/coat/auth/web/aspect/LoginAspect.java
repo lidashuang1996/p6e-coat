@@ -24,8 +24,11 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 @Order(Integer.MIN_VALUE + 20000)
-@ConditionalOnMissingBean(LoginAspect.class)
-@ConditionalOnClass(name = "org.springframework.web.package-info")
+@ConditionalOnMissingBean(
+        value = LoginAspect.class,
+        ignored = LoginAspect.class
+)
+@ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class LoginAspect {
 
     @Pointcut("execution(* club.p6e.coat.auth.web.controller.*.*(..))")
@@ -47,10 +50,10 @@ public class LoginAspect {
         }
         final Object result = joinPoint.proceed();
         if (request != null && response != null && result != null) {
-            if (result instanceof final User ru) {
+            if (result instanceof final User u) {
                 // delete voucher
                 request.setAttribute(VoucherAspect.MyHttpServletRequestWrapper.DELETE, "1");
-                return ResultContext.build(SpringUtil.getBean(TokenGenerator.class).execute(request, response, executeDecorateUser(ru)));
+                return ResultContext.build(SpringUtil.getBean(TokenGenerator.class).execute(request, response, u));
             } else if (result instanceof final String rs && "AUTHENTICATION".equalsIgnoreCase(rs)) {
                 // OAuth2 authentication
                 // delete voucher
@@ -58,18 +61,7 @@ public class LoginAspect {
                 return ResultContext.build(String.valueOf(System.currentTimeMillis()));
             }
         }
-        return ResultContext.build(result);
-    }
-
-    /**
-     * Execute Decorate User
-     *
-     * @param user User Object
-     * @return User Result Object
-     */
-    public User executeDecorateUser(User user) {
-        // decorate user
-        return user;
+        return result;
     }
 
 }

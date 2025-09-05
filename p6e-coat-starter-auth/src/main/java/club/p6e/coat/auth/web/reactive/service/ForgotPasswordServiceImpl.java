@@ -22,8 +22,11 @@ import reactor.core.publisher.Mono;
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(ForgotPasswordService.class)
-@ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
+@ConditionalOnMissingBean(
+        value = ForgotPasswordService.class,
+        ignored = ForgotPasswordServiceImpl.class
+)
+@ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ForgotPasswordServiceImpl implements ForgotPasswordService {
 
     /**

@@ -18,8 +18,11 @@ import java.nio.charset.StandardCharsets;
  * @version 1.0
  */
 @RestController
-@ConditionalOnMissingBean(IndexController.class)
-@ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
+@ConditionalOnMissingBean(
+        value = IndexService.class,
+        ignored = IndexService.class
+)
+@ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class IndexController {
 
     /**

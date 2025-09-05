@@ -18,8 +18,11 @@ import reactor.core.publisher.Mono;
  * @version 1.0
  */
 @RestController
-@ConditionalOnMissingBean(RegisterVerificationCodeAcquisitionController.class)
-@ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
+@ConditionalOnMissingBean(
+        value = RegisterVerificationCodeAcquisitionController.class,
+        ignored = RegisterVerificationCodeAcquisitionController.class
+)
+@ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class RegisterVerificationCodeAcquisitionController {
 
     /**

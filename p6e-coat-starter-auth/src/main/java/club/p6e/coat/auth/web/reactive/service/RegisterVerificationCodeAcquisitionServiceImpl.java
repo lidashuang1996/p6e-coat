@@ -10,6 +10,7 @@ import club.p6e.coat.auth.web.reactive.repository.UserRepository;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.SpringUtil;
 import club.p6e.coat.common.utils.VerificationUtil;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -26,7 +27,11 @@ import java.util.List;
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(RegisterVerificationCodeAcquisitionService.class)
+@ConditionalOnMissingBean(
+        value = RegisterVerificationCodeAcquisitionService.class,
+        ignored = RegisterVerificationCodeAcquisitionServiceImpl.class
+)
+@ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class RegisterVerificationCodeAcquisitionServiceImpl implements RegisterVerificationCodeAcquisitionService {
 
     /**

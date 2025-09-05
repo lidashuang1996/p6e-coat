@@ -15,8 +15,11 @@ import java.time.Duration;
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(PasswordSignatureCache.class)
-@ConditionalOnClass(name = "org.springframework.web.package-info")
+@ConditionalOnMissingBean(
+        value = PasswordSignatureCache.class,
+        ignored = PasswordSignatureRedisCache.class
+)
+@ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class PasswordSignatureRedisCache implements PasswordSignatureCache {
 
     /**

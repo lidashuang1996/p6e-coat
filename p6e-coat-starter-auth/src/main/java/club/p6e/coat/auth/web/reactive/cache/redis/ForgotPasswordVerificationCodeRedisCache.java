@@ -15,8 +15,11 @@ import java.util.List;
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(ForgotPasswordVerificationCodeCache.class)
-@ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
+@ConditionalOnMissingBean(
+        value = ForgotPasswordVerificationCodeCache.class,
+        ignored = ForgotPasswordVerificationCodeRedisCache.class
+)
+@ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ForgotPasswordVerificationCodeRedisCache implements ForgotPasswordVerificationCodeCache {
 
     /**

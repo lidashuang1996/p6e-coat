@@ -1,5 +1,6 @@
 package club.p6e.coat.auth.web.cache.redis;
 
+import club.p6e.coat.auth.web.aspect.LoginAspect;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -18,8 +19,11 @@ import java.util.Map;
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(CodeRedisCache.class)
-@ConditionalOnClass(name = "org.springframework.web.package-info")
+@ConditionalOnMissingBean(
+        value = CodeRedisCache.class,
+        ignored = CodeRedisCache.class
+)
+@ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class CodeRedisCache {
 
     /**

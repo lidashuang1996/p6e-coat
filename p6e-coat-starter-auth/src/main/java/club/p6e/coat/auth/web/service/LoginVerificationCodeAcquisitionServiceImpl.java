@@ -3,9 +3,9 @@ package club.p6e.coat.auth.web.service;
 import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
-import club.p6e.coat.auth.web.event.PushVerificationCodeEvent;
 import club.p6e.coat.auth.web.aspect.VoucherAspect;
 import club.p6e.coat.auth.web.cache.LoginVerificationCodeCache;
+import club.p6e.coat.auth.web.event.PushVerificationCodeEvent;
 import club.p6e.coat.auth.web.repository.UserRepository;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.SpringUtil;
@@ -26,8 +26,11 @@ import java.util.List;
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(LoginVerificationCodeAcquisitionService.class)
-@ConditionalOnClass(name = "org.springframework.web.package-info")
+@ConditionalOnMissingBean(
+        value = LoginVerificationCodeAcquisitionService.class,
+        ignored = LoginVerificationCodeAcquisitionServiceImpl.class
+)
+@ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class LoginVerificationCodeAcquisitionServiceImpl implements LoginVerificationCodeAcquisitionService {
 
     /**

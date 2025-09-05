@@ -32,8 +32,11 @@ import java.util.List;
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(UserRepository.class)
-@ConditionalOnClass(name = "org.springframework.web.package-info")
+@ConditionalOnMissingBean(
+        value = UserRepository.class,
+        ignored = UserRepositoryImpl.class
+)
+@ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class UserRepositoryImpl implements UserRepository {
 
     /**

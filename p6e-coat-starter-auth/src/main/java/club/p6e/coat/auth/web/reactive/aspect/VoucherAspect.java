@@ -32,8 +32,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @Aspect
 @Component
 @Order(Integer.MIN_VALUE + 10000)
-@ConditionalOnMissingBean(VoucherAspect.class)
-@ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
+@ConditionalOnMissingBean(
+        value = VoucherAspect.class,
+        ignored = VoucherAspect.class
+)
+@ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class VoucherAspect {
 
     /**

@@ -18,8 +18,11 @@ import reactor.core.publisher.Mono;
  * @version 1.0
  */
 @RestController
-@ConditionalOnMissingBean(ForgotPasswordVerificationCodeAcquisitionController.class)
-@ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
+@ConditionalOnMissingBean(
+        value = ForgotPasswordVerificationCodeAcquisitionController.class,
+        ignored = ForgotPasswordVerificationCodeAcquisitionController.class
+)
+@ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ForgotPasswordVerificationCodeAcquisitionController {
 
     /**

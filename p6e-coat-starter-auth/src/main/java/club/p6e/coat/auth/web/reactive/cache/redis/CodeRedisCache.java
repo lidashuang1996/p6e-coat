@@ -20,8 +20,11 @@ import java.util.Map;
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(CodeRedisCache.class)
-@ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
+@ConditionalOnMissingBean(
+        value = CodeRedisCache.class,
+        ignored = CodeRedisCache.class
+)
+@ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class CodeRedisCache {
 
     /**

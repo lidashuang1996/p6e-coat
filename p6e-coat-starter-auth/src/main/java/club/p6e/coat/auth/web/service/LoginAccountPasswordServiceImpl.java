@@ -27,8 +27,11 @@ import java.util.Map;
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(LoginAccountPasswordService.class)
-@ConditionalOnClass(name = "org.springframework.web.package-info")
+@ConditionalOnMissingBean(
+        value = LoginAccountPasswordService.class,
+        ignored = LoginAccountPasswordServiceImpl.class
+)
+@ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class LoginAccountPasswordServiceImpl implements LoginAccountPasswordService {
 
     /**

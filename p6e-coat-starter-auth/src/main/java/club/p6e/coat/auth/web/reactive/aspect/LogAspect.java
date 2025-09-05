@@ -1,6 +1,5 @@
 package club.p6e.coat.auth.web.reactive.aspect;
 
-import club.p6e.coat.auth.web.aspect.LoginAspect;
 import club.p6e.coat.common.utils.JsonUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -24,8 +23,11 @@ import java.util.Map;
 @Aspect
 @Component
 @Order(Integer.MIN_VALUE + 30000)
-@ConditionalOnMissingBean(LoginAspect.class)
-@ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
+@ConditionalOnMissingBean(
+        value = LogAspect.class,
+        ignored = LogAspect.class
+)
+@ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class LogAspect {
 
     /**
@@ -33,7 +35,7 @@ public class LogAspect {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(LogAspect.class);
 
-    @Pointcut("execution(* club.p6e.coat.auth.web.controller.*.*(..))")
+    @Pointcut("execution(* club.p6e.coat.auth.web.reactive.controller.*.*(..))")
     public void pointcut() {
     }
 
@@ -49,7 +51,7 @@ public class LogAspect {
         }
         if (exchange != null) {
             final ServerHttpRequest request = exchange.getRequest();
-            LOGGER.info("⬇======================================⬇");
+            LOGGER.info("↓======================================↓");
             LOGGER.info("[ {} ] >>> {}", request.getMethod(), request.getPath().value());
             LOGGER.info("REQUEST PARAMS: {}", JsonUtil.toJson(request.getQueryParams()));
             final Map<String, Object> attributes = request.getAttributes();

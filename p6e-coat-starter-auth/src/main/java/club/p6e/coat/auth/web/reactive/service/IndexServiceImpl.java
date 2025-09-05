@@ -20,8 +20,11 @@ import java.util.HashMap;
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(IndexService.class)
-@ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
+@ConditionalOnMissingBean(
+        value = IndexService.class,
+        ignored = IndexServiceImpl.class
+)
+@ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class IndexServiceImpl implements IndexService {
 
     @Override

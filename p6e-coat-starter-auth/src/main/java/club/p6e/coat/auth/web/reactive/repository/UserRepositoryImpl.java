@@ -23,8 +23,11 @@ import java.util.HashMap;
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(UserRepository.class)
-@ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
+@ConditionalOnMissingBean(
+        value = UserRepository.class,
+        ignored = UserRepositoryImpl.class
+)
+@ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class UserRepositoryImpl implements UserRepository {
 
     /**

@@ -20,8 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
  * @version 1.0
  */
 @RestController
-@ConditionalOnMissingBean(RegisterController.class)
-@ConditionalOnClass(name = "org.springframework.web.package-info")
+@ConditionalOnMissingBean(
+        value = RegisterController.class,
+        ignored = RegisterController.class
+)
+@ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class RegisterController {
 
     /**

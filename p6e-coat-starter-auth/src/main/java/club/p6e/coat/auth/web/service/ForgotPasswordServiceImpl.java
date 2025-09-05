@@ -24,8 +24,11 @@ import java.util.List;
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(ForgotPasswordService.class)
-@ConditionalOnClass(name = "org.springframework.web.package-info")
+@ConditionalOnMissingBean(
+        value = ForgotPasswordService.class,
+        ignored = ForgotPasswordServiceImpl.class
+)
+@ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class ForgotPasswordServiceImpl implements ForgotPasswordService {
 
     /**

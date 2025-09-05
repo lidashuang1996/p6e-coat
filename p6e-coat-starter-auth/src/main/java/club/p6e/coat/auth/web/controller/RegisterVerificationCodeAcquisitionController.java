@@ -4,6 +4,8 @@ import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.RegisterContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.web.RequestParameterValidator;
+import club.p6e.coat.auth.web.repository.UserRepository;
+import club.p6e.coat.auth.web.repository.UserRepositoryImpl;
 import club.p6e.coat.auth.web.service.RegisterVerificationCodeAcquisitionService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,8 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
  * @version 1.0
  */
 @RestController
-@ConditionalOnMissingBean(RegisterVerificationCodeAcquisitionController.class)
-@ConditionalOnClass(name = "org.springframework.web.package-info")
+@ConditionalOnMissingBean(
+        value = RegisterVerificationCodeAcquisitionController.class,
+        ignored = RegisterVerificationCodeAcquisitionController.class
+)
+@ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class RegisterVerificationCodeAcquisitionController {
 
     /**

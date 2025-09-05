@@ -27,8 +27,11 @@ import java.util.List;
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(ForgotPasswordVerificationCodeAcquisitionService.class)
-@ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
+@ConditionalOnMissingBean(
+        value = ForgotPasswordVerificationCodeAcquisitionService.class,
+        ignored = ForgotPasswordVerificationCodeAcquisitionServiceImpl.class
+)
+@ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ForgotPasswordVerificationCodeAcquisitionServiceImpl implements ForgotPasswordVerificationCodeAcquisitionService {
 
     /**

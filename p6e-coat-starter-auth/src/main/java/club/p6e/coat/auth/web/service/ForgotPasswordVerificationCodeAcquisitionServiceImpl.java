@@ -4,9 +4,9 @@ import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.context.ForgotPasswordContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
-import club.p6e.coat.auth.web.event.PushVerificationCodeEvent;
 import club.p6e.coat.auth.web.aspect.VoucherAspect;
 import club.p6e.coat.auth.web.cache.ForgotPasswordVerificationCodeCache;
+import club.p6e.coat.auth.web.event.PushVerificationCodeEvent;
 import club.p6e.coat.auth.web.repository.UserRepository;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.SpringUtil;
@@ -28,8 +28,11 @@ import java.util.List;
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(ForgotPasswordVerificationCodeAcquisitionService.class)
-@ConditionalOnClass(name = "org.springframework.web.package-info")
+@ConditionalOnMissingBean(
+        value = ForgotPasswordVerificationCodeAcquisitionService.class,
+        ignored = ForgotPasswordVerificationCodeAcquisitionServiceImpl.class
+)
+@ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class ForgotPasswordVerificationCodeAcquisitionServiceImpl implements ForgotPasswordVerificationCodeAcquisitionService {
 
     /**

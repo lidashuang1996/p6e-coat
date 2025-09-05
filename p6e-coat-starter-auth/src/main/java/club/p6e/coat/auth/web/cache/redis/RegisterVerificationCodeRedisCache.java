@@ -14,8 +14,11 @@ import java.util.List;
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(RegisterVerificationCodeCache.class)
-@ConditionalOnClass(name = "org.springframework.web.package-info")
+@ConditionalOnMissingBean(
+        value = RegisterVerificationCodeCache.class,
+        ignored = RegisterVerificationCodeCache.class
+)
+@ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class RegisterVerificationCodeRedisCache implements RegisterVerificationCodeCache {
 
     /**

@@ -19,8 +19,11 @@ import java.util.HashMap;
  * @version 1.0
  */
 @Service
-@ConditionalOnMissingBean(IndexService.class)
-@ConditionalOnClass(name = "org.springframework.web.package-info")
+@ConditionalOnMissingBean(
+        value = IndexService.class,
+        ignored = IndexServiceImpl.class
+)
+@ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class IndexServiceImpl implements IndexService {
 
     /**

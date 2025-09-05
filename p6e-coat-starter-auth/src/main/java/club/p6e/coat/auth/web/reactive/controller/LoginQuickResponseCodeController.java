@@ -19,8 +19,11 @@ import reactor.core.publisher.Mono;
  * @version 1.0
  */
 @RestController
-@ConditionalOnMissingBean(LoginQuickResponseCodeController.class)
-@ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
+@ConditionalOnMissingBean(
+        value = LoginQuickResponseCodeController.class,
+        ignored = LoginQuickResponseCodeController.class
+)
+@ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class LoginQuickResponseCodeController {
 
     /**

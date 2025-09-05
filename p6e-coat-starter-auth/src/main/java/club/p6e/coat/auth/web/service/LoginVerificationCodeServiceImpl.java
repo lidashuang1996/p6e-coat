@@ -23,8 +23,11 @@ import java.util.List;
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(LoginVerificationCodeService.class)
-@ConditionalOnClass(name = "org.springframework.web.package-info")
+@ConditionalOnMissingBean(
+        value = LoginVerificationCodeService.class,
+        ignored = LoginVerificationCodeServiceImpl.class
+)
+@ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class LoginVerificationCodeServiceImpl implements LoginVerificationCodeService {
 
     /**

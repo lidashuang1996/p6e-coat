@@ -30,14 +30,14 @@ public class RequestParameterValidatorConfiguration {
             }
 
             @Override
-             public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
+            public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
                 if (param instanceof final ForgotPasswordContext.Request frr) {
                     if (frr.getCode() != null && !frr.getCode().isEmpty()
                             && frr.getPassword() != null && !frr.getPassword().isEmpty()) {
                         return Mono.just(param);
                     }
                 }
-                return null;
+                return Mono.empty();
             }
 
         };
@@ -57,14 +57,14 @@ public class RequestParameterValidatorConfiguration {
             }
 
             @Override
-             public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
+            public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
                 if (param instanceof final ForgotPasswordContext.VerificationCodeAcquisition.Request frr) {
                     if (frr.getAccount() != null && !frr.getAccount().isEmpty()
                             && frr.getLanguage() != null && !frr.getLanguage().isEmpty()) {
                         return Mono.just(param);
                     }
                 }
-                return null;
+                return Mono.empty();
             }
 
         };
@@ -84,14 +84,14 @@ public class RequestParameterValidatorConfiguration {
             }
 
             @Override
-             public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
+            public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
                 if (param instanceof final LoginContext.AccountPassword.Request lrr) {
                     if (lrr.getAccount() != null && !lrr.getAccount().isEmpty()
                             && lrr.getPassword() != null && !lrr.getPassword().isEmpty()) {
                         return Mono.just(param);
                     }
                 }
-                return null;
+                return Mono.empty();
             }
 
         };
@@ -111,11 +111,11 @@ public class RequestParameterValidatorConfiguration {
             }
 
             @Override
-             public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
+            public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
                 if (param instanceof LoginContext.Authentication.Request) {
                     return Mono.just(param);
                 }
-                return null;
+                return Mono.empty();
             }
 
         };
@@ -135,11 +135,11 @@ public class RequestParameterValidatorConfiguration {
             }
 
             @Override
-             public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
+            public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
                 if (param instanceof LoginContext.QuickResponseCodeAcquisition.Request) {
                     return Mono.just(param);
                 }
-                return null;
+                return Mono.empty();
             }
 
         };
@@ -159,11 +159,11 @@ public class RequestParameterValidatorConfiguration {
             }
 
             @Override
-             public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
+            public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
                 if (param instanceof LoginContext.QuickResponseCodeCallback.Request) {
                     return Mono.just(param);
                 }
-                return null;
+                return Mono.empty();
             }
 
         };
@@ -183,7 +183,7 @@ public class RequestParameterValidatorConfiguration {
             }
 
             @Override
-             public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
+            public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
                 if (param instanceof LoginContext.QuickResponseCode.Request) {
                     return Mono.just(param);
                 }
@@ -207,7 +207,7 @@ public class RequestParameterValidatorConfiguration {
             }
 
             @Override
-             public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
+            public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
                 if (param instanceof LoginContext.VerificationCodeAcquisition.Request lrr) {
                     if (lrr.getAccount() != null && !lrr.getAccount().isEmpty()
                             && lrr.getLanguage() != null && !lrr.getLanguage().isEmpty()) {
@@ -234,7 +234,7 @@ public class RequestParameterValidatorConfiguration {
             }
 
             @Override
-             public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
+            public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
                 if (param instanceof LoginContext.VerificationCode.Request lrr) {
                     if (lrr.getCode() != null && !lrr.getCode().isEmpty()) {
                         return Mono.just(param);
@@ -260,7 +260,7 @@ public class RequestParameterValidatorConfiguration {
             }
 
             @Override
-             public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
+            public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
                 if (param instanceof PasswordSignatureContext.Request) {
                     return Mono.just(param);
                 }
@@ -284,7 +284,7 @@ public class RequestParameterValidatorConfiguration {
             }
 
             @Override
-             public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
+            public <T> Mono<T> execute(ServerWebExchange exchange, T param) {
                 if (param instanceof RegisterContext.Request rrr) {
                     if (rrr.getCode() != null && !rrr.getCode().isEmpty()
                             && rrr.getPassword() != null && !rrr.getPassword().isEmpty()) {
