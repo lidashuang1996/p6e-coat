@@ -2,6 +2,7 @@ package club.p6e.coat.common.utils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * 雪花算法的帮助类
@@ -34,7 +35,7 @@ public final class SnowflakeIdUtil {
      */
     private final static long WORKER_ID_BITS = 5L;
     private final static long DATACENTER_ID_BITS = 5L;
-    private final static long SEQUENCE_BITS = 12L;
+    private final static long SEQUENCE_BITS = 10L;
 
     /**
      * 每一部分的最大值
@@ -68,6 +69,25 @@ public final class SnowflakeIdUtil {
     private long lastTimestamp = -1L;
 
     /**
+     * 私有化构造方法
+     *
+     * @param workerId     机器ID
+     * @param datacenterId 数据中心ID
+     */
+    public SnowflakeIdUtil(long workerId, long datacenterId) {
+        if (workerId > MAX_WORKER_ID || workerId < 0) {
+            throw new IllegalArgumentException(
+                    String.format("worker Id can't be greater than %d or less than 0", MAX_WORKER_ID));
+        }
+        if (datacenterId > MAX_DATACENTER_ID || datacenterId < 0) {
+            throw new IllegalArgumentException(
+                    String.format("datacenter Id can't be greater than %d or less than 0", MAX_DATACENTER_ID));
+        }
+        this.workerId = workerId;
+        this.datacenterId = datacenterId;
+    }
+
+    /**
      * 获取类
      */
     public static SnowflakeIdUtil getInstance() {
@@ -96,25 +116,6 @@ public final class SnowflakeIdUtil {
     }
 
     /**
-     * 私有化构造方法
-     *
-     * @param workerId     机器ID
-     * @param datacenterId 数据中心ID
-     */
-    public SnowflakeIdUtil(long workerId, long datacenterId) {
-        if (workerId > MAX_WORKER_ID || workerId < 0) {
-            throw new IllegalArgumentException(
-                    String.format("worker Id can't be greater than %d or less than 0", MAX_WORKER_ID));
-        }
-        if (datacenterId > MAX_DATACENTER_ID || datacenterId < 0) {
-            throw new IllegalArgumentException(
-                    String.format("datacenter Id can't be greater than %d or less than 0", MAX_DATACENTER_ID));
-        }
-        this.workerId = workerId;
-        this.datacenterId = datacenterId;
-    }
-
-    /**
      * 获取 ID
      *
      * @return 生成的 ID
@@ -131,10 +132,10 @@ public final class SnowflakeIdUtil {
                 timestamp = tilNextMillis();
             }
         } else {
-            sequence = (sequence % 2 == 0 ? sequence + 1 : sequence);
+            sequence = 0L;
         }
         lastTimestamp = timestamp;
-
+        sequence = sequence << 2 | (ThreadLocalRandom.current().nextLong(0, 4));
         return
                 // 时间戳部分
                 (timestamp - STARTED) << TIMESTAMP_SHIFT

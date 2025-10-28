@@ -64,6 +64,8 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
+            <!-- scope provided dependency -->
+            <scope>provided</scope>
         </dependency>
         <!-- Spring Boot Configuration Processor [END] -->
 

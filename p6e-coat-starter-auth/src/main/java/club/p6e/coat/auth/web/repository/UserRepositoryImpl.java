@@ -44,19 +44,19 @@ public class UserRepositoryImpl implements UserRepository {
      */
     private static final String BASE_USER_SELECT_SQL = """
             SELECT
-                _user.id,
-                _user.status,
-                _user.enabled,
-                _user.internal,
-                _user.administrator,
-                _user.account,
-                _user.phone,
-                _user.mailbox,
-                _user.name,
-                _user.nickname,
-                _user.language,
-                _user.avatar,
-                _user.description
+                _user.id_,
+                _user.status_,
+                _user.enabled_,
+                _user.internal_,
+                _user.administrator_,
+                _user.account_,
+                _user.phone_,
+                _user.mailbox_,
+                _user.name_,
+                _user.nickname_,
+                _user.language_,
+                _user.avatar_,
+                _user.description_
             FROM
                 @{TABLE} AS _user
             """;
@@ -91,19 +91,19 @@ public class UserRepositoryImpl implements UserRepository {
      */
     private User convertResultSetToUser(ResultSet rs) throws SQLException {
         return SpringUtil.getBean(UserBuilder.class).create(new HashMap<>() {{
-            put("id", TransformationUtil.objectToString(rs.getLong("id")));
-            put("status", TransformationUtil.objectToString(rs.getInt("status")));
-            put("enabled", TransformationUtil.objectToString(rs.getInt("enabled")));
-            put("internal", TransformationUtil.objectToString(rs.getInt("internal")));
-            put("administrator", TransformationUtil.objectToString(rs.getInt("administrator")));
-            put("account", TransformationUtil.objectToString(rs.getString("account")));
-            put("phone", TransformationUtil.objectToString(rs.getString("phone")));
-            put("mailbox", TransformationUtil.objectToString(rs.getString("mailbox")));
-            put("name", TransformationUtil.objectToString(rs.getString("name")));
-            put("nickname", TransformationUtil.objectToString(rs.getString("nickname")));
-            put("language", TransformationUtil.objectToString(rs.getString("language")));
-            put("avatar", TransformationUtil.objectToString(rs.getString("avatar")));
-            put("description", TransformationUtil.objectToString(rs.getString("description")));
+            put("id", TransformationUtil.objectToString(rs.getLong("id_")));
+            put("status", TransformationUtil.objectToString(rs.getInt("status_")));
+            put("enabled", TransformationUtil.objectToString(rs.getInt("enabled_")));
+            put("internal", TransformationUtil.objectToString(rs.getInt("internal_")));
+            put("administrator", TransformationUtil.objectToString(rs.getInt("administrator_")));
+            put("account", TransformationUtil.objectToString(rs.getString("account_")));
+            put("phone", TransformationUtil.objectToString(rs.getString("phone_")));
+            put("mailbox", TransformationUtil.objectToString(rs.getString("mailbox_")));
+            put("name", TransformationUtil.objectToString(rs.getString("name_")));
+            put("nickname", TransformationUtil.objectToString(rs.getString("nickname_")));
+            put("language", TransformationUtil.objectToString(rs.getString("language_")));
+            put("avatar", TransformationUtil.objectToString(rs.getString("avatar_")));
+            put("description", TransformationUtil.objectToString(rs.getString("description_")));
         }});
     }
 
@@ -199,24 +199,24 @@ public class UserRepositoryImpl implements UserRepository {
                     template.update(connection -> {
                         final PreparedStatement ps = connection.prepareStatement(TemplateParser.execute("""
                                 INSERT INTO @{TABLE} (
-                                    status ,
-                                    enabled ,
-                                    internal ,
-                                    administrator ,
-                                    account ,
-                                    phone ,
-                                    mailbox ,
-                                    name ,
-                                    nickname ,
-                                    language ,
-                                    avatar ,
-                                    description ,
-                                    creator ,
-                                    modifier ,
-                                    creation_date_time ,
-                                    modification_date_time ,
-                                    version ,
-                                    is_deleted
+                                    status_ ,
+                                    enabled_ ,
+                                    internal_ ,
+                                    administrator_ ,
+                                    account_ ,
+                                    phone_ ,
+                                    mailbox_ ,
+                                    name_ ,
+                                    nickname_ ,
+                                    language_ ,
+                                    avatar_ ,
+                                    description_ ,
+                                    creator_ ,
+                                    modifier_ ,
+                                    creation_date_time_ ,
+                                    modification_date_time_ ,
+                                    version_ ,
+                                    is_deleted_
                                 ) VALUES (
                                     ? ,
                                     ? ,
@@ -236,7 +236,7 @@ public class UserRepositoryImpl implements UserRepository {
                                     ? ,
                                     ? ,
                                     ? 
-                                )  RETURNING id ;
+                                )  RETURNING id_ ;
                                 """, "TABLE", getUserTableName()));
                         ps.setInt(1, sum.getStatus() == null ? 1 : sum.getStatus());
                         ps.setInt(2, sum.getEnabled() == null ? 1 : sum.getEnabled());
@@ -261,16 +261,16 @@ public class UserRepositoryImpl implements UserRepository {
                     template.update(connection -> {
                         final PreparedStatement ps = connection.prepareStatement(TemplateParser.execute("""
                                 INSERT INTO @{TABLE} (
-                                    id ,
-                                    account ,
-                                    phone ,
-                                    mailbox ,
-                                    password ,
-                                    creator ,
-                                    modifier ,
-                                    creation_date_time ,
-                                    modification_date_time ,
-                                    version
+                                    id_ ,
+                                    account_ ,
+                                    phone_ ,
+                                    mailbox_ ,
+                                    password_ ,
+                                    creator_ ,
+                                    modifier_ ,
+                                    creation_date_time_ ,
+                                    modification_date_time_ ,
+                                    version_
                                 ) VALUES (
                                     ? ,
                                     ? ,
@@ -282,7 +282,7 @@ public class UserRepositoryImpl implements UserRepository {
                                     ? ,
                                     ? ,
                                     ?
-                                )  RETURNING id ;
+                                )  RETURNING id_ ;
                                 """, "TABLE", getUserAuthTableName()));
                         ps.setInt(1, sum.getId());
                         ps.setString(2, sum.getAccount());
@@ -311,7 +311,9 @@ public class UserRepositoryImpl implements UserRepository {
     public User updatePassword(Integer uid, String password) {
         return transactionTemplate.execute(status -> {
             try {
-                final int result = template.update(TemplateParser.execute("UPDATE @{TABLE} AS _user_auth SET password = ? WHERE _user_auth.id = ? ; ", "TABLE", getUserAuthTableName()), password, uid);
+                final int result = template.update(TemplateParser.execute("""
+                        UPDATE @{TABLE} AS _user_auth SET password_ = ? WHERE _user_auth.id_ = ? ; 
+                        """, "TABLE", getUserAuthTableName()), password, uid);
                 return result > 0 ? findById(uid) : null;
             } catch (Exception e) {
                 status.setRollbackOnly();

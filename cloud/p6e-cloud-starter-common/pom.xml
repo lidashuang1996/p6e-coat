@@ -21,18 +21,24 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bootstrap</artifactId>
+            <!-- scope provided dependency -->
+            <scope>provided</scope>
         </dependency>
         <!-- Spring Cloud Alibaba BootStrap [ END ] -->
         <!-- Spring Cloud Alibaba Nacos Config [START] -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+            <!-- scope provided dependency -->
+            <scope>provided</scope>
         </dependency>
         <!-- Spring Cloud Alibaba Nacos Config [END] -->
         <!-- Spring Cloud Alibaba Nacos Discovery [START] -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+            <!-- scope provided dependency -->
+            <scope>provided</scope>
         </dependency>
         <!-- Spring Cloud Alibaba Nacos Discovery [END] -->
         <!-- Spring Cloud Alibaba Nacos [END] -->
