@@ -19,12 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
  * @author lidashuang
  * @version 1.0
  */
-@RestController
 @ConditionalOnMissingBean(
         value = LoginVerificationCodeController.class,
         ignored = LoginVerificationCodeController.class
 )
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
+@RestController("club.p6e.coat.auth.web.controller.LoginVerificationCodeController")
 public class LoginVerificationCodeController {
 
     /**

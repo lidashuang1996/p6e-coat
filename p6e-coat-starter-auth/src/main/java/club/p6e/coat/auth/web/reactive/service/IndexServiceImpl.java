@@ -19,11 +19,11 @@ import java.util.HashMap;
  * @author lidashuang
  * @version 1.0
  */
-@Component
 @ConditionalOnMissingBean(
         value = IndexService.class,
         ignored = IndexServiceImpl.class
 )
+@Component("club.p6e.coat.auth.web.reactive.service.IndexServiceImpl")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class IndexServiceImpl implements IndexService {
 

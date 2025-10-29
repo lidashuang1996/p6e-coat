@@ -15,11 +15,11 @@ import org.springframework.stereotype.Component;
  * @author lidashuang
  * @version 1.0
  */
-@Component
 @ConditionalOnMissingBean(
         value = PushVerificationCodeListener.class,
         ignored = PushVerificationCodeListener.class
 )
+@Component("club.p6e.coat.auth.web.listener.PushVerificationCodeListener")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class PushVerificationCodeListener implements ApplicationListener<PushVerificationCodeEvent> {
 

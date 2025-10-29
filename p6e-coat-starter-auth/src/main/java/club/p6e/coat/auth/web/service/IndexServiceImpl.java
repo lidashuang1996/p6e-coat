@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -18,11 +19,11 @@ import java.util.HashMap;
  * @author lidashuang
  * @version 1.0
  */
-@Service
 @ConditionalOnMissingBean(
         value = IndexService.class,
         ignored = IndexServiceImpl.class
 )
+@Component("club.p6e.coat.auth.web.service.IndexServiceImpl")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class IndexServiceImpl implements IndexService {
 

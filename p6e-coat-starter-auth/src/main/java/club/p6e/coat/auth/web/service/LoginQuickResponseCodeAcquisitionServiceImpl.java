@@ -16,12 +16,12 @@ import org.springframework.stereotype.Component;
  * @author lidashuang
  * @version 1.0
  */
-@Component
 @ConditionalOnMissingBean(
         value = LoginQuickResponseCodeAcquisitionService.class,
         ignored = LoginQuickResponseCodeAcquisitionServiceImpl.class
 )
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
+@Component("club.p6e.coat.auth.web.service.LoginQuickResponseCodeAcquisitionServiceImpl")
 public class LoginQuickResponseCodeAcquisitionServiceImpl implements LoginQuickResponseCodeAcquisitionService {
 
     /**

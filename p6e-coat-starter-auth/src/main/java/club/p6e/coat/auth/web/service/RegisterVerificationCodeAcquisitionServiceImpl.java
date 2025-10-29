@@ -26,12 +26,12 @@ import java.util.List;
  * @author lidashuang
  * @version 1.0
  */
-@Component
 @ConditionalOnMissingBean(
         value = RegisterVerificationCodeAcquisitionService.class,
         ignored = RegisterVerificationCodeAcquisitionServiceImpl.class
 )
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
+@Component("club.p6e.coat.auth.web.service.RegisterVerificationCodeAcquisitionServiceImpl")
 public class RegisterVerificationCodeAcquisitionServiceImpl implements RegisterVerificationCodeAcquisitionService {
 
     /**

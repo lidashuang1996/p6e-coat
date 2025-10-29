@@ -15,12 +15,12 @@ import java.time.Duration;
  * @author lidashuang
  * @version 1.0
  */
-@Component
 @ConditionalOnMissingBean(
         value = LoginQuickResponseCodeCache.class,
         ignored = LoginQuickResponseCodeRedisCache.class
 )
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
+@Component("club.p6e.coat.auth.web.reactive.cache.redis.LoginQuickResponseCodeRedisCache")
 public class LoginQuickResponseCodeRedisCache implements LoginQuickResponseCodeCache {
 
     /**

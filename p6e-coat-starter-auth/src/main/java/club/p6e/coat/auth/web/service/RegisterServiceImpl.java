@@ -22,11 +22,11 @@ import org.springframework.stereotype.Component;
  * @author lidashuang
  * @version 1.0
  */
-@Component
 @ConditionalOnMissingBean(
         value = RegisterService.class,
         ignored = RegisterServiceImpl.class
 )
+@Component("club.p6e.coat.auth.web.service.RegisterServiceImpl")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class RegisterServiceImpl implements RegisterService {
 

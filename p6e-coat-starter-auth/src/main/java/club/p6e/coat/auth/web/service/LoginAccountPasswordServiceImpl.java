@@ -26,11 +26,11 @@ import java.util.Map;
  * @author lidashuang
  * @version 1.0
  */
-@Component
 @ConditionalOnMissingBean(
         value = LoginAccountPasswordService.class,
         ignored = LoginAccountPasswordServiceImpl.class
 )
+@Component("club.p6e.coat.auth.web.service.LoginAccountPasswordServiceImpl")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class LoginAccountPasswordServiceImpl implements LoginAccountPasswordService {
 

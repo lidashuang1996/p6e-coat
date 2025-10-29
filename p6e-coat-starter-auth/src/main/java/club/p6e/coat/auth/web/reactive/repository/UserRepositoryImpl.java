@@ -22,11 +22,11 @@ import java.util.HashMap;
  * @author lidashuang
  * @version 1.0
  */
-@Component
 @ConditionalOnMissingBean(
         value = UserRepository.class,
         ignored = UserRepositoryImpl.class
 )
+@Component("club.p6e.coat.auth.web.reactive.repository.UserRepositoryImpl")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class UserRepositoryImpl implements UserRepository {
 
@@ -35,19 +35,19 @@ public class UserRepositoryImpl implements UserRepository {
      */
     private static final String BASE_SELECT_SQL = """
             SELECT
-            _user.id,
-            _user.status,
-            _user.enabled,
-            _user.internal,
-            _user.administrator,
-            _user.account,
-            _user.phone,
-            _user.mailbox,
-            _user.name,
-            _user.nickname,
-            _user.language,
-            _user.avatar,
-            _user.description
+            _user.id_,
+            _user.status_,
+            _user.enabled_,
+            _user.internal_,
+            _user.administrator_,
+            _user.account_,
+            _user.phone_,
+            _user.mailbox_,
+            _user.name_,
+            _user.nickname_,
+            _user.language_,
+            _user.avatar_,
+            _user.description_
             FROM
             @{TABLE} AS _user
             """;
@@ -74,19 +74,19 @@ public class UserRepositoryImpl implements UserRepository {
      */
     private User convertReadableToUser(Readable readable) {
         return SpringUtil.getBean(UserBuilder.class).create(new HashMap<>() {{
-            put("id", TransformationUtil.objectToString(readable.get("id")));
-            put("status", TransformationUtil.objectToString(readable.get("status")));
-            put("enabled", TransformationUtil.objectToString(readable.get("enabled")));
-            put("internal", TransformationUtil.objectToString(readable.get("internal")));
-            put("administrator", TransformationUtil.objectToString(readable.get("administrator")));
-            put("account", TransformationUtil.objectToString(readable.get("account")));
-            put("phone", TransformationUtil.objectToString(readable.get("phone")));
-            put("mailbox", TransformationUtil.objectToString(readable.get("mailbox")));
-            put("name", TransformationUtil.objectToString(readable.get("name")));
-            put("nickname", TransformationUtil.objectToString(readable.get("nickname")));
-            put("language", TransformationUtil.objectToString(readable.get("language")));
-            put("avatar", TransformationUtil.objectToString(readable.get("avatar")));
-            put("description", TransformationUtil.objectToString(readable.get("description")));
+            put("id", TransformationUtil.objectToString(readable.get("id_")));
+            put("status", TransformationUtil.objectToString(readable.get("status_")));
+            put("enabled", TransformationUtil.objectToString(readable.get("enabled_")));
+            put("internal", TransformationUtil.objectToString(readable.get("internal_")));
+            put("administrator", TransformationUtil.objectToString(readable.get("administrator_")));
+            put("account", TransformationUtil.objectToString(readable.get("account_")));
+            put("phone", TransformationUtil.objectToString(readable.get("phone_")));
+            put("mailbox", TransformationUtil.objectToString(readable.get("mailbox_")));
+            put("name", TransformationUtil.objectToString(readable.get("name_")));
+            put("nickname", TransformationUtil.objectToString(readable.get("nickname_")));
+            put("language", TransformationUtil.objectToString(readable.get("language_")));
+            put("avatar", TransformationUtil.objectToString(readable.get("avatar_")));
+            put("description", TransformationUtil.objectToString(readable.get("description_")));
         }});
     }
 
@@ -117,16 +117,16 @@ public class UserRepositoryImpl implements UserRepository {
     @SuppressWarnings("ALL")
     protected Mono<String> findPasswordById(Integer id) {
         return client
-                .sql(TemplateParser.execute("SELECT _user_auth.id, _user_auth.password FROM @{TABLE} AS _user_auth WHERE _user_auth.id = :ID ; ", "TABLE", getUserAuthTableName()))
+                .sql(TemplateParser.execute("SELECT _user_auth.id_ AS id_ , _user_auth.password_ AS password_ FROM @{TABLE} AS _user_auth WHERE _user_auth.id_ = :ID ; ", "TABLE", getUserAuthTableName()))
                 .bind("ID", id)
-                .map(readable -> TransformationUtil.objectToString(readable.get("password")))
+                .map(readable -> TransformationUtil.objectToString(readable.get("password_")))
                 .first();
     }
 
     @SuppressWarnings("ALL")
     @Override
     public Mono<User> findById(Integer id) {
-        return client.sql(TemplateParser.execute(BASE_SELECT_SQL + " WHERE _user.id = :ID ; ", "TABLE", getUserTableName()))
+        return client.sql(TemplateParser.execute(BASE_SELECT_SQL + " WHERE _user.id_ = :ID ; ", "TABLE", getUserTableName()))
                 .bind("ID", id)
                 .map(this::convertReadableToUser)
                 .first()
@@ -136,7 +136,7 @@ public class UserRepositoryImpl implements UserRepository {
     @SuppressWarnings("ALL")
     @Override
     public Mono<User> findByAccount(String account) {
-        return client.sql(TemplateParser.execute(BASE_SELECT_SQL + " WHERE _user.account = :ACCOUNT ; ", "TABLE", getUserTableName()))
+        return client.sql(TemplateParser.execute(BASE_SELECT_SQL + " WHERE _user.account_ = :ACCOUNT ; ", "TABLE", getUserTableName()))
                 .bind("ACCOUNT", account)
                 .map(this::convertReadableToUser)
                 .first()
@@ -146,7 +146,7 @@ public class UserRepositoryImpl implements UserRepository {
     @SuppressWarnings("ALL")
     @Override
     public Mono<User> findByPhone(String phone) {
-        return client.sql(TemplateParser.execute(BASE_SELECT_SQL + " WHERE _user.phone = :PHONE ; ", "TABLE", getUserTableName()))
+        return client.sql(TemplateParser.execute(BASE_SELECT_SQL + " WHERE _user.phone_ = :PHONE ; ", "TABLE", getUserTableName()))
                 .bind("PHONE", phone)
                 .map(this::convertReadableToUser)
                 .first()
@@ -156,7 +156,7 @@ public class UserRepositoryImpl implements UserRepository {
     @SuppressWarnings("ALL")
     @Override
     public Mono<User> findByMailbox(String mailbox) {
-        return client.sql(TemplateParser.execute(BASE_SELECT_SQL + " WHERE _user.mailbox = :MAILBOX ; ", "TABLE", getUserTableName()))
+        return client.sql(TemplateParser.execute(BASE_SELECT_SQL + " WHERE _user.mailbox_ = :MAILBOX ; ", "TABLE", getUserTableName()))
                 .bind("MAILBOX", mailbox)
                 .map(this::convertReadableToUser)
                 .first()
@@ -166,7 +166,7 @@ public class UserRepositoryImpl implements UserRepository {
     @SuppressWarnings("ALL")
     @Override
     public Mono<User> findByPhoneOrMailbox(String account) {
-        return client.sql(TemplateParser.execute(BASE_SELECT_SQL + " WHERE \"phone\" = :ACCOUNT OR \"mailbox\" = :ACCOUNT ; ", "TABLE", getUserTableName()))
+        return client.sql(TemplateParser.execute(BASE_SELECT_SQL + " WHERE _user.phone_ = :ACCOUNT OR _user.mailbox_ = :ACCOUNT ; ", "TABLE", getUserTableName()))
                 .bind("ACCOUNT", account)
                 .map(this::convertReadableToUser)
                 .first()
@@ -179,24 +179,24 @@ public class UserRepositoryImpl implements UserRepository {
         if (user instanceof SimpleUserModel sum) {
             return client.sql(TemplateParser.execute("""
                             INSERT INTO @{TABLE} (
-                                        status ,
-                                        enabled ,
-                                        internal ,
-                                        administrator ,
-                                        account ,
-                                        phone ,
-                                        mailbox ,
-                                        name ,
-                                        nickname ,
-                                        language ,
-                                        avatar ,
-                                        description ,
-                                        creator ,
-                                        modifier ,
-                                        creation_date_time ,
-                                        modification_date_time ,
-                                        version ,
-                                        is_deleted
+                                        status_ ,
+                                        enabled_ ,
+                                        internal_ ,
+                                        administrator_ ,
+                                        account_ ,
+                                        phone_ ,
+                                        mailbox_ ,
+                                        name_ ,
+                                        nickname_ ,
+                                        language_ ,
+                                        avatar_ ,
+                                        description_ ,
+                                        creator_ ,
+                                        modifier_ ,
+                                        creation_date_time_ ,
+                                        modification_date_time_ ,
+                                        version_ ,
+                                        is_deleted_
                                     ) VALUES (
                                         :STATUS ,
                                         :ENABLED ,
@@ -216,7 +216,7 @@ public class UserRepositoryImpl implements UserRepository {
                                         :MODIFICATION_DATE_TIME ,
                                         :VERSION ,
                                         :IS_DELETED
-                                    )  RETURNING id ;
+                                    )  RETURNING id_ ;
                             """, "TABLE", getUserAuthTableName()))
                     .bind("STATUS", sum.getStatus() == null ? 1 : sum.getStatus())
                     .bind("ENABLED", sum.getEnabled() == null ? 1 : sum.getEnabled())
@@ -240,15 +240,15 @@ public class UserRepositoryImpl implements UserRepository {
                     .first()
                     .flatMap(i -> client.sql(TemplateParser.execute("""
                                     INSERT INTO @{TABLE} (
-                                        id ,
-                                        account ,
-                                        phone ,
-                                        mailbox ,
-                                        password ,
-                                        creator ,
-                                        modifier ,
-                                        creation_date_time ,
-                                        modification_date_time ,
+                                        id_ ,
+                                        account_ ,
+                                        phone_ ,
+                                        mailbox_ ,
+                                        password_ ,
+                                        creator_ ,
+                                        modifier_ ,
+                                        creation_date_time_ ,
+                                        modification_date_time_ ,
                                         version
                                     ) VALUES (
                                         :ID ,
@@ -261,7 +261,7 @@ public class UserRepositoryImpl implements UserRepository {
                                         :CREATION_DATE_TIME ,
                                         :MODIFICATION_DATE_TIME ,
                                         :VERSION
-                                    )  RETURNING id ;
+                                    )  RETURNING id_ ;
                                     """, "TABLE", getUserAuthTableName()))
                             .bind("ID", i)
                             .bind("ACCOUNT", sum.getAccount())
@@ -285,7 +285,7 @@ public class UserRepositoryImpl implements UserRepository {
     @SuppressWarnings("ALL")
     @Override
     public Mono<User> updatePassword(Integer uid, String password) {
-        return client.sql(TemplateParser.execute("UPDATE @{TABLE} AS _user_auth SET password = :PASSWORD WHERE _user_auth.id = :ID ; ", "TABLE", getUserAuthTableName()))
+        return client.sql(TemplateParser.execute("UPDATE @{TABLE} AS _user_auth SET _user_auth.password_ = :PASSWORD WHERE _user_auth.id_ = :ID ; ", "TABLE", getUserAuthTableName()))
                 .bind("ID", uid)
                 .bind("PASSWORD", password)
                 .fetch()

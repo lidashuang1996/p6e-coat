@@ -17,12 +17,12 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
-@RestController
 @ConditionalOnMissingBean(
         value = RegisterVerificationCodeAcquisitionController.class,
         ignored = RegisterVerificationCodeAcquisitionController.class
 )
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
+@RestController("club.p6e.coat.auth.web.reactive.controller.RegisterVerificationCodeAcquisitionController")
 public class RegisterVerificationCodeAcquisitionController {
 
     /**

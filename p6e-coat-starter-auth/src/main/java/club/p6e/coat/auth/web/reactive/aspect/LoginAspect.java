@@ -23,12 +23,12 @@ import reactor.core.publisher.Mono;
  * @version 1.0
  */
 @Aspect
-@Component
 @Order(Integer.MIN_VALUE + 20000)
 @ConditionalOnMissingBean(
         value = LoginAspect.class,
         ignored = LoginAspect.class
 )
+@Component("club.p6e.coat.auth.web.reactive.aspect.LoginAspect")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class LoginAspect {
 
@@ -61,7 +61,7 @@ public class LoginAspect {
                     e.getRequest().getAttributes().put(VoucherAspect.MyHttpServletRequestWrapper.DELETE, "1");
                     return Mono.just(ResultContext.build(String.valueOf(System.currentTimeMillis())));
                 }
-                return Mono.just(r);
+                return Mono.just(ResultContext.build(r));
             });
         }
         return result;

@@ -17,11 +17,11 @@ import org.springframework.stereotype.Component;
  * @author lidashuang
  * @version 1.0
  */
-@Component
 @ConditionalOnMissingBean(
         value = LoginQuickResponseCodeService.class,
         ignored = LoginQuickResponseCodeServiceImpl.class
 )
+@Component("club.p6e.coat.auth.web.service.LoginQuickResponseCodeServiceImpl")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class LoginQuickResponseCodeServiceImpl implements LoginQuickResponseCodeService {
 

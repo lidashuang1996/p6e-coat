@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
  * @author lidashuang
  * @version 1.0
  */
-@RestController
 @ConditionalOnMissingBean(
         value = PasswordSignatureController.class,
         ignored = PasswordSignatureController.class
 )
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
+@RestController("club.p6e.coat.auth.web.controller.PasswordSignatureController")
 public class PasswordSignatureController {
 
     /**

@@ -25,12 +25,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version 1.0
  */
 @Aspect
-@Component
 @Order(Integer.MIN_VALUE + 10000)
 @ConditionalOnMissingBean(
         value = VoucherAspect.class,
         ignored = VoucherAspect.class
 )
+@Component("club.p6e.coat.auth.web.aspect.VoucherAspect")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class VoucherAspect {
 

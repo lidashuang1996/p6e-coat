@@ -19,11 +19,11 @@ import java.util.Map;
  * @author lidashuang
  * @version 1.0
  */
-@Component
 @ConditionalOnMissingBean(
         value = CodeRedisCache.class,
         ignored = CodeRedisCache.class
 )
+@Component("club.p6e.coat.auth.web.reactive.cache.redis.CodeRedisCache")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class CodeRedisCache {
 

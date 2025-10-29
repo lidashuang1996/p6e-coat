@@ -19,12 +19,12 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
-@Component
 @ConditionalOnMissingBean(
         value = LoginQuickResponseCodeCallbackService.class,
         ignored = LoginQuickResponseCodeCallbackServiceImpl.class
 )
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
+@Component("club.p6e.coat.auth.web.reactive.service.LoginQuickResponseCodeCallbackServiceImpl")
 public class LoginQuickResponseCodeCallbackServiceImpl implements LoginQuickResponseCodeCallbackService {
 
     /**

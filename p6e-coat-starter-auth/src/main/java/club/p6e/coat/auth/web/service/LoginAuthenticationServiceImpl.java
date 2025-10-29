@@ -15,11 +15,11 @@ import org.springframework.stereotype.Component;
  * @author lidashuang
  * @version 1.0
  */
-@Component
 @ConditionalOnMissingBean(
         value = LoginAuthenticationService.class,
         ignored = LoginAuthenticationServiceImpl.class
 )
+@Component("club.p6e.coat.auth.web.service.LoginAuthenticationServiceImpl")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class LoginAuthenticationServiceImpl implements LoginAuthenticationService {
 

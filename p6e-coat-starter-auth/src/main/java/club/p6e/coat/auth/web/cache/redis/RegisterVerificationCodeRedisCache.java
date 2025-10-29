@@ -13,12 +13,12 @@ import java.util.List;
  * @author lidashuang
  * @version 1.0
  */
-@Component
 @ConditionalOnMissingBean(
         value = RegisterVerificationCodeCache.class,
         ignored = RegisterVerificationCodeCache.class
 )
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
+@Component("club.p6e.coat.auth.web.cache.redis.RegisterVerificationCodeRedisCache")
 public class RegisterVerificationCodeRedisCache implements RegisterVerificationCodeCache {
 
     /**

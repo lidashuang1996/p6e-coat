@@ -21,12 +21,12 @@ import java.util.HashMap;
  * @author lidashuang
  * @version 1.0
  */
-@Component
 @ConditionalOnMissingBean(
         value = PasswordSignatureService.class,
         ignored = PasswordSignatureServiceImpl.class
 )
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
+@Component("club.p6e.coat.auth.web.reactive.service.PasswordSignatureServiceImpl")
 public class PasswordSignatureServiceImpl implements PasswordSignatureService {
 
     /**

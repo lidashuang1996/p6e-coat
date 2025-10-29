@@ -17,11 +17,11 @@ import java.nio.charset.StandardCharsets;
  * @author lidashuang
  * @version 1.0
  */
-@RestController
 @ConditionalOnMissingBean(
         value = IndexService.class,
         ignored = IndexService.class
 )
+@RestController("club.p6e.coat.auth.web.reactive.controller.IndexController")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class IndexController {
 

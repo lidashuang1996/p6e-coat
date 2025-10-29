@@ -22,12 +22,12 @@ import org.springframework.stereotype.Component;
  * @version 1.0
  */
 @Aspect
-@Component
 @Order(Integer.MIN_VALUE + 20000)
 @ConditionalOnMissingBean(
         value = LoginAspect.class,
         ignored = LoginAspect.class
 )
+@Component("club.p6e.coat.auth.web.aspect.LoginAspect")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class LoginAspect {
 

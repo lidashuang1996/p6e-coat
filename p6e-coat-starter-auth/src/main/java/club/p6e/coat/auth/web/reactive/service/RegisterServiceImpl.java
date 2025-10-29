@@ -23,11 +23,11 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
-@Component
 @ConditionalOnMissingBean(
         value = RegisterService.class,
         ignored = RegisterServiceImpl.class
 )
+@Component("club.p6e.coat.auth.web.reactive.service.RegisterServiceImpl")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class RegisterServiceImpl implements RegisterService {
 

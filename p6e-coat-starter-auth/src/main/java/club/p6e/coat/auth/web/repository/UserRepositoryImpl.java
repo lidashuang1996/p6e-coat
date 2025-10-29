@@ -31,11 +31,11 @@ import java.util.List;
  * @author lidashuang
  * @version 1.0
  */
-@Component
 @ConditionalOnMissingBean(
         value = UserRepository.class,
         ignored = UserRepositoryImpl.class
 )
+@Component("club.p6e.coat.auth.web.repository.UserRepositoryImpl")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class UserRepositoryImpl implements UserRepository {
 
