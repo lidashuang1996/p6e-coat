@@ -22,7 +22,7 @@ public class SimpleUserModel implements User, Serializable {
 
     private Integer id;
     private Integer status;
-    private Integer enabled;
+    private Integer enable;
     private Integer internal;
     private Integer administrator;
     private String account;
@@ -52,7 +52,7 @@ public class SimpleUserModel implements User, Serializable {
     public SimpleUserModel(Map<String, Object> content) {
         this.id = TransformationUtil.objectToInteger(content.get("id"));
         this.status = TransformationUtil.objectToInteger(content.get("status"));
-        this.enabled = TransformationUtil.objectToInteger(content.get("enabled"));
+        this.enable = TransformationUtil.objectToInteger(content.get("enable"));
         this.internal = TransformationUtil.objectToInteger(content.get("internal"));
         this.administrator = TransformationUtil.objectToInteger(content.get("administrator"));
         this.account = TransformationUtil.objectToString(content.get("account"));
@@ -86,7 +86,7 @@ public class SimpleUserModel implements User, Serializable {
     public SimpleUserModel(
             Integer id,
             Integer status,
-            Integer enabled,
+            Integer enable,
             Integer internal,
             Integer administrator,
             String account,
@@ -100,7 +100,7 @@ public class SimpleUserModel implements User, Serializable {
     ) {
         this.id = id;
         this.status = status;
-        this.enabled = enabled;
+        this.enable = enable;
         this.internal = internal;
         this.administrator = administrator;
         this.account = account;
@@ -139,7 +139,7 @@ public class SimpleUserModel implements User, Serializable {
         return new HashMap<>() {{
             put("id", id);
             put("status", status);
-            put("enabled", enabled);
+            put("enable", enable);
             put("internal", internal);
             put("administrator", administrator);
             put("account", account);

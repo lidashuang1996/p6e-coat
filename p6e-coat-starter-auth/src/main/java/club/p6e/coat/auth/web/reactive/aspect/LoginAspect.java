@@ -51,6 +51,7 @@ public class LoginAspect {
         if (exchange != null && result instanceof Mono<?> mono) {
             final ServerWebExchange e = exchange;
             return mono.flatMap(r -> {
+                System.out.println(">>> r>>>" + r + "  " + r.getClass());
                 if (r instanceof final User ru) {
                     // delete voucher
                     e.getRequest().getAttributes().put(VoucherAspect.MyHttpServletRequestWrapper.DELETE, "1");

@@ -69,26 +69,26 @@ public class PermissionRepositoryImpl implements PermissionRepository {
     public Mono<List<PermissionDetails>> getPermissionDetailsList(Integer page, Integer size) {
         return client.sql(TemplateParser.execute(TemplateParser.execute("""
                         SELECT
-                            _permission_url_table.url,
-                            _permission_url_table.base_url,
-                            _permission_url_table.method,
-                            _permission_url_group_table.mark,
-                            _permission_url_group_table.weight,
-                            _permission_url_group_mapper_url_table.gid,
-                            _permission_url_group_mapper_url_table.uid,
-                            _permission_url_group_mapper_url_table.config,
-                            _permission_url_group_mapper_url_table.attribute
+                            _permission_url_table.url_ AS url,
+                            _permission_url_table.base_url_ AS baseUrl,
+                            _permission_url_table.method_ AS method,
+                            _permission_url_group_table.mark_ AS mark,
+                            _permission_url_group_table.weight_ AS weight,
+                            _permission_url_group_mapper_url_table.gid_ AS gid,
+                            _permission_url_group_mapper_url_table.uid_ AS uid,
+                            _permission_url_group_mapper_url_table.config_ AS config,
+                            _permission_url_group_mapper_url_table.attribute_ AS attribute
                         FROM
                             (
                                 SELECT
-                                    _permission_url.id,
-                                    _permission_url.url,
-                                    _permission_url.base_url,
-                                    _permission_url.method
+                                    _permission_url.id_,
+                                    _permission_url.url_,
+                                    _permission_url.base_url_,
+                                    _permission_url.method_
                                 FROM
                                     @{TABLE1} AS _permission_url
                                 ORDER BY
-                                    _permission_url.id
+                                    _permission_url.id_
                                     ASC
                                 LIMIT 
                                     :LIMIT
@@ -97,10 +97,10 @@ public class PermissionRepositoryImpl implements PermissionRepository {
                             ) AS _permission_url_table
                             LEFT JOIN 
                                 @{TABLE2} AS _permission_url_group_mapper_url_table
-                                ON _permission_url_table.id = _permission_url_group_mapper_url_table.uid
+                                ON _permission_url_table.id_ = _permission_url_group_mapper_url_table.uid_
                             LEFT JOIN 
                                 @{TABLE3} AS _permission_url_group_table
-                                ON _permission_url_group_mapper_url_table.gid = _permission_url_group_table.id
+                                ON _permission_url_group_mapper_url_table.gid_ = _permission_url_group_table.id_
                         """, "TABLE1", getPermissionUrlTableName(), "TABLE2", getPermissionUrlGroupMapperUrlTableName(), "TABLE3", getPermissionUrlGroupTableName()
                 )))
                 .bind("LIMIT", size)
@@ -110,7 +110,7 @@ public class PermissionRepositoryImpl implements PermissionRepository {
                     details.setGid(TransformationUtil.objectToInteger(row.get("gid")));
                     details.setUid(TransformationUtil.objectToInteger(row.get("uid")));
                     details.setUrl(TransformationUtil.objectToString(row.get("url")));
-                    details.setBaseUrl(TransformationUtil.objectToString(row.get("base_url")));
+                    details.setBaseUrl(TransformationUtil.objectToString(row.get("baseUrl")));
                     details.setMethod(TransformationUtil.objectToString(row.get("method")));
                     details.setMark(TransformationUtil.objectToString(row.get("mark")));
                     details.setWeight(TransformationUtil.objectToInteger(row.get("weight")));

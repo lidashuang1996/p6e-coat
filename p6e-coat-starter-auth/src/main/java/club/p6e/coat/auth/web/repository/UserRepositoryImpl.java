@@ -46,7 +46,7 @@ public class UserRepositoryImpl implements UserRepository {
             SELECT
                 _user.id_,
                 _user.status_,
-                _user.enabled_,
+                _user.enable_,
                 _user.internal_,
                 _user.administrator_,
                 _user.account_,
@@ -93,7 +93,7 @@ public class UserRepositoryImpl implements UserRepository {
         return SpringUtil.getBean(UserBuilder.class).create(new HashMap<>() {{
             put("id", TransformationUtil.objectToString(rs.getLong("id_")));
             put("status", TransformationUtil.objectToString(rs.getInt("status_")));
-            put("enabled", TransformationUtil.objectToString(rs.getInt("enabled_")));
+            put("enable", TransformationUtil.objectToString(rs.getInt("enable_")));
             put("internal", TransformationUtil.objectToString(rs.getInt("internal_")));
             put("administrator", TransformationUtil.objectToString(rs.getInt("administrator_")));
             put("account", TransformationUtil.objectToString(rs.getString("account_")));
@@ -200,7 +200,7 @@ public class UserRepositoryImpl implements UserRepository {
                         final PreparedStatement ps = connection.prepareStatement(TemplateParser.execute("""
                                 INSERT INTO @{TABLE} (
                                     status_ ,
-                                    enabled_ ,
+                                    enable_ ,
                                     internal_ ,
                                     administrator_ ,
                                     account_ ,
@@ -239,7 +239,7 @@ public class UserRepositoryImpl implements UserRepository {
                                 )  RETURNING id_ ;
                                 """, "TABLE", getUserTableName()));
                         ps.setInt(1, sum.getStatus() == null ? 1 : sum.getStatus());
-                        ps.setInt(2, sum.getEnabled() == null ? 1 : sum.getEnabled());
+                        ps.setInt(2, sum.getEnable() == null ? 1 : sum.getEnable());
                         ps.setInt(3, sum.getInternal() == null ? 0 : sum.getInternal());
                         ps.setInt(4, sum.getAdministrator() == null ? 0 : sum.getAdministrator());
                         ps.setString(5, sum.getAccount());

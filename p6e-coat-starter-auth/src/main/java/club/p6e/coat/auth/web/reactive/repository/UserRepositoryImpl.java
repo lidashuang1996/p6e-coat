@@ -37,7 +37,7 @@ public class UserRepositoryImpl implements UserRepository {
             SELECT
             _user.id_,
             _user.status_,
-            _user.enabled_,
+            _user.enable_,
             _user.internal_,
             _user.administrator_,
             _user.account_,
@@ -76,7 +76,7 @@ public class UserRepositoryImpl implements UserRepository {
         return SpringUtil.getBean(UserBuilder.class).create(new HashMap<>() {{
             put("id", TransformationUtil.objectToString(readable.get("id_")));
             put("status", TransformationUtil.objectToString(readable.get("status_")));
-            put("enabled", TransformationUtil.objectToString(readable.get("enabled_")));
+            put("enable", TransformationUtil.objectToString(readable.get("enable_")));
             put("internal", TransformationUtil.objectToString(readable.get("internal_")));
             put("administrator", TransformationUtil.objectToString(readable.get("administrator_")));
             put("account", TransformationUtil.objectToString(readable.get("account_")));
@@ -180,7 +180,7 @@ public class UserRepositoryImpl implements UserRepository {
             return client.sql(TemplateParser.execute("""
                             INSERT INTO @{TABLE} (
                                         status_ ,
-                                        enabled_ ,
+                                        enable_ ,
                                         internal_ ,
                                         administrator_ ,
                                         account_ ,
@@ -199,7 +199,7 @@ public class UserRepositoryImpl implements UserRepository {
                                         is_deleted_
                                     ) VALUES (
                                         :STATUS ,
-                                        :ENABLED ,
+                                        :ENABLE ,
                                         :INTERNAL ,
                                         :ADMINISTRATOR ,
                                         :ACCOUNT ,
@@ -219,7 +219,7 @@ public class UserRepositoryImpl implements UserRepository {
                                     )  RETURNING id_ ;
                             """, "TABLE", getUserAuthTableName()))
                     .bind("STATUS", sum.getStatus() == null ? 1 : sum.getStatus())
-                    .bind("ENABLED", sum.getEnabled() == null ? 1 : sum.getEnabled())
+                    .bind("ENABLE", sum.getEnable() == null ? 1 : sum.getEnable())
                     .bind("INTERNAL", sum.getInternal() == null ? 0 : sum.getInternal())
                     .bind("ADMINISTRATOR", sum.getAdministrator() == null ? 0 : sum.getAdministrator())
                     .bind("ACCOUNT", sum.getAccount())
