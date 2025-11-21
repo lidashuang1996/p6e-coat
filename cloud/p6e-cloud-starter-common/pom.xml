@@ -16,55 +16,56 @@
 
     <dependencies>
 
-        <!-- Spring Cloud Alibaba Nacos [START] -->
+        <!-- Spring Cloud Alibaba Nacos Service [START] -->
         <!-- Spring Cloud Alibaba BootStrap [ START ] -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bootstrap</artifactId>
-            <!-- scope provided dependency -->
-            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
         <!-- Spring Cloud Alibaba BootStrap [ END ] -->
+
         <!-- Spring Cloud Alibaba Nacos Config [START] -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
-            <!-- scope provided dependency -->
-            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
         <!-- Spring Cloud Alibaba Nacos Config [END] -->
+
         <!-- Spring Cloud Alibaba Nacos Discovery [START] -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-            <!-- scope provided dependency -->
-            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
         <!-- Spring Cloud Alibaba Nacos Discovery [END] -->
-        <!-- Spring Cloud Alibaba Nacos [END] -->
+        <!-- Spring Cloud Alibaba Nacos Service [END] -->
 
-        <!-- P6e Coat Common [START] -->
+        <!-- Redis Service [START] -->
+        <!-- Spring Redis [START] -->
         <dependency>
-            <groupId>club.p6e.coat</groupId>
-            <artifactId>p6e-coat-starter-common</artifactId>
-            <version>3.4.2</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+            <optional>true</optional>
         </dependency>
-        <!-- P6e Coat Common [END] -->
+        <!-- Spring Redis [END] -->
 
         <!-- Spring Reactive Redis [START] -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis-reactive</artifactId>
-            <!-- scope provided dependency -->
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-            <!-- scope provided dependency -->
-            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
         <!-- Spring Reactive Redis [END] -->
+        <!-- Redis Service [END] -->
+
+        <!-- P6e Coat Common [START] -->
+        <dependency>
+            <groupId>club.p6e.coat</groupId>
+            <artifactId>p6e-coat-starter-common</artifactId>
+        </dependency>
+        <!-- P6e Coat Common [END] -->
 
     </dependencies>
 </project>
