@@ -16,19 +16,19 @@ import java.util.Map;
  * @author lidashuang
  * @version 1.0
  */
-public class AuthenticationGatewayFilterFactory extends AbstractGatewayFilterFactory<Object> {
+public class InjectAuthenticationGatewayFilterFactory extends AbstractGatewayFilterFactory<Object> {
 
     /**
      * Authentication Gateway Service Object
      */
-    private final AuthenticationGatewayService service;
+    private final InjectAuthenticationGatewayService service;
 
     /**
      * Constructor Initialization
      *
      * @param service Authentication Gateway Service object
      */
-    public AuthenticationGatewayFilterFactory(AuthenticationGatewayService service) {
+    public InjectAuthenticationGatewayFilterFactory(InjectAuthenticationGatewayService service) {
         this.service = service;
     }
 
@@ -42,7 +42,7 @@ public class AuthenticationGatewayFilterFactory extends AbstractGatewayFilterFac
      *
      * @param service Authentication Gateway Service Object
      */
-    public record CustomGatewayFilter(AuthenticationGatewayService service) implements GatewayFilter {
+    public record CustomGatewayFilter(InjectAuthenticationGatewayService service) implements GatewayFilter {
 
         /**
          * User Info Header Name

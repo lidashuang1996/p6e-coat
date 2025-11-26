@@ -3,18 +3,18 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>club.p6e.coat</groupId>
-        <artifactId>p6e-coat-starter-parent</artifactId>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.4.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <packaging>pom</packaging>
-    <groupId>club.p6e.cloud</groupId>
-    <artifactId>p6e-cloud-starter-parent</artifactId>
+    <groupId>club.p6e.coat</groupId>
+    <artifactId>p6e-coat-starter-parent</artifactId>
     <version>3.4.2</version>
-    <name>p6e-cloud-starter-parent</name>
-    <description>p6e-cloud-starter-parent</description>
+    <name>p6e-coat-starter-parent</name>
+    <description>p6e-coat-starter-parent</description>
 
     <properties>
         <skip-tests>true</skip-tests>
@@ -23,124 +23,104 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <spring-cloud.version>2024.0.0</spring-cloud.version>
-        <spring-cloud-alibaba.version>2022.0.0.0</spring-cloud-alibaba.version>
-        <spring-boot-dubbo.version>3.2.7</spring-boot-dubbo.version>
+        <p6e-coat.version>3.4.2</p6e-coat.version>
+        <spring-boot.version>3.4.2</spring-boot.version>
+        <netty.version>4.1.107.Final</netty.version>
+        <http.client.version>4.5.14</http.client.version>
+        <r2dbc-postgresql.version>1.0.2.RELEASE</r2dbc-postgresql.version>
+        <java.auth.jwt>4.4.0</java.auth.jwt>
     </properties>
+
+    <dependencies>
+        <!-- lombok [START] -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- lombok [END] -->
+
+        <!-- Spring Boot Test [START] -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- Spring Boot Test [END] -->
+    </dependencies>
 
     <dependencyManagement>
         <dependencies>
-
-            <!-- Spring Boot Dubbo [START] -->
             <dependency>
-                <groupId>org.apache.dubbo</groupId>
-                <artifactId>dubbo-spring-boot-starter</artifactId>
-                <version>${spring-boot-dubbo.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
+                <groupId>club.p6e.coat</groupId>
+                <artifactId>p6e-coat-starter-common</artifactId>
+                <version>${p6e-coat.version}</version>
             </dependency>
-            <!-- Spring Boot Dubbo [END] -->
-
-            <!-- Spring Cloud ALiBaba [START] -->
             <dependency>
-                <groupId>com.alibaba.cloud</groupId>
-                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
-                <version>${spring-cloud-alibaba.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
+                <groupId>club.p6e.coat</groupId>
+                <artifactId>p6e-coat-starter-auth</artifactId>
+                <version>${p6e-coat.version}</version>
             </dependency>
-            <!-- Spring Cloud ALiBaba [END] -->
-
-            <!-- Spring Cloud Dependencies [START] -->
             <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>${spring-cloud.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
+                <groupId>club.p6e.coat</groupId>
+                <artifactId>p6e-coat-starter-auth-token</artifactId>
+                <version>${p6e-coat.version}</version>
             </dependency>
-            <!-- Spring Cloud Dependencies [END] -->
-
-            <!-- P6e Cloud Auth [START] -->
             <dependency>
-                <groupId>club.p6e.cloud</groupId>
-                <artifactId>p6e-cloud-starter-auth</artifactId>
-                <version>${p6e-cloud.version}</version>
+                <groupId>club.p6e.coat</groupId>
+                <artifactId>p6e-coat-starter-message-center</artifactId>
+                <version>${p6e-coat.version}</version>
             </dependency>
-            <!-- P6e Cloud Auth [END] -->
-
-            <!-- P6e Cloud Auth Client [START] -->
             <dependency>
-                <groupId>club.p6e.cloud</groupId>
-                <artifactId>p6e-cloud-starter-auth-client</artifactId>
-                <version>${p6e-cloud.version}</version>
+                <groupId>club.p6e.coat</groupId>
+                <artifactId>p6e-coat-starter-auth-client</artifactId>
+                <version>${p6e-coat.version}</version>
             </dependency>
-            <!-- P6e Cloud Auth Client [END] -->
-
-            <!-- P6e Cloud File [START] -->
             <dependency>
-                <groupId>club.p6e.cloud</groupId>
-                <artifactId>p6e-cloud-starter-file</artifactId>
-                <version>${p6e-cloud.version}</version>
+                <groupId>club.p6e.coat</groupId>
+                <artifactId>p6e-coat-starter-file</artifactId>
+                <version>${p6e-coat.version}</version>
             </dependency>
-            <!-- P6e Cloud File [END] -->
-
-            <!-- P6e Cloud Common [START] -->
             <dependency>
-                <groupId>club.p6e.cloud</groupId>
-                <artifactId>p6e-cloud-starter-common</artifactId>
-                <version>${p6e-cloud.version}</version>
+                <groupId>club.p6e.coat</groupId>
+                <artifactId>p6e-coat-starter-permission</artifactId>
+                <version>${p6e-coat.version}</version>
             </dependency>
-            <!-- P6e Cloud Common [END] -->
-
-            <!-- P6e Cloud Gateway [START] -->
             <dependency>
-                <groupId>club.p6e.cloud</groupId>
-                <artifactId>p6e-cloud-starter-gateway</artifactId>
-                <version>${p6e-cloud.version}</version>
+                <groupId>club.p6e.coat</groupId>
+                <artifactId>p6e-coat-starter-sse</artifactId>
+                <version>${p6e-coat.version}</version>
             </dependency>
-            <!-- P6e Cloud Gateway [END] -->
-
-            <!-- P6e Cloud Gateway Auth [START] -->
             <dependency>
-                <groupId>club.p6e.cloud</groupId>
-                <artifactId>p6e-cloud-starter-gateway-auth</artifactId>
-                <version>${p6e-cloud.version}</version>
+                <groupId>club.p6e.coat</groupId>
+                <artifactId>p6e-coat-starter-websocket</artifactId>
+                <version>${p6e-coat.version}</version>
             </dependency>
-            <!-- P6e Cloud Gateway Auth [END] -->
-
-            <!-- P6e Cloud Gateway Permission [START] -->
             <dependency>
-                <groupId>club.p6e.cloud</groupId>
-                <artifactId>p6e-cloud-starter-gateway-permission</artifactId>
-                <version>${p6e-cloud.version}</version>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-all</artifactId>
+                <version>${netty.version}</version>
             </dependency>
-            <!-- P6e Cloud Gateway Permission [END] -->
-
-            <!-- P6e Cloud SSE [START] -->
             <dependency>
-                <groupId>club.p6e.cloud</groupId>
-                <artifactId>p6e-cloud-starter-sse</artifactId>
-                <version>${p6e-cloud.version}</version>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${http.client.version}</version>
             </dependency>
-            <!-- P6e Cloud SSE [END] -->
-
-            <!-- P6e Cloud WebSocket [END] -->
             <dependency>
-                <groupId>club.p6e.cloud</groupId>
-                <artifactId>p6e-cloud-starter-websocket</artifactId>
-                <version>${p6e-cloud.version}</version>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpmime</artifactId>
+                <version>${http.client.version}</version>
             </dependency>
-            <!-- P6e Cloud WebSocket [END] -->
-
-            <!-- P6e Cloud Message Center [START] -->
             <dependency>
-                <groupId>club.p6e.cloud</groupId>
-                <artifactId>p6e-cloud-starter-message-center</artifactId>
-                <version>${p6e-cloud.version}</version>
+                <groupId>com.auth0</groupId>
+                <artifactId>java-jwt</artifactId>
+                <version>4.4.0</version>
             </dependency>
-            <!-- P6e Cloud Message Center [END] -->
-
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-aop</artifactId>
+                <version>3.4.4</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

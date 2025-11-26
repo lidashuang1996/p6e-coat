@@ -12,8 +12,8 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(AuthenticationGatewayService.class)
-public class AuthenticationGatewayService {
+@ConditionalOnMissingBean(InjectAuthenticationGatewayService.class)
+public class InjectAuthenticationGatewayService {
 
     /**
      * Token Validator Object
@@ -25,7 +25,7 @@ public class AuthenticationGatewayService {
      *
      * @param validator Token Validator Object
      */
-    public AuthenticationGatewayService(TokenValidator validator) {
+    public InjectAuthenticationGatewayService(TokenValidator validator) {
         this.validator = validator;
     }
 
