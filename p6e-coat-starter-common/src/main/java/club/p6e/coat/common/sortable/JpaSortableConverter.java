@@ -31,7 +31,7 @@ public class JpaSortableConverter {
         execute(root, query, builder, context, sort);
     }
 
-    private static Sort execute(SortableContext context, Sort sort) {
+    public static Sort execute(SortableContext context, Sort sort) {
         if (context == null) {
             return sort;
         }
@@ -51,7 +51,7 @@ public class JpaSortableConverter {
         }
     }
 
-    private static void execute(Root<?> root, CriteriaQuery<?> query, CriteriaBuilder builder, SortableContext context, Sort sort) {
+    public static void execute(Root<?> root, CriteriaQuery<?> query, CriteriaBuilder builder, SortableContext context, Sort sort) {
         final List<Order> orders = new ArrayList<>();
         if (context != null) {
             for (final SortableAbstract.Option option : context) {
