@@ -2,8 +2,10 @@ package club.p6e.coat.common.utils;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 
@@ -105,6 +107,8 @@ public final class TransformationUtil {
             return ((Timestamp) o).toLocalDateTime();
         } else if (o instanceof LocalDateTime) {
             return (LocalDateTime) o;
+        } else if (o instanceof Instant) {
+            return ((Instant) o).atZone(ZoneId.systemDefault()).toLocalDateTime();
         } else {
             return null;
         }
