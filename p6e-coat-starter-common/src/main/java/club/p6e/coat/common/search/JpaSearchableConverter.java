@@ -1,7 +1,9 @@
 package club.p6e.coat.common.search;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.criteria.*;
 import org.hibernate.query.sqm.tree.domain.SqmPath;
+import org.hibernate.type.StandardBasicTypes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,7 +93,7 @@ public class JpaSearchableConverter {
                 .LIKE_OPTION_CONDITION
                 .equalsIgnoreCase(option.getCondition())
                 && option.getValue() != null) {
-            return builder.like(builder.lower(root.get(option.getKey()).as(String.class)), option.getValue().toLowerCase());
+            return builder.like(builder.lower(builder.concat(root.get(option.getKey()).as(String.class), "").as(String.class)), option.getValue().toLowerCase());
         }
         return builder.and();
     }
