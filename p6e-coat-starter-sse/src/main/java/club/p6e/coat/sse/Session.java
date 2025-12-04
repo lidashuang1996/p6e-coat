@@ -9,7 +9,7 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HexFormat;
+import java.util.Base64;
 
 /**
  * Session
@@ -99,25 +99,25 @@ public class Session {
     /**
      * Push Message
      *
-     * @param id    Message ID
-     * @param event Message Event
-     * @param data  Message Content
+     * @param id      Message ID
+     * @param event   Message Event
+     * @param content Message Content
      */
-    public void push(String id, String event, Object data) {
+    public void push(String id, String event, Object content) {
         if (context != null && !context.isRemoved()) {
             event = event == null ? "MESSAGE" : event;
             id = id == null ? (LocalDateTime.now().format(DATE_TIME_FORMATTER) + GeneratorUtil.random(8, true, false)) : id;
-            if (data == null) {
-                data = "";
-            } else if (data instanceof final byte[] bytes) {
-                data = HexFormat.of().formatHex(bytes);
+            if (content == null) {
+                content = "";
+            } else if (content instanceof final byte[] bytes) {
+                content = Base64.getEncoder().encodeToString(bytes);
             } else {
-                data = data.toString();
+                content = content.toString();
             }
             final FullHttpResponse response = new DefaultFullHttpResponse(
                     HttpVersion.HTTP_1_1,
                     HttpResponseStatus.OK,
-                    Unpooled.copiedBuffer("id: " + id + "\nevent: " + event + "\ndata: " + data + "\n\n", CharsetUtil.UTF_8)
+                    Unpooled.copiedBuffer("id: " + id + "\nevent: " + event + "\ndata: " + content + "\n\n", CharsetUtil.UTF_8)
             );
             response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/event-stream; charset=UTF-8");
             response.headers().set(HttpHeaderNames.CACHE_CONTROL, "no-cache");

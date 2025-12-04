@@ -27,7 +27,7 @@ public class HeartbeatCallback implements Callback {
      * HEARTBEAT CONTENT BYTES
      */
     public static final byte[] CONTENT_BYTES = new byte[]{
-            16, 0, 0, 0, 16, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            0, 0, 0, 16, 0, 16, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
     };
 
     /**
@@ -61,6 +61,17 @@ public class HeartbeatCallback implements Callback {
     public HeartbeatCallback(long interval) {
         this.interval = interval <= 0 ? 60L : interval;
         EXECUTOR.scheduleAtFixedRate(new Task(this.interval), this.interval, this.interval, TimeUnit.SECONDS);
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            EXECUTOR.shutdown();
+            try {
+                if (!EXECUTOR.awaitTermination(10, TimeUnit.SECONDS)) {
+                    EXECUTOR.shutdownNow();
+                }
+            } catch (Exception e) {
+                EXECUTOR.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
+        }));
     }
 
     /**
@@ -112,7 +123,7 @@ public class HeartbeatCallback implements Callback {
                 }
             }
             session.refresh();
-            session.push(CONTENT_TEXT);
+            session.push(CONTENT_BYTES);
         }
     }
 

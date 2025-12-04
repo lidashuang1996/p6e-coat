@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 /**
@@ -62,6 +63,17 @@ public class SessionManager {
                     new Thread(r, "P6E-WS-SESSION-MANAGER-THREAD-" + r.hashCode()));
             SLOTS_NUM = num;
         }
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            EXECUTOR.shutdown();
+            try {
+                if (!EXECUTOR.awaitTermination(10, TimeUnit.SECONDS)) {
+                    EXECUTOR.shutdownNow();
+                }
+            } catch (Exception e) {
+                EXECUTOR.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
+        }));
     }
 
     /**

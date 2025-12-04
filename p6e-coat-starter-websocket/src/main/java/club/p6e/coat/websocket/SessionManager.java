@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 /**
@@ -62,6 +63,17 @@ public class SessionManager {
                     new Thread(r, "P6E-WS-SESSION-MANAGER-THREAD-" + r.hashCode()));
             SLOTS_NUM = num;
         }
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            EXECUTOR.shutdown();
+            try {
+                if (!EXECUTOR.awaitTermination(10, TimeUnit.SECONDS)) {
+                    EXECUTOR.shutdownNow();
+                }
+            } catch (Exception e) {
+                EXECUTOR.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
+        }));
     }
 
     /**
@@ -100,7 +112,7 @@ public class SessionManager {
                 if (channel != null) {
                     channel.remove(id);
                 }
-                LOGGER.info("[ SESSION MANAGER ] UNREGISTER => {}%{}={} >>> {}", id, SLOTS_NUM, index, SLOTS.get(index));
+                LOGGER.info("[ SESSION MANAGER ] UNREGISTER => {} % {} = {} >>> {}", id, SLOTS_NUM, index, SLOTS.get(index));
             }
         }
     }
@@ -209,7 +221,7 @@ public class SessionManager {
     private static void submit(List<Session> slot, Function<User, Boolean> filter, String name, Object content) {
         EXECUTOR.submit(() -> {
             for (final Session session : slot) {
-                LOGGER.info("[ SUBMIT TASK EXECUTE ] >>> NAME CHECK >>> CHANNEL NAME:{}/SESSION CHANNEL NAME:{} ? {}", name, session.getChannelName(), name.equalsIgnoreCase(session.getChannelName()));
+                LOGGER.info("[ SUBMIT TASK EXECUTE ] >>> NAME CHECK >>> CHANNEL NAME: {}/SESSION CHANNEL NAME: {} ? {}", name, session.getChannelName(), name.equalsIgnoreCase(session.getChannelName()));
                 if (filter != null && name.equalsIgnoreCase(session.getChannelName())) {
                     final Boolean result = filter.apply(session.getUser());
                     LOGGER.info("[ SUBMIT TASK EXECUTE ] >>> FILTER RESULT >>> {}", result);

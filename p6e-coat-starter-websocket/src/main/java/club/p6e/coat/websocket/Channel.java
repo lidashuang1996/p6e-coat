@@ -29,7 +29,7 @@ public class Channel implements ChannelInboundHandler {
      * LOGIN SUCCESS CONTENT BYTES
      */
     private static final byte[] LOGIN_CONTENT_BYTES = new byte[]{
-            16, 0, 0, 0, 16, 0, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0
+            0, 0, 0, 16, 0, 16, 0, 1, 0, 0, 0, 0, 0, 0, 0, 2
     };
 
     /**
@@ -41,7 +41,7 @@ public class Channel implements ChannelInboundHandler {
      * LOGOUT SUCCESS CONTENT BYTES
      */
     private static final byte[] LOGOUT_CONTENT_BYTES = new byte[]{
-            16, 0, 0, 0, 16, 0, 1, 0, 0, 0, 0, 0, 6, 0, 0, 0
+            0, 0, 0, 16, 0, 16, 0, 1, 0, 0, 0, 0, 0, 0, 0, 4
     };
 
     /**

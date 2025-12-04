@@ -11,6 +11,7 @@ public enum DataType {
      * TEXT
      */
     TEXT,
+    
     /**
      * BINARY
      */

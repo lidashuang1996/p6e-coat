@@ -43,8 +43,8 @@ public class WebController extends Controller {
         if (param == null || param.getContent() == null) {
             throw new ParameterException(
                     this.getClass(),
-                    "fun pushText(PushParam param).",
-                    "request parameter exception."
+                    "fun pushText(PushParam param)",
+                    "request parameter exception"
             );
         }
         pushTextMessage(param.getName() == null ? "DEFAULT" : param.getName(), param);
@@ -56,8 +56,8 @@ public class WebController extends Controller {
         if (param == null || param.getContent() == null) {
             throw new ParameterException(
                     this.getClass(),
-                    "fun pushHex(PushParam param).",
-                    "request parameter exception."
+                    "fun pushHex(PushParam param)",
+                    "request parameter exception"
             );
         }
         pushHexMessage(param.getName() == null ? "DEFAULT" : param.getName(), param);
@@ -71,7 +71,7 @@ public class WebController extends Controller {
      * @param param Push Param Object
      */
     protected void pushHexMessage(String name, PushParam param) {
-        application.push(user -> true, name, HexFormat.of().parseHex(param.getContent()));
+        this.application.push(user -> true, name, HexFormat.of().parseHex(param.getContent()));
     }
 
     /**
@@ -81,7 +81,7 @@ public class WebController extends Controller {
      * @param param Push Param Object
      */
     protected void pushTextMessage(String name, PushParam param) {
-        application.push(user -> true, name, param.getContent());
+        this.application.push(user -> true, name, param.getContent());
     }
 
 }
