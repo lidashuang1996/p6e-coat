@@ -25,6 +25,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <p6e-coat.version>3.4.2</p6e-coat.version>
         <spring-boot.version>3.4.2</spring-boot.version>
+        <lombok.version>1.18.42</lombok.version>
         <netty.version>4.1.107.Final</netty.version>
         <http.client.version>4.5.14</http.client.version>
         <r2dbc-postgresql.version>1.0.2.RELEASE</r2dbc-postgresql.version>
@@ -36,11 +37,12 @@
     </properties>
 
     <dependencies>
+
         <!-- lombok [START] -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <optional>true</optional>
+            <version>${lombok.version}</version>
         </dependency>
         <!-- lombok [END] -->
 
@@ -51,55 +53,84 @@
             <scope>test</scope>
         </dependency>
         <!-- Spring Boot Test [END] -->
+
     </dependencies>
 
     <dependencyManagement>
         <dependencies>
+
+            <!-- Club P6e Coat Common [START] -->
             <dependency>
                 <groupId>club.p6e.coat</groupId>
                 <artifactId>p6e-coat-starter-common</artifactId>
                 <version>${p6e-coat.version}</version>
             </dependency>
+            <!-- Club P6e Coat Common [END] -->
+
+            <!-- Club P6e Coat Auth [START] -->
             <dependency>
                 <groupId>club.p6e.coat</groupId>
                 <artifactId>p6e-coat-starter-auth</artifactId>
                 <version>${p6e-coat.version}</version>
             </dependency>
+            <!-- Club P6e Coat Auth [END] -->
+
+            <!-- Club P6e Coat Auth Token [START] -->
             <dependency>
                 <groupId>club.p6e.coat</groupId>
                 <artifactId>p6e-coat-starter-auth-token</artifactId>
                 <version>${p6e-coat.version}</version>
             </dependency>
-            <dependency>
-                <groupId>club.p6e.coat</groupId>
-                <artifactId>p6e-coat-starter-message-center</artifactId>
-                <version>${p6e-coat.version}</version>
-            </dependency>
+            <!-- Club P6e Coat Auth Token [END] -->
+
+            <!-- Club P6e Coat Auth Client [START] -->
             <dependency>
                 <groupId>club.p6e.coat</groupId>
                 <artifactId>p6e-coat-starter-auth-client</artifactId>
                 <version>${p6e-coat.version}</version>
             </dependency>
+            <!-- Club P6e Coat Auth Client [END] -->
+
+            <!-- Club P6e Coat Message Center [START] -->
+            <dependency>
+                <groupId>club.p6e.coat</groupId>
+                <artifactId>p6e-coat-starter-message-center</artifactId>
+                <version>${p6e-coat.version}</version>
+            </dependency>
+            <!-- Club P6e Coat Message Center [END] -->
+
+            <!-- Club P6e Coat Message Center [START] -->
             <dependency>
                 <groupId>club.p6e.coat</groupId>
                 <artifactId>p6e-coat-starter-file</artifactId>
                 <version>${p6e-coat.version}</version>
             </dependency>
+            <!-- Club P6e Coat Message Center [END] -->
+
+            <!-- Club P6e Coat Permission [START] -->
             <dependency>
                 <groupId>club.p6e.coat</groupId>
                 <artifactId>p6e-coat-starter-permission</artifactId>
                 <version>${p6e-coat.version}</version>
             </dependency>
+            <!-- Club P6e Coat Permission [END] -->
+
+            <!-- Club P6e Coat SSE [START] -->
             <dependency>
                 <groupId>club.p6e.coat</groupId>
                 <artifactId>p6e-coat-starter-sse</artifactId>
                 <version>${p6e-coat.version}</version>
             </dependency>
+            <!-- Club P6e Coat SSE [END] -->
+
+            <!-- Club P6e Coat Web Socket [START] -->
             <dependency>
                 <groupId>club.p6e.coat</groupId>
                 <artifactId>p6e-coat-starter-websocket</artifactId>
                 <version>${p6e-coat.version}</version>
             </dependency>
+            <!-- Club P6e Coat Web Socket [END] -->
+
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-all</artifactId>
