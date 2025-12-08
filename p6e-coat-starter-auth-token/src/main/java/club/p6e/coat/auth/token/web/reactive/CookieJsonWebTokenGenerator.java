@@ -22,7 +22,7 @@ public class CookieJsonWebTokenGenerator implements TokenGenerator {
     /**
      * Auth Cookie Name
      */
-    private static final String AUTH_COOKIE_NAME = "P6E_AUTH";
+    protected static final String AUTH_COOKIE_NAME = "P6E_AUTH";
 
     /**
      * Device Header Name
@@ -31,12 +31,12 @@ public class CookieJsonWebTokenGenerator implements TokenGenerator {
      * When Receiving Requests, It Is Necessary To Clear The Request Header Carried By The User To Ensure Program Security
      */
     @SuppressWarnings("ALL")
-    private static final String DEVICE_HEADER_NAME = "P6e-Device";
+    protected static final String DEVICE_HEADER_NAME = "P6e-Device";
 
     /**
      * Json Web Token Codec Object
      */
-    private final JsonWebTokenCodec codec;
+    protected final JsonWebTokenCodec codec;
 
     /**
      * Constructor Initialization

@@ -22,12 +22,12 @@ public class CookieJsonWebTokenValidator implements TokenValidator {
     /**
      * Auth Cookie Name
      */
-    private static final String AUTH_COOKIE_NAME = "P6E_AUTH";
+    protected static final String AUTH_COOKIE_NAME = "P6E_AUTH";
 
     /**
      * Json Web Token Codec Object
      */
-    private final JsonWebTokenCodec codec;
+    protected final JsonWebTokenCodec codec;
 
     /**
      * Constructor Initialization

@@ -23,12 +23,12 @@ public class LocalStorageCacheTokenGenerator implements TokenGenerator {
      * When Receiving Requests, It Is Necessary To Clear The Request Header Carried By The User To Ensure Program Security
      */
     @SuppressWarnings("ALL")
-    private static final String DEVICE_HEADER_NAME = "P6e-Device";
+    protected static final String DEVICE_HEADER_NAME = "P6e-Device";
 
     /**
      * User Token Cache Object
      */
-    private final UserTokenCache cache;
+    protected final UserTokenCache cache;
 
     /**
      * Constructor Initialization
@@ -69,4 +69,5 @@ public class LocalStorageCacheTokenGenerator implements TokenGenerator {
     public String token() {
         return GeneratorUtil.uuid() + GeneratorUtil.random(8, false, false);
     }
+    
 }

@@ -23,12 +23,12 @@ public class LocalStorageJsonWebTokenGenerator implements TokenGenerator {
      * When Receiving Requests, It Is Necessary To Clear The Request Header Carried By The User To Ensure Program Security
      */
     @SuppressWarnings("ALL")
-    private static final String DEVICE_HEADER_NAME = "P6e-Device";
+    protected static final String DEVICE_HEADER_NAME = "P6e-Device";
 
     /**
      * Json Web Token Codec Object
      */
-    private final JsonWebTokenCodec codec;
+    protected final JsonWebTokenCodec codec;
 
     /**
      * Constructor Initialization

@@ -17,30 +17,6 @@ import java.util.List;
 public interface UserTokenCache {
 
     /**
-     * Model
-     */
-    @Data
-    @Accessors(chain = true)
-    class Model implements Serializable {
-
-        /**
-         * UID
-         */
-        private String uid;
-
-        /**
-         * Device
-         */
-        private String device;
-
-        /**
-         * TOKEN
-         */
-        private String token;
-
-    }
-
-    /**
      * Delimiter
      */
     String DELIMITER = ":";
@@ -102,5 +78,29 @@ public interface UserTokenCache {
      * @return Token List Object
      */
     Mono<List<String>> cleanUserAll(String uid);
+
+    /**
+     * Model
+     */
+    @Data
+    @Accessors(chain = true)
+    class Model implements Serializable {
+
+        /**
+         * UID
+         */
+        private String uid;
+
+        /**
+         * Device
+         */
+        private String device;
+
+        /**
+         * TOKEN
+         */
+        private String token;
+
+    }
 
 }

@@ -21,27 +21,27 @@ public class LocalStorageCacheTokenValidator implements TokenValidator {
     /**
      * Bearer Type
      */
-    private static final String BEARER_TYPE = "Bearer";
+    protected static final String BEARER_TYPE = "Bearer";
 
     /**
      * Request Parameter Name
      */
-    private static final String REQUEST_PARAMETER_NAME = "token";
+    protected static final String REQUEST_PARAMETER_NAME = "token";
 
     /**
      * Authorization Prefix
      */
-    private static final String AUTHORIZATION_PREFIX = BEARER_TYPE + " ";
+    protected static final String AUTHORIZATION_PREFIX = BEARER_TYPE + " ";
 
     /**
      * Authorization Header Name
      */
-    private static final String AUTHORIZATION_HEADER_NAME = "Authorization";
+    protected static final String AUTHORIZATION_HEADER_NAME = "Authorization";
 
     /**
      * User Token Cache Object
      */
-    private final UserTokenCache cache;
+    protected final UserTokenCache cache;
 
     /**
      * Constructor Initialization

@@ -24,12 +24,12 @@ public class CookieCacheTokenValidator implements TokenValidator {
     /**
      * Auth Cookie Name
      */
-    private static final String AUTH_COOKIE_NAME = "P6E_AUTH";
+    protected static final String AUTH_COOKIE_NAME = "P6E_AUTH";
 
     /**
      * User Token Cache Object
      */
-    private final UserTokenCache cache;
+    protected final UserTokenCache cache;
 
     /**
      * Constructor Initialization
