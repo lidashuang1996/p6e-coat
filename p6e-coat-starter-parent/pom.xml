@@ -34,6 +34,7 @@
         <http.client.version>4.5.14</http.client.version>
         <r2dbc-postgresql.version>1.0.7.RELEASE</r2dbc-postgresql.version>
         <spring-framework.version>6.2.10</spring-framework.version>
+        <java.jwt.version>4.4.0</java.jwt.version>
     </properties>
 
     <dependencies>
