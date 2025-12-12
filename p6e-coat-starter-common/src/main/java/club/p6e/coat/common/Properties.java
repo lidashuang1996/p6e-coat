@@ -21,10 +21,24 @@ import java.util.Map;
 @Component(value = "club.p6e.coat.common.Properties")
 public class Properties implements Serializable {
 
+    private boolean debug = false;
+
     /**
      * 版本号
      */
     private String version = "unknown";
+    /**
+     * 安全
+     */
+    private Security security = new Security();
+    /**
+     * 安全
+     */
+    private CrossDomain crossDomain = new CrossDomain();
+    /**
+     * 雪花
+     */
+    private Map<String, Snowflake> snowflake = new HashMap<>();
 
     /**
      * Security
@@ -46,11 +60,6 @@ public class Properties implements Serializable {
     }
 
     /**
-     * 安全
-     */
-    private Security security = new Security();
-
-    /**
      * Cross Domain
      */
     @Data
@@ -68,11 +77,6 @@ public class Properties implements Serializable {
     }
 
     /**
-     * 安全
-     */
-    private CrossDomain crossDomain = new CrossDomain();
-
-    /**
      * Snowflake
      */
     @Data
@@ -81,10 +85,5 @@ public class Properties implements Serializable {
         private Integer workerId;
         private Integer dataCenterId;
     }
-
-    /**
-     * 雪花
-     */
-    private Map<String, Snowflake> snowflake = new HashMap<>();
 
 }
