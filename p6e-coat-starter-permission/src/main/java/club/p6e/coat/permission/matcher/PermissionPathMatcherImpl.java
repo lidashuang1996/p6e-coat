@@ -53,7 +53,7 @@ public class PermissionPathMatcherImpl implements PermissionPathMatcher {
 
     @Override
     public void register(PermissionDetails model) {
-        if (model != null && model.getGid() != null && model.getUid() != null && model.getPath() != null) {
+        if (model != null && model.getGid() != null && model.getUid() != null && model.getPath() != null && model.getWeight() != null) {
             synchronized (this) {
                 final String path = model.getPath();
                 for (final PathPattern pattern : cache.keySet()) {
