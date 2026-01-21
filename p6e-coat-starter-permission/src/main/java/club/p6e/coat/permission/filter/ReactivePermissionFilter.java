@@ -1,4 +1,4 @@
-package club.p6e.coat.permission.web.reactive;
+package club.p6e.coat.permission.filter;
 
 import club.p6e.coat.common.error.PermissionException;
 import club.p6e.coat.common.utils.JsonUtil;
@@ -16,12 +16,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Permission Filter
+ * Reactive Permission Filter
  *
  * @author lidashuang
  * @version 1.0
  */
-public class PermissionFilter implements WebFilter, Ordered {
+@SuppressWarnings("ALL")
+public class ReactivePermissionFilter implements WebFilter, Ordered {
 
     /**
      * Permission Header
@@ -51,7 +52,7 @@ public class PermissionFilter implements WebFilter, Ordered {
      *
      * @param validator Permission Validator Object
      */
-    public PermissionFilter(PermissionValidator validator) {
+    public ReactivePermissionFilter(PermissionValidator validator) {
         this.validator = validator;
     }
 
@@ -68,8 +69,8 @@ public class PermissionFilter implements WebFilter, Ordered {
         if (details == null) {
             return Mono.error(new PermissionException(
                     this.getClass(),
-                    "filter(ServerWebExchange exchange, WebFilterChain chain).",
-                    "request permission exception."
+                    "filter(ServerWebExchange exchange, WebFilterChain chain)",
+                    "request permission exception"
             ));
         } else {
             exchange.mutate().request(request.mutate().header(
@@ -97,7 +98,7 @@ public class PermissionFilter implements WebFilter, Ordered {
                 }
             }
         }
-        return validator.execute("0", path, method, permissions);
+        return this.validator.execute(path, method, permissions);
     }
 
 }

@@ -1,8 +1,7 @@
-package club.p6e.coat.permission.web;
+package club.p6e.coat.permission.repository;
 
 import club.p6e.coat.common.utils.TemplateParser;
 import club.p6e.coat.permission.PermissionDetails;
-import club.p6e.coat.permission.PermissionRepository;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.dao.DataAccessException;
@@ -16,15 +15,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Permission Repository Impl
+ * Blocking Permission Repository Impl
  *
  * @author lidashuang
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(PermissionRepository.class)
+@ConditionalOnMissingBean(BlockingPermissionRepository.class)
 @ConditionalOnClass(name = "org.springframework.web.servlet.package-info")
-public class PermissionRepositoryImpl implements PermissionRepository {
+public class BlockingPermissionRepositoryImpl implements BlockingPermissionRepository {
 
     /**
      * Jdbc Template Object
@@ -36,7 +35,7 @@ public class PermissionRepositoryImpl implements PermissionRepository {
      *
      * @param template Jdbc Template Object
      */
-    public PermissionRepositoryImpl(JdbcTemplate template) {
+    public BlockingPermissionRepositoryImpl(JdbcTemplate template) {
         this.template = template;
     }
 

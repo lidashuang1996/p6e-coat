@@ -1,9 +1,8 @@
-package club.p6e.coat.permission.web.reactive;
+package club.p6e.coat.permission.repository;
 
 import club.p6e.coat.common.utils.TemplateParser;
 import club.p6e.coat.common.utils.TransformationUtil;
 import club.p6e.coat.permission.PermissionDetails;
-import club.p6e.coat.permission.PermissionRepository;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.r2dbc.core.DatabaseClient;
@@ -13,15 +12,15 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 /**
- * Permission Repository Impl
+ * Reactive Permission Repository Impl
  *
  * @author lidashuang
  * @version 1.0
  */
 @Component
-@ConditionalOnMissingBean(PermissionRepository.class)
+@ConditionalOnMissingBean(ReactivePermissionRepository.class)
 @ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
-public class PermissionRepositoryImpl implements PermissionRepository {
+public class ReactivePermissionRepositoryImpl implements ReactivePermissionRepository {
 
     /**
      * Database Client Object
@@ -33,7 +32,7 @@ public class PermissionRepositoryImpl implements PermissionRepository {
      *
      * @param client Database Client Object
      */
-    public PermissionRepositoryImpl(DatabaseClient client) {
+    public ReactivePermissionRepositoryImpl(DatabaseClient client) {
         this.client = client;
     }
 

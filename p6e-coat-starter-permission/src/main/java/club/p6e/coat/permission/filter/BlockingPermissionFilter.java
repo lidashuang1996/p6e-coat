@@ -1,4 +1,4 @@
-package club.p6e.coat.permission.web;
+package club.p6e.coat.permission.filter;
 
 import club.p6e.coat.common.error.PermissionException;
 import club.p6e.coat.common.utils.JsonUtil;
@@ -13,12 +13,13 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * Permission Filter
+ * Blocking Permission Filter
  *
  * @author lidashuang
  * @version 1.0
  */
-public class PermissionFilter implements Filter, Ordered {
+@SuppressWarnings("ALL")
+public class BlockingPermissionFilter implements Filter, Ordered {
 
     /**
      * Permission Header
@@ -48,7 +49,7 @@ public class PermissionFilter implements Filter, Ordered {
      *
      * @param validator Permission Validator Object
      */
-    public PermissionFilter(PermissionValidator validator) {
+    public BlockingPermissionFilter(PermissionValidator validator) {
         this.validator = validator;
     }
 
@@ -64,8 +65,8 @@ public class PermissionFilter implements Filter, Ordered {
         if (details == null) {
             throw new PermissionException(
                     this.getClass(),
-                    "fun doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain).",
-                    "request permission exception."
+                    "fun doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)",
+                    "request permission exception"
             );
         } else {
             filterChain.doFilter(new MyHttpServletRequestWrapper(request, details), servletResponse);
@@ -89,7 +90,7 @@ public class PermissionFilter implements Filter, Ordered {
                 permissions.addAll(data);
             }
         }
-        return validator.execute("0", path, method, permissions);
+        return this.validator.execute(path, method, permissions);
     }
 
     /**
@@ -113,7 +114,7 @@ public class PermissionFilter implements Filter, Ordered {
 
         @Override
         public String getHeader(String name) {
-            final String value = headers.get(name);
+            final String value = this.headers.get(name);
             if (value == null) {
                 return super.getHeader(name);
             } else {
@@ -124,8 +125,8 @@ public class PermissionFilter implements Filter, Ordered {
         @Override
         public Enumeration<String> getHeaders(String name) {
             final List<String> values = new ArrayList<>();
-            if (headers.containsKey(name)) {
-                values.add(headers.get(name));
+            if (this.headers.containsKey(name)) {
+                values.add(this.headers.get(name));
             }
             final Enumeration<String> originalHeaders = super.getHeaders(name);
             if (originalHeaders != null) {
@@ -138,7 +139,7 @@ public class PermissionFilter implements Filter, Ordered {
 
         @Override
         public Enumeration<String> getHeaderNames() {
-            final Set<String> names = new HashSet<>(headers.keySet());
+            final Set<String> names = new HashSet<>(this.headers.keySet());
             final Enumeration<String> originalNames = super.getHeaderNames();
             if (originalNames != null) {
                 while (originalNames.hasMoreElements()) {

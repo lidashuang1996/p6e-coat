@@ -18,14 +18,9 @@ import java.util.List;
 public class PermissionValidatorImpl implements PermissionValidator {
 
     /**
-     * COMMON MARK
+     * USUAL CHAR
      */
-    private static final String COMMON_MARK = "*";
-
-    /**
-     * IGNORE MARK
-     */
-    private static final String IGNORE_MARK = "@IGNORE";
+    private static final String USUAL_CHAR = "*";
 
     /**
      * Permission Path Matcher Object
@@ -42,27 +37,20 @@ public class PermissionValidatorImpl implements PermissionValidator {
     }
 
     @Override
-    public PermissionDetails execute(String mode, String path, String method, List<String> groups) {
+    public PermissionDetails execute(String path, String method, List<String> groups) {
         PermissionDetails vague = null;
         if (groups != null) {
-            final List<PermissionDetails> permissions = matcher.match(path);
+            final List<PermissionDetails> permissions = this.matcher.match(path);
             if (permissions != null && !permissions.isEmpty()) {
                 for (final PermissionDetails permission : permissions) {
                     final String pp = permission.getPath();
-                    final String pk = permission.getMark();
                     final String pm = permission.getMethod();
                     final String pg = String.valueOf(permission.getGid());
-                    final boolean gv = groups.contains(pg) || pk.toUpperCase().endsWith(IGNORE_MARK);
-                    final boolean mv = COMMON_MARK.equalsIgnoreCase(pm) || method.equalsIgnoreCase(pm);
-                    if (gv && mv) {
+                    final boolean gb = groups.contains(pg);
+                    final boolean mb = USUAL_CHAR.equalsIgnoreCase(pm) || method.equalsIgnoreCase(pm);
+                    if (gb && mb) {
                         if (pp.contains("*")) {
-                            switch (mode) {
-                                case "0":
-                                    vague = permission;
-                                    break;
-                                case "-1":
-                                    return permission;
-                            }
+                            vague = permission;
                         } else {
                             return permission;
                         }

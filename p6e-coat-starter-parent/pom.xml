@@ -12,7 +12,6 @@
     <packaging>pom</packaging>
     <groupId>club.p6e.coat</groupId>
     <artifactId>p6e-coat-starter-parent</artifactId>
-    <version>3.4.2</version>
     <name>p6e-coat-starter-parent</name>
     <description>p6e-coat-starter-parent</description>
 

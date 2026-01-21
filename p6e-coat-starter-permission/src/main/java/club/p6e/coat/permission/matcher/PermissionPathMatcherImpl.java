@@ -13,7 +13,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Permission Path Matcher
+ * Permission Path Matcher Impl
  *
  * @author lidashuang
  * @version 1.0
@@ -41,9 +41,9 @@ public class PermissionPathMatcherImpl implements PermissionPathMatcher {
     public List<PermissionDetails> match(String path) {
         final List<PermissionDetails> result = new ArrayList<>();
         final PathContainer container = PathContainer.parsePath(path);
-        for (final PathPattern pattern : cache.keySet()) {
+        for (final PathPattern pattern : this.cache.keySet()) {
             if (pattern.matches(container)) {
-                result.addAll(cache.get(pattern));
+                result.addAll(this.cache.get(pattern));
             }
         }
         // permission list is sorted in desc order of weight
@@ -53,21 +53,24 @@ public class PermissionPathMatcherImpl implements PermissionPathMatcher {
 
     @Override
     public void register(PermissionDetails model) {
-        if (model != null && model.getGid() != null && model.getUid() != null && model.getPath() != null && model.getWeight() != null) {
+        if (model != null
+                && model.getGid() != null && model.getUid() != null
+                && model.getMark() != null && model.getPath() != null
+                && model.getMethod() != null && model.getWeight() != null && model.getVersion() != null) {
             synchronized (this) {
                 final String path = model.getPath();
-                for (final PathPattern pattern : cache.keySet()) {
+                for (final PathPattern pattern : this.cache.keySet()) {
                     if (pattern.getPatternString().equalsIgnoreCase(path)) {
                         final String mark = model.getGid() + "_" + model.getUid();
-                        final List<PermissionDetails> list = cache.get(pattern);
+                        final List<PermissionDetails> list = this.cache.get(pattern);
                         list.removeIf(i -> mark.equalsIgnoreCase((i.getGid() + "_" + i.getUid())));
                         LOGGER.info("[ PERMISSION PATH MATCHER REGISTER (ADD/REPLACE) ] {}({}) >>> {}", path, model.getMethod(), model);
-                        cache.get(parser.parse(path)).add(model);
+                        this.cache.get(parser.parse(path)).add(model);
                         return;
                     }
                 }
                 LOGGER.info("[ PERMISSION PATH MATCHER REGISTER (ADD) ] {}({}) >>> {}", path, model.getMethod(), model);
-                cache.put(parser.parse(path), Collections.synchronizedList(new ArrayList<>(List.of(model))));
+                this.cache.put(parser.parse(path), new ArrayList<>(List.of(model)));
             }
         }
     }
@@ -75,12 +78,12 @@ public class PermissionPathMatcherImpl implements PermissionPathMatcher {
     @Override
     public void cleanExpiredVersionData(long version) {
         synchronized (this) {
-            for (final PathPattern key : cache.keySet()) {
-                final List<PermissionDetails> list = cache.get(key);
+            for (final PathPattern key : this.cache.keySet()) {
+                final List<PermissionDetails> list = this.cache.get(key);
                 if (list != null && !list.isEmpty()) {
                     list.removeIf(i -> i.getVersion() == null || i.getVersion() < version);
                     if (list.isEmpty()) {
-                        cache.remove(key);
+                        this.cache.remove(key);
                     }
                 }
             }
