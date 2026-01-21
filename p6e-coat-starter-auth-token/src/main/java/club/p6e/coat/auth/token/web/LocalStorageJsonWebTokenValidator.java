@@ -3,7 +3,6 @@ package club.p6e.coat.auth.token.web;
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.UserBuilder;
 import club.p6e.coat.auth.token.JsonWebTokenCodec;
-import club.p6e.coat.common.utils.SpringUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -40,6 +39,11 @@ public class LocalStorageJsonWebTokenValidator implements TokenValidator {
     protected static final String AUTHORIZATION_HEADER_NAME = "Authorization";
 
     /**
+     * User Builder Object
+     */
+    protected final UserBuilder builder;
+
+    /**
      * Json Web Token Codec Object
      */
     protected final JsonWebTokenCodec codec;
@@ -49,8 +53,9 @@ public class LocalStorageJsonWebTokenValidator implements TokenValidator {
      *
      * @param codec Json Web Token Codec Object
      */
-    public LocalStorageJsonWebTokenValidator(JsonWebTokenCodec codec) {
+    public LocalStorageJsonWebTokenValidator(UserBuilder builder, JsonWebTokenCodec codec) {
         this.codec = codec;
+        this.builder = builder;
     }
 
     @Override
@@ -68,13 +73,13 @@ public class LocalStorageJsonWebTokenValidator implements TokenValidator {
             String content;
             for (final String item : list) {
                 if (item.startsWith(AUTHORIZATION_PREFIX)) {
-                    content = codec.decryption(item.substring(AUTHORIZATION_PREFIX.length()));
+                    content = this.codec.decryption(item.substring(AUTHORIZATION_PREFIX.length()));
                 } else {
-                    content = codec.decryption(item);
+                    content = this.codec.decryption(item);
                 }
                 if (content != null) {
                     content = content.substring(content.indexOf("@") + 1);
-                    return SpringUtil.getBean(UserBuilder.class).create(content);
+                    return this.builder.create(content);
                 }
             }
         }

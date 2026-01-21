@@ -2,7 +2,6 @@ package club.p6e.coat.auth.token.web.reactive;
 
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.UserBuilder;
-import club.p6e.coat.common.utils.SpringUtil;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -40,6 +39,11 @@ public class LocalStorageCacheTokenValidator implements TokenValidator {
     protected static final String AUTHORIZATION_HEADER_NAME = "Authorization";
 
     /**
+     * User Builder Object
+     */
+    private final UserBuilder builder;
+
+    /**
      * User Token Cache Object
      */
     protected final UserTokenCache cache;
@@ -49,8 +53,9 @@ public class LocalStorageCacheTokenValidator implements TokenValidator {
      *
      * @param cache User Token Cache Object
      */
-    public LocalStorageCacheTokenValidator(UserTokenCache cache) {
+    public LocalStorageCacheTokenValidator(UserBuilder builder, UserTokenCache cache) {
         this.cache = cache;
+        this.builder = builder;
     }
 
     @Override
@@ -66,7 +71,7 @@ public class LocalStorageCacheTokenValidator implements TokenValidator {
             list.addAll(pList);
         }
         if (!list.isEmpty()) {
-            return execute(new ArrayList<>(list)).flatMap(content -> Mono.just(SpringUtil.getBean(UserBuilder.class).create(content)));
+            return execute(new ArrayList<>(list)).flatMap(content -> Mono.just(this.builder.create(content)));
         }
         return Mono.empty();
     }
@@ -85,7 +90,7 @@ public class LocalStorageCacheTokenValidator implements TokenValidator {
             if (token.startsWith(AUTHORIZATION_PREFIX)) {
                 token = token.substring(AUTHORIZATION_PREFIX.length());
             }
-            return (token == null || token.isEmpty()) ? execute(list) : cache.getToken(token).flatMap(m -> cache.getUser(m.getUid())).switchIfEmpty(execute(list));
+            return (token == null || token.isEmpty()) ? execute(list) : this.cache.getToken(token).flatMap(m -> this.cache.getUser(m.getUid())).switchIfEmpty(execute(list));
         }
     }
 

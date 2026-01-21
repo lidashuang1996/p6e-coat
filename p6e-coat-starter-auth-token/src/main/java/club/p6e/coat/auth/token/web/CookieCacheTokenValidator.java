@@ -2,7 +2,6 @@ package club.p6e.coat.auth.token.web;
 
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.UserBuilder;
-import club.p6e.coat.common.utils.SpringUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,6 +21,11 @@ public class CookieCacheTokenValidator implements TokenValidator {
     protected static final String AUTH_COOKIE_NAME = "P6E_AUTH";
 
     /**
+     * User Builder Object
+     */
+    protected final UserBuilder builder;
+
+    /**
      * User Token Cache Object
      */
     protected final UserTokenCache cache;
@@ -29,9 +33,11 @@ public class CookieCacheTokenValidator implements TokenValidator {
     /**
      * Constructor Initialization
      *
-     * @param cache User Token Cache Object
+     * @param builder User Builder Object
+     * @param cache   User Token Cache Object
      */
-    public CookieCacheTokenValidator(UserTokenCache cache) {
+    public CookieCacheTokenValidator(UserBuilder builder, UserTokenCache cache) {
+        this.builder = builder;
         this.cache = cache;
     }
 
@@ -43,7 +49,7 @@ public class CookieCacheTokenValidator implements TokenValidator {
                 if (AUTH_COOKIE_NAME.equalsIgnoreCase(cookie.getName())) {
                     final String content = execute(cookie);
                     if (content != null) {
-                        return SpringUtil.getBean(UserBuilder.class).create(content);
+                        return this.builder.create(content);
                     }
                 }
             }

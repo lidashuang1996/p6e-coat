@@ -3,7 +3,6 @@ package club.p6e.coat.auth.token.web;
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.UserBuilder;
 import club.p6e.coat.auth.token.JsonWebTokenCodec;
-import club.p6e.coat.common.utils.SpringUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,6 +21,11 @@ public class CookieJsonWebTokenValidator implements TokenValidator {
      */
     protected static final String AUTH_COOKIE_NAME = "P6E_AUTH";
 
+     /**
+     * User Builder Object
+     */
+    protected final UserBuilder builder;
+
     /**
      * Json Web Token Codec Object
      */
@@ -30,10 +34,12 @@ public class CookieJsonWebTokenValidator implements TokenValidator {
     /**
      * Constructor Initialization
      *
-     * @param codec Json Web Token Codec Object
+     * @param builder User Builder Object
+     * @param codec   Json Web Token Codec Object
      */
-    public CookieJsonWebTokenValidator(JsonWebTokenCodec codec) {
+    public CookieJsonWebTokenValidator(UserBuilder builder, JsonWebTokenCodec codec) {
         this.codec = codec;
+        this.builder = builder;
     }
 
     @Override
@@ -45,7 +51,7 @@ public class CookieJsonWebTokenValidator implements TokenValidator {
                     String content = codec.decryption(cookie.getValue());
                     if (content != null) {
                         content = content.substring(content.indexOf("@") + 1);
-                        return SpringUtil.getBean(UserBuilder.class).create(content);
+                        return this.builder.create(content);
                     }
                 }
             }

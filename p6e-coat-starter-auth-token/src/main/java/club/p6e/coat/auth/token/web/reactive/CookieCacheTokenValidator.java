@@ -2,7 +2,6 @@ package club.p6e.coat.auth.token.web.reactive;
 
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.UserBuilder;
-import club.p6e.coat.common.utils.SpringUtil;
 import org.springframework.http.HttpCookie;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.util.MultiValueMap;
@@ -25,6 +24,10 @@ public class CookieCacheTokenValidator implements TokenValidator {
      * Auth Cookie Name
      */
     protected static final String AUTH_COOKIE_NAME = "P6E_AUTH";
+    /**
+     * User Builder Object
+     */
+    protected final UserBuilder builder;
 
     /**
      * User Token Cache Object
@@ -34,9 +37,11 @@ public class CookieCacheTokenValidator implements TokenValidator {
     /**
      * Constructor Initialization
      *
-     * @param cache User Token Cache Object
+     * @param builder User Builder Object
+     * @param cache   User Token Cache Object
      */
-    public CookieCacheTokenValidator(UserTokenCache cache) {
+    public CookieCacheTokenValidator(UserBuilder builder, UserTokenCache cache) {
+        this.builder = builder;
         this.cache = cache;
     }
 
@@ -47,7 +52,7 @@ public class CookieCacheTokenValidator implements TokenValidator {
         if (!cookies.isEmpty()) {
             for (final String key : cookies.keySet()) {
                 if (AUTH_COOKIE_NAME.equalsIgnoreCase(key)) {
-                    return execute(new ArrayList<>(cookies.get(key))).flatMap(content -> Mono.just(SpringUtil.getBean(UserBuilder.class).create(content)));
+                    return execute(new ArrayList<>(cookies.get(key))).flatMap(content -> Mono.just(builder.create(content)));
                 }
             }
         }

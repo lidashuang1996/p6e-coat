@@ -3,7 +3,6 @@ package club.p6e.coat.auth.token.web.reactive;
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.UserBuilder;
 import club.p6e.coat.auth.token.JsonWebTokenCodec;
-import club.p6e.coat.common.utils.SpringUtil;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -41,6 +40,11 @@ public class LocalStorageJsonWebTokenValidator implements TokenValidator {
     protected static final String AUTHORIZATION_HEADER_NAME = "Authorization";
 
     /**
+     * User Builder Object
+     */
+    protected final UserBuilder builder;
+
+    /**
      * Json Web Token Codec Object
      */
     protected final JsonWebTokenCodec codec;
@@ -48,9 +52,11 @@ public class LocalStorageJsonWebTokenValidator implements TokenValidator {
     /**
      * Constructor Initialization
      *
-     * @param codec Json Web Token Codec Object
+     * @param builder User Builder Object
+     * @param codec   Json Web Token Codec Object
      */
-    public LocalStorageJsonWebTokenValidator(JsonWebTokenCodec codec) {
+    public LocalStorageJsonWebTokenValidator(UserBuilder builder, JsonWebTokenCodec codec) {
+        this.builder = builder;
         this.codec = codec;
     }
 
@@ -76,7 +82,7 @@ public class LocalStorageJsonWebTokenValidator implements TokenValidator {
                 }
                 if (content != null) {
                     content = content.substring(content.indexOf("@") + 1);
-                    return Mono.just(SpringUtil.getBean(UserBuilder.class).create(content));
+                    return Mono.just(builder.create(content));
                 }
             }
         }

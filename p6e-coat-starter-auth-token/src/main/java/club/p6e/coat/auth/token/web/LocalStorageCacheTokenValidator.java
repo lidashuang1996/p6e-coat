@@ -2,7 +2,6 @@ package club.p6e.coat.auth.token.web;
 
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.UserBuilder;
-import club.p6e.coat.common.utils.SpringUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -39,6 +38,11 @@ public class LocalStorageCacheTokenValidator implements TokenValidator {
     protected static final String AUTHORIZATION_HEADER_NAME = "Authorization";
 
     /**
+     * User Builder Object
+     */
+    protected final UserBuilder builder;
+
+    /**
      * User Token Cache Object
      */
     protected final UserTokenCache cache;
@@ -46,9 +50,11 @@ public class LocalStorageCacheTokenValidator implements TokenValidator {
     /**
      * Constructor Initialization
      *
-     * @param cache User Token Cache Object
+     * @param builder User Builder Object
+     * @param cache   User Token Cache Object
      */
-    public LocalStorageCacheTokenValidator(UserTokenCache cache) {
+    public LocalStorageCacheTokenValidator(UserBuilder builder, UserTokenCache cache) {
+        this.builder = builder;
         this.cache = cache;
     }
 
@@ -66,7 +72,7 @@ public class LocalStorageCacheTokenValidator implements TokenValidator {
         if (!list.isEmpty()) {
             final String content = execute(list);
             if (content != null) {
-                return SpringUtil.getBean(UserBuilder.class).create(content);
+                return builder.create(content);
             }
         }
         return null;
