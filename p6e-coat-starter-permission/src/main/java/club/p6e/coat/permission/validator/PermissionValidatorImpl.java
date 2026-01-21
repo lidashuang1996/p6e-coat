@@ -28,7 +28,7 @@ public class PermissionValidatorImpl implements PermissionValidator {
     private final PermissionPathMatcher matcher;
 
     /**
-     * Constructor Initializers
+     * Constructor Initialization
      *
      * @param matcher Permission Path Matcher Object
      */

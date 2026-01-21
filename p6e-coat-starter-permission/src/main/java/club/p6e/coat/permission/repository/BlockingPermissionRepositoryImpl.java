@@ -31,7 +31,7 @@ public class BlockingPermissionRepositoryImpl implements BlockingPermissionRepos
     private final JdbcTemplate template;
 
     /**
-     * Constructor Initializers
+     * Constructor Initialization
      *
      * @param template Jdbc Template Object
      */

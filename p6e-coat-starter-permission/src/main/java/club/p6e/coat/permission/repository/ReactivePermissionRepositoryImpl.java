@@ -28,7 +28,7 @@ public class ReactivePermissionRepositoryImpl implements ReactivePermissionRepos
     private final DatabaseClient client;
 
     /**
-     * Constructor Initializers
+     * Constructor Initialization
      *
      * @param client Database Client Object
      */

@@ -29,7 +29,7 @@ public class PermissionTask {
     private final ReactivePermissionAutoRefreshTask reactivePermissionAutoRefreshTask;
 
     /**
-     * Constructor Initializers
+     * Constructor Initialization
      *
      * @param blockingPermissionAutoRefreshTask Blocking Permission Auto Refresh Task Object
      * @param reactivePermissionAutoRefreshTask Reactive Permission Auto Refresh Task Object

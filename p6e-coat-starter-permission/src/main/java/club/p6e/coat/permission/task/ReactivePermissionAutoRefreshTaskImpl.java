@@ -46,7 +46,7 @@ public class ReactivePermissionAutoRefreshTaskImpl implements ReactivePermission
     private final AtomicInteger version = new AtomicInteger(1);
 
     /**
-     * Constructor Initializers
+     * Constructor Initialization
      *
      * @param matcher    Permission Path Matcher Object
      * @param repository Blocking Permission Repository Object
