@@ -20,14 +20,6 @@ import java.io.Serializable;
 public class InjectVoucherGatewayFilterFactory extends AbstractGatewayFilterFactory<InjectVoucherGatewayFilterFactory.Config> {
 
     /**
-     * Voucher Header Name
-     * Request Header For Downstream Service Voucher
-     * Request Header Is Customized By The Program And Not Carried By The User Request
-     * When Receiving Requests, It Is Necessary To Clear The Request Header Carried By The User To Ensure Program Security
-     */
-    private static final String VOUCHER_HEADER = "P6e-Voucher";
-
-    /**
      * Constructor Initialization
      */
     public InjectVoucherGatewayFilterFactory() {
@@ -61,7 +53,9 @@ public class InjectVoucherGatewayFilterFactory extends AbstractGatewayFilterFact
         @Override
         public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
             final ServerHttpRequest.Builder builder = exchange.getRequest().mutate();
-            builder.header(VOUCHER_HEADER, (config.getVoucher() == null ? "" : config.getVoucher()));
+            if (this.config != null && this.config.getKey() != null && this.config.getValue() != null) {
+                builder.header(this.config.getKey(), this.config.getValue());
+            }
             return chain.filter(exchange.mutate().request(builder.build()).build());
         }
 
@@ -75,9 +69,14 @@ public class InjectVoucherGatewayFilterFactory extends AbstractGatewayFilterFact
     public static class Config implements Serializable {
 
         /**
-         * Voucher
+         * Voucher Key
          */
-        private String voucher;
+        private String key;
+
+        /**
+         * Voucher Value
+         */
+        private String value;
 
     }
 

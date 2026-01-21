@@ -3,7 +3,7 @@ package club.p6e.coat.auth.web.reactive.service;
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
-import club.p6e.coat.auth.token.web.reactive.TokenValidator;
+import club.p6e.coat.auth.token.ReactiveTokenValidator;
 import club.p6e.coat.auth.web.reactive.cache.LoginQuickResponseCodeCache;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -28,7 +28,7 @@ public class LoginQuickResponseCodeServiceImpl implements LoginQuickResponseCode
     /**
      * Token Validator Object
      */
-    private final TokenValidator validator;
+    private final ReactiveTokenValidator validator;
 
     /**
      * Login Quick Response Code Cache Object
@@ -41,7 +41,7 @@ public class LoginQuickResponseCodeServiceImpl implements LoginQuickResponseCode
      * @param validator Token Validator Object
      * @param cache     Login Quick Response Code Cache Object
      */
-    public LoginQuickResponseCodeServiceImpl(TokenValidator validator, LoginQuickResponseCodeCache cache) {
+    public LoginQuickResponseCodeServiceImpl(ReactiveTokenValidator validator, LoginQuickResponseCodeCache cache) {
         this.cache = cache;
         this.validator = validator;
     }

@@ -3,7 +3,7 @@ package club.p6e.coat.auth.web.service;
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
-import club.p6e.coat.auth.token.web.TokenValidator;
+import club.p6e.coat.auth.token.BlockingTokenValidator;
 import club.p6e.coat.auth.web.cache.LoginQuickResponseCodeCache;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -28,7 +28,7 @@ public class LoginQuickResponseCodeServiceImpl implements LoginQuickResponseCode
     /**
      * Token Validator Object
      */
-    private final TokenValidator validator;
+    private final BlockingTokenValidator validator;
 
     /**
      * Quick Response Code Login Cache Object
@@ -41,7 +41,7 @@ public class LoginQuickResponseCodeServiceImpl implements LoginQuickResponseCode
      * @param validator Token Validator Object
      * @param cache     Quick Response Code Login Cache Object
      */
-    public LoginQuickResponseCodeServiceImpl(TokenValidator validator, LoginQuickResponseCodeCache cache) {
+    public LoginQuickResponseCodeServiceImpl(BlockingTokenValidator validator, LoginQuickResponseCodeCache cache) {
         this.cache = cache;
         this.validator = validator;
     }

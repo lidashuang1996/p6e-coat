@@ -1,20 +1,20 @@
-package club.p6e.coat.auth.token.web;
+package club.p6e.coat.auth.token;
 
 import club.p6e.coat.auth.User;
 import club.p6e.coat.common.utils.GeneratorUtil;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 
 /**
- * Local Storage Cache Token Generator
+ * Reactive Local Storage Cache Token Generator
  *
  * @author lidashuang
  * @version 1.0
  */
 @SuppressWarnings("ALL")
-public class LocalStorageCacheTokenGenerator implements TokenGenerator {
+public class ReactiveLocalStorageCacheTokenGenerator implements ReactiveTokenGenerator {
 
     /**
      * Device Header Name
@@ -28,28 +28,27 @@ public class LocalStorageCacheTokenGenerator implements TokenGenerator {
     /**
      * User Token Cache Object
      */
-    protected final UserTokenCache cache;
+    protected final ReactiveUserTokenCache cache;
 
     /**
      * Constructor Initialization
      *
      * @param cache User Token Cache Object
      */
-    public LocalStorageCacheTokenGenerator(UserTokenCache cache) {
+    public ReactiveLocalStorageCacheTokenGenerator(ReactiveUserTokenCache cache) {
         this.cache = cache;
     }
 
     @Override
-    public Object execute(HttpServletRequest request, HttpServletResponse response, User user) {
+    public Mono<Object> execute(ServerWebExchange exchange, User user) {
         final String token = token();
         final long duration = duration();
-        final String device = request.getHeader(DEVICE_HEADER_NAME);
-        cache.set(user.id(), device == null ? "PC" : device, token, user.serialize(), duration);
-        return new HashMap<>() {{
+        final String device = exchange.getRequest().getHeaders().getFirst(DEVICE_HEADER_NAME);
+        return cache.set(user.id(), device == null ? "PC" : device, token, user.serialize(), duration).map(m -> new HashMap<>() {{
             put("token", token);
             put("type", "Bearer");
             put("expiration", duration);
-        }};
+        }});
     }
 
     /**
@@ -69,5 +68,5 @@ public class LocalStorageCacheTokenGenerator implements TokenGenerator {
     public String token() {
         return GeneratorUtil.uuid() + GeneratorUtil.random(8, false, false);
     }
-    
+
 }

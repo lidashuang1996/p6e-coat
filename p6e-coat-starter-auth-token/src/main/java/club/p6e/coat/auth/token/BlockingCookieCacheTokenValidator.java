@@ -1,4 +1,4 @@
-package club.p6e.coat.auth.token.web;
+package club.p6e.coat.auth.token;
 
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.UserBuilder;
@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * @version 1.0
  */
 @SuppressWarnings("ALL")
-public class CookieCacheTokenValidator implements TokenValidator {
+public class BlockingCookieCacheTokenValidator implements BlockingTokenValidator {
 
     /**
      * Auth Cookie Name
@@ -28,7 +28,7 @@ public class CookieCacheTokenValidator implements TokenValidator {
     /**
      * User Token Cache Object
      */
-    protected final UserTokenCache cache;
+    protected final BlockingUserTokenCache cache;
 
     /**
      * Constructor Initialization
@@ -36,7 +36,7 @@ public class CookieCacheTokenValidator implements TokenValidator {
      * @param builder User Builder Object
      * @param cache   User Token Cache Object
      */
-    public CookieCacheTokenValidator(UserBuilder builder, UserTokenCache cache) {
+    public BlockingCookieCacheTokenValidator(UserBuilder builder, BlockingUserTokenCache cache) {
         this.builder = builder;
         this.cache = cache;
     }
@@ -64,7 +64,7 @@ public class CookieCacheTokenValidator implements TokenValidator {
      * @return User String Object
      */
     public String execute(Cookie cookie) {
-        final UserTokenCache.Model model = cache.getToken(cookie.getValue());
+        final BlockingUserTokenCache.Model model = cache.getToken(cookie.getValue());
         if (model != null) {
             return cache.getUser(model.getUid());
         }

@@ -1,4 +1,4 @@
-package club.p6e.coat.auth.token.web.reactive;
+package club.p6e.coat.auth.token;
 
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.UserBuilder;
@@ -10,13 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Local Storage Cache Token Validator
+ * Reactive Local Storage Cache Token Validator
  *
  * @author lidashuang
  * @version 1.0
  */
 @SuppressWarnings("ALL")
-public class LocalStorageCacheTokenValidator implements TokenValidator {
+public class ReactiveLocalStorageCacheTokenValidator implements ReactiveTokenValidator {
 
     /**
      * Bearer Type
@@ -46,14 +46,14 @@ public class LocalStorageCacheTokenValidator implements TokenValidator {
     /**
      * User Token Cache Object
      */
-    protected final UserTokenCache cache;
+    protected final ReactiveUserTokenCache cache;
 
     /**
      * Constructor Initialization
      *
      * @param cache User Token Cache Object
      */
-    public LocalStorageCacheTokenValidator(UserBuilder builder, UserTokenCache cache) {
+    public ReactiveLocalStorageCacheTokenValidator(UserBuilder builder, ReactiveUserTokenCache cache) {
         this.cache = cache;
         this.builder = builder;
     }

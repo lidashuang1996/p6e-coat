@@ -2,7 +2,7 @@ package club.p6e.coat.auth.web.service;
 
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.context.LoginContext;
-import club.p6e.coat.auth.token.web.TokenValidator;
+import club.p6e.coat.auth.token.BlockingTokenValidator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -26,14 +26,14 @@ public class LoginAuthenticationServiceImpl implements LoginAuthenticationServic
     /**
      * Token Validator Object
      */
-    private final TokenValidator validator;
+    private final BlockingTokenValidator validator;
 
     /**
      * Constructor Initialization
      *
      * @param validator Token Validator Object
      */
-    public LoginAuthenticationServiceImpl(TokenValidator validator) {
+    public LoginAuthenticationServiceImpl(BlockingTokenValidator validator) {
         this.validator = validator;
     }
 

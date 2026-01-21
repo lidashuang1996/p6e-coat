@@ -1,8 +1,7 @@
-package club.p6e.coat.auth.token.web;
+package club.p6e.coat.auth.token;
 
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.UserBuilder;
-import club.p6e.coat.auth.token.JsonWebTokenCodec;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,7 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * @version 1.0
  */
 @SuppressWarnings("ALL")
-public class CookieJsonWebTokenValidator implements TokenValidator {
+public class BlockingCookieJsonWebTokenValidator implements BlockingTokenValidator {
 
     /**
      * Auth Cookie Name
@@ -37,7 +36,7 @@ public class CookieJsonWebTokenValidator implements TokenValidator {
      * @param builder User Builder Object
      * @param codec   Json Web Token Codec Object
      */
-    public CookieJsonWebTokenValidator(UserBuilder builder, JsonWebTokenCodec codec) {
+    public BlockingCookieJsonWebTokenValidator(UserBuilder builder, JsonWebTokenCodec codec) {
         this.codec = codec;
         this.builder = builder;
     }

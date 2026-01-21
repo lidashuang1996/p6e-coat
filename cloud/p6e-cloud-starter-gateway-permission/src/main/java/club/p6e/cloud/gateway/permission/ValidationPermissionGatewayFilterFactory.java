@@ -9,24 +9,24 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * Permission Gateway Filter Factory
+ * Validation Permission Gateway Filter Factory
  *
  * @author lidashuang
  * @version 1.0
  */
-public class PermissionValidationGatewayFilterFactory extends AbstractGatewayFilterFactory<Object> {
+public class ValidationPermissionGatewayFilterFactory extends AbstractGatewayFilterFactory<Object> {
 
     /**
-     * Permission Validation Gateway Service Object
+     * Validation Permission Gateway Service Object
      */
-    private final PermissionValidationGatewayService service;
+    private final ValidationPermissionGatewayService service;
 
     /**
      * Constructor Initialization
      *
-     * @param service Permission Validation Gateway Service Object
+     * @param service Validation Permission Gateway Service Object
      */
-    public PermissionValidationGatewayFilterFactory(PermissionValidationGatewayService service) {
+    public ValidationPermissionGatewayFilterFactory(ValidationPermissionGatewayService service) {
         this.service = service;
     }
 
@@ -38,9 +38,9 @@ public class PermissionValidationGatewayFilterFactory extends AbstractGatewayFil
     /**
      * Custom Gateway Filter
      *
-     * @param service Permission Validation Gateway Service Object
+     * @param service Validation Permission Gateway Service Object
      */
-    public record CustomGatewayFilter(PermissionValidationGatewayService service) implements GatewayFilter {
+    public record CustomGatewayFilter(ValidationPermissionGatewayService service) implements GatewayFilter {
 
         /**
          * Permission Header

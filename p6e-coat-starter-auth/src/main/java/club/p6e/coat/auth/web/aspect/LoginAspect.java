@@ -1,7 +1,7 @@
 package club.p6e.coat.auth.web.aspect;
 
 import club.p6e.coat.auth.User;
-import club.p6e.coat.auth.token.web.TokenGenerator;
+import club.p6e.coat.auth.token.BlockingTokenGenerator;
 import club.p6e.coat.common.context.ResultContext;
 import club.p6e.coat.common.utils.SpringUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -53,7 +53,7 @@ public class LoginAspect {
             if (result instanceof final User u) {
                 // delete voucher
                 request.setAttribute(VoucherAspect.MyHttpServletRequestWrapper.DELETE, "1");
-                return ResultContext.build(SpringUtil.getBean(TokenGenerator.class).execute(request, response, u));
+                return ResultContext.build(SpringUtil.getBean(BlockingTokenGenerator.class).execute(request, response, u));
             } else if (result instanceof final String rs && "AUTHENTICATION".equalsIgnoreCase(rs)) {
                 // OAuth2 authentication
                 // delete voucher

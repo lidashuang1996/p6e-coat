@@ -9,13 +9,12 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * Authentication Gateway Filter Factory
+ * Validation Authentication Gateway Filter Factory
  *
  * @author lidashuang
  * @version 1.0
  */
-public class AuthenticationValidationGatewayFilterFactory extends AbstractGatewayFilterFactory<Object> {
-
+public class ValidationAuthenticationGatewayFilterFactory extends AbstractGatewayFilterFactory<Object> {
 
     @Override
     public GatewayFilter apply(Object config) {
@@ -24,10 +23,8 @@ public class AuthenticationValidationGatewayFilterFactory extends AbstractGatewa
 
     /**
      * Custom Gateway Filter
-     *
      */
     public static class CustomGatewayFilter implements GatewayFilter {
-
 
         /**
          * User Info Header Name
@@ -75,8 +72,8 @@ public class AuthenticationValidationGatewayFilterFactory extends AbstractGatewa
             }
             return Mono.error(new AuthException(
                     this.getClass(),
-                    "fun filter(ServerWebExchange exchange, GatewayFilterChain chain).",
-                    "request authentication exception."
+                    "fun filter(ServerWebExchange exchange, GatewayFilterChain chain)",
+                    "request authentication exception"
             ));
         }
 

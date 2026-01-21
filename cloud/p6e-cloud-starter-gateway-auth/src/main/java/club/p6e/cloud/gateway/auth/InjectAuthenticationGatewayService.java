@@ -1,13 +1,13 @@
 package club.p6e.cloud.gateway.auth;
 
 import club.p6e.coat.auth.User;
-import club.p6e.coat.auth.token.web.reactive.TokenValidator;
+import club.p6e.coat.auth.token.ReactiveTokenValidator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * Authentication Gateway Service
+ * Inject Authentication Gateway Service
  *
  * @author lidashuang
  * @version 1.0
@@ -16,24 +16,24 @@ import reactor.core.publisher.Mono;
 public class InjectAuthenticationGatewayService {
 
     /**
-     * Token Validator Object
+     * Reactive Token Validator Object
      */
-    private final TokenValidator validator;
+    private final ReactiveTokenValidator validator;
 
     /**
      * Constructor Initialization
      *
-     * @param validator Token Validator Object
+     * @param validator Reactive Token Validator Object
      */
-    public InjectAuthenticationGatewayService(TokenValidator validator) {
+    public InjectAuthenticationGatewayService(ReactiveTokenValidator validator) {
         this.validator = validator;
     }
 
     /**
-     * Execute Authentication Service
+     * Execute
      *
      * @param exchange Server Web Exchange Object
-     * @return Server Web Exchange Object
+     * @return Mono<User> User Object
      */
     public Mono<User> execute(ServerWebExchange exchange) {
         return validator.execute(exchange);

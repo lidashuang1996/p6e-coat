@@ -1,4 +1,4 @@
-package club.p6e.coat.auth.token.web.reactive;
+package club.p6e.coat.auth.token;
 
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.UserBuilder;
@@ -12,18 +12,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Cookie Cache Token Validator
+ * Reactive Cookie Cache Token Validator
  *
  * @author lidashuang
  * @version 1.0
  */
 @SuppressWarnings("ALL")
-public class CookieCacheTokenValidator implements TokenValidator {
+public class ReactiveCookieCacheTokenValidator implements ReactiveTokenValidator {
 
     /**
      * Auth Cookie Name
      */
     protected static final String AUTH_COOKIE_NAME = "P6E_AUTH";
+
     /**
      * User Builder Object
      */
@@ -32,7 +33,7 @@ public class CookieCacheTokenValidator implements TokenValidator {
     /**
      * User Token Cache Object
      */
-    protected final UserTokenCache cache;
+    protected final ReactiveUserTokenCache cache;
 
     /**
      * Constructor Initialization
@@ -40,9 +41,9 @@ public class CookieCacheTokenValidator implements TokenValidator {
      * @param builder User Builder Object
      * @param cache   User Token Cache Object
      */
-    public CookieCacheTokenValidator(UserBuilder builder, UserTokenCache cache) {
-        this.builder = builder;
+    public ReactiveCookieCacheTokenValidator(UserBuilder builder, ReactiveUserTokenCache cache) {
         this.cache = cache;
+        this.builder = builder;
     }
 
     @Override
@@ -70,7 +71,7 @@ public class CookieCacheTokenValidator implements TokenValidator {
             return Mono.empty();
         } else {
             final HttpCookie cookie = list.remove(0);
-            return cookie == null ? execute(list) : cache.getToken(cookie.getValue()).flatMap(m -> cache.getUser(m.getUid())).switchIfEmpty(execute(list));
+            return cookie == null ? execute(list) : this.cache.getToken(cookie.getValue()).flatMap(m -> cache.getUser(m.getUid())).switchIfEmpty(execute(list));
         }
     }
 

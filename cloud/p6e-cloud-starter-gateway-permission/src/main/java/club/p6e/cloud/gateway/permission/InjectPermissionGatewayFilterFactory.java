@@ -1,4 +1,4 @@
-package club.p6e.cloud.gateway.filter;
+package club.p6e.cloud.gateway.permission;
 
 import club.p6e.coat.common.utils.JsonUtil;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono;
 import java.util.ArrayList;
 
 /**
- * Permission Inject Gateway Filter Factory
+ * Inject Permission Gateway Filter Factory
  *
  * @author lidashuang
  * @version 1.0

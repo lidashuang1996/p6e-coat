@@ -1,20 +1,19 @@
-package club.p6e.coat.auth.token.web.reactive;
+package club.p6e.coat.auth.token;
 
 import club.p6e.coat.auth.User;
-import club.p6e.coat.auth.token.JsonWebTokenCodec;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 
 /**
- * Local Storage Json Web Token Generator
+ * Reactive Local Storage Json Web Token Generator
  *
  * @author lidashuang
  * @version 1.0
  */
 @SuppressWarnings("ALL")
-public class LocalStorageJsonWebTokenGenerator implements TokenGenerator {
+public class ReactiveLocalStorageJsonWebTokenGenerator implements ReactiveTokenGenerator {
 
     /**
      * Device Header Name
@@ -35,7 +34,7 @@ public class LocalStorageJsonWebTokenGenerator implements TokenGenerator {
      *
      * @param codec Json Web Token Codec Object
      */
-    public LocalStorageJsonWebTokenGenerator(JsonWebTokenCodec codec) {
+    public ReactiveLocalStorageJsonWebTokenGenerator(JsonWebTokenCodec codec) {
         this.codec = codec;
     }
 
@@ -43,7 +42,7 @@ public class LocalStorageJsonWebTokenGenerator implements TokenGenerator {
     public Mono<Object> execute(ServerWebExchange exchange, User user) {
         final long duration = duration();
         final String device = exchange.getRequest().getHeaders().getFirst(DEVICE_HEADER_NAME);
-        final String content = codec.encryption(user.id(), (device == null ? "PC" : device) + "@" + user.serialize(), duration);
+        final String content = this.codec.encryption(user.id(), (device == null ? "PC" : device) + "@" + user.serialize(), duration);
         return Mono.just(content).map(m -> new HashMap<>() {{
             put("token", content);
             put("type", "Bearer");

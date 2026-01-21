@@ -39,7 +39,7 @@ public class JsonWebTokenCodec {
     }
 
     /**
-     * Json Web Token Encryption
+     * JSON Web Token Encryption
      *
      * @param id         ID
      * @param content    Content
@@ -63,7 +63,7 @@ public class JsonWebTokenCodec {
     }
 
     /**
-     * Json Web Token Decryption
+     * JSON Web Token Decryption
      *
      * @param token Json Web Token
      * @return Decryption Content

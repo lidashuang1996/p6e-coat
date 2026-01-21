@@ -1,7 +1,7 @@
 package club.p6e.coat.auth.web.reactive.aspect;
 
 import club.p6e.coat.auth.User;
-import club.p6e.coat.auth.token.web.reactive.TokenGenerator;
+import club.p6e.coat.auth.token.ReactiveTokenGenerator;
 import club.p6e.coat.common.context.ResultContext;
 import club.p6e.coat.common.utils.SpringUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -40,7 +40,7 @@ public class LoginResultAspect {
             return mono.flatMap(r -> {
                 if (r instanceof final User user) {
                     return executeDecorateUserMono(user)
-                            .flatMap(u -> SpringUtil.getBean(TokenGenerator.class).execute(e, user))
+                            .flatMap(u -> SpringUtil.getBean(ReactiveTokenGenerator.class).execute(e, user))
                             .flatMap(o -> {
                                 if (o instanceof final ResponseCookie cookie) {
                                     e.getResponse().addCookie(cookie);

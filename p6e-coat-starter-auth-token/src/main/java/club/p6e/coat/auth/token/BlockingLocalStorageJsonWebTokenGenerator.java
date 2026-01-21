@@ -1,26 +1,19 @@
-package club.p6e.coat.auth.token.web;
+package club.p6e.coat.auth.token;
 
 import club.p6e.coat.auth.User;
-import club.p6e.coat.auth.token.JsonWebTokenCodec;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.time.LocalDateTime;
+import java.util.HashMap;
 
 /**
- * Cookie Json Web Token Generator
+ * Local Storage Json Web Token Generator
  *
  * @author lidashuang
  * @version 1.0
  */
 @SuppressWarnings("ALL")
-public class CookieJsonWebTokenGenerator implements TokenGenerator {
-
-    /**
-     * Auth Cookie Name
-     */
-    protected static final String AUTH_COOKIE_NAME = "P6E_AUTH";
+public class BlockingLocalStorageJsonWebTokenGenerator implements BlockingTokenGenerator {
 
     /**
      * Device Header Name
@@ -41,7 +34,7 @@ public class CookieJsonWebTokenGenerator implements TokenGenerator {
      *
      * @param codec Json Web Token Codec Object
      */
-    public CookieJsonWebTokenGenerator(JsonWebTokenCodec codec) {
+    public BlockingLocalStorageJsonWebTokenGenerator(JsonWebTokenCodec codec) {
         this.codec = codec;
     }
 
@@ -50,12 +43,11 @@ public class CookieJsonWebTokenGenerator implements TokenGenerator {
         final long duration = duration();
         final String device = request.getHeader(DEVICE_HEADER_NAME);
         final String content = codec.encryption(user.id(), (device == null ? "PC" : device) + "@" + user.serialize(), duration);
-        final Cookie cookie = new Cookie(AUTH_COOKIE_NAME, content);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge((int) duration);
-        response.addCookie(cookie);
-        return LocalDateTime.now();
+        return new HashMap<>() {{
+            put("token", content);
+            put("type", "Bearer");
+            put("expiration", duration);
+        }};
     }
 
     /**

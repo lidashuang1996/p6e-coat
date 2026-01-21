@@ -1,4 +1,4 @@
-package club.p6e.coat.auth.token.web;
+package club.p6e.coat.auth.token;
 
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.UserBuilder;
@@ -15,7 +15,7 @@ import java.util.List;
  * @version 1.0
  */
 @SuppressWarnings("ALL")
-public class LocalStorageCacheTokenValidator implements TokenValidator {
+public class BlockingLocalStorageCacheTokenValidator implements BlockingTokenValidator {
 
     /**
      * Bearer Type
@@ -45,7 +45,7 @@ public class LocalStorageCacheTokenValidator implements TokenValidator {
     /**
      * User Token Cache Object
      */
-    protected final UserTokenCache cache;
+    protected final BlockingUserTokenCache cache;
 
     /**
      * Constructor Initialization
@@ -53,7 +53,7 @@ public class LocalStorageCacheTokenValidator implements TokenValidator {
      * @param builder User Builder Object
      * @param cache   User Token Cache Object
      */
-    public LocalStorageCacheTokenValidator(UserBuilder builder, UserTokenCache cache) {
+    public BlockingLocalStorageCacheTokenValidator(UserBuilder builder, BlockingUserTokenCache cache) {
         this.builder = builder;
         this.cache = cache;
     }
@@ -87,7 +87,7 @@ public class LocalStorageCacheTokenValidator implements TokenValidator {
     public String execute(List<String> list) {
         String result = null;
         for (final String item : list) {
-            final UserTokenCache.Model model;
+            final BlockingUserTokenCache.Model model;
             if (item.startsWith(AUTHORIZATION_PREFIX)) {
                 model = cache.getToken(item.substring(AUTHORIZATION_PREFIX.length()));
             } else {

@@ -1,6 +1,6 @@
 package club.p6e.coat.auth.web.reactive.service;
 
-import club.p6e.coat.auth.token.web.reactive.TokenValidator;
+import club.p6e.coat.auth.token.ReactiveTokenValidator;
 import club.p6e.coat.auth.web.reactive.cache.QuickResponseCodeLoginCache;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
@@ -25,7 +25,7 @@ public class QuickResponseCodeLoginServiceImpl implements QuickResponseCodeLogin
     /**
      * Token Validator Object
      */
-    private final TokenValidator validator;
+    private final ReactiveTokenValidator validator;
 
     /**
      * Quick Response Code Login Cache Object
@@ -38,7 +38,7 @@ public class QuickResponseCodeLoginServiceImpl implements QuickResponseCodeLogin
      * @param validator Token Validator Object
      * @param cache     Quick Response Code Login Cache Object
      */
-    public QuickResponseCodeLoginServiceImpl(TokenValidator validator, QuickResponseCodeLoginCache cache) {
+    public QuickResponseCodeLoginServiceImpl(ReactiveTokenValidator validator, QuickResponseCodeLoginCache cache) {
         this.cache = cache;
         this.validator = validator;
     }

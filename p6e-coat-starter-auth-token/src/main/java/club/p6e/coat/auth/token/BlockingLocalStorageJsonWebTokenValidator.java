@@ -1,11 +1,9 @@
-package club.p6e.coat.auth.token.web.reactive;
+package club.p6e.coat.auth.token;
 
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.UserBuilder;
-import club.p6e.coat.auth.token.JsonWebTokenCodec;
-import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Mono;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +15,7 @@ import java.util.List;
  * @version 1.0
  */
 @SuppressWarnings("ALL")
-public class LocalStorageJsonWebTokenValidator implements TokenValidator {
+public class BlockingLocalStorageJsonWebTokenValidator implements BlockingTokenValidator {
 
     /**
      * Bearer Type
@@ -52,41 +50,39 @@ public class LocalStorageJsonWebTokenValidator implements TokenValidator {
     /**
      * Constructor Initialization
      *
-     * @param builder User Builder Object
-     * @param codec   Json Web Token Codec Object
+     * @param codec Json Web Token Codec Object
      */
-    public LocalStorageJsonWebTokenValidator(UserBuilder builder, JsonWebTokenCodec codec) {
-        this.builder = builder;
+    public BlockingLocalStorageJsonWebTokenValidator(UserBuilder builder, JsonWebTokenCodec codec) {
         this.codec = codec;
+        this.builder = builder;
     }
 
     @Override
-    public Mono<User> execute(ServerWebExchange context) {
-        final ServerHttpRequest request = context.getRequest();
-        final List<String> hList = request.getHeaders().get(AUTHORIZATION_HEADER_NAME);
-        final List<String> pList = request.getQueryParams().get(REQUEST_PARAMETER_NAME);
+    public User execute(HttpServletRequest request, HttpServletResponse response) {
+        final String ht = request.getHeader(AUTHORIZATION_HEADER_NAME);
+        final String qt = request.getParameter(REQUEST_PARAMETER_NAME);
         final List<String> list = new ArrayList<>();
-        if (hList != null) {
-            list.addAll(hList);
+        if (ht != null) {
+            list.add(ht);
         }
-        if (pList != null) {
-            list.addAll(pList);
+        if (qt != null) {
+            list.add(qt);
         }
         if (!list.isEmpty()) {
             String content;
             for (final String item : list) {
                 if (item.startsWith(AUTHORIZATION_PREFIX)) {
-                    content = codec.decryption(item.substring(AUTHORIZATION_PREFIX.length()));
+                    content = this.codec.decryption(item.substring(AUTHORIZATION_PREFIX.length()));
                 } else {
-                    content = codec.decryption(item);
+                    content = this.codec.decryption(item);
                 }
                 if (content != null) {
                     content = content.substring(content.indexOf("@") + 1);
-                    return Mono.just(builder.create(content));
+                    return this.builder.create(content);
                 }
             }
         }
-        return Mono.empty();
+        return null;
     }
 
 }

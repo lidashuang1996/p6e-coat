@@ -1,24 +1,25 @@
-package club.p6e.coat.auth.token.web;
+package club.p6e.coat.auth.token;
 
 import club.p6e.coat.auth.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Token Validator
+ * Token Generator
  *
  * @author lidashuang
  * @version 1.0
  */
-public interface TokenValidator {
+public interface BlockingTokenGenerator {
 
     /**
-     * Execute Token Validate
+     * Execute Token Generate
      *
      * @param request  Http Servlet Request Object
      * @param response Http Servlet Response Object
-     * @return User Object
+     * @param user     User Object
+     * @return Result Object
      */
-    User execute(HttpServletRequest request, HttpServletResponse response);
+    Object execute(HttpServletRequest request, HttpServletResponse response, User user);
 
 }

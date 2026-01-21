@@ -97,8 +97,8 @@ public class ValidateVoucherGatewayFilterFactory extends AbstractGatewayFilterFa
             }
             return Mono.error(new VoucherException(
                     this.getClass(),
-                    "fun filter(ServerWebExchange exchange, GatewayFilterChain chain).",
-                    "request voucher exception."
+                    "fun filter(ServerWebExchange exchange, GatewayFilterChain chain)",
+                    "request voucher exception"
             ));
         }
 

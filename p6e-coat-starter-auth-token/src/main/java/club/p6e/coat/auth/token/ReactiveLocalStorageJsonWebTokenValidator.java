@@ -1,22 +1,22 @@
-package club.p6e.coat.auth.token.web;
+package club.p6e.coat.auth.token;
 
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.UserBuilder;
-import club.p6e.coat.auth.token.JsonWebTokenCodec;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Local Storage Json Web Token Validator
+ * Reactive Local Storage Json Web Token Validator
  *
  * @author lidashuang
  * @version 1.0
  */
 @SuppressWarnings("ALL")
-public class LocalStorageJsonWebTokenValidator implements TokenValidator {
+public class ReactiveLocalStorageJsonWebTokenValidator implements ReactiveTokenValidator {
 
     /**
      * Bearer Type
@@ -51,23 +51,25 @@ public class LocalStorageJsonWebTokenValidator implements TokenValidator {
     /**
      * Constructor Initialization
      *
-     * @param codec Json Web Token Codec Object
+     * @param builder User Builder Object
+     * @param codec   Json Web Token Codec Object
      */
-    public LocalStorageJsonWebTokenValidator(UserBuilder builder, JsonWebTokenCodec codec) {
+    public ReactiveLocalStorageJsonWebTokenValidator(UserBuilder builder, JsonWebTokenCodec codec) {
         this.codec = codec;
         this.builder = builder;
     }
 
     @Override
-    public User execute(HttpServletRequest request, HttpServletResponse response) {
-        final String ht = request.getHeader(AUTHORIZATION_HEADER_NAME);
-        final String qt = request.getParameter(REQUEST_PARAMETER_NAME);
+    public Mono<User> execute(ServerWebExchange context) {
+        final ServerHttpRequest request = context.getRequest();
+        final List<String> hList = request.getHeaders().get(AUTHORIZATION_HEADER_NAME);
+        final List<String> pList = request.getQueryParams().get(REQUEST_PARAMETER_NAME);
         final List<String> list = new ArrayList<>();
-        if (ht != null) {
-            list.add(ht);
+        if (hList != null) {
+            list.addAll(hList);
         }
-        if (qt != null) {
-            list.add(qt);
+        if (pList != null) {
+            list.addAll(pList);
         }
         if (!list.isEmpty()) {
             String content;
@@ -79,11 +81,11 @@ public class LocalStorageJsonWebTokenValidator implements TokenValidator {
                 }
                 if (content != null) {
                     content = content.substring(content.indexOf("@") + 1);
-                    return this.builder.create(content);
+                    return Mono.just(this.builder.create(content));
                 }
             }
         }
-        return null;
+        return Mono.empty();
     }
 
 }

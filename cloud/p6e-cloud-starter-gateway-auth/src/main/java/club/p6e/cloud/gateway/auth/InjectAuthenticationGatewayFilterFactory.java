@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono;
 import java.util.Map;
 
 /**
- * Authentication Gateway Filter Factory
+ * Inject Authentication Gateway Filter Factory
  *
  * @author lidashuang
  * @version 1.0
@@ -19,14 +19,14 @@ import java.util.Map;
 public class InjectAuthenticationGatewayFilterFactory extends AbstractGatewayFilterFactory<Object> {
 
     /**
-     * Authentication Gateway Service Object
+     * Inject Authentication Gateway Service Object
      */
     private final InjectAuthenticationGatewayService service;
 
     /**
      * Constructor Initialization
      *
-     * @param service Authentication Gateway Service object
+     * @param service Inject Authentication Gateway Service Object
      */
     public InjectAuthenticationGatewayFilterFactory(InjectAuthenticationGatewayService service) {
         this.service = service;
@@ -40,7 +40,7 @@ public class InjectAuthenticationGatewayFilterFactory extends AbstractGatewayFil
     /**
      * Custom Gateway Filter
      *
-     * @param service Authentication Gateway Service Object
+     * @param service Inject Authentication Gateway Service Object
      */
     public record CustomGatewayFilter(InjectAuthenticationGatewayService service) implements GatewayFilter {
 

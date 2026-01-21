@@ -1,7 +1,6 @@
-package club.p6e.coat.auth.token.web.reactive;
+package club.p6e.coat.auth.token;
 
 import club.p6e.coat.auth.User;
-import club.p6e.coat.auth.token.JsonWebTokenCodec;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -11,13 +10,13 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDateTime;
 
 /**
- * Cookie Json Web Token Generator
+ * Reactive Cookie Json Web Token Generator
  *
  * @author lidashuang
  * @version 1.0
  */
 @SuppressWarnings("ALL")
-public class CookieJsonWebTokenGenerator implements TokenGenerator {
+public class ReactiveCookieJsonWebTokenGenerator implements ReactiveTokenGenerator {
 
     /**
      * Auth Cookie Name
@@ -43,7 +42,7 @@ public class CookieJsonWebTokenGenerator implements TokenGenerator {
      *
      * @param codec Json Web Token Codec Object
      */
-    public CookieJsonWebTokenGenerator(JsonWebTokenCodec codec) {
+    public ReactiveCookieJsonWebTokenGenerator(JsonWebTokenCodec codec) {
         this.codec = codec;
     }
 
@@ -53,7 +52,7 @@ public class CookieJsonWebTokenGenerator implements TokenGenerator {
         final ServerHttpRequest request = exchange.getRequest();
         final ServerHttpResponse response = exchange.getResponse();
         final String device = request.getHeaders().getFirst(DEVICE_HEADER_NAME);
-        final String content = codec.encryption(user.id(), (device == null ? "PC" : device) + "@" + user.serialize(), duration);
+        final String content = this.codec.encryption(user.id(), (device == null ? "PC" : device) + "@" + user.serialize(), duration);
         return Mono
                 .just(content)
                 .flatMap(c -> Mono.just(ResponseCookie.from(AUTH_COOKIE_NAME, c).maxAge(duration).httpOnly(true).path("/").build()))

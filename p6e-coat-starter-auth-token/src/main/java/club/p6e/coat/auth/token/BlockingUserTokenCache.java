@@ -1,4 +1,4 @@
-package club.p6e.coat.auth.token.web;
+package club.p6e.coat.auth.token;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -13,7 +13,7 @@ import java.util.List;
  * @version 1.0
  */
 @SuppressWarnings("ALL")
-public interface UserTokenCache {
+public interface BlockingUserTokenCache {
 
     /**
      * Delimiter

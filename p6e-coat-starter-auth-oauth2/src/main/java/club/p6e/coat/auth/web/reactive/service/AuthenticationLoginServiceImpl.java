@@ -2,7 +2,7 @@ package club.p6e.coat.auth.web.reactive.service;
 
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.context.LoginContext;
-import club.p6e.coat.auth.token.web.reactive.TokenValidator;
+import club.p6e.coat.auth.token.ReactiveTokenValidator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -24,14 +24,14 @@ public class AuthenticationLoginServiceImpl implements AuthenticationLoginServic
     /**
      * Token Validator Object
      */
-    private final TokenValidator validator;
+    private final ReactiveTokenValidator validator;
 
     /**
      * Constructor Initialization
      *
      * @param validator Token Validator Object
      */
-    public AuthenticationLoginServiceImpl(TokenValidator validator) {
+    public AuthenticationLoginServiceImpl(ReactiveTokenValidator validator) {
         this.validator = validator;
     }
 

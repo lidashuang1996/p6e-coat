@@ -1,6 +1,6 @@
 package club.p6e.coat.auth.web.reactive.cache.redis;
 
-import club.p6e.coat.auth.token.web.reactive.UserTokenCache;
+import club.p6e.coat.auth.token.ReactiveUserTokenCache;
 import club.p6e.coat.common.utils.JsonUtil;
 import org.springframework.data.redis.connection.RedisStringCommands;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  * @author lidashuang
  * @version 1.0
  */
-public class UserTokenRedisCache implements UserTokenCache {
+public class UserTokenRedisCache implements ReactiveUserTokenCache {
 
     /**
      * Reactive String Redis Template Object
