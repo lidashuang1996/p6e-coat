@@ -1,6 +1,5 @@
 package club.p6e.coat.websocket;
 
-import club.p6e.coat.common.utils.SpringUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
@@ -11,10 +10,12 @@ import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -23,7 +24,8 @@ import java.util.function.Function;
  * @author lidashuang
  * @version 1.0
  */
-public class Application {
+@EnableConfigurationProperties(Properties.class)
+public class Application implements ApplicationRunner {
 
     /**
      * Inject Log Object
@@ -41,9 +43,36 @@ public class Application {
     private EventLoopGroup work;
 
     /**
-     * Constructor Initialization
+     * Properties Object
      */
-    public Application() {
+    private Properties properties;
+
+    /**
+     * Callback List Object
+     */
+    private final List<Callback> callbacks;
+
+    /**
+     * Auth Service List Object
+     */
+    private final List<AuthService> authServices;
+
+    /**
+     * Server Channels
+     */
+    private final List<io.netty.channel.Channel> channels = new ArrayList<>();
+
+    /**
+     * Constructor Initialization
+     *
+     * @param properties   Properties Object
+     * @param callbacks    Callback List Object
+     * @param authServices Auth Service List Object
+     */
+    public Application(Properties properties, List<Callback> callbacks, List<AuthService> authServices) {
+        this.callbacks = callbacks;
+        this.properties = properties;
+        this.authServices = authServices;
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             if (this.boss != null) {
                 this.boss.shutdownGracefully();
@@ -54,14 +83,19 @@ public class Application {
         }));
     }
 
+    @Override
+    public void run(ApplicationArguments args) {
+    }
+
     /**
-     * Config Reset
-     *
-     * @param config Config Object
+     * Reset
      */
-    @SuppressWarnings("ALL")
-    public synchronized void reset(Config config) {
-        LOGGER.info("[ WEBSOCKET SERVICE ] RESET CONFIG >>> {}", config);
+    public synchronized void reset() {
+        LOGGER.info("[ WEBSOCKET SERVICE ] RESET PROPERTIES >>> {}", this.properties);
+        for (final io.netty.channel.Channel channel : this.channels) {
+            channel.close();
+        }
+        this.channels.clear();
         if (this.boss != null) {
             this.boss.shutdownGracefully();
             this.boss = null;
@@ -70,30 +104,39 @@ public class Application {
             this.work.shutdownGracefully();
             this.work = null;
         }
-        SessionManager.init(config.getManagerThreadPoolLength());
-        this.boss = new NioEventLoopGroup(config.getBossThreads());
-        this.work = new NioEventLoopGroup(config.getWorkerThreads());
-        for (final Config.Channel channel : config.getChannels()) {
+        SessionManager.init(this.properties.getManagerThreadPoolLength());
+        this.boss = new NioEventLoopGroup(this.properties.getBossThreads());
+        this.work = new NioEventLoopGroup(this.properties.getWorkerThreads());
+        for (final Properties.Channel channel : this.properties.getChannels()) {
             LOGGER.info("[ WEBSOCKET SERVICE ] RESET CHANNEL >>> {}", channel);
             AuthService auth = null;
             final List<Callback> callbacks = new ArrayList<>();
-            final Map<String, Callback> cBeans = SpringUtil.getBeans(Callback.class);
-            final Map<String, AuthService> aBeans = SpringUtil.getBeans(AuthService.class);
-            for (final String bn : channel.getCallbacks()) {
-                for (final Callback item : cBeans.values()) {
-                    if (bn.equalsIgnoreCase(item.getClass().getName())) {
-                        callbacks.add(item);
+            for (final String item : channel.getCallbacks()) {
+                for (final Callback callback : this.callbacks) {
+                    if (callback.getClass().getName().equalsIgnoreCase(item)) {
+                        callbacks.add(callback);
                     }
                 }
             }
-            for (final AuthService item : aBeans.values()) {
-                if (channel.getAuth().equalsIgnoreCase(item.getClass().getName())) {
+            for (final AuthService item : this.authServices) {
+                if (item.getClass().getName().equalsIgnoreCase(channel.getAuth())) {
                     auth = item;
                     break;
                 }
             }
             run(channel.getPort(), channel.getPath(), channel.getName(), channel.getType(), channel.getFrame(), auth, callbacks);
         }
+    }
+
+    /**
+     * Reset
+     *
+     * @param properties Properties Object
+     */
+    @SuppressWarnings("ALL")
+    public void reset(Properties properties) {
+        this.properties = properties;
+        reset();
     }
 
     /**
@@ -150,7 +193,7 @@ public class Application {
                     channel.pipeline().addLast(new Channel(name, type, auth, callbacks));
                 }
             });
-            bootstrap.bind(port).sync();
+            this.channels.add(bootstrap.bind(port).sync().channel());
             LOGGER.info("[ WEBSOCKET SERVICE ] ({} : {}) ==> START SUCCESSFULLY... BIND ( {} : {} )", name, type, port, path);
         } catch (Exception e) {
             LOGGER.error("[ WEBSOCKET SERVICE ]", e);

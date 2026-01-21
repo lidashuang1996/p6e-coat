@@ -84,9 +84,22 @@ public class Controller {
     @Data
     @Accessors(chain = true)
     public static class PushParam implements Serializable {
+        
+        /**
+         * Name
+         */
         private String name;
+
+        /**
+         * Content
+         */
         private String content;
+
+        /**
+         * Users
+         */
         private List<String> users;
+
     }
 
 }

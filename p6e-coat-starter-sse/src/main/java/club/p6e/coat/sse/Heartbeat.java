@@ -28,7 +28,7 @@ public class Heartbeat {
     /**
      * Scheduled Executor Service Object
      */
-    private static ScheduledExecutorService EXECUTOR = new ScheduledThreadPoolExecutor(
+    private static final ScheduledExecutorService EXECUTOR = new ScheduledThreadPoolExecutor(
             1, r -> new Thread(r, "P6E-SSE-HEARTBEAT-THREAD-" + r.hashCode()));
 
     /**

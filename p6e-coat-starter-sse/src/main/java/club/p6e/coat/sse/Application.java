@@ -1,6 +1,5 @@
 package club.p6e.coat.sse;
 
-import club.p6e.coat.common.utils.SpringUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
@@ -10,7 +9,12 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -20,7 +24,8 @@ import java.util.function.Function;
  * @author lidashuang
  * @version 1.0
  */
-public class Application {
+@EnableConfigurationProperties(Properties.class)
+public class Application implements ApplicationRunner {
 
     /**
      * Inject Log Object
@@ -38,9 +43,29 @@ public class Application {
     private EventLoopGroup work;
 
     /**
-     * Constructor Initialization
+     * Properties Object
      */
-    public Application() {
+    private Properties properties;
+
+    /**
+     * Auth Service List Object
+     */
+    private final List<AuthService> authServices;
+
+    /**
+     * Server Channels
+     */
+    private final List<io.netty.channel.Channel> channels = new ArrayList<>();
+
+    /**
+     * Constructor Initialization
+     *
+     * @param properties   Properties Object
+     * @param authServices Auth Service List Object
+     */
+    public Application(Properties properties, List<AuthService> authServices) {
+        this.properties = properties;
+        this.authServices = authServices;
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             if (this.boss != null) {
                 this.boss.shutdownGracefully();
@@ -51,14 +76,21 @@ public class Application {
         }));
     }
 
+
+    @Override
+    public void run(ApplicationArguments args) {
+        reset();
+    }
+
     /**
-     * Config Reset
-     *
-     * @param config Config Object
+     * Reset
      */
-    @SuppressWarnings("ALL")
-    public synchronized void reset(Config config) {
-        LOGGER.info("[ SSE SERVICE ] RESET CONFIG >>> {}", config);
+    public synchronized void reset() {
+        LOGGER.info("[ SSE SERVICE ] RESET PROPERTIES >>> {}", this.properties);
+        for (final io.netty.channel.Channel channel : this.channels) {
+            channel.close();
+        }
+        this.channels.clear();
         if (this.boss != null) {
             this.boss.shutdownGracefully();
             this.boss = null;
@@ -67,21 +99,34 @@ public class Application {
             this.work.shutdownGracefully();
             this.work = null;
         }
-        SessionManager.init(config.getManagerThreadPoolLength());
-        this.boss = new NioEventLoopGroup(config.getBossThreads());
-        this.work = new NioEventLoopGroup(config.getWorkerThreads());
-        for (final Config.Channel channel : config.getChannels()) {
+        SessionManager.init(this.properties.getManagerThreadPoolLength());
+        this.boss = new NioEventLoopGroup(this.properties.getBossThreads());
+        this.work = new NioEventLoopGroup(this.properties.getWorkerThreads());
+        for (final Properties.Channel channel : this.properties.getChannels()) {
             LOGGER.info("[ SSE SERVICE ] RESET CHANNEL >>> {}", channel);
             AuthService auth = null;
-            final Map<String, AuthService> aBeans = SpringUtil.getBeans(AuthService.class);
-            for (final AuthService item : aBeans.values()) {
+            for (final AuthService item : this.authServices) {
                 if (channel.getAuth().equalsIgnoreCase(item.getClass().getName())) {
                     auth = item;
                     break;
                 }
             }
-            run(channel.getPort(), channel.getName(), channel.getFrame(), auth);
+            if (auth == null) {
+                throw new NullPointerException("[ SSE SERVICE ] (" + channel.getAuth() + ") AUTH SERVICE NOT FOUND");
+            }
+            run(channel, auth);
         }
+    }
+
+    /**
+     * Reset
+     *
+     * @param properties Properties Object
+     */
+    @SuppressWarnings("ALL")
+    public void reset(Properties properties) {
+        this.properties = properties;
+        reset();
     }
 
     /**
@@ -109,17 +154,16 @@ public class Application {
     /**
      * Netty Web Socket Server
      *
-     * @param port  Channel Port
-     * @param name  Channel Name
-     * @param frame Channel Frame
-     * @param auth  Auth Service Object
+     * @param psc  Properties Channel Object
+     * @param auth Auth Service Object
      */
-    private void run(int port, String name, int frame, AuthService auth) {
-        final EventLoopGroup boss = new NioEventLoopGroup();
-        final EventLoopGroup work = new NioEventLoopGroup();
+    private void run(Properties.Channel psc, AuthService auth) {
         try {
+            final int port = psc.getPort();
+            final int frame = psc.getFrame();
+            final String name = psc.getName();
             final ServerBootstrap bootstrap = new ServerBootstrap();
-            bootstrap.group(boss, work);
+            bootstrap.group(this.boss, this.work);
             bootstrap.channel(NioServerSocketChannel.class);
             bootstrap.childHandler(new ChannelInitializer<>() {
                 @Override
@@ -129,10 +173,10 @@ public class Application {
                     // HTTP OBJECT AGGREGATOR
                     channel.pipeline().addLast(new HttpObjectAggregator(frame));
                     // CHANNEL
-                    channel.pipeline().addLast(new Channel(name, auth));
+                    channel.pipeline().addLast(new Channel(psc, auth));
                 }
             });
-            bootstrap.bind(port).sync().channel();
+            this.channels.add(bootstrap.bind(port).sync().channel());
             LOGGER.info("[ SSE SERVICE ] ({}) ==> START SUCCESSFULLY... BIND ( {} )", name, port);
         } catch (Exception e) {
             LOGGER.error("[ SSE SERVICE ]", e);

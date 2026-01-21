@@ -38,40 +38,51 @@ public class Channel implements ChannelInboundHandler {
     private final String id;
 
     /**
-     * Channel Name
-     */
-    private final String name;
-
-    /**
      * Auth Service Object
      */
     private final AuthService auth;
 
     /**
+     * Properties Channel Object
+     */
+    private final Properties.Channel psc;
+
+    /**
      * Constructor Initialization
      *
-     * @param name Channel Name
+     * @param psc  Properties Channel Object
      * @param auth Auth Service Object
      */
-    public Channel(String name, AuthService auth) {
-        this.id = GeneratorUtil.uuid() + GeneratorUtil.random();
-        this.name = name;
+    public Channel(Properties.Channel psc, AuthService auth) {
+        this.psc = psc;
         this.auth = auth;
+        this.id = GeneratorUtil.uuid() + GeneratorUtil.random();
     }
 
     @Override
     public void channelRead(ChannelHandlerContext context, Object o) {
         if (o instanceof final FullHttpRequest request) {
+            final Properties.Channel.CrossDomain pcc = psc.getCrossDomain();
             final FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
-            final String origin = request.headers().get(HttpHeaderNames.ORIGIN);
-            response.headers().set(HttpHeaderNames.ACCESS_CONTROL_MAX_AGE, "3600");
-            response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_HEADERS, "Content-Type");
-            response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN, origin == null ? "*" : origin);
-            response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_METHODS, "GET,POST,DELETE,PUT,OPTIONS");
+            if (pcc.getEnable()) {
+                final String origin = request.headers().get(HttpHeaderNames.ORIGIN);
+                for (final String item : pcc.getOrigin()) {
+                    if ("*".equals(item)) {
+                        response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN, origin == null ? "*" : origin);
+                        break;
+                    } else if (item.equals(origin)) {
+                        response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN, origin);
+                        break;
+                    }
+                }
+                response.headers().set(HttpHeaderNames.ACCESS_CONTROL_MAX_AGE, String.valueOf(pcc.getMaxAge()));
+                response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_HEADERS, String.join(",", pcc.getHeaders()));
+                response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_METHODS, String.join(",", pcc.getMethods()));
+            }
             if (HttpMethod.OPTIONS.equals(request.method())) {
                 context.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
             } else {
-                final User user = this.auth.validate(this.name, request.uri());
+                final User user = this.auth.validate(this.psc.getName(), request.uri());
                 if (user == null) {
                     response.content().writeBytes(context.alloc().buffer().writeBytes(JsonUtil.toJson(
                             ResultContext.build(500, "AUTH_ERROR", "AUTH_ERROR")
@@ -83,7 +94,7 @@ public class Channel implements ChannelInboundHandler {
                     response.headers().set(HttpHeaderNames.CONNECTION, "keep-alive");
                     response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/event-stream; charset=UTF-8");
                     response.headers().set(HttpHeaderNames.CACHE_CONTROL, "no-cache, no-store, must-revalidate");
-                    final Session session = new Session(this.name, user, context);
+                    final Session session = new Session(this.psc.getName(), user, context);
                     context.channel().attr(SESSION_ID).set(this.id);
                     SessionManager.register(this.id, session);
                     context.writeAndFlush(response);
@@ -95,11 +106,14 @@ public class Channel implements ChannelInboundHandler {
 
     @Override
     public void handlerRemoved(ChannelHandlerContext context) {
-        final Session session = SessionManager.get(this.id);
-        if (session != null) {
-            session.push("LOGOUT", JsonUtil.toJson(Map.of("type", "LOGOUT", "data", "SUCCESS")));
+        try {
+            final Session session = SessionManager.get(this.id);
+            if (session != null) {
+                session.push("LOGOUT", JsonUtil.toJson(Map.of("type", "LOGOUT", "data", "SUCCESS")));
+            }
+        } finally {
+            SessionManager.unregister(this.id);
         }
-        SessionManager.unregister(this.id);
     }
 
     @Override

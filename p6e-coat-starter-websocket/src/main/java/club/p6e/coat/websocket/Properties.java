@@ -2,6 +2,7 @@ package club.p6e.coat.websocket;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -15,17 +16,8 @@ import java.util.List;
  */
 @Data
 @Accessors(chain = true)
-public class Config {
-
-    /**
-     * Channel Config List Object
-     */
-    private final List<Channel> channels = new ArrayList<>();
-
-    /**
-     * Manager Thread Pool Length
-     */
-    private int managerThreadPoolLength = 15;
+@ConfigurationProperties(prefix = "club.p6e.coat.websocket")
+public class Properties {
 
     /**
      * Boss Threads
@@ -36,6 +28,16 @@ public class Config {
      * Worker Threads
      */
     private int workerThreads = Runtime.getRuntime().availableProcessors() * 2;
+
+    /**
+     * Manager Thread Pool Length
+     */
+    private int managerThreadPoolLength = 15;
+
+    /**
+     * Channel List Object
+     */
+    private final List<Channel> channels = new ArrayList<>();
 
     /**
      * Channel
@@ -80,4 +82,5 @@ public class Config {
         private List<String> callbacks = new ArrayList<>();
 
     }
+
 }
