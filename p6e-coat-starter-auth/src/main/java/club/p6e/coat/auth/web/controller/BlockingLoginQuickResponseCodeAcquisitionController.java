@@ -18,7 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
  * @author lidashuang
  * @version 1.0
  */
+<<<<<<< HEAD:p6e-coat-starter-auth/src/main/java/club/p6e/coat/auth/web/controller/BlockingLoginQuickResponseCodeAcquisitionController.java
 @ConditionalOnMissingBean(BlockingLoginQuickResponseCodeAcquisitionController.class)
+=======
+@ConditionalOnMissingBean(LoginQuickResponseCodeAcquisitionController.class)
+>>>>>>> 5317f79cc52ef26a5b430eb2353a47e797b96d61:p6e-coat-starter-auth/src/main/java/club/p6e/coat/auth/web/controller/LoginQuickResponseCodeAcquisitionController.java
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 @RestController("club.p6e.coat.auth.web.controller.LoginQuickResponseCodeAcquisitionController")
 public class BlockingLoginQuickResponseCodeAcquisitionController {

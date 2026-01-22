@@ -55,7 +55,7 @@ public class ReactiveCookieJsonWebTokenGenerator implements ReactiveTokenGenerat
         final String content = this.codec.encryption(user.id(), (device == null ? "PC" : device) + "@" + user.serialize(), duration);
         return Mono
                 .just(content)
-                .flatMap(c -> Mono.just(ResponseCookie.from(AUTH_COOKIE_NAME, c).maxAge(duration).httpOnly(true).path("/").build()))
+                .flatMap(c -> Mono.just(cookie(AUTH_COOKIE_NAME, c)))
                 .flatMap(c -> {
                     response.addCookie(c);
                     return Mono.just(LocalDateTime.now());
@@ -69,6 +69,18 @@ public class ReactiveCookieJsonWebTokenGenerator implements ReactiveTokenGenerat
      */
     public long duration() {
         return 3600L;
+    }
+
+    /**
+     * Cookie
+     *
+     * @param name    Cookie Name
+     * @param content Cookie Content
+     * @return
+     */
+    public ResponseCookie cookie(String name, String content) {
+        final int age = (int) duration();
+        return ResponseCookie.from(name, content).path("/").maxAge(age).httpOnly(true).build();
     }
 
 }

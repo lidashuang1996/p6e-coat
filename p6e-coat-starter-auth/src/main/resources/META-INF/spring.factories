@@ -1,0 +1,10 @@
+# Auto Configure
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+club.p6e.coat.permission.PermissionTask,\
+club.p6e.coat.permission.matcher.PermissionPathMatcherImpl,\
+club.p6e.coat.permission.validator.PermissionValidatorImpl,\
+club.p6e.coat.permission.repository.BlockingPermissionRepositoryImpl,\
+club.p6e.coat.permission.task.BlockingPermissionAutoRefreshTaskImpl,\
+club.p6e.coat.permission.repository.ReactivePermissionRepositoryImpl,\
+club.p6e.coat.permission.task.ReactivePermissionAutoRefreshTaskImpl
+

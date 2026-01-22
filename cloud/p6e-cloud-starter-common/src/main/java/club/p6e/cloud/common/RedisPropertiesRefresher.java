@@ -38,6 +38,11 @@ public abstract class RedisPropertiesRefresher {
     private final AtomicLong timestamp = new AtomicLong(0);
 
     /**
+     * Scheduled Executor Service Object
+     */
+    private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+
+    /**
      * reactor.core.Disposable Object
      */
     private reactor.core.Disposable subscription;
@@ -61,7 +66,7 @@ public abstract class RedisPropertiesRefresher {
     public RedisPropertiesRefresher(org.springframework.data.redis.core.StringRedisTemplate template, ConfigurableApplicationContext context) {
         this.stringRedisTemplate = template;
         context.addApplicationListener(new ReadyEventListener(this));
-        context.addApplicationListener(new ContextClosedEventListener(this));
+        context.addApplicationListener(new ClosedEventListener(this));
     }
 
     /**
@@ -73,7 +78,7 @@ public abstract class RedisPropertiesRefresher {
     public RedisPropertiesRefresher(org.springframework.data.redis.core.ReactiveStringRedisTemplate template, ConfigurableApplicationContext context) {
         this.reactiveStringRedisTemplate = template;
         context.addApplicationListener(new ReadyEventListener(this));
-        context.addApplicationListener(new ContextClosedEventListener(this));
+        context.addApplicationListener(new ClosedEventListener(this));
     }
 
     /**
@@ -129,22 +134,23 @@ public abstract class RedisPropertiesRefresher {
      * Close
      */
     protected void close() {
+        this.executor.shutdown();
         try {
-            if (subscription != null && subscription.isDisposed()) {
-                subscription.dispose();
+            if (this.subscription != null && this.subscription.isDisposed()) {
+                this.subscription.dispose();
             }
         } catch (Exception e) {
             // ignore exception
         }
         try {
             Class.forName("org.springframework.data.redis.core.StringRedisTemplate");
-            stringRedisTemplate = null;
+            this.stringRedisTemplate = null;
         } catch (Exception e) {
             // ignore exception
         }
         try {
             Class.forName("org.springframework.data.redis.core.ReactiveStringRedisTemplate");
-            reactiveStringRedisTemplate = null;
+            this.reactiveStringRedisTemplate = null;
         } catch (Exception e) {
             // ignore exception
         }
@@ -156,12 +162,12 @@ public abstract class RedisPropertiesRefresher {
     protected void execute(Map<String, String> message) {
         if (message != null && message.get("type") != null) {
             if ("heartbeat".equalsIgnoreCase(message.get("type"))) {
-                if (timestamp.get() <= 0) {
+                if (this.timestamp.get() <= 0) {
                     synchronized (this) {
-                        if (timestamp.get() <= 0) {
+                        if (this.timestamp.get() <= 0) {
                             try {
                                 Class.forName("org.springframework.data.redis.core.StringRedisTemplate");
-                                stringRedisTemplate.convertAndSend(CONFIG_TOPIC, JsonUtil.toJson(new HashMap<>() {{
+                                this.stringRedisTemplate.convertAndSend(CONFIG_TOPIC, JsonUtil.toJson(new HashMap<>() {{
                                     put("type", "init");
                                 }}));
                                 return;
@@ -170,7 +176,7 @@ public abstract class RedisPropertiesRefresher {
                             }
                             try {
                                 Class.forName("org.springframework.data.redis.core.ReactiveStringRedisTemplate");
-                                reactiveStringRedisTemplate.convertAndSend(CONFIG_TOPIC, JsonUtil.toJson(new HashMap<>() {{
+                                this.reactiveStringRedisTemplate.convertAndSend(CONFIG_TOPIC, JsonUtil.toJson(new HashMap<>() {{
                                     put("type", "init");
                                 }})).subscribe();
                             } catch (Exception e) {
@@ -182,7 +188,7 @@ public abstract class RedisPropertiesRefresher {
             } else if ("config".equalsIgnoreCase(message.get("type")) && message.get("format") != null && message.get("content") != null) {
                 synchronized (this) {
                     // refresh timestamp
-                    timestamp.set(System.currentTimeMillis());
+                    this.timestamp.set(System.currentTimeMillis());
                     config(message.get("format"), message.get("content"));
                 }
             }
@@ -200,14 +206,14 @@ public abstract class RedisPropertiesRefresher {
     public static class ReadyEventListener implements ApplicationListener<ApplicationReadyEvent> {
 
         /**
-         * RedisPropertiesRefresher Object
+         * Redis Properties Refresher Object
          */
         private final RedisPropertiesRefresher refresher;
 
         /**
          * Constructor Initializers
          *
-         * @param refresher RedisPropertiesRefresher Object
+         * @param refresher Redis Properties Refresher Object
          */
         public ReadyEventListener(RedisPropertiesRefresher refresher) {
             this.refresher = refresher;
@@ -223,10 +229,10 @@ public abstract class RedisPropertiesRefresher {
     /**
      * Spring Close Event Listener
      */
-    public static class ContextClosedEventListener implements ApplicationListener<ContextClosedEvent> {
+    public static class ClosedEventListener implements ApplicationListener<ContextClosedEvent> {
 
         /**
-         * RedisPropertiesRefresher Object
+         * Redis Properties Refresher Object
          */
         private final RedisPropertiesRefresher refresher;
 
@@ -235,7 +241,7 @@ public abstract class RedisPropertiesRefresher {
          *
          * @param refresher RedisPropertiesRefresher Object
          */
-        public ContextClosedEventListener(RedisPropertiesRefresher refresher) {
+        public ClosedEventListener(RedisPropertiesRefresher refresher) {
             this.refresher = refresher;
         }
 

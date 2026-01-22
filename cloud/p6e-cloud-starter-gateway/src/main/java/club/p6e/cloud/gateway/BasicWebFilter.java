@@ -31,9 +31,11 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Basic Web Filter
@@ -169,14 +171,17 @@ public class BasicWebFilter implements WebFilter, Ordered {
          */
         @SuppressWarnings("ALL")
         private static final String IP_HEADER_WL_PROXY_CLIENT_IP = "wl-proxy-client-ip";
+
         /**
          * Log Mode Object
          */
         private final Model model;
+
         /**
          * Properties Object
          */
         private final Properties properties;
+
         /**
          * Server Http Request Object
          */
@@ -197,11 +202,13 @@ public class BasicWebFilter implements WebFilter, Ordered {
 
             // request header is used internally for calling
             // prohibit sending requests that carry this request header to downstream services
+            final List<String> keys = new ArrayList<>();
             for (final String key : this.getHeaders().keySet()) {
                 if (key.toLowerCase().startsWith("p6e-")) {
-                    this.getHeaders().remove(key);
+                    keys.add(key);
                 }
             }
+            keys.forEach(key -> this.getHeaders().remove(key));
 
             // log info
             if (properties.getLog().isEnable()) {
@@ -219,43 +226,38 @@ public class BasicWebFilter implements WebFilter, Ordered {
         @NonNull
         @Override
         public Flux<DataBuffer> getBody() {
-            if (properties.getLog().isEnable()) {
-                return DataBufferUtils.join(super.getBody())
-                        .map(buffer -> {
-                            final byte[] bytes = new byte[buffer.readableByteCount()];
-                            buffer.read(bytes);
-                            DataBufferUtils.release(buffer);
-                            return bytes;
-                        })
-                        .defaultIfEmpty(new byte[0])
-                        .map(bytes -> {
-                            final Map<String, String> rBodyMap = new HashMap<>(3);
-                            final List<String> types = request.getHeaders().get(HttpHeaders.CONTENT_TYPE);
-                            if (types == null || types.isEmpty()) {
-                                rBodyMap.put("type", "unknown");
-                                rBodyMap.put("size", String.valueOf(bytes.length));
-                            } else {
-                                final String type = types.get(0);
-                                rBodyMap.put("type", type);
-                                rBodyMap.put("size", String.valueOf(bytes.length));
-                                final byte[] content = new byte[Math.min(bytes.length, 1024 * 30)];
-                                System.arraycopy(bytes, 0, content, 0, content.length);
-                                // if the requested type is JSON/FORM, then print all the information
-                                if (type.startsWith(MediaType.APPLICATION_JSON_VALUE)
-                                        || type.startsWith(MediaType.APPLICATION_FORM_URLENCODED_VALUE)) {
-                                    rBodyMap.put("content", new String(content, StandardCharsets.UTF_8)
-                                            .replaceAll("\r", "").replaceAll("\n", ""));
-                                } else {
-                                    rBodyMap.put("content", new String(content, StandardCharsets.UTF_8));
-                                }
-                            }
-                            model.setRequestBody(JsonUtil.toJson(rBodyMap));
-                            return DATA_BUFFER_FACTORY.wrap(bytes);
-                        })
-                        .flux();
-            } else {
+            if (!properties.getLog().isEnable()) {
                 return super.getBody();
             }
+            final AtomicBoolean status = new AtomicBoolean(false);
+            final List<String> types = request.getHeaders().get(HttpHeaders.CONTENT_TYPE);
+            final String type = (types == null || types.isEmpty()) ? "unknown" : types.get(0);
+            return super.getBody()
+                    .map(buffer -> {
+                        final byte[] bytes = new byte[buffer.readableByteCount()];
+                        buffer.read(bytes);
+                        DataBufferUtils.release(buffer);
+                        return bytes;
+                    })
+                    .defaultIfEmpty(new byte[0])
+                    .map(bytes -> {
+                        if (status.get()) {
+                            return DATA_BUFFER_FACTORY.wrap(bytes);
+                        }
+                        status.set(true);
+                        final Map<String, String> rBodyMap = new HashMap<>(2);
+                        rBodyMap.put("type", type);
+                        final byte[] content = new byte[Math.min(bytes.length, 1024 * 2)];
+                        System.arraycopy(bytes, 0, content, 0, content.length);
+                        if (type.startsWith(MediaType.APPLICATION_JSON_VALUE) || type.startsWith(MediaType.APPLICATION_FORM_URLENCODED_VALUE)) {
+                            rBodyMap.put("content", new String(content, StandardCharsets.UTF_8)
+                                    .replaceAll("\r", "").replaceAll("\n", ""));
+                        } else {
+                            rBodyMap.put("content", new String(content, StandardCharsets.UTF_8));
+                        }
+                        model.setRequestBody(JsonUtil.toJson(rBodyMap));
+                        return DATA_BUFFER_FACTORY.wrap(bytes);
+                    });
         }
 
         /**
@@ -343,8 +345,7 @@ public class BasicWebFilter implements WebFilter, Ordered {
         }
 
         @Override
-        public @NonNull
-        Mono<Void> writeWith(@NonNull Publisher<? extends DataBuffer> body) {
+        public @NonNull Mono<Void> writeWith(@NonNull Publisher<? extends DataBuffer> body) {
             // only response headers
             final HttpHeaders httpHeaders = response.getHeaders();
             for (final String key : httpHeaders.keySet()) {
@@ -357,68 +358,64 @@ public class BasicWebFilter implements WebFilter, Ordered {
                     }
                 }
             }
-            if (properties.getLog().isEnable()) {
-                return super.writeWith(DataBufferUtils.join(body)
-                        .map(buffer -> {
-                            final byte[] bytes = new byte[buffer.readableByteCount()];
-                            buffer.read(bytes);
-                            DataBufferUtils.release(buffer);
-                            return bytes;
-                        })
-                        .defaultIfEmpty(new byte[0])
-                        .flatMap(bytes -> {
-                            final Map<String, String> rBodyMap = new HashMap<>(3);
-                            final List<String> types = response.getHeaders().get(HttpHeaders.CONTENT_TYPE);
-                            if (types == null || types.isEmpty()) {
-                                rBodyMap.put("type", "unknown");
-                                rBodyMap.put("size", String.valueOf(bytes.length));
-                            } else {
-                                final byte[] content = new byte[Math.min(bytes.length, 10240)];
-                                System.arraycopy(bytes, 0, content, 0, content.length);
-                                final String type = types.get(0);
-                                rBodyMap.put("type", type);
-                                rBodyMap.put("size", String.valueOf(bytes.length));
-                                // if the requested type is JSON/FORM, then print all the information
-                                if (type.startsWith(MediaType.APPLICATION_JSON_VALUE)) {
-                                    rBodyMap.put("content", new String(content, StandardCharsets.UTF_8)
-                                            .replaceAll("\r", "").replaceAll("\n", ""));
-                                } else {
-                                    rBodyMap.put("content", new String(content, StandardCharsets.UTF_8));
-                                }
-                            }
-                            model.setResponseDateTime(LocalDateTime.now());
-                            model.setResponseBody(JsonUtil.toJson(rBodyMap));
-                            model.setResponseHeaders(JsonUtil.toJson(response.getHeaders()));
-                            model.setResponseCookies(JsonUtil.toJson(response.getCookies()));
-                            // retrieve the latest user information from the request header
-                            // ===== USER INFO ========================================
-                            final List<String> userInfoData = request.getHeaders().get(USER_INFO_HEADER);
-                            if (userInfoData != null) {
-                                model.setUser(JsonUtil.toJson(userInfoData));
-                            }
-                            // ===== USER INFO ========================================
-                            if (model.getRequestDateTime() != null && model.getResponseDateTime() != null) {
-                                final long s = model.getRequestDateTime().atZone(ZoneOffset.systemDefault()).toInstant().toEpochMilli();
-                                final long e = model.getResponseDateTime().atZone(ZoneOffset.systemDefault()).toInstant().toEpochMilli();
-                                // time interval for writing requests
-                                model.setIntervalDateTime(e - s);
-                            }
-                            // output logs according to configuration
-                            if (properties.getLog().isDetails()) {
-                                LOGGER.info(model.toJsonString());
-                            } else {
-                                LOGGER.info("{} >>> [{}] {} ::: {}",
-                                        model.getIp(),
-                                        model.getRequestMethod(),
-                                        model.getPath(),
-                                        model.getIntervalDateTime()
-                                );
-                            }
-                            return Mono.just(DATA_BUFFER_FACTORY.wrap(bytes));
-                        }));
-            } else {
+            if (!properties.getLog().isEnable()) {
                 return super.writeWith(body);
             }
+            final AtomicBoolean status = new AtomicBoolean(false);
+            final List<String> types = response.getHeaders().get(HttpHeaders.CONTENT_TYPE);
+            final String type = (types == null || types.isEmpty()) ? "unknown" : types.get(0);
+            return super.writeWith(Flux
+                    .from(body)
+                    .cast(DataBuffer.class)
+                    .map(buffer -> {
+                        final byte[] bytes = new byte[buffer.readableByteCount()];
+                        buffer.read(bytes);
+                        DataBufferUtils.release(buffer);
+                        return bytes;
+                    })
+                    .defaultIfEmpty(new byte[0])
+                    .map(bytes -> {
+                        if (status.get()) {
+                            return DATA_BUFFER_FACTORY.wrap(bytes);
+                        }
+                        status.set(true);
+                        final Map<String, String> rBodyMap = new HashMap<>(2);
+                        rBodyMap.put("type", type);
+                        final byte[] content = new byte[Math.min(bytes.length, 1024 * 5)];
+                        System.arraycopy(bytes, 0, content, 0, content.length);
+                        if (type.startsWith(MediaType.APPLICATION_JSON_VALUE)) {
+                            rBodyMap.put("content", new String(content, StandardCharsets.UTF_8)
+                                    .replaceAll("\r", "").replaceAll("\n", ""));
+                        } else {
+                            rBodyMap.put("content", new String(content, StandardCharsets.UTF_8));
+                        }
+                        model.setResponseDateTime(LocalDateTime.now());
+                        model.setResponseBody(JsonUtil.toJson(rBodyMap));
+                        model.setResponseHeaders(JsonUtil.toJson(response.getHeaders()));
+                        model.setResponseCookies(JsonUtil.toJson(response.getCookies()));
+                        // ===== USER INFO ========================================
+                        final List<String> userInfoData = request.getHeaders().get(USER_INFO_HEADER);
+                        if (userInfoData != null) {
+                            model.setUser(JsonUtil.toJson(userInfoData));
+                        }
+                        // ===== USER INFO ========================================
+                        if (model.getRequestDateTime() != null && model.getResponseDateTime() != null) {
+                            final long s = model.getRequestDateTime().atZone(ZoneOffset.systemDefault()).toInstant().toEpochMilli();
+                            final long e = model.getResponseDateTime().atZone(ZoneOffset.systemDefault()).toInstant().toEpochMilli();
+                            model.setIntervalDateTime(e - s);
+                        }
+                        if (properties.getLog().isDetails()) {
+                            LOGGER.info(model.toJsonString());
+                        } else {
+                            LOGGER.info("{} >>> [{}] {} ::: {}",
+                                    model.getIp(),
+                                    model.getRequestMethod(),
+                                    model.getPath(),
+                                    model.getIntervalDateTime()
+                            );
+                        }
+                        return DATA_BUFFER_FACTORY.wrap(bytes);
+                    }));
         }
     }
 

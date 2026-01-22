@@ -16,7 +16,6 @@ import java.util.ArrayList;
  * @author lidashuang
  * @version 1.0
  */
-@SuppressWarnings("ALL")
 public class InjectPermissionGatewayFilterFactory extends AbstractGatewayFilterFactory<Object> {
 
     @Override

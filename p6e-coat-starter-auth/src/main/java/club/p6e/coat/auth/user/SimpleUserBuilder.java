@@ -3,7 +3,6 @@ package club.p6e.coat.auth.user;
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.UserBuilder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
@@ -14,7 +13,6 @@ import java.util.Map;
  * @version 1.0
  */
 @ConditionalOnMissingBean(UserBuilder.class)
-@Component("club.p6e.coat.auth.user.SimpleUserBuilder")
 public class SimpleUserBuilder implements UserBuilder {
 
     @Override

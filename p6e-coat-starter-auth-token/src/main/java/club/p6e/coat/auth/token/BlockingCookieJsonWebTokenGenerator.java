@@ -49,11 +49,7 @@ public class BlockingCookieJsonWebTokenGenerator implements BlockingTokenGenerat
         final long duration = duration();
         final String device = request.getHeader(DEVICE_HEADER_NAME);
         final String content = codec.encryption(user.id(), (device == null ? "PC" : device) + "@" + user.serialize(), duration);
-        final Cookie cookie = new Cookie(AUTH_COOKIE_NAME, content);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge((int) duration);
-        response.addCookie(cookie);
+        response.addCookie(cookie(AUTH_COOKIE_NAME, content));
         return LocalDateTime.now();
     }
 
@@ -64,6 +60,22 @@ public class BlockingCookieJsonWebTokenGenerator implements BlockingTokenGenerat
      */
     public long duration() {
         return 3600L;
+    }
+
+    /**
+     * Cookie
+     *
+     * @param name    Cookie Name
+     * @param content Cookie Content
+     * @return
+     */
+    public Cookie cookie(String name, String content) {
+        final int age = (int) duration();
+        final Cookie cookie = new Cookie(name, content);
+        cookie.setPath("/");
+        cookie.setMaxAge(age);
+        cookie.setHttpOnly(true);
+        return cookie;
     }
 
 }

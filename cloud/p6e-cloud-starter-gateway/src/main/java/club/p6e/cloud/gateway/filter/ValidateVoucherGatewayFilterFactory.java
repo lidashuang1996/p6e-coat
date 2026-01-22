@@ -91,7 +91,7 @@ public class ValidateVoucherGatewayFilterFactory extends AbstractGatewayFilterFa
                 vouchers.addAll(vp2);
             }
             for (final String voucher : vouchers) {
-                if (config.getVouchers().contains(voucher)) {
+                if (this.config.getVouchers().contains(voucher)) {
                     return chain.filter(exchange);
                 }
             }
