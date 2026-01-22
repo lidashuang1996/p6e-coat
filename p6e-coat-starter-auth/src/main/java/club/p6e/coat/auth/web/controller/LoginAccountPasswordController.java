@@ -19,10 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(
-        value = LoginAccountPasswordController.class,
-        ignored = LoginAccountPasswordController.class
-)
+@ConditionalOnMissingBean(LoginAccountPasswordController.class)
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 @RestController("club.p6e.coat.auth.web.controller.LoginAccountPasswordController")
 public class LoginAccountPasswordController {

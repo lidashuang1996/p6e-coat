@@ -15,7 +15,7 @@ import org.springframework.context.ApplicationListener;
  * @version 1.0
  */
 @SuppressWarnings("ALL")
-public class NacosPropertiesRefresher implements ApplicationListener<ApplicationReadyEvent> {
+public abstract class NacosPropertiesRefresher implements ApplicationListener<ApplicationReadyEvent> {
 
     /**
      * Nacos Config Manager Object
@@ -60,7 +60,7 @@ public class NacosPropertiesRefresher implements ApplicationListener<Application
         try {
             final String dataId = getDataId();
             final String groupId = getGroupId();
-            manager.getConfigService()
+            this.manager.getConfigService()
                     .addListener(dataId, groupId, new AbstractConfigChangeListener() {
                         @Override
                         public void receiveConfigChange(ConfigChangeEvent configChangeEvent) {
@@ -82,7 +82,7 @@ public class NacosPropertiesRefresher implements ApplicationListener<Application
      * @return Data ID
      */
     protected String getDataId() {
-        return name + (active == null ? "" : ("-" + active)) + "." + fileExtension;
+        return this.name + (this.active == null ? "" : ("-" + this.active)) + "." + this.fileExtension;
     }
 
     /**
@@ -91,7 +91,7 @@ public class NacosPropertiesRefresher implements ApplicationListener<Application
      * @return Group ID
      */
     protected String getGroupId() {
-        return group;
+        return this.group;
     }
 
     /**
@@ -100,7 +100,6 @@ public class NacosPropertiesRefresher implements ApplicationListener<Application
      * @param format  Format Object
      * @param content Content Object
      */
-    protected void config(String format, String content) {
-    }
+    protected abstract void config(String format, String content);
 
 }

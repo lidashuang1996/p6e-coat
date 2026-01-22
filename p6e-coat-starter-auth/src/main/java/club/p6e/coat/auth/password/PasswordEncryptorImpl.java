@@ -42,8 +42,8 @@ public class PasswordEncryptorImpl implements PasswordEncryptor {
         if (!status) {
             throw GlobalExceptionContext.exceptionPasswordEncryptorException(
                     this.getClass(),
-                    "fun execute(String content).",
-                    "password encryptor salt not init exception."
+                    "fun execute(String content)",
+                    "password encryptor salt not init exception"
             );
         }
     }

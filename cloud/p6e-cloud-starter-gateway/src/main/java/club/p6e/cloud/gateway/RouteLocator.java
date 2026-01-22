@@ -44,11 +44,13 @@ public class RouteLocator implements RouteDefinitionRepository {
      *
      * @param routeDefinitions Route DefinitionList Object
      */
-    public synchronized void refresh(List<RouteDefinition> routeDefinitions) {
-        this.routeDefinitions.clear();
-        this.routeDefinitions.addAll(routeDefinitions);
-        if (!this.routeDefinitions.isEmpty()) {
-            this.publisher.publishEvent(new RefreshRoutesEvent(this));
+    public void refresh(List<RouteDefinition> routeDefinitions) {
+        synchronized (this) {
+            this.routeDefinitions.clear();
+            this.routeDefinitions.addAll(routeDefinitions);
+            if (!this.routeDefinitions.isEmpty()) {
+                this.publisher.publishEvent(new RefreshRoutesEvent(this));
+            }
         }
     }
 
@@ -59,19 +61,23 @@ public class RouteLocator implements RouteDefinitionRepository {
 
     @Override
     public Mono<Void> save(Mono<RouteDefinition> mr) {
-        return mr.map(routeDefinitions::add).then();
+        synchronized (this) {
+            return mr.map(routeDefinitions::add).then();
+        }
     }
 
     @Override
     public Mono<Void> delete(Mono<String> ms) {
         return ms.map(r -> {
-            for (final RouteDefinition item : routeDefinitions) {
-                if (item.getId().equalsIgnoreCase(r)) {
-                    routeDefinitions.remove(item);
-                    break;
+            synchronized (this) {
+                for (final RouteDefinition item : routeDefinitions) {
+                    if (item.getId().equalsIgnoreCase(r)) {
+                        routeDefinitions.remove(item);
+                        break;
+                    }
                 }
+                return r;
             }
-            return r;
         }).then();
     }
 

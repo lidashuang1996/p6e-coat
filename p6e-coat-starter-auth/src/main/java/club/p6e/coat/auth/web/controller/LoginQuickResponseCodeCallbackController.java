@@ -18,10 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(
-        value = LoginQuickResponseCodeCallbackController.class,
-        ignored = LoginQuickResponseCodeCallbackController.class
-)
+@ConditionalOnMissingBean(LoginQuickResponseCodeCallbackController.class)
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 @RestController("club.p6e.coat.auth.web.controller.LoginQuickResponseCodeCallbackController")
 public class LoginQuickResponseCodeCallbackController {
