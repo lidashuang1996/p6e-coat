@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * User Token Cache
+ * Reactive User Token Cache
  *
  * @author lidashuang
  * @version 1.0

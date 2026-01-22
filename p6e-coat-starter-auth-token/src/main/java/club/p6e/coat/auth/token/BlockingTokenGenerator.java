@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Token Generator
+ * Blocking Token Generator
  *
  * @author lidashuang
  * @version 1.0

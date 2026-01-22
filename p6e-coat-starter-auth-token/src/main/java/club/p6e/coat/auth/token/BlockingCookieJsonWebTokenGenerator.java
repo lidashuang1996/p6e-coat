@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 
 /**
- * Cookie Json Web Token Generator
+ * Blocking Cookie Json Web Token Generator
  *
  * @author lidashuang
  * @version 1.0

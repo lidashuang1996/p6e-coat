@@ -14,18 +14,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Authentication Login Controller
+ * Blocking Authentication Login Controller
  *
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(
-        value = LoginAuthenticationLoginController.class,
-        ignored = LoginAuthenticationLoginController.class
-)
+@ConditionalOnMissingBean(BlockingLoginAuthenticationLoginController.class)
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 @RestController("club.p6e.coat.auth.web.controller.LoginAuthenticationLoginController")
-public class LoginAuthenticationLoginController {
+public class BlockingLoginAuthenticationLoginController {
 
     /**
      * Login Authentication Service Object
@@ -37,7 +34,7 @@ public class LoginAuthenticationLoginController {
      *
      * @param service Login Authentication Service Object
      */
-    public LoginAuthenticationLoginController(LoginAuthenticationService service) {
+    public BlockingLoginAuthenticationLoginController(LoginAuthenticationService service) {
         this.service = service;
     }
 

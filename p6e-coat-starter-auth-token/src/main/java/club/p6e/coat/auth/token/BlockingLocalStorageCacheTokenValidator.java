@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Local Storage Cache Token Validator
+ * Blocking Local Storage Cache Token Validator
  *
  * @author lidashuang
  * @version 1.0

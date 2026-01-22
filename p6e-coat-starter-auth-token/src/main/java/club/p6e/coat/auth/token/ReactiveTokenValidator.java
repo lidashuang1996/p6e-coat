@@ -5,7 +5,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * Token Validator
+ * Reactive Token Validator
  *
  * @author lidashuang
  * @version 1.0

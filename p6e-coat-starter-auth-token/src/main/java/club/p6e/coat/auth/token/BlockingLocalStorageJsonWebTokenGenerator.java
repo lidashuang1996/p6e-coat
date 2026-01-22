@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 
 /**
- * Local Storage Json Web Token Generator
+ * Blocking Local Storage Json Web Token Generator
  *
  * @author lidashuang
  * @version 1.0

@@ -4,39 +4,37 @@ import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.RegisterContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.web.RequestParameterValidator;
-import club.p6e.coat.auth.web.service.RegisterVerificationCodeAcquisitionService;
+import club.p6e.coat.auth.web.service.RegisterService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Verification Code Register Acquisition Controller
+ * Blocking Register Controller
  *
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(
-        value = RegisterVerificationCodeAcquisitionController.class,
-        ignored = RegisterVerificationCodeAcquisitionController.class
-)
+@ConditionalOnMissingBean(BlockingRegisterController.class)
+@RestController("club.p6e.coat.auth.web.controller.RegisterController")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
-@RestController("club.p6e.coat.auth.web.controller.RegisterVerificationCodeAcquisitionController")
-public class RegisterVerificationCodeAcquisitionController {
+public class BlockingRegisterController {
 
     /**
-     * Register Verification Code Acquisition Service Object
+     * Register Service Object
      */
-    private final RegisterVerificationCodeAcquisitionService service;
+    private final RegisterService service;
 
     /**
      * Constructor Initialization
      *
-     * @param service Register Verification Code Acquisition Service Object
+     * @param service Register Service Object
      */
-    public RegisterVerificationCodeAcquisitionController(RegisterVerificationCodeAcquisitionService service) {
+    public BlockingRegisterController(RegisterService service) {
         this.service = service;
     }
 
@@ -45,30 +43,30 @@ public class RegisterVerificationCodeAcquisitionController {
      *
      * @param httpServletRequest  Http Servlet Request Object
      * @param httpServletResponse Http Servlet Response Object
-     * @param request             Register Context Verification Code Acquisition Request Object
-     * @return Register Context Verification Code Acquisition Request Object
+     * @param request             Password Signature Context Request Object
+     * @return Password Signature Context Request Object
      */
-    private RegisterContext.VerificationCodeAcquisition.Request validate(
+    private RegisterContext.Request validate(
             HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse,
-            RegisterContext.VerificationCodeAcquisition.Request request
+            RegisterContext.Request request
     ) {
-        final RegisterContext.VerificationCodeAcquisition.Request result = RequestParameterValidator.run(httpServletRequest, httpServletResponse, request);
+        final RegisterContext.Request result = RequestParameterValidator.run(httpServletRequest, httpServletResponse, request);
         if (result == null) {
             throw GlobalExceptionContext.executeParameterException(
                     this.getClass(),
-                    "fun RegisterContext.VerificationCodeAcquisition.Request validate(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, RegisterContext.VerificationCodeAcquisition.Request request)",
+                    "fun RegisterContext.Request validate(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, RegisterContext.Request request)",
                     "request parameter validation exception"
             );
         }
         return result;
     }
 
-    @GetMapping(value = "/register/code")
+    @PostMapping("/register")
     public Object def(
             HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse,
-            RegisterContext.VerificationCodeAcquisition.Request request
+            @RequestBody RegisterContext.Request request
     ) {
         final Properties properties = Properties.getInstance();
         if (properties.isEnable() && properties.getRegister().isEnable()) {
@@ -76,7 +74,7 @@ public class RegisterVerificationCodeAcquisitionController {
         } else {
             throw GlobalExceptionContext.exceptionServiceNoEnabledException(
                     this.getClass(),
-                    "fun Object def(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, RegisterContext.VerificationCodeAcquisition.Request request)",
+                    "fun Object def(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, RegisterContext.Request request)",
                     "register is not enabled"
             );
         }

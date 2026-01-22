@@ -13,18 +13,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Quick Response Code Login Acquisition Controller
+ * Blocking Quick Response Code Login Acquisition Controller
  *
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(
-        value = LoginQuickResponseCodeAcquisitionController.class,
-        ignored = LoginQuickResponseCodeAcquisitionController.class
-)
+@ConditionalOnMissingBean(BlockingLoginQuickResponseCodeAcquisitionController.class)
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 @RestController("club.p6e.coat.auth.web.controller.LoginQuickResponseCodeAcquisitionController")
-public class LoginQuickResponseCodeAcquisitionController {
+public class BlockingLoginQuickResponseCodeAcquisitionController {
 
     /**
      * Login Quick Response Code Acquisition Service Object
@@ -36,7 +33,7 @@ public class LoginQuickResponseCodeAcquisitionController {
      *
      * @param service Login Quick Response Code Acquisition Service Object
      */
-    public LoginQuickResponseCodeAcquisitionController(LoginQuickResponseCodeAcquisitionService service) {
+    public BlockingLoginQuickResponseCodeAcquisitionController(LoginQuickResponseCodeAcquisitionService service) {
         this.service = service;
     }
 

@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 
 /**
- * Cookie Cache Token Generator
+ * Blocking Cookie Cache Token Generator
  *
  * @author lidashuang
  * @version 1.0

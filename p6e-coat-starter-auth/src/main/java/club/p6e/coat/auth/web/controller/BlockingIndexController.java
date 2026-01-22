@@ -11,18 +11,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Account Password Login Controller
+ * Blocking Index Controller
  *
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(
-        value = IndexController.class,
-        ignored = IndexController.class
-)
+@ConditionalOnMissingBean(BlockingIndexController.class)
 @RestController("club.p6e.coat.auth.web.controller.IndexController")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
-public class IndexController {
+public class BlockingIndexController {
 
     /**
      * Index Service Object
@@ -34,7 +31,7 @@ public class IndexController {
      *
      * @param service Index Service Object
      */
-    public IndexController(IndexService service) {
+    public BlockingIndexController(IndexService service) {
         this.service = service;
     }
 

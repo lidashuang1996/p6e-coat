@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 
 /**
- * Local Storage Cache Token Generator
+ * Blocking Local Storage Cache Token Generator
  *
  * @author lidashuang
  * @version 1.0

@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Cookie Json Web Token Validator
+ * Blocking Cookie Json Web Token Validator
  *
  * @author lidashuang
  * @version 1.0

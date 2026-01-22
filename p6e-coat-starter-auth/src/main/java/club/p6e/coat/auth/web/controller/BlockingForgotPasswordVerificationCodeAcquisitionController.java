@@ -13,18 +13,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Verification Code Forgot Password Acquisition Controller
+ * Blocking Forgot Password Verification Code Acquisition Controller
  *
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(
-        value = ForgotPasswordVerificationCodeAcquisitionController.class,
-        ignored = ForgotPasswordVerificationCodeAcquisitionController.class
-)
+@ConditionalOnMissingBean(BlockingForgotPasswordVerificationCodeAcquisitionController.class)
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 @RestController("club.p6e.coat.auth.web.controller.ForgotPasswordVerificationCodeAcquisitionController")
-public class ForgotPasswordVerificationCodeAcquisitionController {
+public class BlockingForgotPasswordVerificationCodeAcquisitionController {
 
     /**
      * Forgot Password Verification Code Acquisition Service Object
@@ -36,7 +33,7 @@ public class ForgotPasswordVerificationCodeAcquisitionController {
      *
      * @param service Forgot Password Verification Code Acquisition Service Object
      */
-    public ForgotPasswordVerificationCodeAcquisitionController(ForgotPasswordVerificationCodeAcquisitionService service) {
+    public BlockingForgotPasswordVerificationCodeAcquisitionController(ForgotPasswordVerificationCodeAcquisitionService service) {
         this.service = service;
     }
 
