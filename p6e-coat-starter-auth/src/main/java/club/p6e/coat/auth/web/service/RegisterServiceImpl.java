@@ -6,8 +6,8 @@ import club.p6e.coat.auth.UserBuilder;
 import club.p6e.coat.auth.context.RegisterContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.password.PasswordEncryptor;
-import club.p6e.coat.auth.web.aspect.VoucherAspect;
-import club.p6e.coat.auth.web.repository.UserRepository;
+import club.p6e.coat.auth.aspect.BlockingVoucherAspect;
+import club.p6e.coat.auth.repository.BlockingUserRepository;
 import club.p6e.coat.common.utils.SpringUtil;
 import club.p6e.coat.common.utils.TransformationUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,7 +38,7 @@ public class RegisterServiceImpl implements RegisterService {
     /**
      * User Repository Object
      */
-    private final UserRepository repository;
+    private final BlockingUserRepository repository;
 
     /**
      * Constructor Initialization
@@ -46,7 +46,7 @@ public class RegisterServiceImpl implements RegisterService {
      * @param encryptor  Password Encryptor Object
      * @param repository User Repository Object
      */
-    public RegisterServiceImpl(PasswordEncryptor encryptor, UserRepository repository) {
+    public RegisterServiceImpl(PasswordEncryptor encryptor, BlockingUserRepository repository) {
         this.encryptor = encryptor;
         this.repository = repository;
     }
@@ -58,7 +58,7 @@ public class RegisterServiceImpl implements RegisterService {
             RegisterContext.Request param
     ) {
         param.setPassword(encryptor.execute(param.getPassword()));
-        final String account = TransformationUtil.objectToString(httpServletRequest.getAttribute(VoucherAspect.MyHttpServletRequestWrapper.ACCOUNT));
+        final String account = TransformationUtil.objectToString(httpServletRequest.getAttribute(BlockingVoucherAspect.MyHttpServletRequestWrapper.ACCOUNT));
         final User user = switch (Properties.getInstance().getMode()) {
             case PHONE -> executePhoneMode(account, param);
             case MAILBOX -> executeMailboxMode(account, param);

@@ -3,10 +3,10 @@ package club.p6e.coat.auth.web.reactive.service;
 import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.RegisterContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
-import club.p6e.coat.auth.web.aspect.VoucherAspect;
-import club.p6e.coat.auth.web.reactive.cache.RegisterVerificationCodeCache;
+import club.p6e.coat.auth.aspect.BlockingVoucherAspect;
+import club.p6e.coat.auth.cache.ReactiveRegisterVerificationCodeCache;
 import club.p6e.coat.auth.web.reactive.event.PushVerificationCodeEvent;
-import club.p6e.coat.auth.web.reactive.repository.UserRepository;
+import club.p6e.coat.auth.repository.ReactiveUserRepository;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.SpringUtil;
 import club.p6e.coat.common.utils.VerificationUtil;
@@ -42,12 +42,12 @@ public class RegisterVerificationCodeAcquisitionServiceImpl implements RegisterV
     /**
      * User Repository Object
      */
-    private final UserRepository repository;
+    private final ReactiveUserRepository repository;
 
     /**
      * Verification Code Register Cache Object
      */
-    private final RegisterVerificationCodeCache cache;
+    private final ReactiveRegisterVerificationCodeCache cache;
 
     /**
      * Constructor Initialization
@@ -55,7 +55,7 @@ public class RegisterVerificationCodeAcquisitionServiceImpl implements RegisterV
      * @param repository User Repository Object
      * @param cache      Verification Code Login Cache Object
      */
-    public RegisterVerificationCodeAcquisitionServiceImpl(UserRepository repository, RegisterVerificationCodeCache cache) {
+    public RegisterVerificationCodeAcquisitionServiceImpl(ReactiveUserRepository repository, ReactiveRegisterVerificationCodeCache cache) {
         this.cache = cache;
         this.repository = repository;
     }
@@ -97,7 +97,7 @@ public class RegisterVerificationCodeAcquisitionServiceImpl implements RegisterV
         final boolean pb = VerificationUtil.validationPhone(account);
         final boolean mb = VerificationUtil.validationMailbox(account);
         if (pb || mb) {
-            exchange.getRequest().getAttributes().put(VoucherAspect.MyHttpServletRequestWrapper.ACCOUNT, account);
+            exchange.getRequest().getAttributes().put(BlockingVoucherAspect.MyHttpServletRequestWrapper.ACCOUNT, account);
             return cache
                     .set(account, code)
                     .switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(

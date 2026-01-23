@@ -5,9 +5,9 @@ import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.context.ForgotPasswordContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.password.PasswordEncryptor;
-import club.p6e.coat.auth.web.reactive.aspect.VoucherAspect;
-import club.p6e.coat.auth.web.reactive.cache.ForgotPasswordVerificationCodeCache;
-import club.p6e.coat.auth.web.reactive.repository.UserRepository;
+import club.p6e.coat.auth.aspect.ReactiveVoucherAspect;
+import club.p6e.coat.auth.cache.ReactiveForgotPasswordVerificationCodeCache;
+import club.p6e.coat.auth.repository.ReactiveUserRepository;
 import club.p6e.coat.common.utils.TransformationUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -32,7 +32,7 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
     /**
      * User Repository Object
      */
-    private final UserRepository repository;
+    private final ReactiveUserRepository repository;
 
     /**
      * Password Encryptor Object
@@ -42,7 +42,7 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
     /**
      * Forgot Password Verification Code Cache Object
      */
-    private final ForgotPasswordVerificationCodeCache cache;
+    private final ReactiveForgotPasswordVerificationCodeCache cache;
 
     /**
      * Constructor Initialization
@@ -51,7 +51,7 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
      * @param encryptor  Password Encryptor Object
      * @param cache      Forgot Password Verification Code Cache Object
      */
-    public ForgotPasswordServiceImpl(UserRepository repository, PasswordEncryptor encryptor, ForgotPasswordVerificationCodeCache cache) {
+    public ForgotPasswordServiceImpl(ReactiveUserRepository repository, PasswordEncryptor encryptor, ReactiveForgotPasswordVerificationCodeCache cache) {
         this.cache = cache;
         this.encryptor = encryptor;
         this.repository = repository;
@@ -75,7 +75,7 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
     @Override
     public Mono<ForgotPasswordContext.Dto> execute(ServerWebExchange exchange, ForgotPasswordContext.Request param) {
         final String account = TransformationUtil.objectToString(
-                exchange.getRequest().getAttributes().get(VoucherAspect.MyServerHttpRequestDecorator.ACCOUNT));
+                exchange.getRequest().getAttributes().get(ReactiveVoucherAspect.MyServerHttpRequestDecorator.ACCOUNT));
         return cache
                 .get(account)
                 .filter(l -> l.contains(param.getCode()))

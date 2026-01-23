@@ -4,9 +4,9 @@ import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
-import club.p6e.coat.auth.web.reactive.aspect.VoucherAspect;
-import club.p6e.coat.auth.web.reactive.cache.LoginVerificationCodeCache;
-import club.p6e.coat.auth.web.reactive.repository.UserRepository;
+import club.p6e.coat.auth.aspect.ReactiveVoucherAspect;
+import club.p6e.coat.auth.cache.ReactiveLoginVerificationCodeCache;
+import club.p6e.coat.auth.repository.ReactiveUserRepository;
 import club.p6e.coat.common.utils.TransformationUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -31,12 +31,12 @@ public class LoginVerificationCodeServiceImpl implements LoginVerificationCodeSe
     /**
      * User Repository Object
      */
-    private final UserRepository repository;
+    private final ReactiveUserRepository repository;
 
     /**
      * Login Verification Code Cache Object
      */
-    private final LoginVerificationCodeCache cache;
+    private final ReactiveLoginVerificationCodeCache cache;
 
     /**
      * Constructor Initialization
@@ -44,7 +44,7 @@ public class LoginVerificationCodeServiceImpl implements LoginVerificationCodeSe
      * @param cache      Verification Code Login Cache Object
      * @param repository User Repository Object
      */
-    public LoginVerificationCodeServiceImpl(UserRepository repository, LoginVerificationCodeCache cache) {
+    public LoginVerificationCodeServiceImpl(ReactiveUserRepository repository, ReactiveLoginVerificationCodeCache cache) {
         this.cache = cache;
         this.repository = repository;
     }
@@ -67,7 +67,7 @@ public class LoginVerificationCodeServiceImpl implements LoginVerificationCodeSe
     @Override
     public Mono<User> execute(ServerWebExchange exchange, LoginContext.VerificationCode.Request param) {
         final String code = param.getCode();
-        final String account = TransformationUtil.objectToString(exchange.getRequest().getAttributes().get(VoucherAspect.MyServerHttpRequestDecorator.ACCOUNT));
+        final String account = TransformationUtil.objectToString(exchange.getRequest().getAttributes().get(ReactiveVoucherAspect.MyServerHttpRequestDecorator.ACCOUNT));
         return cache
                 .get(account)
                 .switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(

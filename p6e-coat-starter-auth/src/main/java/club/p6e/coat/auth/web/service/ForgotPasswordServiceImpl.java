@@ -5,9 +5,9 @@ import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.context.ForgotPasswordContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.password.PasswordEncryptor;
-import club.p6e.coat.auth.web.aspect.VoucherAspect;
-import club.p6e.coat.auth.web.cache.ForgotPasswordVerificationCodeCache;
-import club.p6e.coat.auth.web.repository.UserRepository;
+import club.p6e.coat.auth.aspect.BlockingVoucherAspect;
+import club.p6e.coat.auth.cache.BlockingForgotPasswordVerificationCodeCache;
+import club.p6e.coat.auth.repository.BlockingUserRepository;
 import club.p6e.coat.common.utils.TransformationUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -34,7 +34,7 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
     /**
      * User Repository Object
      */
-    private final UserRepository repository;
+    private final BlockingUserRepository repository;
 
     /**
      * Password Encryptor Object
@@ -44,7 +44,7 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
     /**
      * Forgot Password Verification Code Cache Object
      */
-    private final ForgotPasswordVerificationCodeCache cache;
+    private final BlockingForgotPasswordVerificationCodeCache cache;
 
     /**
      * Constructor Initialization
@@ -53,9 +53,9 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
      * @param cache     Forgot Password Verification Code Cache Object
      */
     public ForgotPasswordServiceImpl(
-            UserRepository repository,
+            BlockingUserRepository repository,
             PasswordEncryptor encryptor,
-            ForgotPasswordVerificationCodeCache cache
+            BlockingForgotPasswordVerificationCodeCache cache
     ) {
         this.cache = cache;
         this.encryptor = encryptor;
@@ -93,7 +93,7 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
             ForgotPasswordContext.Request param
     ) {
         final String code = param.getCode();
-        final String account = TransformationUtil.objectToString(httpServletRequest.getAttribute(VoucherAspect.MyHttpServletRequestWrapper.ACCOUNT));
+        final String account = TransformationUtil.objectToString(httpServletRequest.getAttribute(BlockingVoucherAspect.MyHttpServletRequestWrapper.ACCOUNT));
         final List<String> codes = cache.get(account);
         if (codes != null && !codes.isEmpty() && codes.contains(code)) {
             cache.del(account);

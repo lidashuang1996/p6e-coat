@@ -3,9 +3,9 @@ package club.p6e.coat.auth.web.reactive.service;
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
-import club.p6e.coat.auth.web.reactive.aspect.VoucherAspect;
-import club.p6e.coat.auth.web.reactive.cache.LoginQuickResponseCodeCache;
-import club.p6e.coat.auth.web.reactive.repository.UserRepository;
+import club.p6e.coat.auth.aspect.ReactiveVoucherAspect;
+import club.p6e.coat.auth.cache.ReactiveLoginQuickResponseCodeCache;
+import club.p6e.coat.auth.repository.ReactiveUserRepository;
 import club.p6e.coat.common.utils.TransformationUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -30,12 +30,12 @@ public class LoginQuickResponseCodeCallbackServiceImpl implements LoginQuickResp
     /**
      * User Repository Object
      */
-    private final UserRepository repository;
+    private final ReactiveUserRepository repository;
 
     /**
      * Login Quick Response Code Cache Object
      */
-    private final LoginQuickResponseCodeCache cache;
+    private final ReactiveLoginQuickResponseCodeCache cache;
 
     /**
      * Constructor Initialization
@@ -43,7 +43,7 @@ public class LoginQuickResponseCodeCallbackServiceImpl implements LoginQuickResp
      * @param cache      Login Quick Response Code Cache Object
      * @param repository User Repository Object
      */
-    public LoginQuickResponseCodeCallbackServiceImpl(LoginQuickResponseCodeCache cache, UserRepository repository) {
+    public LoginQuickResponseCodeCallbackServiceImpl(ReactiveLoginQuickResponseCodeCache cache, ReactiveUserRepository repository) {
         this.cache = cache;
         this.repository = repository;
     }
@@ -51,7 +51,7 @@ public class LoginQuickResponseCodeCallbackServiceImpl implements LoginQuickResp
     @Override
     public Mono<User> execute(ServerWebExchange exchange, LoginContext.QuickResponseCodeCallback.Request param) {
         final String mark = TransformationUtil.objectToString(exchange.getRequest()
-                .getAttributes().get(VoucherAspect.MyServerHttpRequestDecorator.QUICK_RESPONSE_CODE_LOGIN_MARK));
+                .getAttributes().get(ReactiveVoucherAspect.MyServerHttpRequestDecorator.QUICK_RESPONSE_CODE_LOGIN_MARK));
         return cache
                 .get(mark)
                 .switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(
@@ -60,7 +60,7 @@ public class LoginQuickResponseCodeCallbackServiceImpl implements LoginQuickResp
                         "login quick response code cache data does not exist or expire exception"
                 )))
                 .flatMap(s -> {
-                    if (LoginQuickResponseCodeCache.isEmpty(s)) {
+                    if (ReactiveLoginQuickResponseCodeCache.isEmpty(s)) {
                         return Mono.error(GlobalExceptionContext.executeQrCodeDataNullException(
                                 this.getClass(),
                                 "fun execute(ServerWebExchange exchange, LoginContext.QuickResponseCode.Request param)",

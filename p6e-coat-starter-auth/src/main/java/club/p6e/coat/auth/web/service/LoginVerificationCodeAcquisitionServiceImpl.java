@@ -3,10 +3,10 @@ package club.p6e.coat.auth.web.service;
 import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
-import club.p6e.coat.auth.web.aspect.VoucherAspect;
-import club.p6e.coat.auth.web.cache.LoginVerificationCodeCache;
-import club.p6e.coat.auth.web.event.PushVerificationCodeEvent;
-import club.p6e.coat.auth.web.repository.UserRepository;
+import club.p6e.coat.auth.aspect.BlockingVoucherAspect;
+import club.p6e.coat.auth.cache.BlockingLoginVerificationCodeCache;
+import club.p6e.coat.auth.event.PushVerificationCodeEvent;
+import club.p6e.coat.auth.repository.BlockingUserRepository;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.SpringUtil;
 import club.p6e.coat.common.utils.VerificationUtil;
@@ -41,12 +41,12 @@ public class LoginVerificationCodeAcquisitionServiceImpl implements LoginVerific
     /**
      * User Repository Object
      */
-    private final UserRepository repository;
+    private final BlockingUserRepository repository;
 
     /**
      * Login Verification Code Cache Object
      */
-    private final LoginVerificationCodeCache cache;
+    private final BlockingLoginVerificationCodeCache cache;
 
     /**
      * Constructor Initialization
@@ -55,8 +55,8 @@ public class LoginVerificationCodeAcquisitionServiceImpl implements LoginVerific
      * @param cache      Login Verification Code Cache Object
      */
     public LoginVerificationCodeAcquisitionServiceImpl(
-            UserRepository repository,
-            LoginVerificationCodeCache cache
+            BlockingUserRepository repository,
+            BlockingLoginVerificationCodeCache cache
     ) {
         this.cache = cache;
         this.repository = repository;
@@ -105,7 +105,7 @@ public class LoginVerificationCodeAcquisitionServiceImpl implements LoginVerific
         final boolean pb = VerificationUtil.validationPhone(account);
         final boolean mb = VerificationUtil.validationMailbox(account);
         if (pb || mb) {
-            httpServletRequest.setAttribute(VoucherAspect.MyHttpServletRequestWrapper.ACCOUNT, account);
+            httpServletRequest.setAttribute(BlockingVoucherAspect.MyHttpServletRequestWrapper.ACCOUNT, account);
             cache.set(account, code);
             final PushVerificationCodeEvent event = new PushVerificationCodeEvent(this, List.of(account), VERIFICATION_CODE_LOGIN_TEMPLATE, language, new HashMap<>() {{
                 put("code", code);

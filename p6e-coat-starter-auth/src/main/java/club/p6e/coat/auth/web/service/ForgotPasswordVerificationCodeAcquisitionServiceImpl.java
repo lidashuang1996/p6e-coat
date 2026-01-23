@@ -4,10 +4,10 @@ import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.context.ForgotPasswordContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
-import club.p6e.coat.auth.web.aspect.VoucherAspect;
-import club.p6e.coat.auth.web.cache.ForgotPasswordVerificationCodeCache;
-import club.p6e.coat.auth.web.event.PushVerificationCodeEvent;
-import club.p6e.coat.auth.web.repository.UserRepository;
+import club.p6e.coat.auth.aspect.BlockingVoucherAspect;
+import club.p6e.coat.auth.cache.BlockingForgotPasswordVerificationCodeCache;
+import club.p6e.coat.auth.event.PushVerificationCodeEvent;
+import club.p6e.coat.auth.repository.BlockingUserRepository;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.SpringUtil;
 import club.p6e.coat.common.utils.VerificationUtil;
@@ -43,12 +43,12 @@ public class ForgotPasswordVerificationCodeAcquisitionServiceImpl implements For
     /**
      * User Repository Object
      */
-    private final UserRepository repository;
+    private final BlockingUserRepository repository;
 
     /**
      * Forgot Password Verification Code Cache Object
      */
-    private final ForgotPasswordVerificationCodeCache cache;
+    private final BlockingForgotPasswordVerificationCodeCache cache;
 
     /**
      * Constructor Initialization
@@ -57,8 +57,8 @@ public class ForgotPasswordVerificationCodeAcquisitionServiceImpl implements For
      * @param cache      Forgot Password Verification Code Cache Object
      */
     public ForgotPasswordVerificationCodeAcquisitionServiceImpl(
-            UserRepository repository,
-            ForgotPasswordVerificationCodeCache cache
+            BlockingUserRepository repository,
+            BlockingForgotPasswordVerificationCodeCache cache
     ) {
         this.cache = cache;
         this.repository = repository;
@@ -108,7 +108,7 @@ public class ForgotPasswordVerificationCodeAcquisitionServiceImpl implements For
         final boolean pb = VerificationUtil.validationPhone(account);
         final boolean mb = VerificationUtil.validationMailbox(account);
         if (pb || mb) {
-            request.setAttribute(VoucherAspect.MyHttpServletRequestWrapper.ACCOUNT, account);
+            request.setAttribute(BlockingVoucherAspect.MyHttpServletRequestWrapper.ACCOUNT, account);
             cache.set(account, code);
             final PushVerificationCodeEvent event = new PushVerificationCodeEvent(this, List.of(account), FORGOT_PASSWORD_TEMPLATE, language, new HashMap<>() {{
                 put("code", code);

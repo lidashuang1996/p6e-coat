@@ -4,7 +4,7 @@ import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.token.ReactiveTokenValidator;
-import club.p6e.coat.auth.web.reactive.cache.LoginQuickResponseCodeCache;
+import club.p6e.coat.auth.cache.ReactiveLoginQuickResponseCodeCache;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Component;
@@ -33,7 +33,7 @@ public class LoginQuickResponseCodeServiceImpl implements LoginQuickResponseCode
     /**
      * Login Quick Response Code Cache Object
      */
-    private final LoginQuickResponseCodeCache cache;
+    private final ReactiveLoginQuickResponseCodeCache cache;
 
     /**
      * Constructor Initialization
@@ -41,7 +41,7 @@ public class LoginQuickResponseCodeServiceImpl implements LoginQuickResponseCode
      * @param validator Token Validator Object
      * @param cache     Login Quick Response Code Cache Object
      */
-    public LoginQuickResponseCodeServiceImpl(ReactiveTokenValidator validator, LoginQuickResponseCodeCache cache) {
+    public LoginQuickResponseCodeServiceImpl(ReactiveTokenValidator validator, ReactiveLoginQuickResponseCodeCache cache) {
         this.cache = cache;
         this.validator = validator;
     }
@@ -63,7 +63,7 @@ public class LoginQuickResponseCodeServiceImpl implements LoginQuickResponseCode
                                 "login quick response code cache data does not exist or expire exception"
                         )))
                         .flatMap(s -> {
-                            if (LoginQuickResponseCodeCache.isEmpty(s)) {
+                            if (ReactiveLoginQuickResponseCodeCache.isEmpty(s)) {
                                 return cache.set(content, u.id()).switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(
                                         this.getClass(),
                                         "fun execute(ServerWebExchange exchange, LoginContext.QuickResponseCodeCallback.Request param)",

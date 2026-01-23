@@ -4,7 +4,7 @@ import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.token.BlockingTokenValidator;
-import club.p6e.coat.auth.web.cache.LoginQuickResponseCodeCache;
+import club.p6e.coat.auth.cache.BlockingLoginQuickResponseCodeCache;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -33,7 +33,7 @@ public class LoginQuickResponseCodeServiceImpl implements LoginQuickResponseCode
     /**
      * Quick Response Code Login Cache Object
      */
-    private final LoginQuickResponseCodeCache cache;
+    private final BlockingLoginQuickResponseCodeCache cache;
 
     /**
      * Constructor Initialization
@@ -41,7 +41,7 @@ public class LoginQuickResponseCodeServiceImpl implements LoginQuickResponseCode
      * @param validator Token Validator Object
      * @param cache     Quick Response Code Login Cache Object
      */
-    public LoginQuickResponseCodeServiceImpl(BlockingTokenValidator validator, LoginQuickResponseCodeCache cache) {
+    public LoginQuickResponseCodeServiceImpl(BlockingTokenValidator validator, BlockingLoginQuickResponseCodeCache cache) {
         this.cache = cache;
         this.validator = validator;
     }
@@ -68,7 +68,7 @@ public class LoginQuickResponseCodeServiceImpl implements LoginQuickResponseCode
                         "fun execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, LoginContext.QuickResponseCodeCallback.Request param)",
                         "login quick response code cache data does not exist or expire exception"
                 );
-            } else if (LoginQuickResponseCodeCache.isEmpty(content)) {
+            } else if (BlockingLoginQuickResponseCodeCache.isEmpty(content)) {
                 cache.set(mark, String.valueOf(user.id()));
                 return new LoginContext.QuickResponseCode.Dto().setContent(String.valueOf(System.currentTimeMillis()));
             } else {

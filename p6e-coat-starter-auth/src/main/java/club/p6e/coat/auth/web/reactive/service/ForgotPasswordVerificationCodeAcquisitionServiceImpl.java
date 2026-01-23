@@ -3,10 +3,10 @@ package club.p6e.coat.auth.web.reactive.service;
 import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.ForgotPasswordContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
-import club.p6e.coat.auth.web.reactive.aspect.VoucherAspect;
-import club.p6e.coat.auth.web.reactive.cache.ForgotPasswordVerificationCodeCache;
+import club.p6e.coat.auth.aspect.ReactiveVoucherAspect;
+import club.p6e.coat.auth.cache.ReactiveForgotPasswordVerificationCodeCache;
 import club.p6e.coat.auth.web.reactive.event.PushVerificationCodeEvent;
-import club.p6e.coat.auth.web.reactive.repository.UserRepository;
+import club.p6e.coat.auth.repository.ReactiveUserRepository;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.SpringUtil;
 import club.p6e.coat.common.utils.VerificationUtil;
@@ -42,12 +42,12 @@ public class ForgotPasswordVerificationCodeAcquisitionServiceImpl implements For
     /**
      * Repository Object
      */
-    private final UserRepository repository;
+    private final ReactiveUserRepository repository;
 
     /**
      * Forgot Password Verification Code Cache Object
      */
-    private final ForgotPasswordVerificationCodeCache cache;
+    private final ReactiveForgotPasswordVerificationCodeCache cache;
 
     /**
      * Constructor Initialization
@@ -55,7 +55,7 @@ public class ForgotPasswordVerificationCodeAcquisitionServiceImpl implements For
      * @param repository Repository Object
      * @param cache      Forgot Password Verification Code Cache Object
      */
-    public ForgotPasswordVerificationCodeAcquisitionServiceImpl(UserRepository repository, ForgotPasswordVerificationCodeCache cache) {
+    public ForgotPasswordVerificationCodeAcquisitionServiceImpl(ReactiveUserRepository repository, ReactiveForgotPasswordVerificationCodeCache cache) {
         this.cache = cache;
         this.repository = repository;
     }
@@ -89,7 +89,7 @@ public class ForgotPasswordVerificationCodeAcquisitionServiceImpl implements For
         final boolean pb = VerificationUtil.validationPhone(account);
         final boolean mb = VerificationUtil.validationMailbox(account);
         if (pb || mb) {
-            exchange.getRequest().getAttributes().put(VoucherAspect.MyServerHttpRequestDecorator.ACCOUNT, account);
+            exchange.getRequest().getAttributes().put(ReactiveVoucherAspect.MyServerHttpRequestDecorator.ACCOUNT, account);
             return cache
                     .set(account, code)
                     .switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(

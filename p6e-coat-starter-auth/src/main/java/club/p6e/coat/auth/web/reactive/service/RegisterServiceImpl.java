@@ -6,8 +6,8 @@ import club.p6e.coat.auth.UserBuilder;
 import club.p6e.coat.auth.context.RegisterContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.password.PasswordEncryptor;
-import club.p6e.coat.auth.web.reactive.aspect.VoucherAspect;
-import club.p6e.coat.auth.web.reactive.repository.UserRepository;
+import club.p6e.coat.auth.aspect.ReactiveVoucherAspect;
+import club.p6e.coat.auth.repository.ReactiveUserRepository;
 import club.p6e.coat.common.utils.SpringUtil;
 import club.p6e.coat.common.utils.TransformationUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -34,7 +34,7 @@ public class RegisterServiceImpl implements RegisterService {
     /**
      * User Repository Object
      */
-    private final UserRepository repository;
+    private final ReactiveUserRepository repository;
 
     /**
      * Password Encryptor Object
@@ -47,7 +47,7 @@ public class RegisterServiceImpl implements RegisterService {
      * @param encryptor  Password Encryptor Object
      * @param repository User Repository Object
      */
-    public RegisterServiceImpl(PasswordEncryptor encryptor, UserRepository repository) {
+    public RegisterServiceImpl(PasswordEncryptor encryptor, ReactiveUserRepository repository) {
         this.encryptor = encryptor;
         this.repository = repository;
     }
@@ -55,7 +55,7 @@ public class RegisterServiceImpl implements RegisterService {
     @Override
     public Mono<RegisterContext.Dto> execute(ServerWebExchange exchange, RegisterContext.Request param) {
         param.setPassword(encryptor.execute(param.getPassword()));
-        final String account = TransformationUtil.objectToString(exchange.getRequest().getAttributes().get(VoucherAspect.MyServerHttpRequestDecorator.ACCOUNT));
+        final String account = TransformationUtil.objectToString(exchange.getRequest().getAttributes().get(ReactiveVoucherAspect.MyServerHttpRequestDecorator.ACCOUNT));
         return (switch (Properties.getInstance().getMode()) {
             case PHONE -> executePhoneMode(account, param);
             case MAILBOX -> executeMailboxMode(account, param);

@@ -3,9 +3,9 @@ package club.p6e.coat.auth.web.service;
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
-import club.p6e.coat.auth.web.aspect.VoucherAspect;
-import club.p6e.coat.auth.web.cache.LoginQuickResponseCodeCache;
-import club.p6e.coat.auth.web.repository.UserRepository;
+import club.p6e.coat.auth.aspect.BlockingVoucherAspect;
+import club.p6e.coat.auth.cache.BlockingLoginQuickResponseCodeCache;
+import club.p6e.coat.auth.repository.BlockingUserRepository;
 import club.p6e.coat.common.utils.TransformationUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -30,12 +30,12 @@ public class LoginQuickResponseCodeCallbackServiceImpl implements LoginQuickResp
     /**
      * User Repository Object
      */
-    private final UserRepository repository;
+    private final BlockingUserRepository repository;
 
     /**
      * Login Quick Response Code Cache Object
      */
-    private final LoginQuickResponseCodeCache cache;
+    private final BlockingLoginQuickResponseCodeCache cache;
 
     /**
      * Constructor Initialization
@@ -43,7 +43,7 @@ public class LoginQuickResponseCodeCallbackServiceImpl implements LoginQuickResp
      * @param cache      Login Quick Response Code Cache Object
      * @param repository User Repository Object
      */
-    public LoginQuickResponseCodeCallbackServiceImpl(LoginQuickResponseCodeCache cache, UserRepository repository) {
+    public LoginQuickResponseCodeCallbackServiceImpl(BlockingLoginQuickResponseCodeCache cache, BlockingUserRepository repository) {
         this.cache = cache;
         this.repository = repository;
     }
@@ -54,7 +54,7 @@ public class LoginQuickResponseCodeCallbackServiceImpl implements LoginQuickResp
             HttpServletResponse httpServletResponse,
             LoginContext.QuickResponseCodeCallback.Request param
     ) {
-        final String mark = TransformationUtil.objectToString(httpServletRequest.getAttribute(VoucherAspect.MyHttpServletRequestWrapper.QUICK_RESPONSE_CODE_LOGIN_MARK));
+        final String mark = TransformationUtil.objectToString(httpServletRequest.getAttribute(BlockingVoucherAspect.MyHttpServletRequestWrapper.QUICK_RESPONSE_CODE_LOGIN_MARK));
         final String content = cache.get(mark);
         if (content == null) {
             throw GlobalExceptionContext.executeCacheException(
@@ -62,7 +62,7 @@ public class LoginQuickResponseCodeCallbackServiceImpl implements LoginQuickResp
                     "fun execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, LoginContext.QuickResponseCode.Request param)",
                     "login quick response code cache data does not exist or expire exception"
             );
-        } else if (LoginQuickResponseCodeCache.isEmpty(content)) {
+        } else if (BlockingLoginQuickResponseCodeCache.isEmpty(content)) {
             throw GlobalExceptionContext.executeQrCodeDataNullException(
                     this.getClass(),
                     "fun execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, LoginContext.QuickResponseCode.Request param)",

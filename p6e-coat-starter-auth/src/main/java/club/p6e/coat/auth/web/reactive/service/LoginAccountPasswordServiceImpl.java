@@ -5,9 +5,9 @@ import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.password.PasswordEncryptor;
-import club.p6e.coat.auth.web.reactive.aspect.VoucherAspect;
-import club.p6e.coat.auth.web.reactive.cache.PasswordSignatureCache;
-import club.p6e.coat.auth.web.reactive.repository.UserRepository;
+import club.p6e.coat.auth.aspect.ReactiveVoucherAspect;
+import club.p6e.coat.auth.cache.ReactivePasswordSignatureCache;
+import club.p6e.coat.auth.repository.ReactiveUserRepository;
 import club.p6e.coat.common.utils.JsonUtil;
 import club.p6e.coat.common.utils.RsaUtil;
 import club.p6e.coat.common.utils.SpringUtil;
@@ -38,7 +38,7 @@ public class LoginAccountPasswordServiceImpl implements LoginAccountPasswordServ
     /**
      * Repository Object
      */
-    private final UserRepository repository;
+    private final ReactiveUserRepository repository;
 
     /**
      * Password Encryptor Object
@@ -51,7 +51,7 @@ public class LoginAccountPasswordServiceImpl implements LoginAccountPasswordServ
      * @param encryptor  Password Encryptor Object
      * @param repository User Repository Object
      */
-    public LoginAccountPasswordServiceImpl(PasswordEncryptor encryptor, UserRepository repository) {
+    public LoginAccountPasswordServiceImpl(PasswordEncryptor encryptor, ReactiveUserRepository repository) {
         this.encryptor = encryptor;
         this.repository = repository;
     }
@@ -82,18 +82,18 @@ public class LoginAccountPasswordServiceImpl implements LoginAccountPasswordServ
         final boolean enableTransmissionEncryption = Properties.getInstance()
                 .getLogin().getAccountPassword().isEnableTransmissionEncryption();
         if (enableTransmissionEncryption) {
-            final PasswordSignatureCache cache;
-            if (SpringUtil.exist(PasswordSignatureCache.class)) {
-                cache = SpringUtil.getBean(PasswordSignatureCache.class);
+            final ReactivePasswordSignatureCache cache;
+            if (SpringUtil.exist(ReactivePasswordSignatureCache.class)) {
+                cache = SpringUtil.getBean(ReactivePasswordSignatureCache.class);
             } else {
                 return Mono.error(GlobalExceptionContext.exceptionBeanException(
                         this.getClass(),
                         "fun executePasswordTransmissionDecryption(ServerWebExchange exchange, String password)",
-                        "login account password password transmission decryption cache handle bean[" + PasswordSignatureCache.class + "] not exist exception"
+                        "login account password password transmission decryption cache handle bean[" + ReactivePasswordSignatureCache.class + "] not exist exception"
                 ));
             }
             final String mark = TransformationUtil.objectToString(exchange.getRequest()
-                    .getAttributes().get(VoucherAspect.MyServerHttpRequestDecorator.ACCOUNT_PASSWORD_SIGNATURE_MARK));
+                    .getAttributes().get(ReactiveVoucherAspect.MyServerHttpRequestDecorator.ACCOUNT_PASSWORD_SIGNATURE_MARK));
             return cache.get(mark)
                     .switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(
                             this.getClass(),

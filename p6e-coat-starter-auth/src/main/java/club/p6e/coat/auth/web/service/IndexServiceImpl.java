@@ -1,7 +1,7 @@
 package club.p6e.coat.auth.web.service;
 
 import club.p6e.coat.auth.Properties;
-import club.p6e.coat.auth.web.cache.VoucherCache;
+import club.p6e.coat.auth.cache.BlockingVoucherCache;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.TemplateParser;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 
@@ -30,14 +29,14 @@ public class IndexServiceImpl implements IndexService {
     /**
      * Voucher Cache Object
      */
-    private final VoucherCache cache;
+    private final BlockingVoucherCache cache;
 
     /**
      * Constructor Initialization
      *
      * @param cache Voucher Cache Object
      */
-    public IndexServiceImpl(VoucherCache cache) {
+    public IndexServiceImpl(BlockingVoucherCache cache) {
         this.cache = cache;
     }
 

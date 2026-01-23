@@ -3,10 +3,10 @@ package club.p6e.coat.auth.web.service;
 import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.RegisterContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
-import club.p6e.coat.auth.web.event.PushVerificationCodeEvent;
-import club.p6e.coat.auth.web.aspect.VoucherAspect;
-import club.p6e.coat.auth.web.cache.RegisterVerificationCodeCache;
-import club.p6e.coat.auth.web.repository.UserRepository;
+import club.p6e.coat.auth.event.PushVerificationCodeEvent;
+import club.p6e.coat.auth.aspect.BlockingVoucherAspect;
+import club.p6e.coat.auth.cache.BlockingRegisterVerificationCodeCache;
+import club.p6e.coat.auth.repository.BlockingUserRepository;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.SpringUtil;
 import club.p6e.coat.common.utils.VerificationUtil;
@@ -42,12 +42,12 @@ public class RegisterVerificationCodeAcquisitionServiceImpl implements RegisterV
     /**
      * User Repository Object
      */
-    private final UserRepository repository;
+    private final BlockingUserRepository repository;
 
     /**
      * Verification Code Register Cache Object
      */
-    private final RegisterVerificationCodeCache cache;
+    private final BlockingRegisterVerificationCodeCache cache;
 
     /**
      * Constructor Initialization
@@ -55,7 +55,7 @@ public class RegisterVerificationCodeAcquisitionServiceImpl implements RegisterV
      * @param repository User Repository Object
      * @param cache      Verification Code Login Cache Object
      */
-    public RegisterVerificationCodeAcquisitionServiceImpl(UserRepository repository, RegisterVerificationCodeCache cache) {
+    public RegisterVerificationCodeAcquisitionServiceImpl(BlockingUserRepository repository, BlockingRegisterVerificationCodeCache cache) {
         this.cache = cache;
         this.repository = repository;
     }
@@ -104,7 +104,7 @@ public class RegisterVerificationCodeAcquisitionServiceImpl implements RegisterV
         if (pb || mb) {
             final String code = GeneratorUtil.random();
             cache.set(account, code);
-            request.setAttribute(VoucherAspect.MyHttpServletRequestWrapper.ACCOUNT, account);
+            request.setAttribute(BlockingVoucherAspect.MyHttpServletRequestWrapper.ACCOUNT, account);
             final PushVerificationCodeEvent event = new PushVerificationCodeEvent(this, List.of(account), REGISTER_TEMPLATE, language, new HashMap<>() {{
                 put("code", code);
             }});

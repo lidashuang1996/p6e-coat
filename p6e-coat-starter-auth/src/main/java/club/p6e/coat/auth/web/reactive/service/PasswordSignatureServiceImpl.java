@@ -2,8 +2,8 @@ package club.p6e.coat.auth.web.reactive.service;
 
 import club.p6e.coat.auth.context.PasswordSignatureContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
-import club.p6e.coat.auth.web.reactive.aspect.VoucherAspect;
-import club.p6e.coat.auth.web.reactive.cache.PasswordSignatureCache;
+import club.p6e.coat.auth.aspect.ReactiveVoucherAspect;
+import club.p6e.coat.auth.cache.ReactivePasswordSignatureCache;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.JsonUtil;
 import club.p6e.coat.common.utils.RsaUtil;
@@ -32,14 +32,14 @@ public class PasswordSignatureServiceImpl implements PasswordSignatureService {
     /**
      * Password Signature Cache Object
      */
-    private final PasswordSignatureCache cache;
+    private final ReactivePasswordSignatureCache cache;
 
     /**
      * Constructor Initialization
      *
      * @param cache Password Signature Cache Object
      */
-    public PasswordSignatureServiceImpl(PasswordSignatureCache cache) {
+    public PasswordSignatureServiceImpl(ReactivePasswordSignatureCache cache) {
         this.cache = cache;
     }
 
@@ -61,7 +61,7 @@ public class PasswordSignatureServiceImpl implements PasswordSignatureService {
         final String finalPublicKey = publicKey;
         final String finalPrivateKey = privateKey;
         final String mark = GeneratorUtil.uuid() + GeneratorUtil.random();
-        exchange.getRequest().getAttributes().put(VoucherAspect.MyServerHttpRequestDecorator.ACCOUNT_PASSWORD_SIGNATURE_MARK, mark);
+        exchange.getRequest().getAttributes().put(ReactiveVoucherAspect.MyServerHttpRequestDecorator.ACCOUNT_PASSWORD_SIGNATURE_MARK, mark);
         final String content = JsonUtil.toJson(new HashMap<>() {{
             put("mark", mark);
             put("public", finalPublicKey);

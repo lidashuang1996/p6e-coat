@@ -1,8 +1,8 @@
 package club.p6e.coat.auth.web.service;
 
 import club.p6e.coat.auth.context.LoginContext;
-import club.p6e.coat.auth.web.aspect.VoucherAspect;
-import club.p6e.coat.auth.web.cache.LoginQuickResponseCodeCache;
+import club.p6e.coat.auth.aspect.BlockingVoucherAspect;
+import club.p6e.coat.auth.cache.BlockingLoginQuickResponseCodeCache;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,14 +27,14 @@ public class LoginQuickResponseCodeAcquisitionServiceImpl implements LoginQuickR
     /**
      * Login Quick Response Code Cache Object
      */
-    private final LoginQuickResponseCodeCache cache;
+    private final BlockingLoginQuickResponseCodeCache cache;
 
     /**
      * Constructor Initialization
      *
      * @param cache Login Quick Response Code Cache Object
      */
-    public LoginQuickResponseCodeAcquisitionServiceImpl(LoginQuickResponseCodeCache cache) {
+    public LoginQuickResponseCodeAcquisitionServiceImpl(BlockingLoginQuickResponseCodeCache cache) {
         this.cache = cache;
     }
 
@@ -45,8 +45,8 @@ public class LoginQuickResponseCodeAcquisitionServiceImpl implements LoginQuickR
             LoginContext.QuickResponseCodeAcquisition.Request param
     ) {
         final String code = GeneratorUtil.uuid() + GeneratorUtil.random(8, true, false);
-        httpServletRequest.setAttribute(VoucherAspect.MyHttpServletRequestWrapper.QUICK_RESPONSE_CODE_LOGIN_MARK, code);
-        cache.set(code, LoginQuickResponseCodeCache.EMPTY_CONTENT);
+        httpServletRequest.setAttribute(BlockingVoucherAspect.MyHttpServletRequestWrapper.QUICK_RESPONSE_CODE_LOGIN_MARK, code);
+        cache.set(code, BlockingLoginQuickResponseCodeCache.EMPTY_CONTENT);
         return new LoginContext.QuickResponseCodeAcquisition.Dto().setContent(code);
     }
 

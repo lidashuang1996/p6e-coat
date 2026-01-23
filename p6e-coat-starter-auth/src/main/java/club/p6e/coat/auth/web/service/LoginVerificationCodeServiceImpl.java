@@ -4,9 +4,9 @@ import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
-import club.p6e.coat.auth.web.aspect.VoucherAspect;
-import club.p6e.coat.auth.web.cache.LoginVerificationCodeCache;
-import club.p6e.coat.auth.web.repository.UserRepository;
+import club.p6e.coat.auth.aspect.BlockingVoucherAspect;
+import club.p6e.coat.auth.cache.BlockingLoginVerificationCodeCache;
+import club.p6e.coat.auth.repository.BlockingUserRepository;
 import club.p6e.coat.common.utils.TransformationUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -33,12 +33,12 @@ public class LoginVerificationCodeServiceImpl implements LoginVerificationCodeSe
     /**
      * User Repository Object
      */
-    private final UserRepository repository;
+    private final BlockingUserRepository repository;
 
     /**
      * Login Verification Code Cache Object
      */
-    private final LoginVerificationCodeCache cache;
+    private final BlockingLoginVerificationCodeCache cache;
 
     /**
      * Constructor Initialization
@@ -46,7 +46,7 @@ public class LoginVerificationCodeServiceImpl implements LoginVerificationCodeSe
      * @param cache      Login Verification Code Cache Object
      * @param repository User Repository Object
      */
-    public LoginVerificationCodeServiceImpl(UserRepository repository, LoginVerificationCodeCache cache) {
+    public LoginVerificationCodeServiceImpl(BlockingUserRepository repository, BlockingLoginVerificationCodeCache cache) {
         this.cache = cache;
         this.repository = repository;
     }
@@ -73,7 +73,7 @@ public class LoginVerificationCodeServiceImpl implements LoginVerificationCodeSe
             LoginContext.VerificationCode.Request param
     ) {
         final String code = param.getCode();
-        final String account = TransformationUtil.objectToString(httpServletRequest.getAttribute(VoucherAspect.MyHttpServletRequestWrapper.ACCOUNT));
+        final String account = TransformationUtil.objectToString(httpServletRequest.getAttribute(BlockingVoucherAspect.MyHttpServletRequestWrapper.ACCOUNT));
         final List<String> codes = cache.get(account);
         if (codes == null || codes.isEmpty()) {
             throw GlobalExceptionContext.executeCacheException(

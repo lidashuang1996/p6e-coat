@@ -5,9 +5,9 @@ import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.password.PasswordEncryptor;
-import club.p6e.coat.auth.web.aspect.VoucherAspect;
-import club.p6e.coat.auth.web.cache.PasswordSignatureCache;
-import club.p6e.coat.auth.web.repository.UserRepository;
+import club.p6e.coat.auth.aspect.BlockingVoucherAspect;
+import club.p6e.coat.auth.cache.BlockingPasswordSignatureCache;
+import club.p6e.coat.auth.repository.BlockingUserRepository;
 import club.p6e.coat.common.utils.JsonUtil;
 import club.p6e.coat.common.utils.RsaUtil;
 import club.p6e.coat.common.utils.SpringUtil;
@@ -37,7 +37,7 @@ public class LoginAccountPasswordServiceImpl implements LoginAccountPasswordServ
     /**
      * User Repository Object
      */
-    private final UserRepository repository;
+    private final BlockingUserRepository repository;
 
     /**
      * Password Encryptor Object
@@ -50,7 +50,7 @@ public class LoginAccountPasswordServiceImpl implements LoginAccountPasswordServ
      * @param encryptor  Password Encryptor Object
      * @param repository User Repository Object
      */
-    public LoginAccountPasswordServiceImpl(PasswordEncryptor encryptor, UserRepository repository) {
+    public LoginAccountPasswordServiceImpl(PasswordEncryptor encryptor, BlockingUserRepository repository) {
         this.encryptor = encryptor;
         this.repository = repository;
     }
@@ -89,15 +89,15 @@ public class LoginAccountPasswordServiceImpl implements LoginAccountPasswordServ
     private String executePasswordTransmissionDecryption(HttpServletRequest request, String password) {
         final boolean enableTransmissionEncryption = Properties.getInstance().getLogin().getAccountPassword().isEnableTransmissionEncryption();
         if (enableTransmissionEncryption) {
-            final PasswordSignatureCache cache = SpringUtil.getBean(PasswordSignatureCache.class);
+            final BlockingPasswordSignatureCache cache = SpringUtil.getBean(BlockingPasswordSignatureCache.class);
             if (cache == null) {
                 throw GlobalExceptionContext.exceptionBeanException(
                         this.getClass(),
                         "fun executePasswordTransmissionDecryption(HttpServletRequest request, String password)",
-                        "login account password password transmission decryption cache handle bean[" + PasswordSignatureCache.class + "] not exist exception"
+                        "login account password password transmission decryption cache handle bean[" + BlockingPasswordSignatureCache.class + "] not exist exception"
                 );
             }
-            final String mark = TransformationUtil.objectToString(request.getAttribute(VoucherAspect.MyHttpServletRequestWrapper.ACCOUNT_PASSWORD_SIGNATURE_MARK));
+            final String mark = TransformationUtil.objectToString(request.getAttribute(BlockingVoucherAspect.MyHttpServletRequestWrapper.ACCOUNT_PASSWORD_SIGNATURE_MARK));
             try {
                 final String content = cache.get(mark);
                 if (content == null || content.isEmpty()) {
