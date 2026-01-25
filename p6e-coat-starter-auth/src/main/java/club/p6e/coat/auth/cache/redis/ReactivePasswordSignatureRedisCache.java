@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 import java.time.Duration;
 
 /**
- * Password Signature Redis Cache
+ * Reactive Password Signature Redis Cache
  *
  * @author lidashuang
  * @version 1.0
@@ -20,7 +20,7 @@ import java.time.Duration;
         ignored = ReactivePasswordSignatureRedisCache.class
 )
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
-@Component("club.p6e.coat.auth.web.reactive.cache.redis.PasswordSignatureRedisCache")
+@Component("club.p6e.coat.auth.cache.redis.PasswordSignatureRedisCache")
 public class ReactivePasswordSignatureRedisCache implements ReactivePasswordSignatureCache {
 
     /**

@@ -18,7 +18,7 @@ import java.util.Map;
  * @version 1.0
  */
 @ConditionalOnMissingBean(BlockingCodeRedisCache.class)
-@Component("club.p6e.coat.auth.web.cache.redis.BlockingCodeRedisCache")
+@Component("club.p6e.coat.auth.cache.redis.BlockingCodeRedisCache")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class BlockingCodeRedisCache {
 

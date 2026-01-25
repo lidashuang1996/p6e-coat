@@ -19,7 +19,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Voucher Aspect
+ * Blocking Voucher Aspect
  *
  * @author lidashuang
  * @version 1.0

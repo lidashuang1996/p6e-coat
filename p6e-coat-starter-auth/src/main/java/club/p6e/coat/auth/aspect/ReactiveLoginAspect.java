@@ -16,7 +16,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * Login Aspect
+ * Reactive Login Aspect
  *
  * @author lidashuang
  * @version 1.0
@@ -24,7 +24,7 @@ import reactor.core.publisher.Mono;
 @Aspect
 @Order(Integer.MIN_VALUE + 20000)
 @ConditionalOnMissingBean(ReactiveLoginAspect.class)
-@Component("club.p6e.coat.auth.web.reactive.aspect.LoginAspect")
+@Component("club.p6e.coat.auth.aspect.ReactiveLoginAspect")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactiveLoginAspect {
 

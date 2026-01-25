@@ -18,7 +18,7 @@ import java.time.Duration;
         value = BlockingPasswordSignatureCache.class,
         ignored = BlockingPasswordSignatureRedisCache.class
 )
-@Component("club.p6e.coat.auth.web.cache.redis.BlockingPasswordSignatureRedisCache")
+@Component("club.p6e.coat.auth.cache.redis.BlockingPasswordSignatureRedisCache")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class BlockingPasswordSignatureRedisCache implements BlockingPasswordSignatureCache {
 

@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 /**
- * Login Verification Code Cache Redis Cache
+ * Reactive Login Verification Code Cache Redis Cache
  *
  * @author lidashuang
  * @version 1.0
@@ -19,7 +19,7 @@ import java.util.List;
         ignored = ReactiveLoginVerificationCodeCacheRedisCache.class
 )
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
-@Component("club.p6e.coat.auth.web.reactive.cache.redis.LoginVerificationCodeCacheRedisCache")
+@Component("club.p6e.coat.auth.cache.redis.LoginVerificationCodeCacheRedisCache")
 public class ReactiveLoginVerificationCodeCacheRedisCache implements ReactiveLoginVerificationCodeCache {
 
     /**
@@ -43,7 +43,7 @@ public class ReactiveLoginVerificationCodeCacheRedisCache implements ReactiveLog
 
     @Override
     public Mono<List<String>> get(String key) {
-        return cache.getVerificationCode(CACHE_PREFIX + key, EXPIRATION_TIME);
+        return cache.getVerificationCode(CACHE_PREFIX + key);
     }
 
     @Override

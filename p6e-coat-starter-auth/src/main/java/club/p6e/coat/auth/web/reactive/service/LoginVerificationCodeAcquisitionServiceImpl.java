@@ -5,7 +5,7 @@ import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.aspect.BlockingVoucherAspect;
 import club.p6e.coat.auth.cache.ReactiveLoginVerificationCodeCache;
-import club.p6e.coat.auth.web.reactive.event.PushVerificationCodeEvent;
+import club.p6e.coat.auth.event.ReactivePushVerificationCodeEvent;
 import club.p6e.coat.auth.repository.ReactiveUserRepository;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.SpringUtil;
@@ -99,11 +99,11 @@ public class LoginVerificationCodeAcquisitionServiceImpl implements LoginVerific
                             "login verification code cache write exception"
                     )))
                     .flatMap(s -> {
-                        final PushVerificationCodeEvent event = new PushVerificationCodeEvent(this, List.of(account), VERIFICATION_CODE_LOGIN_TEMPLATE, language, new HashMap<>() {{
+                        final ReactivePushVerificationCodeEvent event = new ReactivePushVerificationCodeEvent(this, List.of(account), VERIFICATION_CODE_LOGIN_TEMPLATE, language, new HashMap<>() {{
                             put("code", code);
                         }});
                         SpringUtil.getBean(ApplicationContext.class).publishEvent(event);
-                        final club.p6e.coat.auth.web.reactive.event.PushVerificationCodeEvent.Callback callback = event.getCallback();
+                        final ReactivePushVerificationCodeEvent.Callback callback = event.getCallback();
                         if (callback == null) {
                             return Mono.just(new LoginContext.VerificationCodeAcquisition.Dto().setAccount(account));
                         } else {

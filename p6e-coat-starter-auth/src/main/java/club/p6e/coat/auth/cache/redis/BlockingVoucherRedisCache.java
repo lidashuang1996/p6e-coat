@@ -21,7 +21,7 @@ import java.util.Map;
         value = BlockingVoucherCache.class,
         ignored = BlockingVoucherRedisCache.class
 )
-@Component("club.p6e.coat.auth.web.cache.redis.BlockingVoucherRedisCache")
+@Component("club.p6e.coat.auth.cache.redis.BlockingVoucherRedisCache")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class BlockingVoucherRedisCache implements BlockingVoucherCache {
 

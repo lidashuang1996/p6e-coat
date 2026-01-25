@@ -18,7 +18,7 @@ import java.time.Duration;
         value = BlockingLoginQuickResponseCodeCache.class,
         ignored = BlockingLoginQuickResponseCodeRedisCache.class
 )
-@Component("club.p6e.coat.auth.web.cache.redis.BlockingLoginQuickResponseCodeRedisCache")
+@Component("club.p6e.coat.auth.cache.redis.BlockingLoginQuickResponseCodeRedisCache")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class BlockingLoginQuickResponseCodeRedisCache implements BlockingLoginQuickResponseCodeCache {
 

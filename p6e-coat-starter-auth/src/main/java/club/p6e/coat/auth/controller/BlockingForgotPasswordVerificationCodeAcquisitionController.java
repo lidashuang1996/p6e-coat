@@ -4,7 +4,7 @@ import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.ForgotPasswordContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.validator.BlockingRequestParameterValidator;
-import club.p6e.coat.auth.web.service.ForgotPasswordVerificationCodeAcquisitionService;
+import club.p6e.coat.auth.service.BlockingForgotPasswordVerificationCodeAcquisitionService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -30,14 +30,14 @@ public class BlockingForgotPasswordVerificationCodeAcquisitionController {
     /**
      * Forgot Password Verification Code Acquisition Service Object
      */
-    private final ForgotPasswordVerificationCodeAcquisitionService service;
+    private final BlockingForgotPasswordVerificationCodeAcquisitionService service;
 
     /**
      * Constructor Initialization
      *
      * @param service Forgot Password Verification Code Acquisition Service Object
      */
-    public BlockingForgotPasswordVerificationCodeAcquisitionController(ForgotPasswordVerificationCodeAcquisitionService service) {
+    public BlockingForgotPasswordVerificationCodeAcquisitionController(BlockingForgotPasswordVerificationCodeAcquisitionService service) {
         this.service = service;
     }
 

@@ -17,7 +17,7 @@ import java.util.List;
         value = BlockingRegisterVerificationCodeCache.class,
         ignored = BlockingRegisterVerificationCodeRedisCache.class
 )
-@Component("club.p6e.coat.auth.web.cache.redis.BlockingRegisterVerificationCodeRedisCache")
+@Component("club.p6e.coat.auth.cache.redis.BlockingRegisterVerificationCodeRedisCache")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class BlockingRegisterVerificationCodeRedisCache implements BlockingRegisterVerificationCodeCache {
 

@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 import java.time.Duration;
 
 /**
- * Login Quick Response Code Redis Cache
+ * Reactive Login Quick Response Code Redis Cache
  *
  * @author lidashuang
  * @version 1.0
@@ -20,7 +20,7 @@ import java.time.Duration;
         ignored = ReactiveLoginQuickResponseCodeRedisCache.class
 )
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
-@Component("club.p6e.coat.auth.web.reactive.cache.redis.LoginQuickResponseCodeRedisCache")
+@Component("club.p6e.coat.auth.cache.redis.LoginQuickResponseCodeRedisCache")
 public class ReactiveLoginQuickResponseCodeRedisCache implements ReactiveLoginQuickResponseCodeCache {
 
     /**

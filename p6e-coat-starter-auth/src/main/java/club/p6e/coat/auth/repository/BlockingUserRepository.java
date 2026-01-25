@@ -65,6 +65,7 @@ public interface BlockingUserRepository {
      * @param password Password
      * @return User Object
      */
+    @SuppressWarnings("ALL")
     User updatePassword(Integer uid, String password);
 
 }

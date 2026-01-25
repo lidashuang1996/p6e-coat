@@ -1,8 +1,9 @@
 package club.p6e.coat.auth.controller;
 
 import club.p6e.coat.auth.Properties;
+import club.p6e.coat.auth.context.IndexContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
-import club.p6e.coat.auth.web.service.IndexService;
+import club.p6e.coat.auth.service.BlockingIndexService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -24,14 +25,14 @@ public class BlockingIndexController {
     /**
      * Index Service Object
      */
-    private final IndexService service;
+    private final BlockingIndexService service;
 
     /**
      * Constructor Initialization
      *
      * @param service Index Service Object
      */
-    public BlockingIndexController(IndexService service) {
+    public BlockingIndexController(BlockingIndexService service) {
         this.service = service;
     }
 
@@ -60,14 +61,10 @@ public class BlockingIndexController {
     public Object def(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         final Properties properties = Properties.getInstance();
         if (properties.isEnable()) {
-            final String[] r = service.execute(httpServletRequest, httpServletResponse);
-            if (r.length > 1) {
-                httpServletResponse.setContentType(r[0]);
-                httpServletResponse.setCharacterEncoding("UTF-8");
-                return r[1];
-            } else {
-                return "";
-            }
+            final IndexContext.Dto result = service.execute(httpServletRequest, httpServletResponse);
+            httpServletResponse.setContentType(result.getType());
+            httpServletResponse.setCharacterEncoding("UTF-8");
+            return result.getContent();
         } else {
             throw GlobalExceptionContext.exceptionServiceNoEnabledException(
                     this.getClass(),

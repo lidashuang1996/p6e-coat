@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Voucher Redis Cache
+ * Reactive Voucher Redis Cache
  *
  * @author lidashuang
  * @version 1.0
@@ -23,7 +23,7 @@ import java.util.Map;
         ignored = ReactiveVoucherRedisCache.class
 )
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
-@Component("club.p6e.coat.auth.web.reactive.cache.redis.VoucherRedisCache")
+@Component("club.p6e.coat.auth.cache.redis.VoucherRedisCache")
 public class ReactiveVoucherRedisCache implements ReactiveVoucherCache {
 
     /**

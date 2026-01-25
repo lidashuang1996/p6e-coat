@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Code Redis Cache
+ * Reactive Code Redis Cache
  *
  * @author lidashuang
  * @version 1.0
@@ -23,7 +23,7 @@ import java.util.Map;
         value = ReactiveCodeRedisCache.class,
         ignored = ReactiveCodeRedisCache.class
 )
-@Component("club.p6e.coat.auth.web.reactive.cache.redis.CodeRedisCache")
+@Component("club.p6e.coat.auth.cache.redis.ReactiveCodeRedisCache")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactiveCodeRedisCache {
 
@@ -54,11 +54,10 @@ public class ReactiveCodeRedisCache {
     /**
      * Get Verification Code
      *
-     * @param key        Key
-     * @param expiration Expiration Time
+     * @param key Key
      * @return Verification Code List
      */
-    public Mono<List<String>> getVerificationCode(String key, long expiration) {
+    public Mono<List<String>> getVerificationCode(String key) {
         final long now = System.currentTimeMillis();
         return template
                 .opsForHash()
@@ -80,10 +79,13 @@ public class ReactiveCodeRedisCache {
                     return map;
                 })
                 .flatMap(m -> template
-                        .delete(key)
-                        .flatMap(l -> template.opsForHash().putAll(key, m))
-                        .flatMap(b -> template.expire(key, Duration.of(expiration, ChronoUnit.SECONDS)))
-                        .map(b -> new ArrayList<>(m.keySet()))
+                        .getExpire(key)
+                        .flatMap(d -> template
+                                .delete(key)
+                                .flatMap(l -> template.opsForHash().putAll(key, m))
+                                .flatMap(b -> template.expire(key, d))
+                                .map(b -> new ArrayList<>(m.keySet()))
+                        )
                 );
     }
 
