@@ -4,7 +4,7 @@ import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.validator.BlockingRequestParameterValidator;
-import club.p6e.coat.auth.service.LoginVerificationCodeService;
+import club.p6e.coat.auth.service.BlockingLoginVerificationCodeService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -27,14 +27,14 @@ public class LoginVerificationCodeController {
     /**
      * Login Verification Code Service Object
      */
-    private final LoginVerificationCodeService service;
+    private final BlockingLoginVerificationCodeService service;
 
     /**
      * Constructor Initialization
      *
      * @param service Login Verification Code Service Object
      */
-    public LoginVerificationCodeController(LoginVerificationCodeService service) {
+    public LoginVerificationCodeController(BlockingLoginVerificationCodeService service) {
         this.service = service;
     }
 

@@ -2,10 +2,10 @@ package club.p6e.coat.auth.service;
 
 import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.User;
-import club.p6e.coat.auth.context.ForgotPasswordContext;
-import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.aspect.BlockingVoucherAspect;
 import club.p6e.coat.auth.cache.BlockingForgotPasswordVerificationCodeCache;
+import club.p6e.coat.auth.context.ForgotPasswordContext;
+import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.event.BlockingPushVerificationCodeEvent;
 import club.p6e.coat.auth.repository.BlockingUserRepository;
 import club.p6e.coat.common.utils.GeneratorUtil;
@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Forgot Password Verification Code Acquisition Service Impl
+ * Blocking Forgot Password Verification Code Acquisition Service Impl
  *
  * @author lidashuang
  * @version 1.0
@@ -31,8 +31,8 @@ import java.util.List;
         value = BlockingForgotPasswordVerificationCodeAcquisitionService.class,
         ignored = BlockingForgotPasswordVerificationCodeAcquisitionServiceImpl.class
 )
+@Component("club.p6e.coat.auth.service.BlockingForgotPasswordVerificationCodeAcquisitionServiceImpl")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
-@Component("club.p6e.coat.auth.service.ForgotPasswordVerificationCodeAcquisitionServiceImpl")
 public class BlockingForgotPasswordVerificationCodeAcquisitionServiceImpl implements BlockingForgotPasswordVerificationCodeAcquisitionService {
 
     /**
@@ -41,20 +41,20 @@ public class BlockingForgotPasswordVerificationCodeAcquisitionServiceImpl implem
     private static final String FORGOT_PASSWORD_TEMPLATE = "FORGOT_PASSWORD_TEMPLATE";
 
     /**
-     * User Repository Object
+     * Blocking User Repository Object
      */
     private final BlockingUserRepository repository;
 
     /**
-     * Forgot Password Verification Code Cache Object
+     * Blocking Forgot Password Verification Code Cache Object
      */
     private final BlockingForgotPasswordVerificationCodeCache cache;
 
     /**
      * Constructor Initialization
      *
-     * @param repository User Repository Object
-     * @param cache      Forgot Password Verification Code Cache Object
+     * @param repository Blocking User Repository Object
+     * @param cache      Blocking Forgot Password Verification Code Cache Object
      */
     public BlockingForgotPasswordVerificationCodeAcquisitionServiceImpl(
             BlockingUserRepository repository,

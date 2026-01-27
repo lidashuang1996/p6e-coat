@@ -68,8 +68,8 @@ public class ReactiveVoucherRedisCache implements ReactiveVoucherCache {
         return template
                 .opsForHash()
                 .putAll(nk, data)
-                .flatMap(b -> b ? template.expire(nk, Duration.of(
-                        EXPIRATION_TIME, ChronoUnit.SECONDS)).map(bb -> nk) : Mono.empty());
+                .flatMap(b -> b ? template.expire(nk,
+                        Duration.of(EXPIRATION_TIME, ChronoUnit.SECONDS)).map(bb -> nk) : Mono.empty());
     }
 
 }

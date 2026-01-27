@@ -4,7 +4,7 @@ import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.validator.BlockingRequestParameterValidator;
-import club.p6e.coat.auth.service.LoginVerificationCodeAcquisitionService;
+import club.p6e.coat.auth.service.BlockingLoginVerificationCodeAcquisitionService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -26,14 +26,14 @@ public class LoginVerificationCodeAcquisitionController {
     /**
      * Login Verification Code Acquisition Service Object
      */
-    private final LoginVerificationCodeAcquisitionService service;
+    private final BlockingLoginVerificationCodeAcquisitionService service;
 
     /**
      * Constructor Initialization
      *
      * @param service Login Verification Code Acquisition Service Object
      */
-    public LoginVerificationCodeAcquisitionController(LoginVerificationCodeAcquisitionService service) {
+    public LoginVerificationCodeAcquisitionController(BlockingLoginVerificationCodeAcquisitionService service) {
         this.service = service;
     }
 

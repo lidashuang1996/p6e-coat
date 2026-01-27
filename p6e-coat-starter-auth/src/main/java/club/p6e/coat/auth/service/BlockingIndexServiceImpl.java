@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 
 /**
- * Index Service Impl
+ * Blocking Index Service Impl
  *
  * @author lidashuang
  * @version 1.0
@@ -23,12 +23,12 @@ import java.util.HashMap;
         value = BlockingIndexService.class,
         ignored = BlockingIndexServiceImpl.class
 )
-@Component("club.p6e.coat.auth.service.IndexServiceImpl")
+@Component("club.p6e.coat.auth.service.BlockingIndexServiceImpl")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class BlockingIndexServiceImpl implements BlockingIndexService {
 
     /**
-     * Voucher Cache Object
+     * Blocking Voucher Cache Object
      */
     private final BlockingVoucherCache cache;
 

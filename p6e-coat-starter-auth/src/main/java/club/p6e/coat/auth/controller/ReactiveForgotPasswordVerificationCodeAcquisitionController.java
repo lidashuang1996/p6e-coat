@@ -3,7 +3,7 @@ package club.p6e.coat.auth.controller;
 import club.p6e.coat.auth.context.ForgotPasswordContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.validator.ReactiveRequestParameterValidator;
-import club.p6e.coat.auth.web.reactive.service.ForgotPasswordVerificationCodeAcquisitionService;
+import club.p6e.coat.auth.service.ReactiveForgotPasswordVerificationCodeAcquisitionService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,27 +12,27 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * Forgot Password Verification Code Acquisition Controller
+ * Reactive Forgot Password Verification Code Acquisition Controller
  *
  * @author lidashuang
  * @version 1.0
  */
 @ConditionalOnMissingBean(ReactiveForgotPasswordVerificationCodeAcquisitionController.class)
-@RestController("club.p6e.coat.auth.web.reactive.controller.ForgotPasswordVerificationCodeAcquisitionController")
+@RestController("club.p6e.coat.auth.controller.ReactiveForgotPasswordVerificationCodeAcquisitionController")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactiveForgotPasswordVerificationCodeAcquisitionController {
 
     /**
-     * Forgot Password Verification Code Acquisition Service Object
+     * Reactive Forgot Password Verification Code Acquisition Service Object
      */
-    private final ForgotPasswordVerificationCodeAcquisitionService service;
+    private final ReactiveForgotPasswordVerificationCodeAcquisitionService service;
 
     /**
      * Constructor Initialization
      *
-     * @param service Forgot Password Verification Code Acquisition Service Object
+     * @param service Reactive Forgot Password Verification Code Acquisition Service Object
      */
-    public ReactiveForgotPasswordVerificationCodeAcquisitionController(ForgotPasswordVerificationCodeAcquisitionService service) {
+    public ReactiveForgotPasswordVerificationCodeAcquisitionController(ReactiveForgotPasswordVerificationCodeAcquisitionService service) {
         this.service = service;
     }
 

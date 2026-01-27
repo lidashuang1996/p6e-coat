@@ -3,7 +3,7 @@ package club.p6e.coat.auth.controller;
 import club.p6e.coat.auth.context.RegisterContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.validator.ReactiveRequestParameterValidator;
-import club.p6e.coat.auth.web.reactive.service.RegisterService;
+import club.p6e.coat.auth.service.ReactiveRegisterService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,30 +13,27 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * Register Controller
+ * Reactive Register Controller
  *
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(
-        value = ReactiveRegisterController.class,
-        ignored = ReactiveRegisterController.class
-)
+@ConditionalOnMissingBean(ReactiveRegisterController.class)
+@RestController("club.p6e.coat.auth.controller.ReactiveRegisterController")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
-@RestController("club.p6e.coat.auth.web.reactive.controller.RegisterController")
 public class ReactiveRegisterController {
 
     /**
      * Register Service Object
      */
-    private final RegisterService service;
+    private final ReactiveRegisterService service;
 
     /**
      * Constructor Initialization
      *
      * @param service Register Service Object
      */
-    public ReactiveRegisterController(RegisterService service) {
+    public ReactiveRegisterController(ReactiveRegisterService service) {
         this.service = service;
     }
 

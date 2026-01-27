@@ -3,7 +3,7 @@ package club.p6e.coat.auth.controller;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.validator.ReactiveRequestParameterValidator;
-import club.p6e.coat.auth.web.reactive.service.LoginVerificationCodeAcquisitionService;
+import club.p6e.coat.auth.service.ReactiveLoginVerificationCodeAcquisitionService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,25 +17,22 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(
-        value = ReactiveLoginVerificationCodeAcquisitionController.class,
-        ignored = ReactiveLoginVerificationCodeAcquisitionController.class
-)
+@ConditionalOnMissingBean(ReactiveLoginVerificationCodeAcquisitionController.class)
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
-@RestController("club.p6e.coat.auth.web.reactive.controller.LoginVerificationCodeAcquisitionController")
+@RestController("club.p6e.coat.auth.controller.LoginVerificationCodeAcquisitionController")
 public class ReactiveLoginVerificationCodeAcquisitionController {
 
     /**
      * Login Verification Code Acquisition Service Object
      */
-    private final LoginVerificationCodeAcquisitionService service;
+    private final ReactiveLoginVerificationCodeAcquisitionService service;
 
     /**
      * Constructor Initialization
      *
      * @param service Login Verification Code Acquisition Service Object
      */
-    public ReactiveLoginVerificationCodeAcquisitionController(LoginVerificationCodeAcquisitionService service) {
+    public ReactiveLoginVerificationCodeAcquisitionController(ReactiveLoginVerificationCodeAcquisitionService service) {
         this.service = service;
     }
 

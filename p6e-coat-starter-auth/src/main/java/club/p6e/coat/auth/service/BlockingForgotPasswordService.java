@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Forgot Password Service
+ * Blocking Forgot Password Service
  *
  * @author lidashuang
  * @version 1.0

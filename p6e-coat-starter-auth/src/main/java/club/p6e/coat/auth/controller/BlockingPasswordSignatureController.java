@@ -4,7 +4,7 @@ import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.PasswordSignatureContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.validator.BlockingRequestParameterValidator;
-import club.p6e.coat.auth.service.PasswordSignatureService;
+import club.p6e.coat.auth.service.BlockingPasswordSignatureService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -30,14 +30,14 @@ public class BlockingPasswordSignatureController {
     /**
      * Password Signature Service Object
      */
-    private final PasswordSignatureService service;
+    private final BlockingPasswordSignatureService service;
 
     /**
      * Constructor Initialization
      *
      * @param service Password Signature Service Object
      */
-    public BlockingPasswordSignatureController(PasswordSignatureService service) {
+    public BlockingPasswordSignatureController(BlockingPasswordSignatureService service) {
         this.service = service;
     }
 

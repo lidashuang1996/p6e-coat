@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Index Service
+ * Blocking Index Service
  *
  * @author lidashuang
  * @version 1.0

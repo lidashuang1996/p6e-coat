@@ -3,7 +3,7 @@ package club.p6e.coat.auth.controller;
 import club.p6e.coat.auth.context.ForgotPasswordContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.validator.ReactiveRequestParameterValidator;
-import club.p6e.coat.auth.web.reactive.service.ForgotPasswordService;
+import club.p6e.coat.auth.service.ReactiveForgotPasswordService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,27 +13,27 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * Forgot Password Controller
+ * Reactive Forgot Password Controller
  *
  * @author lidashuang
  * @version 1.0
  */
 @ConditionalOnMissingBean(ReactiveForgotPasswordController.class)
-@RestController("club.p6e.coat.auth.web.reactive.controller.ForgotPasswordController")
+@RestController("club.p6e.coat.auth.controller.ReactiveForgotPasswordController")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactiveForgotPasswordController {
 
     /**
-     * Forgot Password Service Object
+     * Reactive Forgot Password Service Object
      */
-    private final ForgotPasswordService service;
+    private final ReactiveForgotPasswordService service;
 
     /**
      * Constructor Initialization
      *
-     * @param service Forgot Password Service Object
+     * @param service Reactive Forgot Password Service Object
      */
-    public ReactiveForgotPasswordController(ForgotPasswordService service) {
+    public ReactiveForgotPasswordController(ReactiveForgotPasswordService service) {
         this.service = service;
     }
 

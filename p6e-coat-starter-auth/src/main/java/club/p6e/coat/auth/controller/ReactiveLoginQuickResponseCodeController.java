@@ -3,7 +3,7 @@ package club.p6e.coat.auth.controller;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.validator.ReactiveRequestParameterValidator;
-import club.p6e.coat.auth.web.reactive.service.LoginQuickResponseCodeService;
+import club.p6e.coat.auth.service.ReactiveLoginQuickResponseCodeService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,25 +18,22 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(
-        value = ReactiveLoginQuickResponseCodeController.class,
-        ignored = ReactiveLoginQuickResponseCodeController.class
-)
+@ConditionalOnMissingBean(ReactiveLoginQuickResponseCodeController.class)
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
-@RestController("club.p6e.coat.auth.web.reactive.controller.LoginQuickResponseCodeController")
+@RestController("club.p6e.coat.auth.controller.LoginQuickResponseCodeController")
 public class ReactiveLoginQuickResponseCodeController {
 
     /**
      * Login Quick Response Code Service Object
      */
-    private final LoginQuickResponseCodeService service;
+    private final ReactiveLoginQuickResponseCodeService service;
 
     /**
      * Constructor Initialization
      *
      * @param service Login Quick Response Code Service Object
      */
-    public ReactiveLoginQuickResponseCodeController(LoginQuickResponseCodeService service) {
+    public ReactiveLoginQuickResponseCodeController(ReactiveLoginQuickResponseCodeService service) {
         this.service = service;
     }
 

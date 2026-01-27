@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * Forgot Password Service Impl
+ * Blocking Forgot Password Service Impl
  *
  * @author lidashuang
  * @version 1.0
@@ -27,7 +27,7 @@ import java.util.List;
         value = BlockingForgotPasswordService.class,
         ignored = BlockingForgotPasswordServiceImpl.class
 )
-@Component("club.p6e.coat.auth.service.ForgotPasswordServiceImpl")
+@Component("club.p6e.coat.auth.service.BlockingForgotPasswordServiceImpl")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class BlockingForgotPasswordServiceImpl implements BlockingForgotPasswordService {
 
@@ -37,12 +37,12 @@ public class BlockingForgotPasswordServiceImpl implements BlockingForgotPassword
     private final PasswordEncryptor encryptor;
 
     /**
-     * User Repository Object
+     * Blocking User Repository Object
      */
     private final BlockingUserRepository repository;
 
     /**
-     * Forgot Password Verification Code Cache Object
+     * Blocking Forgot Password Verification Code Cache Object
      */
     private final BlockingForgotPasswordVerificationCodeCache cache;
 
@@ -50,8 +50,8 @@ public class BlockingForgotPasswordServiceImpl implements BlockingForgotPassword
      * Constructor Initialization
      *
      * @param encryptor  Password Encryptor Object
-     * @param repository User Repository Object
-     * @param cache      Forgot Password Verification Code Cache Object
+     * @param repository Blocking User Repository Object
+     * @param cache      Blocking Forgot Password Verification Code Cache Object
      */
     public BlockingForgotPasswordServiceImpl(
             PasswordEncryptor encryptor,

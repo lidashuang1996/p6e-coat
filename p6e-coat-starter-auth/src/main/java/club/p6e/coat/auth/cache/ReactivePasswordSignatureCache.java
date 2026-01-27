@@ -18,7 +18,7 @@ public interface ReactivePasswordSignatureCache {
     /**
      * Cache Prefix
      */
-    String CACHE_PREFIX = "AUTH:PASSWORD:SIGNATURE_RSA:";
+    String CACHE_PREFIX = "AUTH:PASSWORD:SIGNATURE:RSA:";
 
     /**
      * Del Data

@@ -2,8 +2,8 @@ package club.p6e.coat.auth.controller;
 
 import club.p6e.coat.auth.context.RegisterContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
+import club.p6e.coat.auth.service.ReactiveVerificationCodeAcquisitionService;
 import club.p6e.coat.auth.validator.ReactiveRequestParameterValidator;
-import club.p6e.coat.auth.web.reactive.service.RegisterVerificationCodeAcquisitionService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,30 +12,27 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * Register Verification Code Acquisition Controller
+ * Reactive Register Verification Code Acquisition Controller
  *
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(
-        value = ReactiveRegisterVerificationCodeAcquisitionController.class,
-        ignored = ReactiveRegisterVerificationCodeAcquisitionController.class
-)
+@ConditionalOnMissingBean(ReactiveRegisterVerificationCodeAcquisitionController.class)
+@RestController("club.p6e.coat.auth.controller.ReactiveRegisterVerificationCodeAcquisitionController")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
-@RestController("club.p6e.coat.auth.web.reactive.controller.RegisterVerificationCodeAcquisitionController")
 public class ReactiveRegisterVerificationCodeAcquisitionController {
 
     /**
-     * Register Verification Code Acquisition Service Object
+     * Reactive Register Verification Code Acquisition Service Object
      */
-    private final RegisterVerificationCodeAcquisitionService service;
+    private final ReactiveVerificationCodeAcquisitionService service;
 
     /**
      * Constructor Initialization
      *
-     * @param service Register Verification Code Acquisition Service Object
+     * @param service Reactive Register Verification Code Acquisition Service Object
      */
-    public ReactiveRegisterVerificationCodeAcquisitionController(RegisterVerificationCodeAcquisitionService service) {
+    public ReactiveRegisterVerificationCodeAcquisitionController(ReactiveVerificationCodeAcquisitionService service) {
         this.service = service;
     }
 

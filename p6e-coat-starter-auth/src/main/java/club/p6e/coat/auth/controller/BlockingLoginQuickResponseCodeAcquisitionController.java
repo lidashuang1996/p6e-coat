@@ -4,7 +4,7 @@ import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.validator.BlockingRequestParameterValidator;
-import club.p6e.coat.auth.service.LoginQuickResponseCodeAcquisitionService;
+import club.p6e.coat.auth.service.BlockingLoginQuickResponseCodeAcquisitionService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -30,14 +30,14 @@ public class BlockingLoginQuickResponseCodeAcquisitionController {
     /**
      * Login Quick Response Code Acquisition Service Object
      */
-    private final LoginQuickResponseCodeAcquisitionService service;
+    private final BlockingLoginQuickResponseCodeAcquisitionService service;
 
     /**
      * Constructor Initialization
      *
      * @param service Login Quick Response Code Acquisition Service Object
      */
-    public BlockingLoginQuickResponseCodeAcquisitionController(LoginQuickResponseCodeAcquisitionService service) {
+    public BlockingLoginQuickResponseCodeAcquisitionController(BlockingLoginQuickResponseCodeAcquisitionService service) {
         this.service = service;
     }
 

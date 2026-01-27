@@ -4,7 +4,7 @@ import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.RegisterContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.validator.BlockingRequestParameterValidator;
-import club.p6e.coat.auth.service.RegisterVerificationCodeAcquisitionService;
+import club.p6e.coat.auth.service.BlockingRegisterVerificationCodeAcquisitionService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -26,14 +26,14 @@ public class BlockingRegisterVerificationCodeAcquisitionController {
     /**
      * Register Verification Code Acquisition Service Object
      */
-    private final RegisterVerificationCodeAcquisitionService service;
+    private final BlockingRegisterVerificationCodeAcquisitionService service;
 
     /**
      * Constructor Initialization
      *
      * @param service Register Verification Code Acquisition Service Object
      */
-    public BlockingRegisterVerificationCodeAcquisitionController(RegisterVerificationCodeAcquisitionService service) {
+    public BlockingRegisterVerificationCodeAcquisitionController(BlockingRegisterVerificationCodeAcquisitionService service) {
         this.service = service;
     }
 

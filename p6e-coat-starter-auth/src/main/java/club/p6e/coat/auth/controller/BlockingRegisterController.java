@@ -4,7 +4,7 @@ import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.RegisterContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.validator.BlockingRequestParameterValidator;
-import club.p6e.coat.auth.service.RegisterService;
+import club.p6e.coat.auth.service.BlockingRegisterService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -31,14 +31,14 @@ public class BlockingRegisterController {
     /**
      * Register Service Object
      */
-    private final RegisterService service;
+    private final BlockingRegisterService service;
 
     /**
      * Constructor Initialization
      *
      * @param service Register Service Object
      */
-    public BlockingRegisterController(RegisterService service) {
+    public BlockingRegisterController(BlockingRegisterService service) {
         this.service = service;
     }
 

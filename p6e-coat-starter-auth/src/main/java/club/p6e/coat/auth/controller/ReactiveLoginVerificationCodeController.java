@@ -3,7 +3,7 @@ package club.p6e.coat.auth.controller;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.validator.ReactiveRequestParameterValidator;
-import club.p6e.coat.auth.web.reactive.service.LoginVerificationCodeService;
+import club.p6e.coat.auth.service.ReactiveLoginVerificationCodeService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,25 +18,22 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(
-        value = ReactiveLoginVerificationCodeController.class,
-        ignored = ReactiveLoginVerificationCodeController.class
-)
+@ConditionalOnMissingBean(ReactiveLoginVerificationCodeController.class)
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
-@RestController("club.p6e.coat.auth.web.reactive.controller.LoginVerificationCodeController")
+@RestController("club.p6e.coat.auth.controller.LoginVerificationCodeController")
 public class ReactiveLoginVerificationCodeController {
 
     /**
      * Login Verification Code Service Object
      */
-    private final LoginVerificationCodeService service;
+    private final ReactiveLoginVerificationCodeService service;
 
     /**
      * Constructor Initialization
      *
      * @param service Login Verification Code Service Object
      */
-    public ReactiveLoginVerificationCodeController(LoginVerificationCodeService service) {
+    public ReactiveLoginVerificationCodeController(ReactiveLoginVerificationCodeService service) {
         this.service = service;
     }
 

@@ -2,8 +2,8 @@ package club.p6e.coat.auth.controller;
 
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
+import club.p6e.coat.auth.service.ReactiveLoginAuthenticationService;
 import club.p6e.coat.auth.validator.ReactiveRequestParameterValidator;
-import club.p6e.coat.auth.web.reactive.service.LoginAuthenticationService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,30 +13,27 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * Login Authentication Controller
+ * Reactive Login Authentication Controller
  *
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(
-        value = ReactiveLoginAuthenticationController.class,
-        ignored = ReactiveLoginAuthenticationController.class
-)
+@ConditionalOnMissingBean(ReactiveLoginAuthenticationController.class)
+@RestController("club.p6e.coat.auth.controller.ReactiveLoginAuthenticationController")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
-@RestController("club.p6e.coat.auth.web.reactive.controller.LoginAuthenticationController")
 public class ReactiveLoginAuthenticationController {
 
     /**
-     * Login Authentication Service Object
+     * Reactive Login Authentication Service Object
      */
-    private final LoginAuthenticationService service;
+    private final ReactiveLoginAuthenticationService service;
 
     /**
      * Constructor Initialization
      *
-     * @param service Login Authentication Service Object
+     * @param service Reactive Login Authentication Service Object
      */
-    public ReactiveLoginAuthenticationController(LoginAuthenticationService service) {
+    public ReactiveLoginAuthenticationController(ReactiveLoginAuthenticationService service) {
         this.service = service;
     }
 
@@ -61,7 +58,7 @@ public class ReactiveLoginAuthenticationController {
 
     @PostMapping("/login/authentication")
     public Mono<Object> def(ServerWebExchange exchange, @RequestBody LoginContext.Authentication.Request request) {
-        return validate(exchange, request).flatMap(r -> service.execute(exchange, r)).map(u -> "AUTHENTICATION");
+        return validate(exchange, request).flatMap(r -> service.execute(exchange, r)).map(u -> "AUTHENTICATION_SUCCESS");
     }
 
 }

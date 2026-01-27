@@ -3,7 +3,7 @@ package club.p6e.coat.auth.controller;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.validator.ReactiveRequestParameterValidator;
-import club.p6e.coat.auth.web.reactive.service.LoginQuickResponseCodeCallbackService;
+import club.p6e.coat.auth.service.ReactiveLoginQuickResponseCodeCallbackService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,25 +17,22 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(
-        value = ReactiveLoginQuickResponseCodeCallbackController.class,
-        ignored = ReactiveLoginQuickResponseCodeCallbackController.class
-)
+@ConditionalOnMissingBean(ReactiveLoginQuickResponseCodeCallbackController.class)
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
-@RestController("club.p6e.coat.auth.web.reactive.controller.LoginQuickResponseCodeCallbackController")
+@RestController("club.p6e.coat.auth.controller.LoginQuickResponseCodeCallbackController")
 public class ReactiveLoginQuickResponseCodeCallbackController {
 
     /**
      * Login Quick Response Code Callback Service Object
      */
-    private final LoginQuickResponseCodeCallbackService service;
+    private final ReactiveLoginQuickResponseCodeCallbackService service;
 
     /**
      * Constructor Initialization
      *
      * @param service Login Quick Response Code Callback Service Object
      */
-    public ReactiveLoginQuickResponseCodeCallbackController(LoginQuickResponseCodeCallbackService service) {
+    public ReactiveLoginQuickResponseCodeCallbackController(ReactiveLoginQuickResponseCodeCallbackService service) {
         this.service = service;
     }
 

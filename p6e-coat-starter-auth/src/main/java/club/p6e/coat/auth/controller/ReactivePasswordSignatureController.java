@@ -3,7 +3,7 @@ package club.p6e.coat.auth.controller;
 import club.p6e.coat.auth.context.PasswordSignatureContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.validator.ReactiveRequestParameterValidator;
-import club.p6e.coat.auth.web.reactive.service.PasswordSignatureService;
+import club.p6e.coat.auth.service.ReactivePasswordSignatureService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,25 +17,22 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(
-        value = ReactivePasswordSignatureController.class,
-        ignored = ReactivePasswordSignatureController.class
-)
+@ConditionalOnMissingBean(ReactivePasswordSignatureController.class)
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
-@RestController("club.p6e.coat.auth.web.reactive.controller.PasswordSignatureController")
+@RestController("club.p6e.coat.auth.controller.PasswordSignatureController")
 public class ReactivePasswordSignatureController {
 
     /**
      * Password Signature Service Object
      */
-    private final PasswordSignatureService service;
+    private final ReactivePasswordSignatureService service;
 
     /**
      * Constructor Initialization
      *
      * @param service Password Signature Service Object
      */
-    public ReactivePasswordSignatureController(PasswordSignatureService service) {
+    public ReactivePasswordSignatureController(ReactivePasswordSignatureService service) {
         this.service = service;
     }
 

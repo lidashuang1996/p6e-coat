@@ -2,8 +2,8 @@ package club.p6e.coat.auth.controller;
 
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
+import club.p6e.coat.auth.service.ReactiveLoginAccountPasswordService;
 import club.p6e.coat.auth.validator.ReactiveRequestParameterValidator;
-import club.p6e.coat.auth.web.reactive.service.LoginAccountPasswordService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,30 +13,27 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * Login Account Password Controller
+ * Reactive Login Account Password Controller
  *
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(
-        value = ReactiveLoginAccountPasswordController.class,
-        ignored = ReactiveLoginAccountPasswordController.class
-)
+@ConditionalOnMissingBean(ReactiveLoginAccountPasswordController.class)
+@RestController("club.p6e.coat.auth.controller.ReactiveLoginAccountPasswordService")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
-@RestController("club.p6e.coat.auth.web.reactive.controller.LoginAccountPasswordController")
 public class ReactiveLoginAccountPasswordController {
 
     /**
-     * Login Account Password Service Object
+     * Reactive Login Account Password Service Object
      */
-    private final LoginAccountPasswordService service;
+    private final ReactiveLoginAccountPasswordService service;
 
     /**
      * Constructor Initialization
      *
-     * @param service Login Account Password Service Object
+     * @param service Reactive Login Account Password Service Object
      */
-    public ReactiveLoginAccountPasswordController(LoginAccountPasswordService service) {
+    public ReactiveLoginAccountPasswordController(ReactiveLoginAccountPasswordService service) {
         this.service = service;
     }
 

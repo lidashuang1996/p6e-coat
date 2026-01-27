@@ -1,6 +1,6 @@
 package club.p6e.coat.auth.controller;
 
-import club.p6e.coat.auth.web.reactive.service.IndexService;
+import club.p6e.coat.auth.service.ReactiveIndexService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.http.MediaType;
@@ -18,21 +18,21 @@ import java.nio.charset.StandardCharsets;
  * @version 1.0
  */
 @ConditionalOnMissingBean(ReactiveIndexController.class)
-@RestController("club.p6e.coat.auth.web.reactive.controller.IndexController")
+@RestController("club.p6e.coat.auth.controller.ReactiveIndexController")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactiveIndexController {
 
     /**
-     * Forgot Password Service Object
+     * Reactive Index Service Object
      */
-    private final IndexService service;
+    private final ReactiveIndexService service;
 
     /**
      * Constructor Initialization
      *
-     * @param service Forgot Password Service Object
+     * @param service Reactive Index Service Object
      */
-    public ReactiveIndexController(IndexService service) {
+    public ReactiveIndexController(ReactiveIndexService service) {
         this.service = service;
     }
 
@@ -55,14 +55,8 @@ public class ReactiveIndexController {
         return service
                 .execute(exchange)
                 .flatMap(r -> {
-                    if (r.length > 1) {
-                        exchange.getResponse().getHeaders().setContentType(MediaType.valueOf(r[0]));
-                        return exchange.getResponse().writeWith(
-                                Mono.just(exchange.getResponse().bufferFactory()
-                                        .wrap(r[1].getBytes(StandardCharsets.UTF_8))));
-                    } else {
-                        return Mono.empty();
-                    }
+                    exchange.getResponse().getHeaders().setContentType(MediaType.valueOf(r.getType()));
+                    return exchange.getResponse().writeWith(Mono.just(exchange.getResponse().bufferFactory().wrap(r.getContent().getBytes(StandardCharsets.UTF_8))));
                 });
     }
 

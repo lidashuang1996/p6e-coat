@@ -4,7 +4,7 @@ import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.validator.BlockingRequestParameterValidator;
-import club.p6e.coat.auth.service.LoginAuthenticationService;
+import club.p6e.coat.auth.service.BlockingLoginAuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -31,14 +31,14 @@ public class BlockingLoginAuthenticationLoginController {
     /**
      * Login Authentication Service Object
      */
-    private final LoginAuthenticationService service;
+    private final BlockingLoginAuthenticationService service;
 
     /**
      * Constructor Initialization
      *
      * @param service Login Authentication Service Object
      */
-    public BlockingLoginAuthenticationLoginController(LoginAuthenticationService service) {
+    public BlockingLoginAuthenticationLoginController(BlockingLoginAuthenticationService service) {
         this.service = service;
     }
 
@@ -75,7 +75,7 @@ public class BlockingLoginAuthenticationLoginController {
         final Properties properties = Properties.getInstance();
         if (properties.isEnable() && properties.getLogin().isEnable()) {
             service.execute(httpServletRequest, httpServletResponse, validate(httpServletRequest, httpServletResponse, request));
-            return "AUTHENTICATION";
+            return "AUTHENTICATION_SUCCESS";
         } else {
             throw GlobalExceptionContext.exceptionServiceNoEnabledException(
                     this.getClass(),

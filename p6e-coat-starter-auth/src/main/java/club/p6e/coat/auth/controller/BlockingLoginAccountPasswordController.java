@@ -4,7 +4,7 @@ import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.validator.BlockingRequestParameterValidator;
-import club.p6e.coat.auth.service.LoginAccountPasswordService;
+import club.p6e.coat.auth.service.BlockingLoginAccountPasswordService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -31,14 +31,14 @@ public class BlockingLoginAccountPasswordController {
     /**
      * Login Account Password Service Object
      */
-    private final LoginAccountPasswordService service;
+    private final BlockingLoginAccountPasswordService service;
 
     /**
      * Constructor Initialization
      *
      * @param service Login Account Password Service Object
      */
-    public BlockingLoginAccountPasswordController(LoginAccountPasswordService service) {
+    public BlockingLoginAccountPasswordController(BlockingLoginAccountPasswordService service) {
         this.service = service;
     }
 

@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Forgot Password Verification Code Acquisition Service
+ * Blocking Forgot Password Verification Code Acquisition Service
  *
  * @author lidashuang
  * @version 1.0
