@@ -91,6 +91,11 @@
         <!-- Spring Reactive Redis [END] -->
         <!-- Reactive [END] -->
 
+        <dependency>
+            <groupId>club.p6e.coat</groupId>
+            <artifactId>p6e-coat-starter-auth</artifactId>
+        </dependency>
+
         <!-- P6e Coat Auth Token [ START ] -->
         <dependency>
             <groupId>club.p6e.coat</groupId>
