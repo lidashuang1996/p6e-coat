@@ -2,9 +2,10 @@ package club.p6e.coat.auth.service;
 
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.context.LoginContext;
-import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.token.BlockingTokenValidator;
 import club.p6e.coat.auth.cache.BlockingLoginQuickResponseCodeCache;
+import club.p6e.coat.common.error.AuthException;
+import club.p6e.coat.common.error.CacheException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -55,7 +56,7 @@ public class BlockingLoginQuickResponseCodeServiceImpl implements BlockingLoginQ
         final String mark = param.getContent();
         final User user = validator.execute(httpServletRequest, httpServletResponse);
         if (user == null) {
-            throw GlobalExceptionContext.exceptionAuthException(
+            throw new AuthException(
                     this.getClass(),
                     "fun execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, LoginContext.QuickResponseCodeCallback.Request param)",
                     "login quick response code auth exception"
@@ -63,7 +64,7 @@ public class BlockingLoginQuickResponseCodeServiceImpl implements BlockingLoginQ
         } else {
             final String content = cache.get(mark);
             if (content == null) {
-                throw GlobalExceptionContext.executeCacheException(
+                throw new CacheException(
                         this.getClass(),
                         "fun execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, LoginContext.QuickResponseCodeCallback.Request param)",
                         "login quick response code cache data does not exist or expire exception"
@@ -72,7 +73,7 @@ public class BlockingLoginQuickResponseCodeServiceImpl implements BlockingLoginQ
                 cache.set(mark, String.valueOf(user.id()));
                 return new LoginContext.QuickResponseCode.Dto().setContent(String.valueOf(System.currentTimeMillis()));
             } else {
-                throw GlobalExceptionContext.executeCacheException(
+                throw new CacheException(
                         this.getClass(),
                         "fun execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, LoginContext.QuickResponseCodeCallback.Request param)",
                         "login quick response code cache data exist other user exception"

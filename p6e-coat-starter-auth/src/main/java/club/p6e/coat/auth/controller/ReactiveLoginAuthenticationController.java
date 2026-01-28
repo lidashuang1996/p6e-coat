@@ -1,9 +1,11 @@
 package club.p6e.coat.auth.controller;
 
+import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.LoginContext;
-import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.service.ReactiveLoginAuthenticationService;
 import club.p6e.coat.auth.validator.ReactiveRequestParameterValidator;
+import club.p6e.coat.common.error.ParameterException;
+import club.p6e.coat.common.error.ServiceNotEnableException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,7 +51,7 @@ public class ReactiveLoginAuthenticationController {
             LoginContext.Authentication.Request request
     ) {
         return ReactiveRequestParameterValidator.run(exchange, request)
-                .switchIfEmpty(Mono.error(GlobalExceptionContext.executeParameterException(
+                .switchIfEmpty(Mono.error(new ParameterException(
                         this.getClass(),
                         "fun Mono<LoginContext.Authentication.Request> validate(ServerWebExchange exchange, LoginContext.Authentication.Request request)",
                         "request parameter validation exception"
@@ -58,7 +60,16 @@ public class ReactiveLoginAuthenticationController {
 
     @PostMapping("/login/authentication")
     public Mono<Object> def(ServerWebExchange exchange, @RequestBody LoginContext.Authentication.Request request) {
-        return validate(exchange, request).flatMap(r -> service.execute(exchange, r)).map(u -> new LoginContext.Authentication.Dto());
+        final Properties properties = Properties.getInstance();
+        if (properties.isEnable() && properties.getLogin().isEnable()) {
+            return validate(exchange, request).flatMap(r -> service.execute(exchange, r)).map(u -> new LoginContext.Authentication.Dto());
+        } else {
+            return Mono.error(new ServiceNotEnableException(
+                    this.getClass(),
+                    "fun Mono<Object> def(ServerWebExchange exchange, LoginContext.Authentication.Request request)",
+                    "login authentication is not enabled"
+            ));
+        }
     }
 
 }

@@ -1,7 +1,8 @@
 package club.p6e.coat.auth.aspect;
 
 import club.p6e.coat.auth.cache.ReactiveVoucherCache;
-import club.p6e.coat.auth.error.GlobalExceptionContext;
+import club.p6e.coat.common.error.CacheException;
+import club.p6e.coat.common.error.VoucherException;
 import club.p6e.coat.common.utils.SpringUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -205,16 +206,16 @@ public class ReactiveVoucherAspect {
                 vouchers.addAll(vouchers3);
             }
             if (vouchers.isEmpty()) {
-                return Mono.error(GlobalExceptionContext.executeVoucherException(
+                return Mono.error(new VoucherException(
                         this.getClass(),
-                        "fun init()",
+                        "fun Mono<MyServerHttpRequestDecorator> init()",
                         "request voucher does not exist"
                 ));
             } else {
                 return getVoucher(vouchers)
-                        .switchIfEmpty(Mono.error(GlobalExceptionContext.executeVoucherException(
+                        .switchIfEmpty(Mono.error(new VoucherException(
                                 this.getClass(),
-                                "fun init()",
+                                "fun Mono<MyServerHttpRequestDecorator> init()",
                                 "request voucher does not exist or has expired"
                         ))).map(m -> {
                             m.forEach(this::setAttribute);
@@ -237,9 +238,9 @@ public class ReactiveVoucherAspect {
                 return SpringUtil
                         .getBean(ReactiveVoucherCache.class)
                         .set(this.mark, content)
-                        .switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(
+                        .switchIfEmpty(Mono.error(new CacheException(
                                 this.getClass(),
-                                "fun save()",
+                                "fun Mono<MyServerHttpRequestDecorator> save()",
                                 "request voucher cache data save exception"
                         )))
                         .map(b -> this);

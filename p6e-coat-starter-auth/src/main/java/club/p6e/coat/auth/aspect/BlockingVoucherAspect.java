@@ -1,7 +1,7 @@
 package club.p6e.coat.auth.aspect;
 
-import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.cache.BlockingVoucherCache;
+import club.p6e.coat.common.error.VoucherException;
 import club.p6e.coat.common.utils.SpringUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
@@ -205,17 +205,17 @@ public class BlockingVoucherAspect {
                 vouchers.add(vouchers3);
             }
             if (vouchers.isEmpty()) {
-                throw GlobalExceptionContext.executeVoucherException(
+                throw new VoucherException(
                         this.getClass(),
-                        "fun init()",
+                        "fun void init()",
                         "request voucher does not exist"
                 );
             } else {
                 final Map<String, String> data = getVoucher(vouchers);
                 if (data.isEmpty()) {
-                    throw GlobalExceptionContext.executeVoucherException(
+                    throw new VoucherException(
                             this.getClass(),
-                            "fun init()",
+                            "fun void init()",
                             "request voucher does not exist or has expired"
                     );
                 } else {

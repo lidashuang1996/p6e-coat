@@ -5,9 +5,9 @@ import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.aspect.ReactiveVoucherAspect;
 import club.p6e.coat.auth.cache.ReactiveForgotPasswordVerificationCodeCache;
 import club.p6e.coat.auth.context.ForgotPasswordContext;
-import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.password.PasswordEncryptor;
 import club.p6e.coat.auth.repository.ReactiveUserRepository;
+import club.p6e.coat.common.error.CacheException;
 import club.p6e.coat.common.utils.TransformationUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -80,7 +80,7 @@ public class ReactiveForgotPasswordServiceImpl implements ReactiveForgotPassword
                 .get(account)
                 .filter(l -> l.contains(param.getCode()))
                 .flatMap(l -> cache.del(account))
-                .switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(
+                .switchIfEmpty(Mono.error(new CacheException(
                         this.getClass(),
                         "fun execute(ServerWebExchange exchange, ForgotPasswordContext.Request param)",
                         "forgot password verification code cache data does not exist or expire exception"

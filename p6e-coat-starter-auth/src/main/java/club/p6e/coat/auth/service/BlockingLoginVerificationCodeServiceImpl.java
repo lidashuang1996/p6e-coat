@@ -5,8 +5,8 @@ import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.aspect.BlockingVoucherAspect;
 import club.p6e.coat.auth.cache.BlockingLoginVerificationCodeCache;
 import club.p6e.coat.auth.context.LoginContext;
-import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.repository.BlockingUserRepository;
+import club.p6e.coat.common.error.CacheException;
 import club.p6e.coat.common.utils.TransformationUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -76,7 +76,7 @@ public class BlockingLoginVerificationCodeServiceImpl implements BlockingLoginVe
         final String account = TransformationUtil.objectToString(httpServletRequest.getAttribute(BlockingVoucherAspect.MyHttpServletRequestWrapper.ACCOUNT));
         final List<String> codes = cache.get(account);
         if (codes == null || codes.isEmpty()) {
-            throw GlobalExceptionContext.executeCacheException(
+            throw new CacheException(
                     this.getClass(),
                     "fun execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, LoginContext.VerificationCode.Request param)",
                     "login verification code cache data does not exist or expire exception"
@@ -86,7 +86,7 @@ public class BlockingLoginVerificationCodeServiceImpl implements BlockingLoginVe
             cache.del(account);
             return getUser(account);
         } else {
-            throw GlobalExceptionContext.executeCacheException(
+            throw new CacheException(
                     this.getClass(),
                     "fun execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, LoginContext.VerificationCode.Request param)",
                     "login verification code cache data does not exist or expire exception"

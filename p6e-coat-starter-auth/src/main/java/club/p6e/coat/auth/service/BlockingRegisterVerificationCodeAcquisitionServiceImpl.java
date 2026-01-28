@@ -4,9 +4,9 @@ import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.aspect.BlockingVoucherAspect;
 import club.p6e.coat.auth.cache.BlockingRegisterVerificationCodeCache;
 import club.p6e.coat.auth.context.RegisterContext;
-import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.event.BlockingPushVerificationCodeEvent;
 import club.p6e.coat.auth.repository.BlockingUserRepository;
+import club.p6e.coat.common.error.AccountException;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.VerificationUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -88,7 +88,7 @@ public class BlockingRegisterVerificationCodeAcquisitionServiceImpl implements B
             case ACCOUNT -> repository.findByAccount(account);
             case PHONE_OR_MAILBOX -> repository.findByPhoneOrMailbox(account);
         } == null) {
-            throw GlobalExceptionContext.exceptionAccountNoExistException(
+            throw new AccountException(
                     this.getClass(),
                     "fun validate(String account)",
                     "register verification code acquisition account does not exist exception"
@@ -116,7 +116,7 @@ public class BlockingRegisterVerificationCodeAcquisitionServiceImpl implements B
             }}));
             return new RegisterContext.VerificationCodeAcquisition.Dto().setAccount(account);
         } else {
-            throw GlobalExceptionContext.exceptionAccountException(
+            throw new AccountException(
                     this.getClass(),
                     "fun execute(HttpServletRequest request, String account, String language)",
                     "register verification code acquisition account format exception"

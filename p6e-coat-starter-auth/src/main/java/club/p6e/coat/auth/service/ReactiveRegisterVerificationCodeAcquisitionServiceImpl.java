@@ -2,11 +2,12 @@ package club.p6e.coat.auth.service;
 
 import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.RegisterContext;
-import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.aspect.BlockingVoucherAspect;
 import club.p6e.coat.auth.cache.ReactiveRegisterVerificationCodeCache;
 import club.p6e.coat.auth.event.ReactivePushVerificationCodeEvent;
 import club.p6e.coat.auth.repository.ReactiveUserRepository;
+import club.p6e.coat.common.error.AccountException;
+import club.p6e.coat.common.error.CacheException;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.VerificationUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -83,7 +84,7 @@ public class ReactiveRegisterVerificationCodeAcquisitionServiceImpl implements R
             case MAILBOX -> repository.findByMailbox(account);
             case ACCOUNT -> repository.findByAccount(account);
             case PHONE_OR_MAILBOX -> repository.findByPhoneOrMailbox(account);
-        }).switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionAccountNoExistException(
+        }).switchIfEmpty(Mono.error(new AccountException(
                 this.getClass(),
                 "fun validate(String account)",
                 "register verification code acquisition account does not exist exception"
@@ -106,7 +107,7 @@ public class ReactiveRegisterVerificationCodeAcquisitionServiceImpl implements R
             exchange.getRequest().getAttributes().put(BlockingVoucherAspect.MyHttpServletRequestWrapper.ACCOUNT, account);
             return cache
                     .set(account, code)
-                    .switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(
+                    .switchIfEmpty(Mono.error(new CacheException(
                             this.getClass(),
                             "fun execute(ServerWebExchange exchange, String account, String language)",
                             "register verification code acquisition cache write exception"
@@ -124,7 +125,7 @@ public class ReactiveRegisterVerificationCodeAcquisitionServiceImpl implements R
                         }
                     });
         } else {
-            return Mono.error(GlobalExceptionContext.exceptionAccountException(
+            return Mono.error(new AccountException(
                     this.getClass(),
                     "fun execute(ServerWebExchange exchange, String account, String language)",
                     "register verification code acquisition account does not exist exception"

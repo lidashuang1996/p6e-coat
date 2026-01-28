@@ -1,6 +1,6 @@
 package club.p6e.coat.auth.password;
 
-import club.p6e.coat.auth.error.GlobalExceptionContext;
+import club.p6e.coat.common.error.PasswordException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
 /**
@@ -14,16 +14,16 @@ public class PasswordEncryptorImpl implements PasswordEncryptor {
     @Override
     public String execute(String content) {
         if (content == null || content.isEmpty()) {
-            throw GlobalExceptionContext.exceptionPasswordEncryptorException(
+            throw new PasswordException(
                     this.getClass(),
                     "fun String execute(String content)",
-                    "password content cannot be null or empty"
+                    "password content is null or empty"
             );
         }
         try {
             return BCrypt.hashpw(content, BCrypt.gensalt(10));
         } catch (Exception e) {
-            throw GlobalExceptionContext.exceptionPasswordEncryptorException(
+            throw new PasswordException(
                     this.getClass(),
                     "fun String execute(String content)",
                     "password encryption(B_Crypt) failed: " + e.getMessage()

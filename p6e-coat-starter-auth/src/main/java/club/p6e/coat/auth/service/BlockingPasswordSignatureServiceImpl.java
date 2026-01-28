@@ -3,7 +3,7 @@ package club.p6e.coat.auth.service;
 import club.p6e.coat.auth.aspect.BlockingVoucherAspect;
 import club.p6e.coat.auth.cache.BlockingPasswordSignatureCache;
 import club.p6e.coat.auth.context.PasswordSignatureContext;
-import club.p6e.coat.auth.error.GlobalExceptionContext;
+import club.p6e.coat.common.error.CodecException;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.JsonUtil;
 import club.p6e.coat.common.utils.RsaUtil;
@@ -56,7 +56,7 @@ public class BlockingPasswordSignatureServiceImpl implements BlockingPasswordSig
             publicKey = model.getPublicKey();
             privateKey = model.getPrivateKey();
         } catch (Exception e) {
-            throw GlobalExceptionContext.executeRasException(
+            throw new CodecException(
                     this.getClass(),
                     "fun execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, PasswordSignatureContext.Request param) >>> " + e.getMessage(),
                     "password signature rsa exception"

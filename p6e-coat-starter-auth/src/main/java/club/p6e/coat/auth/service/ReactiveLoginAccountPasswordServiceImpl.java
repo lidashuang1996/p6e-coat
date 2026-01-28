@@ -5,9 +5,12 @@ import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.aspect.ReactiveVoucherAspect;
 import club.p6e.coat.auth.cache.ReactivePasswordSignatureCache;
 import club.p6e.coat.auth.context.LoginContext;
-import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.password.PasswordEncryptor;
 import club.p6e.coat.auth.repository.ReactiveUserRepository;
+import club.p6e.coat.common.error.AccountPasswordLoginAccountOrPasswordException;
+import club.p6e.coat.common.error.BeanException;
+import club.p6e.coat.common.error.CacheException;
+import club.p6e.coat.common.error.PasswordTransmissionCodecException;
 import club.p6e.coat.common.utils.JsonUtil;
 import club.p6e.coat.common.utils.RsaUtil;
 import club.p6e.coat.common.utils.SpringUtil;
@@ -85,7 +88,7 @@ public class ReactiveLoginAccountPasswordServiceImpl implements ReactiveLoginAcc
             if (SpringUtil.exist(ReactivePasswordSignatureCache.class)) {
                 cache = SpringUtil.getBean(ReactivePasswordSignatureCache.class);
             } else {
-                return Mono.error(GlobalExceptionContext.exceptionBeanException(
+                return Mono.error(new BeanException(
                         this.getClass(),
                         "fun executePasswordTransmissionDecryption(ServerWebExchange exchange, String password)",
                         "login account password password transmission decryption cache handle bean[" + ReactivePasswordSignatureCache.class + "] not exist exception"
@@ -93,7 +96,7 @@ public class ReactiveLoginAccountPasswordServiceImpl implements ReactiveLoginAcc
             }
             final String mark = TransformationUtil.objectToString(exchange.getRequest().getAttributes().get(ReactiveVoucherAspect.MyServerHttpRequestDecorator.ACCOUNT_PASSWORD_SIGNATURE_MARK));
             return cache.get(mark)
-                    .switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(
+                    .switchIfEmpty(Mono.error(new CacheException(
                             this.getClass(),
                             "fun executePasswordTransmissionDecryption(ServerWebExchange exchange, String password)",
                             "login account password password transmission decryption cache data does not exist or expire exception"
@@ -105,13 +108,13 @@ public class ReactiveLoginAccountPasswordServiceImpl implements ReactiveLoginAcc
                                 return Mono.just(RsaUtil.privateKeyDecryption(data.get("private"), password));
                             }
                         } catch (Exception e) {
-                            return Mono.error(GlobalExceptionContext.exceptionAccountPasswordLoginTransmissionException(
+                            return Mono.error(new PasswordTransmissionCodecException(
                                     this.getClass(),
                                     "fun executePasswordTransmissionDecryption(ServerWebExchange exchange, String password)" + e.getMessage(),
                                     "login account password password transmission exception"
                             ));
                         }
-                        return Mono.error(GlobalExceptionContext.executeCacheException(
+                        return Mono.error(new CacheException(
                                 this.getClass(),
                                 "fun executePasswordTransmissionDecryption(ServerWebExchange exchange, String password)",
                                 "login account password password transmission decryption cache data does not exist or expire exception"
@@ -129,7 +132,7 @@ public class ReactiveLoginAccountPasswordServiceImpl implements ReactiveLoginAcc
         return executePasswordTransmissionDecryption(exchange, param.getPassword()).map(param::setPassword)
                 .flatMap(p -> getUser(p.getAccount()))
                 .filter(u -> encryptor.validate(param.getPassword(), u.password()))
-                .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionAccountPasswordLoginAccountOrPasswordException(
+                .switchIfEmpty(Mono.error(new AccountPasswordLoginAccountOrPasswordException(
                         this.getClass(),
                         "fun execute(ServerWebExchange exchange, LoginContext.AccountPassword.Request param)",
                         "login account password account or password exception"

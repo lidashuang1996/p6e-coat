@@ -4,10 +4,11 @@ import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.UserBuilder;
 import club.p6e.coat.auth.context.RegisterContext;
-import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.password.PasswordEncryptor;
 import club.p6e.coat.auth.aspect.ReactiveVoucherAspect;
 import club.p6e.coat.auth.repository.ReactiveUserRepository;
+import club.p6e.coat.common.error.AccountException;
+import club.p6e.coat.common.error.DataBaseException;
 import club.p6e.coat.common.utils.TransformationUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -89,14 +90,14 @@ public class ReactiveRegisterServiceImpl implements ReactiveRegisterService {
     protected Mono<User> executeAccountMode(String account, RegisterContext.Request param) {
         return repository
                 .findByPhone(account)
-                .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionAccountExistException(
+                .switchIfEmpty(Mono.error(new AccountException(
                         this.getClass(),
                         "fun executeAccountMode(String account, RegisterContext.Request param)",
                         "register create user account [ " + account + "/(exist) ] exception"
                 )))
                 .flatMap(u -> transactional.execute(status -> repository
                                 .create(builder.create(param.getData()))
-                                .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionDataBaseException(
+                                .switchIfEmpty(Mono.error(new DataBaseException(
                                         this.getClass(),
                                         "fun executeAccountMode(String account, RegisterContext.Request param)",
                                         "register create user account exception"
@@ -113,14 +114,14 @@ public class ReactiveRegisterServiceImpl implements ReactiveRegisterService {
     private Mono<User> executePhoneMode(String account, RegisterContext.Request param) {
         return repository
                 .findByPhone(account)
-                .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionAccountExistException(
+                .switchIfEmpty(Mono.error(new AccountException(
                         this.getClass(),
                         "fun executePhoneMode(String account, RegisterContext.Request param)",
                         "register create user phone account [ " + account + "/(exist) ] exception"
                 )))
                 .flatMap(u -> transactional.execute(status -> repository
                                 .create(builder.create(param.getData()))
-                                .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionDataBaseException(
+                                .switchIfEmpty(Mono.error(new DataBaseException(
                                         this.getClass(),
                                         "fun executePhoneMode(String account, RegisterContext.Request param)",
                                         "register create user phone account exception"
@@ -137,14 +138,14 @@ public class ReactiveRegisterServiceImpl implements ReactiveRegisterService {
     private Mono<User> executeMailboxMode(String account, RegisterContext.Request param) {
         return repository
                 .findByPhone(account)
-                .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionAccountExistException(
+                .switchIfEmpty(Mono.error(new AccountException(
                         this.getClass(),
                         "fun executeMailboxMode(String account, RegisterContext.Request param)",
                         "register create user mailbox account [ " + account + "/(exist) ] exception"
                 )))
                 .flatMap(u -> transactional.execute(status -> repository
                                 .create(builder.create(param.getData()))
-                                .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionDataBaseException(
+                                .switchIfEmpty(Mono.error(new DataBaseException(
                                         this.getClass(),
                                         "fun executeMailboxMode(String account, RegisterContext.Request param)",
                                         "register create user mailbox account exception"
@@ -161,14 +162,14 @@ public class ReactiveRegisterServiceImpl implements ReactiveRegisterService {
     protected Mono<User> executePhoneOrMailboxMode(String account, RegisterContext.Request param) {
         return repository
                 .findByPhone(account)
-                .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionAccountExistException(
+                .switchIfEmpty(Mono.error(new AccountException(
                         this.getClass(),
                         "fun executePhoneOrMailboxMode(String account, RegisterContext.Request param)",
                         "register create user phone/mailbox account [ " + account + "/(exist) ] exception"
                 )))
                 .flatMap(u -> transactional.execute(status -> repository
                                 .create(builder.create(param.getData()))
-                                .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionDataBaseException(
+                                .switchIfEmpty(Mono.error(new DataBaseException(
                                         this.getClass(),
                                         "fun executePhoneOrMailboxMode(String account, RegisterContext.Request param)",
                                         "register create user phone/mailbox account exception"

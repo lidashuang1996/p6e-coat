@@ -5,8 +5,8 @@ import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.aspect.ReactiveVoucherAspect;
 import club.p6e.coat.auth.cache.ReactiveLoginVerificationCodeCache;
 import club.p6e.coat.auth.context.LoginContext;
-import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.repository.ReactiveUserRepository;
+import club.p6e.coat.common.error.CacheException;
 import club.p6e.coat.common.utils.TransformationUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -70,7 +70,7 @@ public class ReactiveLoginVerificationCodeServiceImpl implements ReactiveLoginVe
         final String account = TransformationUtil.objectToString(exchange.getRequest().getAttributes().get(ReactiveVoucherAspect.MyServerHttpRequestDecorator.ACCOUNT));
         return cache
                 .get(account)
-                .switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(
+                .switchIfEmpty(Mono.error(new CacheException(
                         this.getClass(),
                         "fun execute(ServerWebExchange exchange, LoginContext.VerificationCode.Request param)",
                         "login verification code cache data does not exist or expire exception"
@@ -78,7 +78,7 @@ public class ReactiveLoginVerificationCodeServiceImpl implements ReactiveLoginVe
                     if (list != null && !list.isEmpty() && list.contains(code)) {
                         return cache.del(account);
                     } else {
-                        return Mono.error(GlobalExceptionContext.executeCacheException(
+                        return Mono.error(new CacheException(
                                 this.getClass(),
                                 "fun execute(ServerWebExchange exchange, LoginContext.VerificationCode.Request param)",
                                 "login verification code cache data does not exist or expire exception"

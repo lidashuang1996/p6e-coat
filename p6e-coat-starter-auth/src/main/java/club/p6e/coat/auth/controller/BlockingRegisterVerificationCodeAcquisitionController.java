@@ -2,9 +2,10 @@ package club.p6e.coat.auth.controller;
 
 import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.RegisterContext;
-import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.validator.BlockingRequestParameterValidator;
 import club.p6e.coat.auth.service.BlockingRegisterVerificationCodeAcquisitionService;
+import club.p6e.coat.common.error.ParameterException;
+import club.p6e.coat.common.error.ServiceNotEnableException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -52,7 +53,7 @@ public class BlockingRegisterVerificationCodeAcquisitionController {
     ) {
         final RegisterContext.VerificationCodeAcquisition.Request result = BlockingRequestParameterValidator.run(httpServletRequest, httpServletResponse, request);
         if (result == null) {
-            throw GlobalExceptionContext.executeParameterException(
+            throw new ParameterException(
                     this.getClass(),
                     "fun RegisterContext.VerificationCodeAcquisition.Request validate(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, RegisterContext.VerificationCodeAcquisition.Request request)",
                     "request parameter validation exception"
@@ -71,7 +72,7 @@ public class BlockingRegisterVerificationCodeAcquisitionController {
         if (properties.isEnable() && properties.getRegister().isEnable()) {
             return service.execute(httpServletRequest, httpServletResponse, validate(httpServletRequest, httpServletResponse, request));
         } else {
-            throw GlobalExceptionContext.exceptionServiceNoEnabledException(
+            throw new ServiceNotEnableException(
                     this.getClass(),
                     "fun Object def(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, RegisterContext.VerificationCodeAcquisition.Request request)",
                     "register is not enabled"

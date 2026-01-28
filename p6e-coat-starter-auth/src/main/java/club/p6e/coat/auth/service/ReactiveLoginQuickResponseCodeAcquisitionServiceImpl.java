@@ -1,8 +1,8 @@
 package club.p6e.coat.auth.service;
 
 import club.p6e.coat.auth.context.LoginContext;
-import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.cache.ReactiveLoginQuickResponseCodeCache;
+import club.p6e.coat.common.error.CacheException;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -45,7 +45,7 @@ public class ReactiveLoginQuickResponseCodeAcquisitionServiceImpl implements Rea
         exchange.getRequest().getAttributes().put("QUICK_RESPONSE_CODE_LOGIN_MARK", code);
         return cache
                 .set(code, ReactiveLoginQuickResponseCodeCache.EMPTY_CONTENT)
-                .switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(
+                .switchIfEmpty(Mono.error(new CacheException(
                         this.getClass(),
                         "fun execute(ServerWebExchange exchange, LoginContext.QuickResponseCodeAcquisition.Request param)",
                         "login quick response code acquisition cache exception"

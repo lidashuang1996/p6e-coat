@@ -5,9 +5,9 @@ import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.aspect.BlockingVoucherAspect;
 import club.p6e.coat.auth.cache.BlockingForgotPasswordVerificationCodeCache;
 import club.p6e.coat.auth.context.ForgotPasswordContext;
-import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.event.BlockingPushVerificationCodeEvent;
 import club.p6e.coat.auth.repository.BlockingUserRepository;
+import club.p6e.coat.common.error.AccountException;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.VerificationUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -94,7 +94,7 @@ public class BlockingForgotPasswordVerificationCodeAcquisitionServiceImpl implem
             case PHONE_OR_MAILBOX -> repository.findByPhoneOrMailbox(account);
         };
         if (user == null) {
-            throw GlobalExceptionContext.exceptionAccountNoExistException(
+            throw new AccountException(
                     this.getClass(),
                     "fun execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, RegisterContext.Acquisition.Request param)",
                     "forgot password verification code account does not exist exception"
@@ -122,7 +122,7 @@ public class BlockingForgotPasswordVerificationCodeAcquisitionServiceImpl implem
             }}));
             return new ForgotPasswordContext.VerificationCodeAcquisition.Dto().setAccount(account);
         } else {
-            throw GlobalExceptionContext.exceptionAccountException(
+            throw new AccountException(
                     this.getClass(),
                     "fun execute(HttpServletRequest request, String account, String language)",
                     "forgot password verification code account format exception"

@@ -1,9 +1,11 @@
 package club.p6e.coat.auth.controller;
 
+import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.LoginContext;
-import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.validator.ReactiveRequestParameterValidator;
 import club.p6e.coat.auth.service.ReactiveLoginVerificationCodeService;
+import club.p6e.coat.common.error.ParameterException;
+import club.p6e.coat.common.error.ServiceNotEnableException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,7 +49,7 @@ public class ReactiveLoginVerificationCodeController {
     private Mono<LoginContext.VerificationCode.Request> validate(
             ServerWebExchange exchange, LoginContext.VerificationCode.Request request) {
         return ReactiveRequestParameterValidator.run(exchange, request)
-                .switchIfEmpty(Mono.error(GlobalExceptionContext.executeParameterException(
+                .switchIfEmpty(Mono.error(new ParameterException(
                         this.getClass(),
                         "fun Mono<LoginContext.VerificationCode.Request> validate(ServerWebExchange exchange, LoginContext.VerificationCode.Request request)",
                         "request parameter validation exception"
@@ -56,7 +58,16 @@ public class ReactiveLoginVerificationCodeController {
 
     @PostMapping(value = "/login/verification/code")
     public Mono<Object> def(ServerWebExchange exchange, @RequestBody LoginContext.VerificationCode.Request request) {
-        return validate(exchange, request).flatMap(r -> service.execute(exchange, r));
+        final Properties properties = Properties.getInstance();
+        if (properties.isEnable() && properties.getLogin().isEnable() && properties.getLogin().getQuickResponseCode().isEnable()) {
+            return validate(exchange, request).flatMap(r -> service.execute(exchange, r));
+        } else {
+            return Mono.error(new ServiceNotEnableException(
+                    this.getClass(),
+                    "fun Mono<Object> def(ServerWebExchange exchange, LoginContext.VerificationCode.Request request)",
+                    "login verification code is not enabled"
+            ));
+        }
     }
 
 }

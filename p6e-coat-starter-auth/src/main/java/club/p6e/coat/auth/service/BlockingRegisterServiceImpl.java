@@ -5,9 +5,10 @@ import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.UserBuilder;
 import club.p6e.coat.auth.aspect.BlockingVoucherAspect;
 import club.p6e.coat.auth.context.RegisterContext;
-import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.password.PasswordEncryptor;
 import club.p6e.coat.auth.repository.BlockingUserRepository;
+import club.p6e.coat.common.error.AccountException;
+import club.p6e.coat.common.error.DataBaseException;
 import club.p6e.coat.common.utils.TransformationUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -86,7 +87,7 @@ public class BlockingRegisterServiceImpl implements BlockingRegisterService {
     protected User executeAccountMode(String account, RegisterContext.Request param) {
         User user = repository.findByAccount(account);
         if (user == null) {
-            throw GlobalExceptionContext.exceptionAccountExistException(
+            throw new AccountException(
                     this.getClass(),
                     "fun executeAccountMode(String account, RegisterContext.Request param)",
                     "register create user account [ " + account + "/(exist) ] exception"
@@ -94,7 +95,7 @@ public class BlockingRegisterServiceImpl implements BlockingRegisterService {
         } else {
             user = repository.create(builder.create(param.getData()));
             if (user == null) {
-                throw GlobalExceptionContext.exceptionDataBaseException(
+                throw new DataBaseException(
                         this.getClass(),
                         "fun executeAccountMode(String account, RegisterContext.Request param)",
                         "register create user account data exception"
@@ -115,7 +116,7 @@ public class BlockingRegisterServiceImpl implements BlockingRegisterService {
     private User executePhoneMode(String account, RegisterContext.Request param) {
         User user = repository.findByPhone(account);
         if (user == null) {
-            throw GlobalExceptionContext.exceptionAccountExistException(
+            throw new AccountException(
                     this.getClass(),
                     "fun executePhoneMode(String account, RegisterContext.Request param)",
                     "register create user account [ " + account + "/(exist) ] exception"
@@ -123,7 +124,7 @@ public class BlockingRegisterServiceImpl implements BlockingRegisterService {
         } else {
             user = repository.create(builder.create(param.getData()));
             if (user == null) {
-                throw GlobalExceptionContext.exceptionDataBaseException(
+                throw new DataBaseException(
                         this.getClass(),
                         "fun executePhoneMode(String account, RegisterContext.Request param)",
                         "register create user account data exception"
@@ -144,7 +145,7 @@ public class BlockingRegisterServiceImpl implements BlockingRegisterService {
     private User executeMailboxMode(String account, RegisterContext.Request param) {
         User user = repository.findByMailbox(account);
         if (user == null) {
-            throw GlobalExceptionContext.exceptionAccountExistException(
+            throw new AccountException(
                     this.getClass(),
                     "fun executeMailboxMode(String account, RegisterContext.Request param)",
                     "register create user account [ " + account + "/(exist) ] exception"
@@ -152,7 +153,7 @@ public class BlockingRegisterServiceImpl implements BlockingRegisterService {
         } else {
             user = repository.create(builder.create(param.getData()));
             if (user == null) {
-                throw GlobalExceptionContext.exceptionDataBaseException(
+                throw new DataBaseException(
                         this.getClass(),
                         "fun executeMailboxMode(String account, RegisterContext.Request param)",
                         "register create user account data exception"
@@ -173,7 +174,7 @@ public class BlockingRegisterServiceImpl implements BlockingRegisterService {
     protected User executePhoneOrMailboxMode(String account, RegisterContext.Request param) {
         User user = repository.findByPhoneOrMailbox(account);
         if (user == null) {
-            throw GlobalExceptionContext.exceptionAccountExistException(
+            throw new AccountException(
                     this.getClass(),
                     "fun executePhoneOrMailboxMode(String account, RegisterContext.Request param)",
                     "register create user account [ " + account + "/(exist) ] exception"
@@ -181,7 +182,7 @@ public class BlockingRegisterServiceImpl implements BlockingRegisterService {
         } else {
             user = repository.create(builder.create(param.getData()));
             if (user == null) {
-                throw GlobalExceptionContext.exceptionDataBaseException(
+                throw new DataBaseException(
                         this.getClass(),
                         "fun executePhoneOrMailboxMode(String account, RegisterContext.Request param)",
                         "register create user account data exception"

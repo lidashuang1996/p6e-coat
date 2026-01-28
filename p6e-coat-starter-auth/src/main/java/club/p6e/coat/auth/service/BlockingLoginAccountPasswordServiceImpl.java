@@ -5,9 +5,12 @@ import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.aspect.BlockingVoucherAspect;
 import club.p6e.coat.auth.cache.BlockingPasswordSignatureCache;
 import club.p6e.coat.auth.context.LoginContext;
-import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.password.PasswordEncryptor;
 import club.p6e.coat.auth.repository.BlockingUserRepository;
+import club.p6e.coat.common.error.AccountPasswordLoginAccountOrPasswordException;
+import club.p6e.coat.common.error.AccountPasswordLoginTransmissionException;
+import club.p6e.coat.common.error.BeanException;
+import club.p6e.coat.common.error.CacheException;
 import club.p6e.coat.common.utils.JsonUtil;
 import club.p6e.coat.common.utils.RsaUtil;
 import club.p6e.coat.common.utils.SpringUtil;
@@ -69,7 +72,7 @@ public class BlockingLoginAccountPasswordServiceImpl implements BlockingLoginAcc
             case PHONE_OR_MAILBOX -> repository.findByPhoneOrMailbox(account);
         };
         if (user == null) {
-            throw GlobalExceptionContext.exceptionAccountPasswordLoginAccountOrPasswordException(
+            throw new AccountPasswordLoginAccountOrPasswordException(
                     this.getClass(),
                     "fun getUser(String account)",
                     "login account password account or password exception"
@@ -93,7 +96,7 @@ public class BlockingLoginAccountPasswordServiceImpl implements BlockingLoginAcc
             if (SpringUtil.exist(BlockingPasswordSignatureCache.class)) {
                 cache = SpringUtil.getBean(BlockingPasswordSignatureCache.class);
             } else {
-                throw GlobalExceptionContext.exceptionBeanException(
+                throw new BeanException(
                         this.getClass(),
                         "fun executePasswordTransmissionDecryption(HttpServletRequest request, String password)",
                         "login account password password transmission decryption cache handle bean[" + BlockingPasswordSignatureCache.class + "] not exist exception"
@@ -103,7 +106,7 @@ public class BlockingLoginAccountPasswordServiceImpl implements BlockingLoginAcc
             try {
                 final String content = cache.get(mark);
                 if (content == null || content.isEmpty()) {
-                    throw GlobalExceptionContext.executeCacheException(
+                    throw new CacheException(
                             this.getClass(),
                             "fun executePasswordTransmissionDecryption(HttpServletRequest request, String password)",
                             "login account password password transmission decryption cache data does not exist or expire exception"
@@ -115,7 +118,7 @@ public class BlockingLoginAccountPasswordServiceImpl implements BlockingLoginAcc
                             return RsaUtil.privateKeyDecryption(data.get("private"), password);
                         }
                     } catch (Exception e) {
-                        throw GlobalExceptionContext.exceptionAccountPasswordLoginTransmissionException(
+                        throw new AccountPasswordLoginTransmissionException(
                                 this.getClass(),
                                 "fun executePasswordTransmissionDecryption(HttpServletRequest request, String password) -> " + e.getMessage(),
                                 "login account password password transmission exception"
@@ -140,7 +143,7 @@ public class BlockingLoginAccountPasswordServiceImpl implements BlockingLoginAcc
         if (encryptor.validate(param.getPassword(), user.password())) {
             return user;
         } else {
-            throw GlobalExceptionContext.exceptionAccountPasswordLoginAccountOrPasswordException(
+            throw new AccountPasswordLoginAccountOrPasswordException(
                     this.getClass(),
                     "fun execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, LoginContext.AccountPassword.Request param)",
                     "login account password account or password exception"

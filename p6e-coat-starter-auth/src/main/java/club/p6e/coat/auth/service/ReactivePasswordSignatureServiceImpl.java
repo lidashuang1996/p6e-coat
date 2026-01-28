@@ -1,9 +1,10 @@
 package club.p6e.coat.auth.service;
 
 import club.p6e.coat.auth.context.PasswordSignatureContext;
-import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.aspect.ReactiveVoucherAspect;
 import club.p6e.coat.auth.cache.ReactivePasswordSignatureCache;
+import club.p6e.coat.common.error.CacheException;
+import club.p6e.coat.common.error.CodecException;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.JsonUtil;
 import club.p6e.coat.common.utils.RsaUtil;
@@ -52,7 +53,7 @@ public class ReactivePasswordSignatureServiceImpl implements ReactivePasswordSig
             publicKey = model.getPublicKey();
             privateKey = model.getPrivateKey();
         } catch (Exception e) {
-            return Mono.error(GlobalExceptionContext.executeRasException(
+            return Mono.error(new CodecException(
                     this.getClass(),
                     "fun execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, PasswordSignatureContext.Request param) >>> " + e.getMessage(),
                     "password signature rsa exception"
@@ -69,7 +70,7 @@ public class ReactivePasswordSignatureServiceImpl implements ReactivePasswordSig
         }});
         return cache
                 .set(mark, content)
-                .switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(
+                .switchIfEmpty(Mono.error(new CacheException(
                         this.getClass(),
                         "fun execute(ServerWebExchange exchange, LoginContext.AccountPasswordSignature.Request param)",
                         "password signature cache write exception"

@@ -5,9 +5,10 @@ import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.aspect.BlockingVoucherAspect;
 import club.p6e.coat.auth.cache.BlockingForgotPasswordVerificationCodeCache;
 import club.p6e.coat.auth.context.ForgotPasswordContext;
-import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.password.PasswordEncryptor;
 import club.p6e.coat.auth.repository.BlockingUserRepository;
+import club.p6e.coat.common.error.AccountException;
+import club.p6e.coat.common.error.CacheException;
 import club.p6e.coat.common.utils.TransformationUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -77,9 +78,9 @@ public class BlockingForgotPasswordServiceImpl implements BlockingForgotPassword
             case PHONE_OR_MAILBOX -> repository.findByPhoneOrMailbox(account);
         };
         if (user == null) {
-            throw GlobalExceptionContext.exceptionAccountException(
+            throw new AccountException(
                     this.getClass(),
-                    "fun getUser(String account)",
+                    "fun User getUser(String account)",
                     "forgot password account does not exist exception"
             );
         } else {
@@ -101,9 +102,9 @@ public class BlockingForgotPasswordServiceImpl implements BlockingForgotPassword
             repository.updatePassword(Integer.valueOf(getUser(account).id()), encryptor.execute(param.getPassword()));
             return new ForgotPasswordContext.Dto().setAccount(account);
         } else {
-            throw GlobalExceptionContext.executeCacheException(
+            throw new CacheException(
                     this.getClass(),
-                    "fun execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, ForgotPasswordContext.Request param)",
+                    "fun ForgotPasswordContext.Dto execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, ForgotPasswordContext.Request param)",
                     "forgot password verification code cache data does not exist or expire exception"
             );
         }

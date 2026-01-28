@@ -4,9 +4,10 @@ import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.aspect.BlockingVoucherAspect;
 import club.p6e.coat.auth.cache.ReactiveLoginVerificationCodeCache;
 import club.p6e.coat.auth.context.LoginContext;
-import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.event.ReactivePushVerificationCodeEvent;
 import club.p6e.coat.auth.repository.ReactiveUserRepository;
+import club.p6e.coat.common.error.AccountException;
+import club.p6e.coat.common.error.CacheException;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.VerificationUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -84,7 +85,7 @@ public class ReactiveLoginVerificationCodeAcquisitionServiceImpl implements Reac
             case MAILBOX -> repository.findByMailbox(account);
             case ACCOUNT -> repository.findByAccount(account);
             case PHONE_OR_MAILBOX -> repository.findByPhoneOrMailbox(account);
-        }).switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionAccountNoExistException(
+        }).switchIfEmpty(Mono.error(new AccountException(
                 this.getClass(),
                 "fun validate(String account)",
                 "login verification code acquisition account does not exist exception"
@@ -99,7 +100,7 @@ public class ReactiveLoginVerificationCodeAcquisitionServiceImpl implements Reac
             exchange.getRequest().getAttributes().put(BlockingVoucherAspect.MyHttpServletRequestWrapper.ACCOUNT, account);
             return cache
                     .set(account, code)
-                    .switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(
+                    .switchIfEmpty(Mono.error(new CacheException(
                             this.getClass(),
                             "fun execute(ServerWebExchange exchange, String account, String language).",
                             "login verification code cache write exception"
@@ -117,7 +118,7 @@ public class ReactiveLoginVerificationCodeAcquisitionServiceImpl implements Reac
                         }
                     });
         } else {
-            return Mono.error(GlobalExceptionContext.exceptionAccountException(
+            return Mono.error(new AccountException(
                     this.getClass(),
                     "fun execute(ServerWebExchange exchange, String account, String language)",
                     "login verification code acquisition account format exception"

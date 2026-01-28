@@ -4,8 +4,10 @@ import club.p6e.coat.auth.User;
 import club.p6e.coat.auth.aspect.BlockingVoucherAspect;
 import club.p6e.coat.auth.cache.BlockingLoginQuickResponseCodeCache;
 import club.p6e.coat.auth.context.LoginContext;
-import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.repository.BlockingUserRepository;
+import club.p6e.coat.common.error.AuthException;
+import club.p6e.coat.common.error.CacheException;
+import club.p6e.coat.common.error.QuickResponseCodeDataNullException;
 import club.p6e.coat.common.utils.TransformationUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -57,13 +59,13 @@ public class BlockingLoginQuickResponseCodeCallbackServiceImpl implements Blocki
         final String mark = TransformationUtil.objectToString(httpServletRequest.getAttribute(BlockingVoucherAspect.MyHttpServletRequestWrapper.QUICK_RESPONSE_CODE_LOGIN_MARK));
         final String content = cache.get(mark);
         if (content == null) {
-            throw GlobalExceptionContext.executeCacheException(
+            throw new CacheException(
                     this.getClass(),
                     "fun execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, LoginContext.QuickResponseCode.Request param)",
                     "login quick response code cache data does not exist or expire exception"
             );
         } else if (BlockingLoginQuickResponseCodeCache.isEmpty(content)) {
-            throw GlobalExceptionContext.executeQrCodeDataNullException(
+            throw new QuickResponseCodeDataNullException(
                     this.getClass(),
                     "fun execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, LoginContext.QuickResponseCode.Request param)",
                     "login quick response code data is null exception"
@@ -72,7 +74,7 @@ public class BlockingLoginQuickResponseCodeCallbackServiceImpl implements Blocki
             cache.del(mark);
             final User user = repository.findById(Integer.valueOf(content));
             if (user == null) {
-                throw GlobalExceptionContext.executeUserNoExistException(
+                throw new AuthException(
                         this.getClass(),
                         "fun execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, LoginContext.QuickResponseCode.Request param)",
                         "login quick response code user id select data does not exist exception"

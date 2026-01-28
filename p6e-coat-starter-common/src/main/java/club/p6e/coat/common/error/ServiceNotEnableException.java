@@ -7,7 +7,7 @@ package club.p6e.coat.common.error;
  * @author lidashuang
  * @version 1.0
  */
-public class ServiceNotEnabledException extends CustomException {
+public class ServiceNotEnableException extends CustomException {
 
     /**
      * 默认的代码
@@ -26,8 +26,8 @@ public class ServiceNotEnabledException extends CustomException {
      * @param error   异常对象
      * @param content 描述内容
      */
-    public ServiceNotEnabledException(Class<?> sc, String error, String content) {
-        super(sc, ServiceNotEnabledException.class, error, DEFAULT_CODE, DEFAULT_SKETCH, content);
+    public ServiceNotEnableException(Class<?> sc, String error, String content) {
+        super(sc, ServiceNotEnableException.class, error, DEFAULT_CODE, DEFAULT_SKETCH, content);
     }
 
     /**
@@ -37,8 +37,8 @@ public class ServiceNotEnabledException extends CustomException {
      * @param throwable 异常对象
      * @param content   描述内容
      */
-    public ServiceNotEnabledException(Class<?> sc, Throwable throwable, String content) {
-        super(sc, ServiceNotEnabledException.class, throwable, DEFAULT_CODE, DEFAULT_SKETCH, content);
+    public ServiceNotEnableException(Class<?> sc, Throwable throwable, String content) {
+        super(sc, ServiceNotEnableException.class, throwable, DEFAULT_CODE, DEFAULT_SKETCH, content);
     }
 
     /**
@@ -50,8 +50,8 @@ public class ServiceNotEnabledException extends CustomException {
      * @param sketch  简述
      * @param content 描述内容
      */
-    public ServiceNotEnabledException(Class<?> sc, String error, int code, String sketch, String content) {
-        super(sc, ServiceNotEnabledException.class, error, code, sketch, content);
+    public ServiceNotEnableException(Class<?> sc, String error, int code, String sketch, String content) {
+        super(sc, ServiceNotEnableException.class, error, code, sketch, content);
     }
 
     /**
@@ -63,7 +63,7 @@ public class ServiceNotEnabledException extends CustomException {
      * @param sketch    简述
      * @param content   描述内容
      */
-    public ServiceNotEnabledException(Class<?> sc, Throwable throwable, int code, String sketch, String content) {
-        super(sc, ServiceNotEnabledException.class, throwable, code, sketch, content);
+    public ServiceNotEnableException(Class<?> sc, Throwable throwable, int code, String sketch, String content) {
+        super(sc, ServiceNotEnableException.class, throwable, code, sketch, content);
     }
 }
