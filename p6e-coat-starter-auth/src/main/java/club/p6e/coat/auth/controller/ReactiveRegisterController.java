@@ -24,14 +24,14 @@ import reactor.core.publisher.Mono;
 public class ReactiveRegisterController {
 
     /**
-     * Register Service Object
+     * Reactive Register Service Object
      */
     private final ReactiveRegisterService service;
 
     /**
      * Constructor Initialization
      *
-     * @param service Register Service Object
+     * @param service Reactive Register Service Object
      */
     public ReactiveRegisterController(ReactiveRegisterService service) {
         this.service = service;

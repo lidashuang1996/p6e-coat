@@ -5,7 +5,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * Login Quick Response Code Acquisition Service
+ * Reactive Login Quick Response Code Acquisition Service
  *
  * @author lidashuang
  * @version 1.0

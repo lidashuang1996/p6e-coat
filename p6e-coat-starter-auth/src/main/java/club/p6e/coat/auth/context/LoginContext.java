@@ -34,6 +34,14 @@ public class LoginContext implements Serializable {
 
         }
 
+        /**
+         * Login Context / Authentication / Dto
+         */
+        @Data
+        @Accessors(chain = true)
+        public static class Dto implements Serializable {
+        }
+
     }
 
     /**
@@ -151,7 +159,7 @@ public class LoginContext implements Serializable {
         public static class Request implements Serializable {
 
             /**
-             *Content
+             * Content
              */
             private String content;
 

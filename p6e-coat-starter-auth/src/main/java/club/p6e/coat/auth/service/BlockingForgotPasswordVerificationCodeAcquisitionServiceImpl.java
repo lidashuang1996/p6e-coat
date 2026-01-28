@@ -9,7 +9,6 @@ import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.event.BlockingPushVerificationCodeEvent;
 import club.p6e.coat.auth.repository.BlockingUserRepository;
 import club.p6e.coat.common.utils.GeneratorUtil;
-import club.p6e.coat.common.utils.SpringUtil;
 import club.p6e.coat.common.utils.VerificationUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -41,6 +40,11 @@ public class BlockingForgotPasswordVerificationCodeAcquisitionServiceImpl implem
     private static final String FORGOT_PASSWORD_TEMPLATE = "FORGOT_PASSWORD_TEMPLATE";
 
     /**
+     * Application Context Object
+     */
+    private final ApplicationContext context;
+
+    /**
      * Blocking User Repository Object
      */
     private final BlockingUserRepository repository;
@@ -53,14 +57,17 @@ public class BlockingForgotPasswordVerificationCodeAcquisitionServiceImpl implem
     /**
      * Constructor Initialization
      *
+     * @param context    Application Context Object
      * @param repository Blocking User Repository Object
      * @param cache      Blocking Forgot Password Verification Code Cache Object
      */
     public BlockingForgotPasswordVerificationCodeAcquisitionServiceImpl(
+            ApplicationContext context,
             BlockingUserRepository repository,
             BlockingForgotPasswordVerificationCodeCache cache
     ) {
         this.cache = cache;
+        this.context = context;
         this.repository = repository;
     }
 
@@ -110,10 +117,9 @@ public class BlockingForgotPasswordVerificationCodeAcquisitionServiceImpl implem
         if (pb || mb) {
             request.setAttribute(BlockingVoucherAspect.MyHttpServletRequestWrapper.ACCOUNT, account);
             cache.set(account, code);
-            final BlockingPushVerificationCodeEvent event = new BlockingPushVerificationCodeEvent(this, List.of(account), FORGOT_PASSWORD_TEMPLATE, language, new HashMap<>() {{
+            context.publishEvent(new BlockingPushVerificationCodeEvent(this, List.of(account), FORGOT_PASSWORD_TEMPLATE, language, new HashMap<>() {{
                 put("code", code);
-            }});
-            SpringUtil.getBean(ApplicationContext.class).publishEvent(event);
+            }}));
             return new ForgotPasswordContext.VerificationCodeAcquisition.Dto().setAccount(account);
         } else {
             throw GlobalExceptionContext.exceptionAccountException(

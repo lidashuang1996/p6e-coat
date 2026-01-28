@@ -19,24 +19,20 @@ import org.springframework.web.bind.annotation.RestController;
  * @author lidashuang
  * @version 1.0
  */
-<<<<<<< HEAD:p6e-coat-starter-auth/src/main/java/club/p6e/coat/auth/web/controller/BlockingRegisterController.java
 @ConditionalOnMissingBean(BlockingRegisterController.class)
-=======
-@ConditionalOnMissingBean(RegisterController.class)
->>>>>>> 5317f79cc52ef26a5b430eb2353a47e797b96d61:p6e-coat-starter-auth/src/main/java/club/p6e/coat/auth/web/controller/RegisterController.java
-@RestController("club.p6e.coat.auth.web.controller.RegisterController")
+@RestController("club.p6e.coat.auth.controller.BlockingRegisterController")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class BlockingRegisterController {
 
     /**
-     * Register Service Object
+     * Blocking Register Service Object
      */
     private final BlockingRegisterService service;
 
     /**
      * Constructor Initialization
      *
-     * @param service Register Service Object
+     * @param service Blocking Register Service Object
      */
     public BlockingRegisterController(BlockingRegisterService service) {
         this.service = service;

@@ -35,7 +35,7 @@ public class BlockingIndexServiceImpl implements BlockingIndexService {
     /**
      * Constructor Initialization
      *
-     * @param cache Voucher Cache Object
+     * @param cache Blocking Voucher Cache Object
      */
     public BlockingIndexServiceImpl(BlockingVoucherCache cache) {
         this.cache = cache;

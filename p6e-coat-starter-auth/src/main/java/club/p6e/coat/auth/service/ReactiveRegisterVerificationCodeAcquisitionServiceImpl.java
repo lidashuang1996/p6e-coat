@@ -8,7 +8,6 @@ import club.p6e.coat.auth.cache.ReactiveRegisterVerificationCodeCache;
 import club.p6e.coat.auth.event.ReactivePushVerificationCodeEvent;
 import club.p6e.coat.auth.repository.ReactiveUserRepository;
 import club.p6e.coat.common.utils.GeneratorUtil;
-import club.p6e.coat.common.utils.SpringUtil;
 import club.p6e.coat.common.utils.VerificationUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -27,12 +26,12 @@ import java.util.List;
  * @version 1.0
  */
 @ConditionalOnMissingBean(
-        value = ReactiveVerificationCodeAcquisitionService.class,
-        ignored = ReactiveVerificationCodeAcquisitionServiceImpl.class
+        value = ReactiveRegisterVerificationCodeAcquisitionService.class,
+        ignored = ReactiveRegisterVerificationCodeAcquisitionServiceImpl.class
 )
-@Component("club.p6e.coat.auth.web.reactive.service.ReactiveVerificationCodeAcquisitionServiceImpl")
+@Component("club.p6e.coat.auth.service.ReactiveRegisterVerificationCodeAcquisitionServiceImpl")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
-public class ReactiveVerificationCodeAcquisitionServiceImpl implements ReactiveVerificationCodeAcquisitionService {
+public class ReactiveRegisterVerificationCodeAcquisitionServiceImpl implements ReactiveRegisterVerificationCodeAcquisitionService {
 
     /**
      * REGISTER TEMPLATE
@@ -40,23 +39,30 @@ public class ReactiveVerificationCodeAcquisitionServiceImpl implements ReactiveV
     private static final String REGISTER_TEMPLATE = "REGISTER_TEMPLATE";
 
     /**
+     * Application Context Object
+     */
+    private final ApplicationContext context;
+
+    /**
      * Reactive User Repository Object
      */
     private final ReactiveUserRepository repository;
 
     /**
-     * Reactive Verification Code Register Cache Object
+     * Reactive Register Verification Code Cache Object
      */
     private final ReactiveRegisterVerificationCodeCache cache;
 
     /**
      * Constructor Initialization
      *
+     * @param context    Application Context Object
      * @param repository Reactive User Repository Object
-     * @param cache      Reactive Verification Code Login Cache Object
+     * @param cache      Reactive Register Verification Code Cache Object
      */
-    public ReactiveVerificationCodeAcquisitionServiceImpl(ReactiveUserRepository repository, ReactiveRegisterVerificationCodeCache cache) {
+    public ReactiveRegisterVerificationCodeAcquisitionServiceImpl(ApplicationContext context, ReactiveUserRepository repository, ReactiveRegisterVerificationCodeCache cache) {
         this.cache = cache;
+        this.context = context;
         this.repository = repository;
     }
 
@@ -109,7 +115,7 @@ public class ReactiveVerificationCodeAcquisitionServiceImpl implements ReactiveV
                         final ReactivePushVerificationCodeEvent event = new ReactivePushVerificationCodeEvent(this, List.of(account), REGISTER_TEMPLATE, language, new HashMap<>() {{
                             put("code", code);
                         }});
-                        SpringUtil.getBean(ApplicationContext.class).publishEvent(event);
+                        context.publishEvent(event);
                         final ReactivePushVerificationCodeEvent.Callback callback = event.getCallback();
                         if (callback == null) {
                             return Mono.just(new RegisterContext.VerificationCodeAcquisition.Dto().setAccount(account));

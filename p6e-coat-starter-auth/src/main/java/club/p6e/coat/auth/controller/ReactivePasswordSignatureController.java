@@ -12,25 +12,25 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * Password Signature Controller
+ * Reactive Password Signature Controller
  *
  * @author lidashuang
  * @version 1.0
  */
 @ConditionalOnMissingBean(ReactivePasswordSignatureController.class)
+@RestController("club.p6e.coat.auth.controller.ReactivePasswordSignatureController")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
-@RestController("club.p6e.coat.auth.controller.PasswordSignatureController")
 public class ReactivePasswordSignatureController {
 
     /**
-     * Password Signature Service Object
+     * Reactive Password Signature Service Object
      */
     private final ReactivePasswordSignatureService service;
 
     /**
      * Constructor Initialization
      *
-     * @param service Password Signature Service Object
+     * @param service Reactive Password Signature Service Object
      */
     public ReactivePasswordSignatureController(ReactivePasswordSignatureService service) {
         this.service = service;

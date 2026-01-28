@@ -13,25 +13,25 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * Login Quick Response Code Controller
+ * Reactive Login Quick Response Code Controller
  *
  * @author lidashuang
  * @version 1.0
  */
 @ConditionalOnMissingBean(ReactiveLoginQuickResponseCodeController.class)
+@RestController("club.p6e.coat.auth.controller.ReactiveLoginQuickResponseCodeController")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
-@RestController("club.p6e.coat.auth.controller.LoginQuickResponseCodeController")
 public class ReactiveLoginQuickResponseCodeController {
 
     /**
-     * Login Quick Response Code Service Object
+     * Reactive Login Quick Response Code Service Object
      */
     private final ReactiveLoginQuickResponseCodeService service;
 
     /**
      * Constructor Initialization
      *
-     * @param service Login Quick Response Code Service Object
+     * @param service Reactive Login Quick Response Code Service Object
      */
     public ReactiveLoginQuickResponseCodeController(ReactiveLoginQuickResponseCodeService service) {
         this.service = service;

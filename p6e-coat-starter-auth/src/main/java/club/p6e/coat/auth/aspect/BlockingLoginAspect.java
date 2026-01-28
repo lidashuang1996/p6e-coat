@@ -1,6 +1,7 @@
 package club.p6e.coat.auth.aspect;
 
 import club.p6e.coat.auth.User;
+import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.token.BlockingTokenGenerator;
 import club.p6e.coat.common.context.ResultContext;
 import club.p6e.coat.common.utils.SpringUtil;
@@ -50,7 +51,7 @@ public class BlockingLoginAspect {
             if (result instanceof final User u) {
                 request.setAttribute(BlockingVoucherAspect.MyHttpServletRequestWrapper.DELETE, "1");
                 return ResultContext.build(SpringUtil.getBean(BlockingTokenGenerator.class).execute(request, response, u));
-            } else if (result instanceof final String rs && "AUTHENTICATION_SUCCESS".equalsIgnoreCase(rs)) {
+            } else if (result instanceof LoginContext.Authentication.Dto) {
                 request.setAttribute(BlockingVoucherAspect.MyHttpServletRequestWrapper.DELETE, "1");
                 return ResultContext.build(String.valueOf(System.currentTimeMillis()));
             }

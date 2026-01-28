@@ -24,7 +24,7 @@ import reactor.core.publisher.Mono;
         value = ReactiveLoginVerificationCodeService.class,
         ignored = ReactiveLoginVerificationCodeServiceImpl.class
 )
-@Component("club.p6e.coat.auth.web.reactive.service.ReactiveLoginVerificationCodeServiceImpl")
+@Component("club.p6e.coat.auth.service.ReactiveLoginVerificationCodeServiceImpl")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactiveLoginVerificationCodeServiceImpl implements ReactiveLoginVerificationCodeService {
 

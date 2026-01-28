@@ -70,7 +70,7 @@ public class SimpleUserModel implements User, Serializable {
      *
      * @param id            ID
      * @param status        Status
-     * @param enabled       Enabled
+     * @param enable        Enabled
      * @param internal      Internal
      * @param administrator Administrator
      * @param account       Account

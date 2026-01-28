@@ -4,7 +4,7 @@ import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.validator.BlockingRequestParameterValidator;
-import club.p6e.coat.auth.service.BlockingLoginVerificationCodeService;
+import club.p6e.coat.auth.service.BlockingLoginAuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -14,27 +14,27 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Verification Code Login Controller
+ * Blocking Login Authentication Controller
  *
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(LoginVerificationCodeController.class)
+@ConditionalOnMissingBean(BlockingLoginAuthenticationController.class)
+@RestController("club.p6e.coat.auth.controller.BlockingLoginAuthenticationController")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
-@RestController("club.p6e.coat.auth.web.controller.LoginVerificationCodeController")
-public class LoginVerificationCodeController {
+public class BlockingLoginAuthenticationController {
 
     /**
-     * Login Verification Code Service Object
+     * Blocking Login Authentication Service Object
      */
-    private final BlockingLoginVerificationCodeService service;
+    private final BlockingLoginAuthenticationService service;
 
     /**
      * Constructor Initialization
      *
-     * @param service Login Verification Code Service Object
+     * @param service Blocking Login Authentication Service Object
      */
-    public LoginVerificationCodeController(BlockingLoginVerificationCodeService service) {
+    public BlockingLoginAuthenticationController(BlockingLoginAuthenticationService service) {
         this.service = service;
     }
 
@@ -43,39 +43,40 @@ public class LoginVerificationCodeController {
      *
      * @param httpServletRequest  Http Servlet Request Object
      * @param httpServletResponse Http Servlet Response Object
-     * @param request             Login Context Verification Code Request Object
-     * @return Login Context Verification Code Request Object
+     * @param request             Login Context Authentication Request Object
+     * @return Login Context Authentication Request Object
      */
-    private LoginContext.VerificationCode.Request validate(
+    private LoginContext.Authentication.Request validate(
             HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse,
-            LoginContext.VerificationCode.Request request
+            LoginContext.Authentication.Request request
     ) {
-        final LoginContext.VerificationCode.Request result = BlockingRequestParameterValidator.run(httpServletRequest, httpServletResponse, request);
+        final LoginContext.Authentication.Request result = BlockingRequestParameterValidator.run(httpServletRequest, httpServletResponse, request);
         if (result == null) {
             throw GlobalExceptionContext.executeParameterException(
                     this.getClass(),
-                    "fun LoginContext.VerificationCode.Request validate(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, LoginContext.VerificationCode.Request request)",
+                    "fun LoginContext.Authentication.Request validate(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, LoginContext.Authentication.Request request)",
                     "request parameter validation exception"
             );
         }
-        return result;
+        return request;
     }
 
-    @PostMapping(value = "/login/verification/code")
+    @PostMapping("/login/authentication")
     public Object def(
             HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse,
-            @RequestBody LoginContext.VerificationCode.Request request
+            @RequestBody LoginContext.Authentication.Request request
     ) {
         final Properties properties = Properties.getInstance();
-        if (properties.isEnable() && properties.getLogin().isEnable() && properties.getLogin().getQuickResponseCode().isEnable()) {
-            return service.execute(httpServletRequest, httpServletResponse, validate(httpServletRequest, httpServletResponse, request));
+        if (properties.isEnable() && properties.getLogin().isEnable()) {
+            service.execute(httpServletRequest, httpServletResponse, validate(httpServletRequest, httpServletResponse, request));
+            return new LoginContext.Authentication.Dto();
         } else {
             throw GlobalExceptionContext.exceptionServiceNoEnabledException(
                     this.getClass(),
-                    "fun Object def(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, LoginContext.VerificationCode.Request request)",
-                    "login verification code is not enabled"
+                    "fun Object def(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, LoginContext.Authentication.Request request)",
+                    "login authentication is not enabled"
             );
         }
     }

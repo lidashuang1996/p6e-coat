@@ -19,19 +19,19 @@ import reactor.core.publisher.Mono;
         value = ReactiveLoginAuthenticationService.class,
         ignored = ReactiveLoginAuthenticationServiceImpl.class
 )
+@Component("club.p6e.coat.auth.service.ReactiveLoginAuthenticationServiceImpl")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
-@Component("club.p6e.coat.auth.web.reactive.service.LoginAuthenticationServiceImpl")
 public class ReactiveLoginAuthenticationServiceImpl implements ReactiveLoginAuthenticationService {
 
     /**
-     * Token Validator Object
+     * Reactive Token Validator Object
      */
     private final ReactiveTokenValidator validator;
 
     /**
      * Constructor Initialization
      *
-     * @param validator Token Validator Object
+     * @param validator Reactive Token Validator Object
      */
     public ReactiveLoginAuthenticationServiceImpl(ReactiveTokenValidator validator) {
         this.validator = validator;

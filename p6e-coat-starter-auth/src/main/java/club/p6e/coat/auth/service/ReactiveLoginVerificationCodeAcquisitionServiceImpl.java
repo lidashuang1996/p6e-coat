@@ -8,7 +8,6 @@ import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.event.ReactivePushVerificationCodeEvent;
 import club.p6e.coat.auth.repository.ReactiveUserRepository;
 import club.p6e.coat.common.utils.GeneratorUtil;
-import club.p6e.coat.common.utils.SpringUtil;
 import club.p6e.coat.common.utils.VerificationUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -30,7 +29,7 @@ import java.util.List;
         value = ReactiveLoginVerificationCodeAcquisitionService.class,
         ignored = ReactiveLoginVerificationCodeAcquisitionServiceImpl.class
 )
-@Component("club.p6e.coat.auth.web.reactive.service.ReactiveLoginVerificationCodeAcquisitionServiceImpl")
+@Component("club.p6e.coat.auth.service.ReactiveLoginVerificationCodeAcquisitionServiceImpl")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactiveLoginVerificationCodeAcquisitionServiceImpl implements ReactiveLoginVerificationCodeAcquisitionService {
 
@@ -38,6 +37,11 @@ public class ReactiveLoginVerificationCodeAcquisitionServiceImpl implements Reac
      * VERIFICATION CODE LOGIN TEMPLATE
      */
     private static final String VERIFICATION_CODE_LOGIN_TEMPLATE = "VERIFICATION_CODE_LOGIN_TEMPLATE";
+
+    /**
+     * Application Context Object
+     */
+    private final ApplicationContext context;
 
     /**
      * Reactive User Repository Object
@@ -52,11 +56,13 @@ public class ReactiveLoginVerificationCodeAcquisitionServiceImpl implements Reac
     /**
      * Constructor Initialization
      *
+     * @param context    Application Context Object
      * @param repository Reactive User Repository Object
      * @param cache      Reactive Login Verification Code Cache Object
      */
-    public ReactiveLoginVerificationCodeAcquisitionServiceImpl(ReactiveUserRepository repository, ReactiveLoginVerificationCodeCache cache) {
+    public ReactiveLoginVerificationCodeAcquisitionServiceImpl(ApplicationContext context, ReactiveUserRepository repository, ReactiveLoginVerificationCodeCache cache) {
         this.cache = cache;
+        this.context = context;
         this.repository = repository;
     }
 
@@ -102,7 +108,7 @@ public class ReactiveLoginVerificationCodeAcquisitionServiceImpl implements Reac
                         final ReactivePushVerificationCodeEvent event = new ReactivePushVerificationCodeEvent(this, List.of(account), VERIFICATION_CODE_LOGIN_TEMPLATE, language, new HashMap<>() {{
                             put("code", code);
                         }});
-                        SpringUtil.getBean(ApplicationContext.class).publishEvent(event);
+                        context.publishEvent(event);
                         final ReactivePushVerificationCodeEvent.Callback callback = event.getCallback();
                         if (callback == null) {
                             return Mono.just(new LoginContext.VerificationCodeAcquisition.Dto().setAccount(account));

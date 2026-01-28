@@ -58,7 +58,7 @@ public class ReactiveLoginAuthenticationController {
 
     @PostMapping("/login/authentication")
     public Mono<Object> def(ServerWebExchange exchange, @RequestBody LoginContext.Authentication.Request request) {
-        return validate(exchange, request).flatMap(r -> service.execute(exchange, r)).map(u -> "AUTHENTICATION_SUCCESS");
+        return validate(exchange, request).flatMap(r -> service.execute(exchange, r)).map(u -> new LoginContext.Authentication.Dto());
     }
 
 }

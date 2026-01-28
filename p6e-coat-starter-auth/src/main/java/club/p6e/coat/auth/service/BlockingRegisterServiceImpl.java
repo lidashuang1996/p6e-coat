@@ -8,7 +8,6 @@ import club.p6e.coat.auth.context.RegisterContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.password.PasswordEncryptor;
 import club.p6e.coat.auth.repository.BlockingUserRepository;
-import club.p6e.coat.common.utils.SpringUtil;
 import club.p6e.coat.common.utils.TransformationUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -31,6 +30,11 @@ import org.springframework.stereotype.Component;
 public class BlockingRegisterServiceImpl implements BlockingRegisterService {
 
     /**
+     * User Builder Object
+     */
+    private final UserBuilder builder;
+
+    /**
      * Password Encryptor Object
      */
     private final PasswordEncryptor encryptor;
@@ -43,10 +47,12 @@ public class BlockingRegisterServiceImpl implements BlockingRegisterService {
     /**
      * Constructor Initialization
      *
+     * @param builder    User Builder Object
      * @param encryptor  Password Encryptor Object
      * @param repository Blocking User Repository Object
      */
-    public BlockingRegisterServiceImpl(PasswordEncryptor encryptor, BlockingUserRepository repository) {
+    public BlockingRegisterServiceImpl(UserBuilder builder, PasswordEncryptor encryptor, BlockingUserRepository repository) {
+        this.builder = builder;
         this.encryptor = encryptor;
         this.repository = repository;
     }
@@ -86,7 +92,7 @@ public class BlockingRegisterServiceImpl implements BlockingRegisterService {
                     "register create user account [ " + account + "/(exist) ] exception"
             );
         } else {
-            user = repository.create(SpringUtil.getBean(UserBuilder.class).create(param.getData()));
+            user = repository.create(builder.create(param.getData()));
             if (user == null) {
                 throw GlobalExceptionContext.exceptionDataBaseException(
                         this.getClass(),
@@ -115,7 +121,7 @@ public class BlockingRegisterServiceImpl implements BlockingRegisterService {
                     "register create user account [ " + account + "/(exist) ] exception"
             );
         } else {
-            user = repository.create(SpringUtil.getBean(UserBuilder.class).create(param.getData()));
+            user = repository.create(builder.create(param.getData()));
             if (user == null) {
                 throw GlobalExceptionContext.exceptionDataBaseException(
                         this.getClass(),
@@ -144,7 +150,7 @@ public class BlockingRegisterServiceImpl implements BlockingRegisterService {
                     "register create user account [ " + account + "/(exist) ] exception"
             );
         } else {
-            user = repository.create(SpringUtil.getBean(UserBuilder.class).create(param.getData()));
+            user = repository.create(builder.create(param.getData()));
             if (user == null) {
                 throw GlobalExceptionContext.exceptionDataBaseException(
                         this.getClass(),
@@ -173,7 +179,7 @@ public class BlockingRegisterServiceImpl implements BlockingRegisterService {
                     "register create user account [ " + account + "/(exist) ] exception"
             );
         } else {
-            user = repository.create(SpringUtil.getBean(UserBuilder.class).create(param.getData()));
+            user = repository.create(builder.create(param.getData()));
             if (user == null) {
                 throw GlobalExceptionContext.exceptionDataBaseException(
                         this.getClass(),

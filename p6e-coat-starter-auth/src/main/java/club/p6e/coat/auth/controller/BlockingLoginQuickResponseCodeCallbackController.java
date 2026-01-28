@@ -4,7 +4,7 @@ import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.validator.BlockingRequestParameterValidator;
-import club.p6e.coat.auth.service.BlockingLoginQuickResponseCodeAcquisitionService;
+import club.p6e.coat.auth.service.BlockingLoginQuickResponseCodeCallbackService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -13,27 +13,27 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Blocking Quick Response Code Login Acquisition Controller
+ * Blocking Quick Response Code Login Callback Controller
  *
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(BlockingLoginQuickResponseCodeAcquisitionController.class)
-@RestController("club.p6e.coat.auth.controller.BlockingLoginQuickResponseCodeAcquisitionController")
+@ConditionalOnMissingBean(BlockingLoginQuickResponseCodeCallbackController.class)
+@RestController("club.p6e.coat.auth.controller.BlockingLoginQuickResponseCodeCallbackController")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
-public class BlockingLoginQuickResponseCodeAcquisitionController {
+public class BlockingLoginQuickResponseCodeCallbackController {
 
     /**
-     * Blocking Login Quick Response Code Acquisition Service Object
+     * Blocking Login Quick Response Code Callback Service Object
      */
-    private final BlockingLoginQuickResponseCodeAcquisitionService service;
+    private final BlockingLoginQuickResponseCodeCallbackService service;
 
     /**
      * Constructor Initialization
      *
-     * @param service Blocking Login Quick Response Code Acquisition Service Object
+     * @param service Blocking Login Quick Response Code Callback Service Object
      */
-    public BlockingLoginQuickResponseCodeAcquisitionController(BlockingLoginQuickResponseCodeAcquisitionService service) {
+    public BlockingLoginQuickResponseCodeCallbackController(BlockingLoginQuickResponseCodeCallbackService service) {
         this.service = service;
     }
 
@@ -42,30 +42,30 @@ public class BlockingLoginQuickResponseCodeAcquisitionController {
      *
      * @param httpServletRequest  Http Servlet Request Object
      * @param httpServletResponse Http Servlet Response Object
-     * @param request             Login Context Quick Response Code Acquisition Request Object
-     * @return Login Context Quick Response Code Acquisition Request Object
+     * @param request             Login Context Quick Response Code Callback Request Object
+     * @return Login Context Quick Response Code Callback Request Object
      */
-    private LoginContext.QuickResponseCodeAcquisition.Request validate(
+    private LoginContext.QuickResponseCodeCallback.Request validate(
             HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse,
-            LoginContext.QuickResponseCodeAcquisition.Request request
+            LoginContext.QuickResponseCodeCallback.Request request
     ) {
-        final LoginContext.QuickResponseCodeAcquisition.Request result = BlockingRequestParameterValidator.run(httpServletRequest, httpServletResponse, request);
+        final LoginContext.QuickResponseCodeCallback.Request result = BlockingRequestParameterValidator.run(httpServletRequest, httpServletResponse, request);
         if (result == null) {
             throw GlobalExceptionContext.executeParameterException(
                     this.getClass(),
-                    "fun LoginContext.QuickResponseCodeAcquisition.Request validate(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, LoginContext.QuickResponseCodeAcquisition.Request request)",
+                    "fun LoginContext.QuickResponseCodeCallback.Request validate(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, LoginContext.QuickResponseCodeCallback.Request request)",
                     "request parameter validation exception"
             );
         }
         return result;
     }
 
-    @GetMapping("/login/quick/response/code")
+    @GetMapping("/login/quick/response/info")
     public Object def(
             HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse,
-            LoginContext.QuickResponseCodeAcquisition.Request request
+            LoginContext.QuickResponseCodeCallback.Request request
     ) {
         final Properties properties = Properties.getInstance();
         if (properties.isEnable() && properties.getLogin().isEnable() && properties.getLogin().getQuickResponseCode().isEnable()) {
@@ -73,7 +73,7 @@ public class BlockingLoginQuickResponseCodeAcquisitionController {
         } else {
             throw GlobalExceptionContext.exceptionServiceNoEnabledException(
                     this.getClass(),
-                    "fun Object def(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, LoginContext.QuickResponseCodeAcquisition.Request request)",
+                    "fun Object def(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, LoginContext.QuickResponseCodeCallback.Request request)",
                     "login quick response code is not enabled"
             );
         }

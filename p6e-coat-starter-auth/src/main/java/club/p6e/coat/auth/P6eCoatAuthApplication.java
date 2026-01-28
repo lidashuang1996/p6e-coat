@@ -4,16 +4,16 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * P6e Links Cloud Auth Application
+ * P6e Coat Auth Application
  *
  * @author lidashuang
  * @version 1.0
  */
 @SpringBootApplication
-public class MainApplication {
+public class P6eCoatAuthApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(MainApplication.class, args);
+        SpringApplication.run(P6eCoatAuthApplication.class, args);
     }
 
 }

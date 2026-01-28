@@ -14,27 +14,27 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Quick Response Code Login Controller
+ * Blocking Quick Response Code Login Controller
  *
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(LoginQuickResponseCodeController.class)
+@ConditionalOnMissingBean(BlockingLoginQuickResponseCodeController.class)
+@RestController("club.p6e.coat.auth.controller.BlockingLoginQuickResponseCodeController")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
-@RestController("club.p6e.coat.auth.web.controller.LoginQuickResponseCodeController")
-public class LoginQuickResponseCodeController {
+public class BlockingLoginQuickResponseCodeController {
 
     /**
-     * Login Quick Response Code Service Object
+     * Blocking Login Quick Response Code Service Object
      */
     private final BlockingLoginQuickResponseCodeService service;
 
     /**
      * Constructor Initialization
      *
-     * @param service Login Quick Response Code Service Object
+     * @param service Blocking Login Quick Response Code Service Object
      */
-    public LoginQuickResponseCodeController(BlockingLoginQuickResponseCodeService service) {
+    public BlockingLoginQuickResponseCodeController(BlockingLoginQuickResponseCodeService service) {
         this.service = service;
     }
 

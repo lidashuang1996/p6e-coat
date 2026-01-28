@@ -31,7 +31,7 @@ public class BlockingLoginQuickResponseCodeServiceImpl implements BlockingLoginQ
     private final BlockingTokenValidator validator;
 
     /**
-     * Blocking Quick Response Code Login Cache Object
+     * Blocking Login Quick Response Code Cache Object
      */
     private final BlockingLoginQuickResponseCodeCache cache;
 
@@ -39,7 +39,7 @@ public class BlockingLoginQuickResponseCodeServiceImpl implements BlockingLoginQ
      * Constructor Initialization
      *
      * @param validator Blocking Token Validator Object
-     * @param cache     Blocking Quick Response Code Login Cache Object
+     * @param cache     Blocking Login Quick Response Code Cache Object
      */
     public BlockingLoginQuickResponseCodeServiceImpl(BlockingTokenValidator validator, BlockingLoginQuickResponseCodeCache cache) {
         this.cache = cache;

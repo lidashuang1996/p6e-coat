@@ -89,8 +89,10 @@ public class BlockingLoginAccountPasswordServiceImpl implements BlockingLoginAcc
     private String executePasswordTransmissionDecryption(HttpServletRequest request, String password) {
         final boolean enableTransmissionEncryption = Properties.getInstance().getLogin().getAccountPassword().isEnableTransmissionEncryption();
         if (enableTransmissionEncryption) {
-            final BlockingPasswordSignatureCache cache = SpringUtil.getBean(BlockingPasswordSignatureCache.class);
-            if (cache == null) {
+            final BlockingPasswordSignatureCache cache;
+            if (SpringUtil.exist(BlockingPasswordSignatureCache.class)) {
+                cache = SpringUtil.getBean(BlockingPasswordSignatureCache.class);
+            } else {
                 throw GlobalExceptionContext.exceptionBeanException(
                         this.getClass(),
                         "fun executePasswordTransmissionDecryption(HttpServletRequest request, String password)",

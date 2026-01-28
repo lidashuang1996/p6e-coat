@@ -18,24 +18,20 @@ import org.springframework.web.bind.annotation.RestController;
  * @author lidashuang
  * @version 1.0
  */
-<<<<<<< HEAD:p6e-coat-starter-auth/src/main/java/club/p6e/coat/auth/web/controller/BlockingPasswordSignatureController.java
 @ConditionalOnMissingBean(BlockingPasswordSignatureController.class)
-=======
-@ConditionalOnMissingBean(PasswordSignatureController.class)
->>>>>>> 5317f79cc52ef26a5b430eb2353a47e797b96d61:p6e-coat-starter-auth/src/main/java/club/p6e/coat/auth/web/controller/PasswordSignatureController.java
+@RestController("club.p6e.coat.auth.controller.BlockingPasswordSignatureController")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
-@RestController("club.p6e.coat.auth.web.controller.PasswordSignatureController")
 public class BlockingPasswordSignatureController {
 
     /**
-     * Password Signature Service Object
+     * Blocking Password Signature Service Object
      */
     private final BlockingPasswordSignatureService service;
 
     /**
      * Constructor Initialization
      *
-     * @param service Password Signature Service Object
+     * @param service Blocking Password Signature Service Object
      */
     public BlockingPasswordSignatureController(BlockingPasswordSignatureService service) {
         this.service = service;

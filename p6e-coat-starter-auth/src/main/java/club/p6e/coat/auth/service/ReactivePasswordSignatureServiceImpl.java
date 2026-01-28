@@ -25,7 +25,7 @@ import java.util.HashMap;
         value = ReactivePasswordSignatureService.class,
         ignored = ReactivePasswordSignatureServiceImpl.class
 )
-@Component("club.p6e.coat.auth.web.reactive.service.ReactivePasswordSignatureServiceImpl")
+@Component("club.p6e.coat.auth.service.ReactivePasswordSignatureServiceImpl")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactivePasswordSignatureServiceImpl implements ReactivePasswordSignatureService {
 

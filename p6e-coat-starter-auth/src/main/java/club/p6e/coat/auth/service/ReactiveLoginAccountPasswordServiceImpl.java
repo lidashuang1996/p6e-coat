@@ -31,7 +31,7 @@ import java.util.Map;
         value = ReactiveLoginAccountPasswordService.class,
         ignored = ReactiveLoginAccountPasswordServiceImpl.class
 )
-@Component("club.p6e.coat.auth.web.reactive.service.ReactiveLoginAccountPasswordServiceImpl")
+@Component("club.p6e.coat.auth.service.ReactiveLoginAccountPasswordServiceImpl")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactiveLoginAccountPasswordServiceImpl implements ReactiveLoginAccountPasswordService {
 
@@ -79,8 +79,7 @@ public class ReactiveLoginAccountPasswordServiceImpl implements ReactiveLoginAcc
      * @return Password Decryption Content Object
      */
     private Mono<String> executePasswordTransmissionDecryption(ServerWebExchange exchange, String password) {
-        final boolean enableTransmissionEncryption = Properties.getInstance()
-                .getLogin().getAccountPassword().isEnableTransmissionEncryption();
+        final boolean enableTransmissionEncryption = Properties.getInstance().getLogin().getAccountPassword().isEnableTransmissionEncryption();
         if (enableTransmissionEncryption) {
             final ReactivePasswordSignatureCache cache;
             if (SpringUtil.exist(ReactivePasswordSignatureCache.class)) {
@@ -92,8 +91,7 @@ public class ReactiveLoginAccountPasswordServiceImpl implements ReactiveLoginAcc
                         "login account password password transmission decryption cache handle bean[" + ReactivePasswordSignatureCache.class + "] not exist exception"
                 ));
             }
-            final String mark = TransformationUtil.objectToString(exchange.getRequest()
-                    .getAttributes().get(ReactiveVoucherAspect.MyServerHttpRequestDecorator.ACCOUNT_PASSWORD_SIGNATURE_MARK));
+            final String mark = TransformationUtil.objectToString(exchange.getRequest().getAttributes().get(ReactiveVoucherAspect.MyServerHttpRequestDecorator.ACCOUNT_PASSWORD_SIGNATURE_MARK));
             return cache.get(mark)
                     .switchIfEmpty(Mono.error(GlobalExceptionContext.executeCacheException(
                             this.getClass(),

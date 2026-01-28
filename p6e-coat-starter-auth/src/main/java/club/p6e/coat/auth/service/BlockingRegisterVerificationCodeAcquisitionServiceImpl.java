@@ -8,7 +8,6 @@ import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.event.BlockingPushVerificationCodeEvent;
 import club.p6e.coat.auth.repository.BlockingUserRepository;
 import club.p6e.coat.common.utils.GeneratorUtil;
-import club.p6e.coat.common.utils.SpringUtil;
 import club.p6e.coat.common.utils.VerificationUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -40,23 +39,30 @@ public class BlockingRegisterVerificationCodeAcquisitionServiceImpl implements B
     private static final String REGISTER_TEMPLATE = "REGISTER_TEMPLATE";
 
     /**
+     * Application Context Object
+     */
+    private final ApplicationContext context;
+
+    /**
      * Blocking User Repository Object
      */
     private final BlockingUserRepository repository;
 
     /**
-     * Blocking Verification Code Register Cache Object
+     * Blocking Register Verification Code Cache Object
      */
     private final BlockingRegisterVerificationCodeCache cache;
 
     /**
      * Constructor Initialization
      *
+     * @param context    Application Context Object
      * @param repository Blocking User Repository Object
-     * @param cache      Blocking Verification Code Login Cache Object
+     * @param cache      Blocking Register Verification Code Cache Object
      */
-    public BlockingRegisterVerificationCodeAcquisitionServiceImpl(BlockingUserRepository repository, BlockingRegisterVerificationCodeCache cache) {
+    public BlockingRegisterVerificationCodeAcquisitionServiceImpl(ApplicationContext context, BlockingUserRepository repository, BlockingRegisterVerificationCodeCache cache) {
         this.cache = cache;
+        this.context = context;
         this.repository = repository;
     }
 
@@ -105,10 +111,9 @@ public class BlockingRegisterVerificationCodeAcquisitionServiceImpl implements B
             final String code = GeneratorUtil.random();
             cache.set(account, code);
             request.setAttribute(BlockingVoucherAspect.MyHttpServletRequestWrapper.ACCOUNT, account);
-            final BlockingPushVerificationCodeEvent event = new BlockingPushVerificationCodeEvent(this, List.of(account), REGISTER_TEMPLATE, language, new HashMap<>() {{
+            context.publishEvent(new BlockingPushVerificationCodeEvent(this, List.of(account), REGISTER_TEMPLATE, language, new HashMap<>() {{
                 put("code", code);
-            }});
-            SpringUtil.getBean(ApplicationContext.class).publishEvent(event);
+            }}));
             return new RegisterContext.VerificationCodeAcquisition.Dto().setAccount(account);
         } else {
             throw GlobalExceptionContext.exceptionAccountException(

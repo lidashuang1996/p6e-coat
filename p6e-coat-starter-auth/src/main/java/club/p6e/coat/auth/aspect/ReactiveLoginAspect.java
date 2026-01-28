@@ -1,6 +1,7 @@
 package club.p6e.coat.auth.aspect;
 
 import club.p6e.coat.auth.User;
+import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.token.ReactiveTokenGenerator;
 import club.p6e.coat.common.context.ResultContext;
 import club.p6e.coat.common.utils.SpringUtil;
@@ -49,7 +50,7 @@ public class ReactiveLoginAspect {
                 if (r instanceof final User ru) {
                     e.getRequest().getAttributes().put(BlockingVoucherAspect.MyHttpServletRequestWrapper.DELETE, "1");
                     return SpringUtil.getBean(ReactiveTokenGenerator.class).execute(e, ru).map(ResultContext::build);
-                } else if (r instanceof final String rs && "AUTHENTICATION_SUCCESS".equalsIgnoreCase(rs)) {
+                } else if (r instanceof LoginContext.Authentication.Dto) {
                     e.getRequest().getAttributes().put(BlockingVoucherAspect.MyHttpServletRequestWrapper.DELETE, "1");
                     return Mono.just(ResultContext.build(String.valueOf(System.currentTimeMillis())));
                 }

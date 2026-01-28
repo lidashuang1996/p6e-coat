@@ -40,10 +40,10 @@ public class BlockingLoginQuickResponseCodeCallbackServiceImpl implements Blocki
     /**
      * Constructor Initialization
      *
-     * @param cache      Blocking Login Quick Response Code Cache Object
      * @param repository Blocking User Repository Object
+     * @param cache      Blocking Login Quick Response Code Cache Object
      */
-    public BlockingLoginQuickResponseCodeCallbackServiceImpl(BlockingLoginQuickResponseCodeCache cache, BlockingUserRepository repository) {
+    public BlockingLoginQuickResponseCodeCallbackServiceImpl(BlockingUserRepository repository, BlockingLoginQuickResponseCodeCache cache) {
         this.cache = cache;
         this.repository = repository;
     }

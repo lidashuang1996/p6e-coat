@@ -18,19 +18,19 @@ import org.springframework.web.bind.annotation.RestController;
  * @version 1.0
  */
 @ConditionalOnMissingBean(BlockingIndexController.class)
-@RestController("club.p6e.coat.auth.web.controller.IndexController")
+@RestController("club.p6e.coat.auth.controller.IndexController")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class BlockingIndexController {
 
     /**
-     * Index Service Object
+     * Blocking Index Service Object
      */
     private final BlockingIndexService service;
 
     /**
      * Constructor Initialization
      *
-     * @param service Index Service Object
+     * @param service Blocking Index Service Object
      */
     public BlockingIndexController(BlockingIndexService service) {
         this.service = service;

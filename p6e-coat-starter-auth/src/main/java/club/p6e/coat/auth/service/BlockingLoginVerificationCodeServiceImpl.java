@@ -43,8 +43,8 @@ public class BlockingLoginVerificationCodeServiceImpl implements BlockingLoginVe
     /**
      * Constructor Initialization
      *
-     * @param cache      Blocking Login Verification Code Cache Object
      * @param repository Blocking User Repository Object
+     * @param cache      Blocking Login Verification Code Cache Object
      */
     public BlockingLoginVerificationCodeServiceImpl(BlockingUserRepository repository, BlockingLoginVerificationCodeCache cache) {
         this.cache = cache;

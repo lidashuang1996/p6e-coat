@@ -2,7 +2,7 @@ package club.p6e.coat.auth.controller;
 
 import club.p6e.coat.auth.context.RegisterContext;
 import club.p6e.coat.auth.error.GlobalExceptionContext;
-import club.p6e.coat.auth.service.ReactiveVerificationCodeAcquisitionService;
+import club.p6e.coat.auth.service.ReactiveRegisterVerificationCodeAcquisitionService;
 import club.p6e.coat.auth.validator.ReactiveRequestParameterValidator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -25,14 +25,14 @@ public class ReactiveRegisterVerificationCodeAcquisitionController {
     /**
      * Reactive Register Verification Code Acquisition Service Object
      */
-    private final ReactiveVerificationCodeAcquisitionService service;
+    private final ReactiveRegisterVerificationCodeAcquisitionService service;
 
     /**
      * Constructor Initialization
      *
      * @param service Reactive Register Verification Code Acquisition Service Object
      */
-    public ReactiveRegisterVerificationCodeAcquisitionController(ReactiveVerificationCodeAcquisitionService service) {
+    public ReactiveRegisterVerificationCodeAcquisitionController(ReactiveRegisterVerificationCodeAcquisitionService service) {
         this.service = service;
     }
 

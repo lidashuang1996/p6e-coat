@@ -8,7 +8,6 @@ import club.p6e.coat.auth.error.GlobalExceptionContext;
 import club.p6e.coat.auth.password.PasswordEncryptor;
 import club.p6e.coat.auth.aspect.ReactiveVoucherAspect;
 import club.p6e.coat.auth.repository.ReactiveUserRepository;
-import club.p6e.coat.common.utils.SpringUtil;
 import club.p6e.coat.common.utils.TransformationUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -27,14 +26,24 @@ import reactor.core.publisher.Mono;
         value = ReactiveRegisterService.class,
         ignored = ReactiveRegisterServiceImpl.class
 )
-@Component("club.p6e.coat.auth.web.reactive.service.ReactiveRegisterServiceImpl")
+@Component("club.p6e.coat.auth.service.ReactiveRegisterServiceImpl")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactiveRegisterServiceImpl implements ReactiveRegisterService {
+
+    /**
+     * User Builder Object
+     */
+    private final UserBuilder builder;
 
     /**
      * Password Encryptor Object
      */
     private final PasswordEncryptor encryptor;
+
+    /**
+     * Transactional Operator Object
+     */
+    private final TransactionalOperator transactional;
 
     /**
      * Reactive User Repository Object
@@ -44,12 +53,16 @@ public class ReactiveRegisterServiceImpl implements ReactiveRegisterService {
     /**
      * Constructor Initialization
      *
-     * @param encryptor  Password Encryptor Object
-     * @param repository Reactive User Repository Object
+     * @param builder       User Builder Object
+     * @param encryptor     Password Encryptor Object
+     * @param transactional Transactional Operator Object
+     * @param repository    Reactive User Repository Object
      */
-    public ReactiveRegisterServiceImpl(PasswordEncryptor encryptor, ReactiveUserRepository repository) {
+    public ReactiveRegisterServiceImpl(UserBuilder builder, PasswordEncryptor encryptor, TransactionalOperator transactional, ReactiveUserRepository repository) {
+        this.builder = builder;
         this.encryptor = encryptor;
         this.repository = repository;
+        this.transactional = transactional;
     }
 
     @Override
@@ -81,16 +94,13 @@ public class ReactiveRegisterServiceImpl implements ReactiveRegisterService {
                         "fun executeAccountMode(String account, RegisterContext.Request param)",
                         "register create user account [ " + account + "/(exist) ] exception"
                 )))
-                .flatMap(u -> SpringUtil
-                        .getBean(TransactionalOperator.class)
-                        .execute(status -> repository
-                                .create(SpringUtil.getBean(UserBuilder.class).create(param.getData()))
+                .flatMap(u -> transactional.execute(status -> repository
+                                .create(builder.create(param.getData()))
                                 .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionDataBaseException(
                                         this.getClass(),
                                         "fun executeAccountMode(String account, RegisterContext.Request param)",
                                         "register create user account exception"
-                                )))
-                                .flux()
+                                ))).flux()
                         ).collectList().map(list -> list.get(0))
                 );
     }
@@ -108,16 +118,13 @@ public class ReactiveRegisterServiceImpl implements ReactiveRegisterService {
                         "fun executePhoneMode(String account, RegisterContext.Request param)",
                         "register create user phone account [ " + account + "/(exist) ] exception"
                 )))
-                .flatMap(u -> SpringUtil
-                        .getBean(TransactionalOperator.class)
-                        .execute(status -> repository
-                                .create(SpringUtil.getBean(UserBuilder.class).create(param.getData()))
+                .flatMap(u -> transactional.execute(status -> repository
+                                .create(builder.create(param.getData()))
                                 .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionDataBaseException(
                                         this.getClass(),
                                         "fun executePhoneMode(String account, RegisterContext.Request param)",
                                         "register create user phone account exception"
-                                )))
-                                .flux()
+                                ))).flux()
                         ).collectList().map(list -> list.get(0))
                 );
     }
@@ -135,16 +142,13 @@ public class ReactiveRegisterServiceImpl implements ReactiveRegisterService {
                         "fun executeMailboxMode(String account, RegisterContext.Request param)",
                         "register create user mailbox account [ " + account + "/(exist) ] exception"
                 )))
-                .flatMap(u -> SpringUtil
-                        .getBean(TransactionalOperator.class)
-                        .execute(status -> repository
-                                .create(SpringUtil.getBean(UserBuilder.class).create(param.getData()))
+                .flatMap(u -> transactional.execute(status -> repository
+                                .create(builder.create(param.getData()))
                                 .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionDataBaseException(
                                         this.getClass(),
                                         "fun executeMailboxMode(String account, RegisterContext.Request param)",
                                         "register create user mailbox account exception"
-                                )))
-                                .flux()
+                                ))).flux()
                         ).collectList().map(list -> list.get(0))
                 );
     }
@@ -162,16 +166,13 @@ public class ReactiveRegisterServiceImpl implements ReactiveRegisterService {
                         "fun executePhoneOrMailboxMode(String account, RegisterContext.Request param)",
                         "register create user phone/mailbox account [ " + account + "/(exist) ] exception"
                 )))
-                .flatMap(u -> SpringUtil
-                        .getBean(TransactionalOperator.class)
-                        .execute(status -> repository
-                                .create(SpringUtil.getBean(UserBuilder.class).create(param.getData()))
+                .flatMap(u -> transactional.execute(status -> repository
+                                .create(builder.create(param.getData()))
                                 .switchIfEmpty(Mono.error(GlobalExceptionContext.exceptionDataBaseException(
                                         this.getClass(),
                                         "fun executePhoneOrMailboxMode(String account, RegisterContext.Request param)",
                                         "register create user phone/mailbox account exception"
-                                )))
-                                .flux()
+                                ))).flux()
                         ).collectList().map(list -> list.get(0))
                 );
     }

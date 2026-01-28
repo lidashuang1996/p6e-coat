@@ -13,25 +13,25 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * Login Verification Code Controller
+ * Reactive Login Verification Code Controller
  *
  * @author lidashuang
  * @version 1.0
  */
 @ConditionalOnMissingBean(ReactiveLoginVerificationCodeController.class)
+@RestController("club.p6e.coat.auth.controller.ReactiveLoginVerificationCodeController")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
-@RestController("club.p6e.coat.auth.controller.LoginVerificationCodeController")
 public class ReactiveLoginVerificationCodeController {
 
     /**
-     * Login Verification Code Service Object
+     * Reactive Login Verification Code Service Object
      */
     private final ReactiveLoginVerificationCodeService service;
 
     /**
      * Constructor Initialization
      *
-     * @param service Login Verification Code Service Object
+     * @param service Reactive Login Verification Code Service Object
      */
     public ReactiveLoginVerificationCodeController(ReactiveLoginVerificationCodeService service) {
         this.service = service;

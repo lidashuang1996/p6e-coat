@@ -23,27 +23,27 @@ import reactor.core.publisher.Mono;
         value = ReactiveLoginQuickResponseCodeCallbackService.class,
         ignored = ReactiveLoginQuickResponseCodeCallbackServiceImpl.class
 )
+@Component("club.p6e.coat.auth.service.ReactiveLoginQuickResponseCodeCallbackServiceImpl")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
-@Component("club.p6e.coat.auth.web.reactive.service.LoginQuickResponseCodeCallbackServiceImpl")
 public class ReactiveLoginQuickResponseCodeCallbackServiceImpl implements ReactiveLoginQuickResponseCodeCallbackService {
 
     /**
-     * User Repository Object
+     * Reactive User Repository Object
      */
     private final ReactiveUserRepository repository;
 
     /**
-     * Login Quick Response Code Cache Object
+     * Reactive Login Quick Response Code Cache Object
      */
     private final ReactiveLoginQuickResponseCodeCache cache;
 
     /**
      * Constructor Initialization
      *
-     * @param cache      Login Quick Response Code Cache Object
-     * @param repository User Repository Object
+     * @param repository Reactive User Repository Object
+     * @param cache      Reactive Login Quick Response Code Cache Object
      */
-    public ReactiveLoginQuickResponseCodeCallbackServiceImpl(ReactiveLoginQuickResponseCodeCache cache, ReactiveUserRepository repository) {
+    public ReactiveLoginQuickResponseCodeCallbackServiceImpl(ReactiveUserRepository repository, ReactiveLoginQuickResponseCodeCache cache) {
         this.cache = cache;
         this.repository = repository;
     }

@@ -11,7 +11,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * Login Quick Response Code Acquisition Service Impl
+ * Reactive Login Quick Response Code Acquisition Service Impl
  *
  * @author lidashuang
  * @version 1.0
@@ -20,19 +20,19 @@ import reactor.core.publisher.Mono;
         value = ReactiveLoginQuickResponseCodeAcquisitionService.class,
         ignored = ReactiveLoginQuickResponseCodeAcquisitionServiceImpl.class
 )
+@Component("club.p6e.coat.auth.service.ReactiveLoginQuickResponseCodeAcquisitionServiceImpl")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
-@Component("club.p6e.coat.auth.web.reactive.service.LoginQuickResponseCodeAcquisitionServiceImpl")
 public class ReactiveLoginQuickResponseCodeAcquisitionServiceImpl implements ReactiveLoginQuickResponseCodeAcquisitionService {
 
     /**
-     * Login Quick Response Code Cache Object
+     * Reactive Login Quick Response Code Cache Object
      */
     private final ReactiveLoginQuickResponseCodeCache cache;
 
     /**
      * Constructor Initialization
      *
-     * @param cache Login Quick Response Code Cache Object
+     * @param cache Reactive Login Quick Response Code Cache Object
      */
     public ReactiveLoginQuickResponseCodeAcquisitionServiceImpl(ReactiveLoginQuickResponseCodeCache cache) {
         this.cache = cache;

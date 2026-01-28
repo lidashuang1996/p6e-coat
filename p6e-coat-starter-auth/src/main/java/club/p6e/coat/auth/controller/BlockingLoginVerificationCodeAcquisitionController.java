@@ -13,27 +13,27 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Verification Code Login Acquisition Controller
+ * Blocking Login Verification Code Login Acquisition Controller
  *
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(LoginVerificationCodeAcquisitionController.class)
+@ConditionalOnMissingBean(BlockingLoginVerificationCodeAcquisitionController.class)
+@RestController("club.p6e.coat.auth.controller.BlockingLoginVerificationCodeAcquisitionController")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
-@RestController("club.p6e.coat.auth.web.controller.LoginVerificationCodeAcquisitionController")
-public class LoginVerificationCodeAcquisitionController {
+public class BlockingLoginVerificationCodeAcquisitionController {
 
     /**
-     * Login Verification Code Acquisition Service Object
+     * Blocking Login Verification Code Acquisition Service Object
      */
     private final BlockingLoginVerificationCodeAcquisitionService service;
 
     /**
      * Constructor Initialization
      *
-     * @param service Login Verification Code Acquisition Service Object
+     * @param service Blocking Login Verification Code Acquisition Service Object
      */
-    public LoginVerificationCodeAcquisitionController(BlockingLoginVerificationCodeAcquisitionService service) {
+    public BlockingLoginVerificationCodeAcquisitionController(BlockingLoginVerificationCodeAcquisitionService service) {
         this.service = service;
     }
 

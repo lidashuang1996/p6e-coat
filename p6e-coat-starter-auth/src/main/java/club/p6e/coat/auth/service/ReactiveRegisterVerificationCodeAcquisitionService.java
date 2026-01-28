@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
-public interface ReactiveVerificationCodeAcquisitionService {
+public interface ReactiveRegisterVerificationCodeAcquisitionService {
 
     /**
      * Execute Register Verification Code Acquisition
