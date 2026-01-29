@@ -11,5 +11,7 @@ public class ClientModel {
 
     private String scope;
     private String redirectUri;
+    private String appId;
+    private String appSecret;
 
 }

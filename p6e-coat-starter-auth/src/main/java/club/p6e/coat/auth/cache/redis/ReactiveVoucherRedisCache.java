@@ -18,12 +18,9 @@ import java.util.Map;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(
-        value = ReactiveVoucherCache.class,
-        ignored = ReactiveVoucherRedisCache.class
-)
+@ConditionalOnMissingBean(ReactiveVoucherRedisCache.class)
+@Component("club.p6e.coat.auth.cache.redis.ReactiveVoucherRedisCache")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
-@Component("club.p6e.coat.auth.cache.redis.VoucherRedisCache")
 public class ReactiveVoucherRedisCache implements ReactiveVoucherCache {
 
     /**

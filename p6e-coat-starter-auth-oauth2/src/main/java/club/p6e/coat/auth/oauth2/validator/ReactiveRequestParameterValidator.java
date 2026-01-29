@@ -1,4 +1,4 @@
-package club.p6e.coat.auth.validator;
+package club.p6e.coat.auth.oauth2.validator;
 
 import club.p6e.coat.common.utils.SpringUtil;
 import org.springframework.web.server.ServerWebExchange;

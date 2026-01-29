@@ -14,12 +14,9 @@ import java.util.List;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(
-        value = ReactiveLoginVerificationCodeCache.class,
-        ignored = ReactiveLoginVerificationCodeCacheRedisCache.class
-)
+@ConditionalOnMissingBean(ReactiveLoginVerificationCodeCacheRedisCache.class)
+@Component("club.p6e.coat.auth.cache.redis.ReactiveLoginVerificationCodeCacheRedisCache")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
-@Component("club.p6e.coat.auth.cache.redis.LoginVerificationCodeCacheRedisCache")
 public class ReactiveLoginVerificationCodeCacheRedisCache implements ReactiveLoginVerificationCodeCache {
 
     /**

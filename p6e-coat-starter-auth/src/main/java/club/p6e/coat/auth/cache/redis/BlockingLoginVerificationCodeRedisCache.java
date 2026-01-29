@@ -13,10 +13,7 @@ import java.util.List;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(
-        value = BlockingLoginVerificationCodeCache.class,
-        ignored = BlockingLoginVerificationCodeRedisCache.class
-)
+@ConditionalOnMissingBean(BlockingLoginVerificationCodeRedisCache.class)
 @Component("club.p6e.coat.auth.cache.redis.BlockingLoginVerificationCodeRedisCache")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class BlockingLoginVerificationCodeRedisCache implements BlockingLoginVerificationCodeCache {

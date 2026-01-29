@@ -5,26 +5,38 @@ import club.p6e.coat.auth.cache.BlockingVoucherCache;
 import club.p6e.coat.auth.context.IndexContext;
 import club.p6e.coat.auth.oauth2.context.AuthorizeContext;
 import club.p6e.coat.auth.oauth2.model.ClientModel;
-import club.p6e.coat.auth.oauth2.repository.BlockingRepository;
-import club.p6e.coat.common.error.Oauth2ClientException;
-import club.p6e.coat.common.error.Oauth2ParameterException;
-import club.p6e.coat.common.error.Oauth2RedirectUriException;
-import club.p6e.coat.common.error.Oauth2ScopeException;
+import club.p6e.coat.auth.oauth2.repository.BlockingClientRepository;
+import club.p6e.coat.auth.oauth2.validator.BlockingRequestParameterValidator;
+import club.p6e.coat.common.error.*;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.TemplateParser;
 import club.p6e.coat.common.utils.VerificationUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.stereotype.Service;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 
-@Service
+/**
+ * Blocking Authorize Service Impl
+ *
+ * @author lidashuang
+ * @version 1.0
+ */
+@ConditionalOnMissingBean(
+        value = BlockingAuthorizeService.class,
+        ignored = BlockingAuthorizeServiceImpl.class
+)
+@Component("club.p6e.coat.auth.oauth2.service.BlockingAuthorizeServiceImpl")
+@ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class BlockingAuthorizeServiceImpl implements BlockingAuthorizeService {
 
+    /**
+     * Code Mode
+     */
     private static final String CODE_MODE = "CODE";
-
-    private final BlockingRepository repository;
 
     /**
      * Blocking Voucher Cache Object
@@ -32,36 +44,64 @@ public class BlockingAuthorizeServiceImpl implements BlockingAuthorizeService {
     private final BlockingVoucherCache cache;
 
     /**
+     * Blocking Client Repository Object
+     */
+    private final BlockingClientRepository repository;
+
+    /**
      * Constructor Initialization
      *
-     * @param cache Blocking Voucher Cache Object
+     * @param cache      Blocking Voucher Cache Object
+     * @param repository Blocking Client Repository Object
      */
-    public BlockingAuthorizeServiceImpl(BlockingVoucherCache cache) {
+    public BlockingAuthorizeServiceImpl(BlockingVoucherCache cache, BlockingClientRepository repository) {
         this.cache = cache;
+        this.repository = repository;
     }
 
     @Override
     public IndexContext.Dto execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthorizeContext.Request request) {
-        final String scope = request.getScope();
-        final String state = request.getState();
-        final String clientId = request.getClientId();
-        final String redirectUri = request.getRedirectUri();
-        final String responseType = request.getResponseType();
+        final AuthorizeContext.Request content = BlockingRequestParameterValidator.run(httpServletRequest, httpServletResponse, request);
+        final String scope = content.getScope();
+        final String state = content.getState();
+        final String clientId = content.getClientId();
+        final String redirectUri = content.getRedirectUri();
+        final String responseType = content.getResponseType();
         if (!CODE_MODE.equalsIgnoreCase(responseType)) {
-            throw new Oauth2ParameterException(this.getClass(), "", "");
+            throw new OAuth2ParameterException(
+                    this.getClass(),
+                    "fun IndexContext.Dto execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthorizeContext.Request request)",
+                    "request parameter response_type<" + responseType + "> not support"
+            );
         }
-        final ClientModel client = repository.findClientByAppId(clientId);
+        final ClientModel client = repository.findByAppId(clientId);
         if (client == null) {
-            throw new Oauth2ClientException(this.getClass(), "", "");
+            throw new OAuth2ClientException(
+                    this.getClass(),
+                    "fun IndexContext.Dto execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthorizeContext.Request request)",
+                    "[" + CODE_MODE + "] client_id<" + clientId + "> not match"
+            );
         }
         if (client.getEnable() != 1) {
-            throw new Oauth2ClientException(this.getClass(), "", "");
+            throw new OAuth2ClientException(
+                    this.getClass(),
+                    "fun IndexContext.Dto execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthorizeContext.Request request)",
+                    "[" + CODE_MODE + "] client not enabled"
+            );
         }
         if (!VerificationUtil.validationOAuth2Scope(client.getScope(), scope)) {
-            throw new Oauth2ScopeException(this.getClass(), "", "");
+            throw new OAuth2ScopeException(
+                    this.getClass(),
+                    "fun IndexContext.Dto execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthorizeContext.Request request)",
+                    "[" + CODE_MODE + "] scope<" + scope + "> not match"
+            );
         }
         if (!VerificationUtil.validationOAuth2RedirectUri(client.getRedirectUri(), redirectUri)) {
-            throw new Oauth2RedirectUriException(this.getClass(), "", "");
+            throw new OAuth2RedirectUriException(
+                    this.getClass(),
+                    "fun IndexContext.Dto execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthorizeContext.Request request)",
+                    "[" + CODE_MODE + "] redirect_uri<" + redirectUri + "> not match"
+            );
         }
         final Properties.Page page = Properties.getInstance().getLogin().getPage();
         final String voucher = GeneratorUtil.uuid() + GeneratorUtil.random(8, true, false);

@@ -31,12 +31,12 @@ import java.util.List;
  * @version 1.0
  */
 @ConditionalOnMissingBean(
-        value = BlockingRepository.class,
+        value = BlockingClientRepository.class,
         ignored = BlockingUserRepositoryImpl.class
 )
 @Component("club.p6e.coat.auth.repository.BlockingUserRepositoryImpl")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
-public class BlockingUserRepositoryImpl implements BlockingRepository {
+public class BlockingUserRepositoryImpl implements BlockingClientRepository {
 
     /**
      * Base User Select SQL

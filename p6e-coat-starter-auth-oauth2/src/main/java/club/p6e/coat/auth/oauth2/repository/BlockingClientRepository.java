@@ -9,7 +9,7 @@ import club.p6e.coat.auth.oauth2.model.ClientModel;
  * @author lidashuang
  * @version 1.0
  */
-public interface BlockingRepository {
+public interface BlockingClientRepository {
 
     /**
      * Query By ID
@@ -17,7 +17,7 @@ public interface BlockingRepository {
      * @param id ID
      * @return User Object
      */
-    ClientModel findClientByAppId(String id);
+    ClientModel findByAppId(String id);
 
     /**
      * Query By Account

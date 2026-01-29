@@ -32,6 +32,7 @@ public class TokenContext implements Serializable {
         private String password;
         private String code;
         private String redirectUri;
+        private String scope;
 
     }
 
@@ -41,12 +42,11 @@ public class TokenContext implements Serializable {
     @Data
     @Accessors(chain = true)
     public static class Dto implements Serializable {
-
-        /**
-         * Custom Data
-         */
-        private Map<String, Object> data = new HashMap<>();
-
+        private String oid;
+        private String type;
+        private String user;
+        private String token;
+        private Long expiration;
     }
 
     /**

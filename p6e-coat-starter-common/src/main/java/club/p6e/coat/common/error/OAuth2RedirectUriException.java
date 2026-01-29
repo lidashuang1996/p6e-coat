@@ -1,3 +1,4 @@
+
 package club.p6e.coat.common.error;
 
 /**
@@ -7,7 +8,7 @@ package club.p6e.coat.common.error;
  * @author lidashuang
  * @version 1.0
  */
-public class Oauth2ScopeException extends CustomException {
+public class OAuth2RedirectUriException extends CustomException {
 
     /**
      * 默认的代码
@@ -26,8 +27,8 @@ public class Oauth2ScopeException extends CustomException {
      * @param error   异常对象
      * @param content 描述内容
      */
-    public Oauth2ScopeException(Class<?> sc, String error, String content) {
-        super(sc, Oauth2ScopeException.class, error, DEFAULT_CODE, DEFAULT_SKETCH, content);
+    public OAuth2RedirectUriException(Class<?> sc, String error, String content) {
+        super(sc, OAuth2RedirectUriException.class, error, DEFAULT_CODE, DEFAULT_SKETCH, content);
     }
 
     /**
@@ -37,8 +38,8 @@ public class Oauth2ScopeException extends CustomException {
      * @param throwable 异常对象
      * @param content   描述内容
      */
-    public Oauth2ScopeException(Class<?> sc, Throwable throwable, String content) {
-        super(sc, Oauth2ScopeException.class, throwable, DEFAULT_CODE, DEFAULT_SKETCH, content);
+    public OAuth2RedirectUriException(Class<?> sc, Throwable throwable, String content) {
+        super(sc, OAuth2RedirectUriException.class, throwable, DEFAULT_CODE, DEFAULT_SKETCH, content);
     }
 
     /**
@@ -50,8 +51,8 @@ public class Oauth2ScopeException extends CustomException {
      * @param sketch  简述
      * @param content 描述内容
      */
-    public Oauth2ScopeException(Class<?> sc, String error, int code, String sketch, String content) {
-        super(sc, Oauth2ScopeException.class, error, code, sketch, content);
+    public OAuth2RedirectUriException(Class<?> sc, String error, int code, String sketch, String content) {
+        super(sc, OAuth2RedirectUriException.class, error, code, sketch, content);
     }
 
     /**
@@ -63,7 +64,7 @@ public class Oauth2ScopeException extends CustomException {
      * @param sketch    简述
      * @param content   描述内容
      */
-    public Oauth2ScopeException(Class<?> sc, Throwable throwable, int code, String sketch, String content) {
-        super(sc, Oauth2ScopeException.class, throwable, code, sketch, content);
+    public OAuth2RedirectUriException(Class<?> sc, Throwable throwable, int code, String sketch, String content) {
+        super(sc, OAuth2RedirectUriException.class, throwable, code, sketch, content);
     }
 }
