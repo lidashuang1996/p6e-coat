@@ -145,7 +145,7 @@ public class BlockingTokenServiceImpl implements BlockingTokenService {
         final String clientId = request.getClientId();
         final String clientSecret = request.getClientSecret();
         final ClientModel client = clientRepository.findByAppId(clientId);
-        if (client == null || client.getAppSecret().equals(clientSecret)) {
+        if (client == null || client.getClientSecret().equals(clientSecret)) {
             throw new OAuth2ClientException(
                     this.getClass(),
                     "fun Map<String, Object> executePasswordMode(TokenContext.Request request)",
@@ -166,14 +166,14 @@ public class BlockingTokenServiceImpl implements BlockingTokenService {
             );
         } else {
             final String token = GeneratorUtil.uuid() + GeneratorUtil.random();
-            authUserCache.set(user.id(), token, "*", user.serialize(), 3600L);
-            final String oid = DigestUtils.md5DigestAsHex((client.getAppId() + "@" + user.id()).getBytes());
+            authUserCache.set(user.id(), token, "*", user.serialize(), expiration());
+            final String oid = DigestUtils.md5DigestAsHex((client.getClientId() + "@" + user.id()).getBytes());
             return new HashMap<>() {{
                 put("oid", oid);
                 put("token", token);
                 put("user", user.serialize());
                 put("scope", "*");
-                put("expiration", 3600L);
+                put("expiration", expiration());
                 put("type", "Bearer");
             }};
         }
@@ -217,7 +217,7 @@ public class BlockingTokenServiceImpl implements BlockingTokenService {
                 );
             }
             final ClientModel client = clientRepository.findByAppId(clientId);
-            if (client == null || client.getAppSecret().equals(clientSecret)) {
+            if (client == null || client.getClientSecret().equals(clientSecret)) {
                 throw new OAuth2ClientException(
                         this.getClass(),
                         "fun Map<String, Object> executeAuthorizationCodeMode(TokenContext.Request request)",
@@ -226,14 +226,14 @@ public class BlockingTokenServiceImpl implements BlockingTokenService {
             }
             final User user = builder.create(cacheUser);
             final String token = GeneratorUtil.uuid() + GeneratorUtil.random();
-            authUserCache.set(user.id(), token, cacheScope, cacheUser, 3600L);
-            final String oid = DigestUtils.md5DigestAsHex((client.getAppId() + "@" + user.id()).getBytes());
+            authUserCache.set(user.id(), token, cacheScope, cacheUser, expiration());
+            final String oid = DigestUtils.md5DigestAsHex((client.getClientId() + "@" + user.id()).getBytes());
             return new HashMap<>() {{
                 put("oid", oid);
                 put("token", token);
                 put("user", cacheUser);
                 put("scope", cacheScope);
-                put("expiration", 3600L);
+                put("expiration", expiration());
                 put("type", "Bearer");
             }};
         }
@@ -250,7 +250,7 @@ public class BlockingTokenServiceImpl implements BlockingTokenService {
         final String clientId = request.getClientId();
         final String clientSecret = request.getClientSecret();
         final ClientModel client = clientRepository.findByAppId(clientId);
-        if (client == null || client.getAppSecret().equals(clientSecret)) {
+        if (client == null || client.getClientSecret().equals(clientSecret)) {
             throw new OAuth2ClientException(
                     this.getClass(),
                     "fun Map<String, Object> executeClientCredentialsMode(TokenContext.Request request)",
@@ -267,13 +267,22 @@ public class BlockingTokenServiceImpl implements BlockingTokenService {
         }
         final String fs = scope;
         final String token = GeneratorUtil.uuid() + GeneratorUtil.random();
-        authClientCache.set(clientId, token, scope, JsonUtil.toJson(client), 3600L);
+        authClientCache.set(clientId, token, scope, JsonUtil.toJson(client), expiration());
         return new HashMap<>() {{
             put("scope", fs);
             put("token", token);
             put("type", "Bearer");
-            put("expiration", 3600L);
+            put("expiration", expiration());
         }};
+    }
+
+    /**
+     * Expiration Time
+     *
+     * @return Expiration Time
+     */
+    protected long expiration() {
+        return 3600L;
     }
 
 }

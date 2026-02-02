@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Request Parameter Validator
+ * Blocking Request Parameter Validator
  *
  * @author lidashuang
  * @version 1.0

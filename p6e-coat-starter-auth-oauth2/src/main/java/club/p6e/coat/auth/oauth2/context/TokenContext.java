@@ -4,11 +4,9 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
- * Register Context
+ * Token Context
  *
  * @author lidashuang
  * @version 1.0
@@ -16,7 +14,7 @@ import java.util.Map;
 public class TokenContext implements Serializable {
 
     /**
-     * Register Context / Request
+     * Token Context / Request
      */
     @Data
     @Accessors(chain = true)
@@ -25,72 +23,42 @@ public class TokenContext implements Serializable {
         /**
          * Code
          */
-        private String grantType;
-        private String clientId;
-        private String clientSecret;
-        private String username;
-        private String password;
         private String code;
-        private String redirectUri;
+
+        /**
+         * Scope
+         */
         private String scope;
 
-    }
-
-    /**
-     * Register Context / Dto
-     */
-    @Data
-    @Accessors(chain = true)
-    public static class Dto implements Serializable {
-        private String oid;
-        private String type;
-        private String user;
-        private String token;
-        private Long expiration;
-    }
-
-    /**
-     * Register Context / Verification Code Acquisition
-     */
-    public static class VerificationCodeAcquisition implements Serializable {
+        /**
+         * Client ID
+         */
+        private String clientId;
 
         /**
-         * Register Context / Verification Code Acquisition / Request
+         * Grant Type
          */
-        @Data
-        @Accessors(chain = true)
-        public static class Request implements Serializable {
-
-            /**
-             * Account
-             */
-            private String account;
-
-            /**
-             * Password
-             */
-            private String language;
-
-            /**
-             * Custom Data
-             */
-            private Map<String, Object> data = new HashMap<>();
-
-        }
+        private String grantType;
 
         /**
-         * Register Context / Verification Code Acquisition / Dto
+         * Redirect URI
          */
-        @Data
-        @Accessors(chain = true)
-        public static class Dto implements Serializable {
+        private String redirectUri;
 
-            /**
-             * Account
-             */
-            private String account;
+        /**
+         * Client Secret
+         */
+        private String clientSecret;
 
-        }
+        /**
+         * Username
+         */
+        private String username;
+
+        /**
+         * Password
+         */
+        private String password;
 
     }
 

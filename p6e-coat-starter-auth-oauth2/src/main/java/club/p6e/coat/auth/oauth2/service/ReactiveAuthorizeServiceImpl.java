@@ -4,7 +4,6 @@ import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.cache.ReactiveVoucherCache;
 import club.p6e.coat.auth.context.IndexContext;
 import club.p6e.coat.auth.oauth2.context.AuthorizeContext;
-import club.p6e.coat.auth.oauth2.model.ClientModel;
 import club.p6e.coat.auth.oauth2.repository.ReactiveClientRepository;
 import club.p6e.coat.auth.oauth2.validator.ReactiveRequestParameterValidator;
 import club.p6e.coat.common.error.*;
@@ -76,50 +75,50 @@ public class ReactiveAuthorizeServiceImpl implements ReactiveAuthorizeService {
                                 "request parameter response_type<" + responseType + "> not support"
                         ));
                     }
-                    final ClientModel client = repository.findByAppId(clientId);
-                    if (client == null) {
-                        return Mono.error(new OAuth2ClientException(
-                                this.getClass(),
-                                "fun Mono<IndexContext.Dto> execute(ServerWebExchange exchange, AuthorizeContext.Request request)",
-                                "[" + CODE_MODE + "] client_id<" + clientId + "> not match"
-                        ));
-                    }
-                    if (client.getEnable() != 1) {
-                        return Mono.error(new OAuth2ClientException(
-                                this.getClass(),
-                                "fun Mono<IndexContext.Dto> execute(ServerWebExchange exchange, AuthorizeContext.Request request)",
-                                "[" + CODE_MODE + "] client not enabled"
-                        ));
-                    }
-                    if (!VerificationUtil.validationOAuth2Scope(client.getScope(), scope)) {
-                        return Mono.error(new OAuth2ScopeException(
-                                this.getClass(),
-                                "fun Mono<IndexContext.Dto> execute(ServerWebExchange exchange, AuthorizeContext.Request request)",
-                                "[" + CODE_MODE + "] scope<" + scope + "> not match"
-                        ));
-                    }
-                    if (!VerificationUtil.validationOAuth2RedirectUri(client.getRedirectUri(), redirectUri)) {
-                        return Mono.error(new OAuth2RedirectUriException(
-                                this.getClass(),
-                                "fun Mono<IndexContext.Dto> execute(ServerWebExchange exchange, AuthorizeContext.Request request)",
-                                "[" + CODE_MODE + "] redirect_uri<" + redirectUri + "> not match"
-                        ));
-                    }
-                    final Properties.Page page = Properties.getInstance().getLogin().getPage();
-                    final String voucher = GeneratorUtil.uuid() + GeneratorUtil.random(8, true, false);
-                    return cache.set(voucher, new HashMap<>() {{
-                        put("type", "OAUTH2");
-                        put("time", String.valueOf(System.currentTimeMillis()));
-                        put("scope", scope);
-                        put("state", state);
-                        put("clientId", clientId);
-                        put("redirectUri", redirectUri);
-                        put("responseType", responseType);
-                    }}).switchIfEmpty(Mono.error(new CacheException(
-                            this.getClass(),
-                            "fun Mono<IndexContext.Dto> execute(ServerWebExchange exchange, AuthorizeContext.Request request)",
-                            "[" + CODE_MODE + "] cache voucher<" + voucher + "> error"
-                    ))).map(k -> new IndexContext.Dto().setType(page.getType()).setContent(TemplateParser.execute(page.getContent(), "VOUCHER", voucher)));
+                    return repository.findByAppId(clientId)
+                            .switchIfEmpty(Mono.error(new OAuth2ClientException(
+                                    this.getClass(),
+                                    "fun Mono<IndexContext.Dto> execute(ServerWebExchange exchange, AuthorizeContext.Request request)",
+                                    "[" + CODE_MODE + "] client_id<" + clientId + "> not match"
+                            )))
+                            .flatMap(client -> {
+                                if (client.getEnable() != 1) {
+                                    return Mono.error(new OAuth2ClientException(
+                                            this.getClass(),
+                                            "fun Mono<IndexContext.Dto> execute(ServerWebExchange exchange, AuthorizeContext.Request request)",
+                                            "[" + CODE_MODE + "] client not enabled"
+                                    ));
+                                }
+                                if (!VerificationUtil.validationOAuth2Scope(client.getScope(), scope)) {
+                                    return Mono.error(new OAuth2ScopeException(
+                                            this.getClass(),
+                                            "fun Mono<IndexContext.Dto> execute(ServerWebExchange exchange, AuthorizeContext.Request request)",
+                                            "[" + CODE_MODE + "] scope<" + scope + "> not match"
+                                    ));
+                                }
+                                if (!VerificationUtil.validationOAuth2RedirectUri(client.getRedirectUri(), redirectUri)) {
+                                    return Mono.error(new OAuth2RedirectUriException(
+                                            this.getClass(),
+                                            "fun Mono<IndexContext.Dto> execute(ServerWebExchange exchange, AuthorizeContext.Request request)",
+                                            "[" + CODE_MODE + "] redirect_uri<" + redirectUri + "> not match"
+                                    ));
+                                }
+                                final Properties.Page page = Properties.getInstance().getLogin().getPage();
+                                final String voucher = GeneratorUtil.uuid() + GeneratorUtil.random(8, true, false);
+                                return cache.set(voucher, new HashMap<>() {{
+                                    put("type", "OAUTH2");
+                                    put("time", String.valueOf(System.currentTimeMillis()));
+                                    put("scope", scope);
+                                    put("state", state);
+                                    put("clientId", clientId);
+                                    put("redirectUri", redirectUri);
+                                    put("responseType", responseType);
+                                }}).switchIfEmpty(Mono.error(new CacheException(
+                                        this.getClass(),
+                                        "fun Mono<IndexContext.Dto> execute(ServerWebExchange exchange, AuthorizeContext.Request request)",
+                                        "[" + CODE_MODE + "] cache voucher<" + voucher + "> error"
+                                ))).map(k -> new IndexContext.Dto().setType(page.getType()).setContent(TemplateParser.execute(page.getContent(), "VOUCHER", voucher)));
+                            });
                 });
     }
 

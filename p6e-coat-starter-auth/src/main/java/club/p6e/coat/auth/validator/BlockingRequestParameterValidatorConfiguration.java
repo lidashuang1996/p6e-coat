@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Request Parameter Validator Configuration
+ * Blocking Request Parameter Validator Configuration
  *
  * @author lidashuang
  * @version 1.0
@@ -16,7 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @SuppressWarnings("ALL")
 public class BlockingRequestParameterValidatorConfiguration {
 
-    public BlockingRequestParameterValidator validatorForgotPasswordContextRequest() {
+    public BlockingRequestParameterValidator validateForgotPasswordContextRequest() {
         return new BlockingRequestParameterValidator() {
 
             @Override
@@ -43,7 +43,7 @@ public class BlockingRequestParameterValidatorConfiguration {
         };
     }
 
-    public BlockingRequestParameterValidator validatorForgotPasswordContextVerificationCodeAcquisitionRequest() {
+    public BlockingRequestParameterValidator validateForgotPasswordContextVerificationCodeAcquisitionRequest() {
         return new BlockingRequestParameterValidator() {
 
             @Override
@@ -70,7 +70,7 @@ public class BlockingRequestParameterValidatorConfiguration {
         };
     }
 
-    public BlockingRequestParameterValidator validatorLoginContextAccountPasswordRequest() {
+    public BlockingRequestParameterValidator validateLoginContextAccountPasswordRequest() {
         return new BlockingRequestParameterValidator() {
 
             @Override
@@ -97,7 +97,7 @@ public class BlockingRequestParameterValidatorConfiguration {
         };
     }
 
-    public BlockingRequestParameterValidator validatorLoginContextAuthenticationRequest() {
+    public BlockingRequestParameterValidator validateLoginContextAuthenticationRequest() {
         return new BlockingRequestParameterValidator() {
 
             @Override
@@ -121,7 +121,7 @@ public class BlockingRequestParameterValidatorConfiguration {
         };
     }
 
-    public BlockingRequestParameterValidator validatorLoginContextQuickResponseCodeAcquisitionRequest() {
+    public BlockingRequestParameterValidator validateLoginContextQuickResponseCodeAcquisitionRequest() {
         return new BlockingRequestParameterValidator() {
 
             @Override
@@ -145,7 +145,7 @@ public class BlockingRequestParameterValidatorConfiguration {
         };
     }
 
-    public BlockingRequestParameterValidator validatorLoginContextQuickResponseCodeCallbackRequest() {
+    public BlockingRequestParameterValidator validateLoginContextQuickResponseCodeCallbackRequest() {
         return new BlockingRequestParameterValidator() {
 
             @Override
@@ -169,7 +169,7 @@ public class BlockingRequestParameterValidatorConfiguration {
         };
     }
 
-    public BlockingRequestParameterValidator validatorLoginContextQuickResponseCodeRequest() {
+    public BlockingRequestParameterValidator validateLoginContextQuickResponseCodeRequest() {
         return new BlockingRequestParameterValidator() {
 
             @Override
@@ -193,7 +193,7 @@ public class BlockingRequestParameterValidatorConfiguration {
         };
     }
 
-    public BlockingRequestParameterValidator validatorLoginContextVerificationCodeAcquisitionRequest() {
+    public BlockingRequestParameterValidator validateLoginContextVerificationCodeAcquisitionRequest() {
         return new BlockingRequestParameterValidator() {
 
             @Override
@@ -220,7 +220,7 @@ public class BlockingRequestParameterValidatorConfiguration {
         };
     }
 
-    public BlockingRequestParameterValidator validatorLoginContextVerificationCodeRequest() {
+    public BlockingRequestParameterValidator validateLoginContextVerificationCodeRequest() {
         return new BlockingRequestParameterValidator() {
 
             @Override
@@ -246,7 +246,7 @@ public class BlockingRequestParameterValidatorConfiguration {
         };
     }
 
-    public BlockingRequestParameterValidator validatorPasswordSignatureContextRequest() {
+    public BlockingRequestParameterValidator validatePasswordSignatureContextRequest() {
         return new BlockingRequestParameterValidator() {
 
             @Override
@@ -270,7 +270,7 @@ public class BlockingRequestParameterValidatorConfiguration {
         };
     }
 
-    public BlockingRequestParameterValidator validatorRegisterContextRequest() {
+    public BlockingRequestParameterValidator validateRegisterContextRequest() {
         return new BlockingRequestParameterValidator() {
 
             @Override
@@ -297,7 +297,7 @@ public class BlockingRequestParameterValidatorConfiguration {
         };
     }
 
-    public BlockingRequestParameterValidator validatorRegisterContextVerificationCodeAcquisitionRequest() {
+    public BlockingRequestParameterValidator validateRegisterContextVerificationCodeAcquisitionRequest() {
         return new BlockingRequestParameterValidator() {
 
             @Override

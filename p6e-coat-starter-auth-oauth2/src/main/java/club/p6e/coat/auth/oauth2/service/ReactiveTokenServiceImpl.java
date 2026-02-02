@@ -143,7 +143,7 @@ public class ReactiveTokenServiceImpl implements ReactiveTokenService {
         final String clientId = request.getClientId();
         final String clientSecret = request.getClientSecret();
         return clientRepository.findByAppId(clientId)
-                .filter(client -> client.getAppSecret().equals(clientSecret))
+                .filter(client -> client.getClientSecret().equals(clientSecret))
                 .switchIfEmpty(Mono.error(new OAuth2ClientException(
                         this.getClass(),
                         "fun Map<String, Object> executePasswordMode(TokenContext.Request request)",
@@ -177,7 +177,7 @@ public class ReactiveTokenServiceImpl implements ReactiveTokenService {
                                                 "[" + PASSWORD_MODE + "] auth cache error"
                                         )))
                                         .map(k -> {
-                                            final String oid = DigestUtils.md5DigestAsHex((client.getAppId() + "@" + user.id()).getBytes());
+                                            final String oid = DigestUtils.md5DigestAsHex((client.getClientId() + "@" + user.id()).getBytes());
                                             return new HashMap<>() {{
                                                 put("oid", oid);
                                                 put("token", token);
@@ -228,7 +228,7 @@ public class ReactiveTokenServiceImpl implements ReactiveTokenService {
                         ));
                     }
                     return clientRepository.findByAppId(clientId)
-                            .filter(client -> client.getAppSecret().equals(clientSecret))
+                            .filter(client -> client.getClientSecret().equals(clientSecret))
                             .switchIfEmpty(Mono.error(new OAuth2ClientException(
                                     this.getClass(),
                                     "fun Map<String, Object> executeAuthorizationCodeMode(TokenContext.Request request)",
@@ -250,7 +250,7 @@ public class ReactiveTokenServiceImpl implements ReactiveTokenService {
                                                 "[" + AUTHORIZATION_CODE_MODE + "] auth cache error"
                                         )))
                                         .map(K -> {
-                                            final String oid = DigestUtils.md5DigestAsHex((client.getAppId() + "@" + user.id()).getBytes());
+                                            final String oid = DigestUtils.md5DigestAsHex((client.getClientId() + "@" + user.id()).getBytes());
                                             return new HashMap<>() {{
                                                 put("type", "Bearer");
                                                 put("expiration", 3600L);
@@ -280,7 +280,7 @@ public class ReactiveTokenServiceImpl implements ReactiveTokenService {
                         "fun Map<String, Object> executeClientCredentialsMode(TokenContext.Request request)",
                         "[" + CLIENT_CREDENTIALS_MODE + "] client_id<" + clientId + "> or client_secret<" + clientSecret + "> not match"
                 )))
-                .filter(client -> client.getAppSecret().equals(clientSecret))
+                .filter(client -> client.getClientSecret().equals(clientSecret))
                 .switchIfEmpty(Mono.error(new OAuth2ClientException(
                         this.getClass(),
                         "fun Map<String, Object> executeClientCredentialsMode(TokenContext.Request request)",

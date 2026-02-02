@@ -22,6 +22,10 @@ public interface BlockingTokenService {
      * @param request             Token Context Request Object
      * @return Result Object
      */
-    Map<String, Object> execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, TokenContext.Request request);
+    Map<String, Object> execute(
+            HttpServletRequest httpServletRequest,
+            HttpServletResponse httpServletResponse,
+            TokenContext.Request request
+    );
 
 }

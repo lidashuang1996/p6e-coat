@@ -13,6 +13,9 @@ import java.io.Serializable;
  */
 public interface BlockingAuthUserCache {
 
+    /**
+     * Auth User Cache Model
+     */
     @Data
     @Accessors(chain = true)
     class Model implements Serializable {

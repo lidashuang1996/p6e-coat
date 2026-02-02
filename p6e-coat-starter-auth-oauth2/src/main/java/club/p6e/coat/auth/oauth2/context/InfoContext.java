@@ -8,44 +8,24 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Authorize Context
+ * Info Context
  *
  * @author lidashuang
  * @version 1.0
  */
-public class AuthorizeContext implements Serializable {
+public class InfoContext implements Serializable {
 
     /**
-     * Authorize Context / Request
+     * Info Context / Request
      */
     @Data
     @Accessors(chain = true)
     public static class Request implements Serializable {
 
         /**
-         * State
+         * Token
          */
-        private String state;
-
-        /**
-         * Scope
-         */
-        private String scope;
-
-        /**
-         * Client ID
-         */
-        private String clientId;
-
-        /**
-         * Redirect URI
-         */
-        private String redirectUri;
-
-        /**
-         * Response Type
-         */
-        private String responseType;
+        private String token;
 
         /**
          * Custom Data

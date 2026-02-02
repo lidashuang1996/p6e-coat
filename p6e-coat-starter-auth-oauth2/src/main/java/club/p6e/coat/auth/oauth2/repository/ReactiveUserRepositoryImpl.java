@@ -1,11 +1,8 @@
 package club.p6e.coat.auth.oauth2.repository;
 
-import club.p6e.coat.auth.User;
-import club.p6e.coat.auth.UserBuilder;
+import club.p6e.coat.auth.oauth2.model.ClientModel;
 import club.p6e.coat.auth.repository.ReactiveUserRepository;
-import club.p6e.coat.auth.user.SimpleUserModel;
 import club.p6e.coat.common.utils.TemplateParser;
-import club.p6e.coat.common.utils.TransformationUtil;
 import io.r2dbc.spi.Readable;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -14,7 +11,6 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 
 /**
  * Reactive User Repository Impl
@@ -28,34 +24,32 @@ import java.util.HashMap;
 )
 @Component("club.p6e.coat.auth.repository.ReactiveUserRepositoryImpl")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
-public class ReactiveUserRepositoryImpl implements ReactiveUserRepository {
+public class ReactiveUserRepositoryImpl implements ReactiveClientRepository {
 
     /**
-     * Base User Select SQL
+     * Base Client Select SQL
      */
-    private static final String BASE_SELECT_SQL = """
+    private static final String BASE_CLIENT_SELECT_SQL = """
             SELECT
-                _user.id_,
-                _user.status_,
-                _user.enable_,
-                _user.internal_,
-                _user.administrator_,
-                _user.account_,
-                _user.phone_,
-                _user.mailbox_,
-                _user.name_,
-                _user.nickname_,
-                _user.language_,
-                _user.avatar_,
-                _user.description_
+                _oauth2_client.id_ AS id_,
+                _oauth2_client.enable_ AS enable_,
+                _oauth2_client.type_ AS type_,
+                _oauth2_client.scope_ AS scope_,
+                _oauth2_client.redirect_uri_ AS redirect_uri_,
+                _oauth2_client.reconfirm_ AS reconfirm_,
+                _oauth2_client.client_id_ AS client_id_,
+                _oauth2_client.client_secret_ AS client_secret_,
+                _oauth2_client.client_name_ AS client_name_,
+                _oauth2_client.client_avatar_ AS client_avatar_,
+                _oauth2_client.client_description_ AS client_description_,
+                _oauth2_client.creator_ AS creator_,
+                _oauth2_client.modifier_ AS modifier_,
+                _oauth2_client.creation_date_time_ AS creation_date_time_,
+                _oauth2_client.modification_date_time_ AS modification_date_time_,
+                _oauth2_client.version_ AS version_
             FROM
-                @{TABLE} AS _user
+                @{TABLE} AS _oauth2_client
             """;
-
-    /**
-     * User Builder Object
-     */
-    private final UserBuilder builder;
 
     /**
      * Database Client Object
@@ -65,12 +59,10 @@ public class ReactiveUserRepositoryImpl implements ReactiveUserRepository {
     /**
      * Constructor Initialization
      *
-     * @param client  Database Client Object
-     * @param builder User Builder Object
+     * @param client Database Client Object
      */
-    public ReactiveUserRepositoryImpl(UserBuilder builder, DatabaseClient client) {
+    public ReactiveUserRepositoryImpl(DatabaseClient client) {
         this.client = client;
-        this.builder = builder;
     }
 
     /**
@@ -79,22 +71,22 @@ public class ReactiveUserRepositoryImpl implements ReactiveUserRepository {
      * @param readable Readable Object
      * @return User Object
      */
-    private User convertReadableToUser(Readable readable) {
-        return this.builder.create(new HashMap<>() {{
-            put("id", TransformationUtil.objectToString(readable.get("id_")));
-            put("status", TransformationUtil.objectToString(readable.get("status_")));
-            put("enable", TransformationUtil.objectToString(readable.get("enable_")));
-            put("internal", TransformationUtil.objectToString(readable.get("internal_")));
-            put("administrator", TransformationUtil.objectToString(readable.get("administrator_")));
-            put("account", TransformationUtil.objectToString(readable.get("account_")));
-            put("phone", TransformationUtil.objectToString(readable.get("phone_")));
-            put("mailbox", TransformationUtil.objectToString(readable.get("mailbox_")));
-            put("name", TransformationUtil.objectToString(readable.get("name_")));
-            put("nickname", TransformationUtil.objectToString(readable.get("nickname_")));
-            put("language", TransformationUtil.objectToString(readable.get("language_")));
-            put("avatar", TransformationUtil.objectToString(readable.get("avatar_")));
-            put("description", TransformationUtil.objectToString(readable.get("description_")));
-        }});
+    private ClientModel convertReadableToClientModel(Readable readable) {
+        final ClientModel model = new ClientModel();
+        model.setId(readable.get("id_", Integer.class));
+        model.setEnable(readable.get("enable_", Integer.class));
+        model.setType(readable.get("type_", String.class));
+        model.setScope(readable.get("scope_", String.class));
+        model.setRedirectUri(readable.get("redirect_uri_", String.class));
+        model.setReconfirm(readable.get("reconfirm_", Integer.class));
+        model.setClientName(readable.get("client_name_", String.class));
+        model.setClientAvatar(readable.get("client_avatar_", String.class));
+        model.setClientDescription(readable.get("client_description_", String.class));
+        model.setCreator(readable.get("creator_", String.class));
+        model.setModifier(readable.get("modifier_", String.class));
+        model.setCreationDateTime(readable.get("creation_date_time_", LocalDateTime.class));
+        model.setModificationDateTime(readable.get("modification_date_time_", LocalDateTime.class));
+        return model;
     }
 
     /**
@@ -102,202 +94,17 @@ public class ReactiveUserRepositoryImpl implements ReactiveUserRepository {
      *
      * @return User Table Name
      */
-    protected String getUserTableName() {
-        return "p6e_user";
+    protected String getClientTableName() {
+        return "p6e_oauth2_client";
     }
 
-    /**
-     * Get User Auth Table Name
-     *
-     * @return User Auth Table Name
-     */
-    protected String getUserAuthTableName() {
-        return "p6e_user_auth";
-    }
-
-    /**
-     * Query Password By Id
-     *
-     * @param id User ID
-     * @return Password
-     */
     @SuppressWarnings("ALL")
-    protected Mono<String> findPasswordById(Integer id) {
-        return client
-                .sql(TemplateParser.execute("SELECT _user_auth.id_ AS id_ , _user_auth.password_ AS password_ FROM @{TABLE} AS _user_auth WHERE _user_auth.id_ = :ID ; ", "TABLE", getUserAuthTableName()))
+    @Override
+    public Mono<ClientModel> findByAppId(String id) {
+        return client.sql(TemplateParser.execute(BASE_SELECT_SQL + " WHERE _oauth2_client.client_id_ = :ID LIMIT 1 ; ", "TABLE", getClientTableName()))
                 .bind("ID", id)
-                .map(readable -> TransformationUtil.objectToString(readable.get("password_")))
+                .map(this::convertReadableToClientModel)
                 .first();
-    }
-
-    @SuppressWarnings("ALL")
-    @Override
-    public Mono<User> findById(Integer id) {
-        return client.sql(TemplateParser.execute(BASE_SELECT_SQL + " WHERE _user.id_ = :ID ; ", "TABLE", getUserTableName()))
-                .bind("ID", id)
-                .map(this::convertReadableToUser)
-                .first()
-                .flatMap(u -> findPasswordById(Integer.valueOf(u.id())).map(u::password));
-    }
-
-    @SuppressWarnings("ALL")
-    @Override
-    public Mono<User> findByAccount(String account) {
-        return client.sql(TemplateParser.execute(BASE_SELECT_SQL + " WHERE _user.account_ = :ACCOUNT ; ", "TABLE", getUserTableName()))
-                .bind("ACCOUNT", account)
-                .map(this::convertReadableToUser)
-                .first()
-                .flatMap(u -> findPasswordById(Integer.valueOf(u.id())).map(u::password));
-    }
-
-    @SuppressWarnings("ALL")
-    @Override
-    public Mono<User> findByPhone(String phone) {
-        return client.sql(TemplateParser.execute(BASE_SELECT_SQL + " WHERE _user.phone_ = :PHONE ; ", "TABLE", getUserTableName()))
-                .bind("PHONE", phone)
-                .map(this::convertReadableToUser)
-                .first()
-                .flatMap(u -> findPasswordById(Integer.valueOf(u.id())).map(u::password));
-    }
-
-    @SuppressWarnings("ALL")
-    @Override
-    public Mono<User> findByMailbox(String mailbox) {
-        return client.sql(TemplateParser.execute(BASE_SELECT_SQL + " WHERE _user.mailbox_ = :MAILBOX ; ", "TABLE", getUserTableName()))
-                .bind("MAILBOX", mailbox)
-                .map(this::convertReadableToUser)
-                .first()
-                .flatMap(u -> findPasswordById(Integer.valueOf(u.id())).map(u::password));
-    }
-
-    @SuppressWarnings("ALL")
-    @Override
-    public Mono<User> findByPhoneOrMailbox(String account) {
-        return client.sql(TemplateParser.execute(BASE_SELECT_SQL + " WHERE _user.phone_ = :ACCOUNT OR _user.mailbox_ = :ACCOUNT ; ", "TABLE", getUserTableName()))
-                .bind("ACCOUNT", account)
-                .map(this::convertReadableToUser)
-                .first()
-                .flatMap(u -> findPasswordById(Integer.valueOf(u.id())).map(u::password));
-    }
-
-    @SuppressWarnings("ALL")
-    @Override
-    public Mono<User> create(User user) {
-        if (user instanceof SimpleUserModel sum) {
-            return client.sql(TemplateParser.execute("""
-                            INSERT INTO @{TABLE} (
-                                        status_ ,
-                                        enable_ ,
-                                        internal_ ,
-                                        administrator_ ,
-                                        account_ ,
-                                        phone_ ,
-                                        mailbox_ ,
-                                        name_ ,
-                                        nickname_ ,
-                                        language_ ,
-                                        avatar_ ,
-                                        description_ ,
-                                        creator_ ,
-                                        modifier_ ,
-                                        creation_date_time_ ,
-                                        modification_date_time_ ,
-                                        version_ ,
-                                        is_deleted_
-                                    ) VALUES (
-                                        :STATUS ,
-                                        :ENABLE ,
-                                        :INTERNAL ,
-                                        :ADMINISTRATOR ,
-                                        :ACCOUNT ,
-                                        :PHONE ,
-                                        :MAILBOX ,
-                                        :NAME ,
-                                        :NICKNAME ,
-                                        :LANGUAGE ,
-                                        :AVATAR ,
-                                        :DESCRIPTION ,
-                                        :CREATOR ,
-                                        :MODIFIER ,
-                                        :CREATION_DATE_TIME ,
-                                        :MODIFICATION_DATE_TIME ,
-                                        :VERSION ,
-                                        :IS_DELETED
-                                    )  RETURNING id_ ;
-                            """, "TABLE", getUserAuthTableName()))
-                    .bind("STATUS", sum.getStatus() == null ? 1 : sum.getStatus())
-                    .bind("ENABLE", sum.getEnable() == null ? 1 : sum.getEnable())
-                    .bind("INTERNAL", sum.getInternal() == null ? 0 : sum.getInternal())
-                    .bind("ADMINISTRATOR", sum.getAdministrator() == null ? 0 : sum.getAdministrator())
-                    .bind("ACCOUNT", sum.getAccount())
-                    .bind("PHONE", sum.getPhone())
-                    .bind("MAILBOX", sum.getMailbox())
-                    .bind("NAME", sum.getName())
-                    .bind("NICKNAME", sum.getNickname())
-                    .bind("LANGUAGE", sum.getLanguage() == null ? "zh-cn" : sum.getLanguage())
-                    .bind("AVATAR", sum.getAvatar())
-                    .bind("DESCRIPTION", sum.getDescription())
-                    .bind("CREATOR", "sys")
-                    .bind("MODIFIER", "sys")
-                    .bind("CREATION_DATE_TIME", LocalDateTime.now())
-                    .bind("MODIFICATION_DATE_TIME", LocalDateTime.now())
-                    .bind("VERSION", 0)
-                    .bind("IS_DELETED", 0)
-                    .map(r -> TransformationUtil.objectToInteger(r.get("id")))
-                    .first()
-                    .flatMap(i -> client.sql(TemplateParser.execute("""
-                                    INSERT INTO @{TABLE} (
-                                        id_ ,
-                                        account_ ,
-                                        phone_ ,
-                                        mailbox_ ,
-                                        password_ ,
-                                        creator_ ,
-                                        modifier_ ,
-                                        creation_date_time_ ,
-                                        modification_date_time_ ,
-                                        version
-                                    ) VALUES (
-                                        :ID ,
-                                        :ACCOUNT ,
-                                        :PHONE ,
-                                        :MAILBOX ,
-                                        :PASSWORD ,
-                                        :CREATOR ,
-                                        :MODIFIER ,
-                                        :CREATION_DATE_TIME ,
-                                        :MODIFICATION_DATE_TIME ,
-                                        :VERSION
-                                    )  RETURNING id_ ;
-                                    """, "TABLE", getUserAuthTableName()))
-                            .bind("ID", i)
-                            .bind("ACCOUNT", sum.getAccount())
-                            .bind("PHONE", sum.getPhone())
-                            .bind("MAILBOX", sum.getMailbox())
-                            .bind("PASSWORD", sum.getPassword())
-                            .bind("CREATOR", "sys")
-                            .bind("MODIFIER", "sys")
-                            .bind("CREATION_DATE_TIME", LocalDateTime.now())
-                            .bind("MODIFICATION_DATE_TIME", LocalDateTime.now())
-                            .bind("VERSION", 0)
-                            .fetch()
-                            .rowsUpdated()
-                            .flatMap(l -> findById(i))
-                    );
-        } else {
-            return Mono.empty();
-        }
-    }
-
-    @SuppressWarnings("ALL")
-    @Override
-    public Mono<User> updatePassword(Integer uid, String password) {
-        return client.sql(TemplateParser.execute("UPDATE @{TABLE} AS _user_auth SET _user_auth.password_ = :PASSWORD WHERE _user_auth.id_ = :ID ; ", "TABLE", getUserAuthTableName()))
-                .bind("ID", uid)
-                .bind("PASSWORD", password)
-                .fetch()
-                .rowsUpdated()
-                .flatMap(r -> findById(uid));
     }
 
 }

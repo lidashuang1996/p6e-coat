@@ -8,7 +8,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * Request Parameter Validator Configuration
+ * Reactive Request Parameter Validator Configuration
  *
  * @author lidashuang
  * @version 1.0
@@ -16,7 +16,7 @@ import reactor.core.publisher.Mono;
 @SuppressWarnings("ALL")
 public class ReactiveRequestParameterValidatorConfiguration {
 
-    public ReactiveRequestParameterValidator validatorForgotPasswordContextRequest() {
+    public ReactiveRequestParameterValidator validateForgotPasswordContextRequest() {
         return new ReactiveRequestParameterValidator() {
 
             @Override
@@ -43,7 +43,7 @@ public class ReactiveRequestParameterValidatorConfiguration {
         };
     }
 
-    public ReactiveRequestParameterValidator validatorForgotPasswordContextVerificationCodeAcquisitionRequest() {
+    public ReactiveRequestParameterValidator validateForgotPasswordContextVerificationCodeAcquisitionRequest() {
         return new ReactiveRequestParameterValidator() {
 
             @Override
@@ -70,7 +70,7 @@ public class ReactiveRequestParameterValidatorConfiguration {
         };
     }
 
-    public ReactiveRequestParameterValidator validatorLoginContextAccountPasswordRequest() {
+    public ReactiveRequestParameterValidator validateLoginContextAccountPasswordRequest() {
         return new ReactiveRequestParameterValidator() {
 
             @Override
@@ -97,7 +97,7 @@ public class ReactiveRequestParameterValidatorConfiguration {
         };
     }
 
-    public ReactiveRequestParameterValidator validatorLoginContextAuthenticationRequest() {
+    public ReactiveRequestParameterValidator validateLoginContextAuthenticationRequest() {
         return new ReactiveRequestParameterValidator() {
 
             @Override
@@ -121,7 +121,7 @@ public class ReactiveRequestParameterValidatorConfiguration {
         };
     }
 
-    public ReactiveRequestParameterValidator validatorLoginContextQuickResponseCodeAcquisitionRequest() {
+    public ReactiveRequestParameterValidator validateLoginContextQuickResponseCodeAcquisitionRequest() {
         return new ReactiveRequestParameterValidator() {
 
             @Override
@@ -145,7 +145,7 @@ public class ReactiveRequestParameterValidatorConfiguration {
         };
     }
 
-    public ReactiveRequestParameterValidator validatorLoginContextQuickResponseCodeCallbackRequest() {
+    public ReactiveRequestParameterValidator validateLoginContextQuickResponseCodeCallbackRequest() {
         return new ReactiveRequestParameterValidator() {
 
             @Override
@@ -169,7 +169,7 @@ public class ReactiveRequestParameterValidatorConfiguration {
         };
     }
 
-    public ReactiveRequestParameterValidator validatorLoginContextQuickResponseCodeRequest() {
+    public ReactiveRequestParameterValidator validateLoginContextQuickResponseCodeRequest() {
         return new ReactiveRequestParameterValidator() {
 
             @Override
@@ -193,7 +193,7 @@ public class ReactiveRequestParameterValidatorConfiguration {
         };
     }
 
-    public ReactiveRequestParameterValidator validatorLoginContextVerificationCodeAcquisitionRequest() {
+    public ReactiveRequestParameterValidator validateLoginContextVerificationCodeAcquisitionRequest() {
         return new ReactiveRequestParameterValidator() {
 
             @Override
@@ -220,7 +220,7 @@ public class ReactiveRequestParameterValidatorConfiguration {
         };
     }
 
-    public ReactiveRequestParameterValidator validatorLoginContextVerificationCodeRequest() {
+    public ReactiveRequestParameterValidator validateLoginContextVerificationCodeRequest() {
         return new ReactiveRequestParameterValidator() {
 
             @Override
@@ -246,7 +246,7 @@ public class ReactiveRequestParameterValidatorConfiguration {
         };
     }
 
-    public ReactiveRequestParameterValidator validatorPasswordSignatureContextRequest() {
+    public ReactiveRequestParameterValidator validatePasswordSignatureContextRequest() {
         return new ReactiveRequestParameterValidator() {
 
             @Override
@@ -270,7 +270,7 @@ public class ReactiveRequestParameterValidatorConfiguration {
         };
     }
 
-    public ReactiveRequestParameterValidator validatorRegisterContextRequest() {
+    public ReactiveRequestParameterValidator validateRegisterContextRequest() {
         return new ReactiveRequestParameterValidator() {
 
             @Override
@@ -297,7 +297,7 @@ public class ReactiveRequestParameterValidatorConfiguration {
         };
     }
 
-    public ReactiveRequestParameterValidator validatorRegisterContextVerificationCodeAcquisitionRequest() {
+    public ReactiveRequestParameterValidator validateRegisterContextVerificationCodeAcquisitionRequest() {
         return new ReactiveRequestParameterValidator() {
 
             @Override

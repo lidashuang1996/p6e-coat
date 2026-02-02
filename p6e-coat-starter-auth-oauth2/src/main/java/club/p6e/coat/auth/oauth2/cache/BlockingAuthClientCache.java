@@ -13,14 +13,17 @@ import java.io.Serializable;
  */
 public interface BlockingAuthClientCache {
 
+    /**
+     * Auth Client Cache Model
+     */
     @Data
     @Accessors(chain = true)
     class Model implements Serializable {
 
         /**
-         * UID
+         * CID
          */
-        private String uid;
+        private String cid;
 
         /**
          * Token

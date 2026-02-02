@@ -21,6 +21,10 @@ public interface BlockingAuthorizeService {
      * @param request             Authorize Context Request Object
      * @return Index Context Dto Object
      */
-    IndexContext.Dto execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthorizeContext.Request request);
+    IndexContext.Dto execute(
+            HttpServletRequest httpServletRequest,
+            HttpServletResponse httpServletResponse,
+            AuthorizeContext.Request request
+    );
 
 }

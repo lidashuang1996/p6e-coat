@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Request Parameter Validator
+ * Reactive Request Parameter Validator
  *
  * @author lidashuang
  * @version 1.0

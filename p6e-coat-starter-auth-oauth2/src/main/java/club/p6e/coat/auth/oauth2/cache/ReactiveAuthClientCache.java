@@ -14,6 +14,9 @@ import java.io.Serializable;
  */
 public interface ReactiveAuthClientCache {
 
+    /**
+     * Auth Client Cache Model
+     */
     @Data
     @Accessors(chain = true)
     class Model implements Serializable {

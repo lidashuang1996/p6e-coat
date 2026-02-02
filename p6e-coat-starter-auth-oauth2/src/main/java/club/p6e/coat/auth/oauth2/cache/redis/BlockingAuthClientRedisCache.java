@@ -52,7 +52,7 @@ public class BlockingAuthClientRedisCache implements BlockingAuthClientCache {
 
     @Override
     public void set(String cid, String token, String scope, String content, long expiration) {
-        final String data = JsonUtil.toJson(new Model().setUid(cid).setToken(token).setScope(scope));
+        final String data = JsonUtil.toJson(new Model().setCid(cid).setToken(token).setScope(scope));
         template.opsForValue().set(CLIENT_DATA_CACHE_PREFIX + cid, content, expiration, TimeUnit.SECONDS);
         template.opsForValue().set(CLIENT_TOKEN_CACHE_PREFIX + token, data, expiration, TimeUnit.SECONDS);
     }
