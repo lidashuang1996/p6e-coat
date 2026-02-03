@@ -18,7 +18,7 @@ import java.time.Duration;
  */
 @ConditionalOnMissingBean(ReactiveAuthClientRedisCache.class)
 @Component("club.p6e.coat.auth.oauth2.cache.redis.ReactiveAuthClientRedisCache")
-@ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
+@ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactiveAuthClientRedisCache implements ReactiveAuthClientCache {
 
     /**
@@ -57,7 +57,7 @@ public class ReactiveAuthClientRedisCache implements ReactiveAuthClientCache {
 
     @Override
     public Mono<String> set(String cid, String token, String scope, String content, long expiration) {
-        final String data = JsonUtil.toJson(new Model().setUid(cid).setToken(token).setScope(scope));
+        final String data = JsonUtil.toJson(new Model().setCid(cid).setToken(token).setScope(scope));
         return template
                 .opsForValue()
                 .set(CLIENT_DATA_CACHE_PREFIX + cid, content, Duration.ofSeconds(expiration))

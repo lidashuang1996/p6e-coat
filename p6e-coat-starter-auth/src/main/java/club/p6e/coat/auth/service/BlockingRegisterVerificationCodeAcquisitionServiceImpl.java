@@ -105,8 +105,8 @@ public class BlockingRegisterVerificationCodeAcquisitionServiceImpl implements B
      * @return Register Context Acquisition Dto Object
      */
     private RegisterContext.VerificationCodeAcquisition.Dto execute(HttpServletRequest request, String account, String language) {
-        final boolean pb = VerificationUtil.validationPhone(account);
-        final boolean mb = VerificationUtil.validationMailbox(account);
+        final boolean pb = VerificationUtil.validatePhone(account);
+        final boolean mb = VerificationUtil.validateMailbox(account);
         if (pb || mb) {
             final String code = GeneratorUtil.random();
             cache.set(account, code);

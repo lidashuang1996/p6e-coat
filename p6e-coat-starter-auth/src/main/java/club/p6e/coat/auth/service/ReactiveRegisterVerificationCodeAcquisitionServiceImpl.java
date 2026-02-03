@@ -101,8 +101,8 @@ public class ReactiveRegisterVerificationCodeAcquisitionServiceImpl implements R
      */
     private Mono<RegisterContext.VerificationCodeAcquisition.Dto> execute(ServerWebExchange exchange, String account, String language) {
         final String code = GeneratorUtil.random();
-        final boolean pb = VerificationUtil.validationPhone(account);
-        final boolean mb = VerificationUtil.validationMailbox(account);
+        final boolean pb = VerificationUtil.validatePhone(account);
+        final boolean mb = VerificationUtil.validateMailbox(account);
         if (pb || mb) {
             exchange.getRequest().getAttributes().put(BlockingVoucherAspect.MyHttpServletRequestWrapper.ACCOUNT, account);
             return cache

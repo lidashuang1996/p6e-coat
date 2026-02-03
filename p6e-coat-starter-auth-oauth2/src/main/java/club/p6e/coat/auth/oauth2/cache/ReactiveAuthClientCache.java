@@ -24,7 +24,7 @@ public interface ReactiveAuthClientCache {
         /**
          * UID
          */
-        private String uid;
+        private String cid;
 
         /**
          * Token

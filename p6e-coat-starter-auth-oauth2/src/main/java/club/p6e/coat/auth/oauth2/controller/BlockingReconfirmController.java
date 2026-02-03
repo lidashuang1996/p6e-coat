@@ -1,6 +1,6 @@
 package club.p6e.coat.auth.oauth2.controller;
 
-import club.p6e.coat.auth.oauth2.context.AuthorizeContext;
+import club.p6e.coat.auth.oauth2.context.ReconfirmContext;
 import club.p6e.coat.auth.oauth2.service.BlockingReconfirmService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -34,11 +34,11 @@ public class BlockingReconfirmController {
         this.service = service;
     }
 
-    @PostMapping("/oauth2/user/info")
+    @PostMapping("/oauth2/reconfirm")
     public Object def(
             HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse,
-            AuthorizeContext.Request request
+            ReconfirmContext.Request request
     ) {
         return service.execute(httpServletRequest, httpServletResponse, request);
     }

@@ -29,7 +29,7 @@ import java.util.HashMap;
         ignored = ReactiveAuthorizeServiceImpl.class
 )
 @Component("club.p6e.coat.auth.oauth2.service.ReactiveAuthorizeServiceImpl")
-@ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
+@ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactiveAuthorizeServiceImpl implements ReactiveAuthorizeService {
 
     /**
@@ -89,14 +89,21 @@ public class ReactiveAuthorizeServiceImpl implements ReactiveAuthorizeService {
                                             "[" + CODE_MODE + "] client not enabled"
                                     ));
                                 }
-                                if (!VerificationUtil.validationOAuth2Scope(client.getScope(), scope)) {
+                                if (!VerificationUtil.validateOAuth2Type(client.getType(), CODE_MODE)) {
+                                    return Mono.error(new OAuth2ClientException(
+                                            this.getClass(),
+                                            "fun Mono<IndexContext.Dto> execute(ServerWebExchange exchange, AuthorizeContext.Request request)",
+                                            "[" + CODE_MODE + "] type<" + CODE_MODE + "> not support"
+                                    ));
+                                }
+                                if (!VerificationUtil.validateOAuth2Scope(client.getScope(), scope)) {
                                     return Mono.error(new OAuth2ScopeException(
                                             this.getClass(),
                                             "fun Mono<IndexContext.Dto> execute(ServerWebExchange exchange, AuthorizeContext.Request request)",
                                             "[" + CODE_MODE + "] scope<" + scope + "> not match"
                                     ));
                                 }
-                                if (!VerificationUtil.validationOAuth2RedirectUri(client.getRedirectUri(), redirectUri)) {
+                                if (!VerificationUtil.validateOAuth2RedirectUri(client.getRedirectUri(), redirectUri)) {
                                     return Mono.error(new OAuth2RedirectUriException(
                                             this.getClass(),
                                             "fun Mono<IndexContext.Dto> execute(ServerWebExchange exchange, AuthorizeContext.Request request)",
@@ -110,9 +117,13 @@ public class ReactiveAuthorizeServiceImpl implements ReactiveAuthorizeService {
                                     put("time", String.valueOf(System.currentTimeMillis()));
                                     put("scope", scope);
                                     put("state", state);
-                                    put("clientId", clientId);
                                     put("redirectUri", redirectUri);
                                     put("responseType", responseType);
+                                    put("clientId", clientId);
+                                    put("clientName", client.getClientName());
+                                    put("clientAvatar", client.getClientAvatar());
+                                    put("clientDescription", client.getClientDescription());
+                                    put("reconfirm", String.valueOf(client.getReconfirm()));
                                 }}).switchIfEmpty(Mono.error(new CacheException(
                                         this.getClass(),
                                         "fun Mono<IndexContext.Dto> execute(ServerWebExchange exchange, AuthorizeContext.Request request)",

@@ -89,14 +89,21 @@ public class BlockingAuthorizeServiceImpl implements BlockingAuthorizeService {
                     "[" + CODE_MODE + "] client not enabled"
             );
         }
-        if (!VerificationUtil.validationOAuth2Scope(client.getScope(), scope)) {
+        if (!VerificationUtil.validateOAuth2Type(client.getType(), CODE_MODE)) {
+            throw new OAuth2ClientException(
+                    this.getClass(),
+                    "fun IndexContext.Dto execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthorizeContext.Request request)",
+                    "[" + CODE_MODE + "] client type<" + CODE_MODE + "> not support"
+            );
+        }
+        if (!VerificationUtil.validateOAuth2Scope(client.getScope(), scope)) {
             throw new OAuth2ScopeException(
                     this.getClass(),
                     "fun IndexContext.Dto execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthorizeContext.Request request)",
                     "[" + CODE_MODE + "] scope<" + scope + "> not match"
             );
         }
-        if (!VerificationUtil.validationOAuth2RedirectUri(client.getRedirectUri(), redirectUri)) {
+        if (!VerificationUtil.validateOAuth2RedirectUri(client.getRedirectUri(), redirectUri)) {
             throw new OAuth2RedirectUriException(
                     this.getClass(),
                     "fun IndexContext.Dto execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthorizeContext.Request request)",
@@ -109,6 +116,10 @@ public class BlockingAuthorizeServiceImpl implements BlockingAuthorizeService {
             put("scope", scope);
             put("state", state);
             put("clientId", clientId);
+            put("clientName", client.getClientName());
+            put("clientAvatar", client.getClientAvatar());
+            put("clientDescription", client.getClientDescription());
+            put("reconfirm", String.valueOf(client.getReconfirm()));
             put("redirectUri", redirectUri);
             put("responseType", responseType);
             put("type", "OAUTH2");

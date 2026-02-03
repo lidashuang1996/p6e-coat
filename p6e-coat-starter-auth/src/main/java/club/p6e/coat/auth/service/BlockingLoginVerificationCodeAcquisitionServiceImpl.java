@@ -110,8 +110,8 @@ public class BlockingLoginVerificationCodeAcquisitionServiceImpl implements Bloc
      */
     private LoginContext.VerificationCodeAcquisition.Dto execute(HttpServletRequest httpServletRequest, String account, String language) {
         final String code = GeneratorUtil.random();
-        final boolean pb = VerificationUtil.validationPhone(account);
-        final boolean mb = VerificationUtil.validationMailbox(account);
+        final boolean pb = VerificationUtil.validatePhone(account);
+        final boolean mb = VerificationUtil.validateMailbox(account);
         if (pb || mb) {
             httpServletRequest.setAttribute(BlockingVoucherAspect.MyHttpServletRequestWrapper.ACCOUNT, account);
             cache.set(account, code);

@@ -101,7 +101,7 @@ public class ReactiveUserRepositoryImpl implements ReactiveClientRepository {
     @SuppressWarnings("ALL")
     @Override
     public Mono<ClientModel> findByAppId(String id) {
-        return client.sql(TemplateParser.execute(BASE_SELECT_SQL + " WHERE _oauth2_client.client_id_ = :ID LIMIT 1 ; ", "TABLE", getClientTableName()))
+        return client.sql(TemplateParser.execute(BASE_CLIENT_SELECT_SQL + " WHERE _oauth2_client.client_id_ = :ID LIMIT 1 ; ", "TABLE", getClientTableName()))
                 .bind("ID", id)
                 .map(this::convertReadableToClientModel)
                 .first();

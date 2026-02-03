@@ -112,8 +112,8 @@ public class BlockingForgotPasswordVerificationCodeAcquisitionServiceImpl implem
      */
     private ForgotPasswordContext.VerificationCodeAcquisition.Dto execute(HttpServletRequest request, String account, String language) {
         final String code = GeneratorUtil.random();
-        final boolean pb = VerificationUtil.validationPhone(account);
-        final boolean mb = VerificationUtil.validationMailbox(account);
+        final boolean pb = VerificationUtil.validatePhone(account);
+        final boolean mb = VerificationUtil.validateMailbox(account);
         if (pb || mb) {
             request.setAttribute(BlockingVoucherAspect.MyHttpServletRequestWrapper.ACCOUNT, account);
             cache.set(account, code);

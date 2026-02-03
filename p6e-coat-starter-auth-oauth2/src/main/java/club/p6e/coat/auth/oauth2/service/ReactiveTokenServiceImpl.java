@@ -35,7 +35,7 @@ import java.util.Map;
         ignored = ReactiveTokenServiceImpl.class
 )
 @Component("club.p6e.coat.auth.oauth2.service.ReactiveTokenServiceImpl")
-@ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
+@ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactiveTokenServiceImpl implements ReactiveTokenService {
 
     /**
@@ -146,16 +146,23 @@ public class ReactiveTokenServiceImpl implements ReactiveTokenService {
                 .filter(client -> client.getClientSecret().equals(clientSecret))
                 .switchIfEmpty(Mono.error(new OAuth2ClientException(
                         this.getClass(),
-                        "fun Map<String, Object> executePasswordMode(TokenContext.Request request)",
+                        "fun Mono<Map<String, Object>> executePasswordMode(TokenContext.Request request)",
                         "[" + PASSWORD_MODE + "] client_id<" + clientId + "> does not exist"
                 )))
                 .filter(client -> client.getEnable() != 1)
                 .switchIfEmpty(Mono.error(new OAuth2ClientException(
                         this.getClass(),
-                        "fun Map<String, Object> executePasswordMode(TokenContext.Request request)",
+                        "fun Mono<Map<String, Object>> executePasswordMode(TokenContext.Request request)",
                         "[" + PASSWORD_MODE + "] client not enabled"
                 )))
                 .flatMap(client -> {
+                    if (!VerificationUtil.validateOAuth2Type(client.getType(), PASSWORD_MODE)) {
+                        return Mono.error(new OAuth2ClientException(
+                                this.getClass(),
+                                "fun Mono<Map<String, Object>> executePasswordMode(TokenContext.Request request)",
+                                "[" + PASSWORD_MODE + "] client type<" + PASSWORD_MODE + "> not support"
+                        ));
+                    }
                     final Mono<User> um = switch (Properties.getInstance().getMode()) {
                         case PHONE -> userRepository.findByPhone(username);
                         case MAILBOX -> userRepository.findByMailbox(username);
@@ -165,15 +172,15 @@ public class ReactiveTokenServiceImpl implements ReactiveTokenService {
                     return um.filter(user -> user.password().equals(password))
                             .switchIfEmpty(Mono.error(new OAuth2UsernamePasswordException(
                                     this.getClass(),
-                                    "fun Map<String, Object> executePasswordMode(TokenContext.Request request)",
+                                    "fun Mono<Map<String, Object>> executePasswordMode(TokenContext.Request request)",
                                     "[" + PASSWORD_MODE + "] username<" + username + "> or password<" + password + "> not match"
                             )))
                             .flatMap(user -> {
                                 final String token = GeneratorUtil.uuid() + GeneratorUtil.random();
-                                return authUserCache.set(user.id(), token, "*", user.serialize(), 3600L)
+                                return authUserCache.set(user.id(), token, "*", user.serialize(), expiration())
                                         .switchIfEmpty(Mono.error(new CacheException(
                                                 this.getClass(),
-                                                "fun Map<String, Object> executePasswordMode(TokenContext.Request request)",
+                                                "fun Mono<Map<String, Object>> executePasswordMode(TokenContext.Request request)",
                                                 "[" + PASSWORD_MODE + "] auth cache error"
                                         )))
                                         .map(k -> {
@@ -184,7 +191,7 @@ public class ReactiveTokenServiceImpl implements ReactiveTokenService {
                                                 put("user", user.serialize());
                                                 put("scope", "*");
                                                 put("type", "Bearer");
-                                                put("expiration", 3600L);
+                                                put("expiration", expiration());
                                             }};
                                         });
                             });
@@ -205,7 +212,7 @@ public class ReactiveTokenServiceImpl implements ReactiveTokenService {
         return codeCache.get(code)
                 .switchIfEmpty(Mono.error(new OAuth2ParameterException(
                         this.getClass(),
-                        "fun Map<String, Object> executeAuthorizationCodeMode(TokenContext.Request request)",
+                        "fun Mono<Map<String, Object>> executeAuthorizationCodeMode(TokenContext.Request request)",
                         "[" + AUTHORIZATION_CODE_MODE + "] code<" + code + "> does not exist or has expired"
                 )))
                 .flatMap(content -> {
@@ -216,14 +223,14 @@ public class ReactiveTokenServiceImpl implements ReactiveTokenService {
                     if (!cacheClientId.equals(clientId)) {
                         return Mono.error(new OAuth2ParameterException(
                                 this.getClass(),
-                                "fun Map<String, Object> executeAuthorizationCodeMode(TokenContext.Request request)",
+                                "fun Mono<Map<String, Object>> executeAuthorizationCodeMode(TokenContext.Request request)",
                                 "[" + AUTHORIZATION_CODE_MODE + "] client_id<" + clientId + "> not match"
                         ));
                     }
                     if (!cacheRedirectUri.equals(redirectUri)) {
                         return Mono.error(new OAuth2ParameterException(
                                 this.getClass(),
-                                "fun Map<String, Object> executeAuthorizationCodeMode(TokenContext.Request request)",
+                                "fun Mono<Map<String, Object>> executeAuthorizationCodeMode(TokenContext.Request request)",
                                 "[" + AUTHORIZATION_CODE_MODE + "] redirect_uri<" + redirectUri + "> not match"
                         ));
                     }
@@ -231,29 +238,36 @@ public class ReactiveTokenServiceImpl implements ReactiveTokenService {
                             .filter(client -> client.getClientSecret().equals(clientSecret))
                             .switchIfEmpty(Mono.error(new OAuth2ClientException(
                                     this.getClass(),
-                                    "fun Map<String, Object> executeAuthorizationCodeMode(TokenContext.Request request)",
+                                    "fun Mono<Map<String, Object>> executeAuthorizationCodeMode(TokenContext.Request request)",
                                     "[" + AUTHORIZATION_CODE_MODE + "] client_id<" + clientId + "> does not exist"
                             )))
                             .filter(client -> client.getEnable() != 1)
                             .switchIfEmpty(Mono.error(new OAuth2ClientException(
                                     this.getClass(),
-                                    "fun Map<String, Object> executeAuthorizationCodeMode(TokenContext.Request request)",
+                                    "fun Mono<Map<String, Object>> executeAuthorizationCodeMode(TokenContext.Request request)",
                                     "[" + AUTHORIZATION_CODE_MODE + "] client not enabled"
                             )))
                             .flatMap(client -> {
+                                if (!VerificationUtil.validateOAuth2Type(client.getType(), AUTHORIZATION_CODE_MODE)) {
+                                    return Mono.error(new OAuth2ClientException(
+                                            this.getClass(),
+                                            "fun Mono<Map<String, Object>> executeAuthorizationCodeMode(TokenContext.Request request)",
+                                            "[" + AUTHORIZATION_CODE_MODE + "] client type<" + AUTHORIZATION_CODE_MODE + "> not support"
+                                    ));
+                                }
                                 final User user = builder.create(cacheUser);
                                 final String token = GeneratorUtil.uuid() + GeneratorUtil.random();
-                                return authUserCache.set(user.id(), token, cacheScope, cacheUser, 3600L)
+                                return authUserCache.set(user.id(), token, cacheScope, cacheUser, expiration())
                                         .switchIfEmpty(Mono.error(new CacheException(
                                                 this.getClass(),
-                                                "fun Map<String, Object> executeAuthorizationCodeMode(TokenContext.Request request)",
+                                                "fun Mono<Map<String, Object>> executeAuthorizationCodeMode(TokenContext.Request request)",
                                                 "[" + AUTHORIZATION_CODE_MODE + "] auth cache error"
                                         )))
                                         .map(K -> {
                                             final String oid = DigestUtils.md5DigestAsHex((client.getClientId() + "@" + user.id()).getBytes());
                                             return new HashMap<>() {{
                                                 put("type", "Bearer");
-                                                put("expiration", 3600L);
+                                                put("expiration", expiration());
                                                 put("oid", oid);
                                                 put("token", token);
                                                 put("user", cacheUser);
@@ -277,47 +291,61 @@ public class ReactiveTokenServiceImpl implements ReactiveTokenService {
         return clientRepository.findByAppId(clientId)
                 .switchIfEmpty(Mono.error(new OAuth2ClientException(
                         this.getClass(),
-                        "fun Map<String, Object> executeClientCredentialsMode(TokenContext.Request request)",
+                        "fun Mono<Map<String, Object>> executeClientCredentialsMode(TokenContext.Request request)",
                         "[" + CLIENT_CREDENTIALS_MODE + "] client_id<" + clientId + "> or client_secret<" + clientSecret + "> not match"
                 )))
                 .filter(client -> client.getClientSecret().equals(clientSecret))
                 .switchIfEmpty(Mono.error(new OAuth2ClientException(
                         this.getClass(),
-                        "fun Map<String, Object> executeClientCredentialsMode(TokenContext.Request request)",
+                        "fun Mono<Map<String, Object>> executeClientCredentialsMode(TokenContext.Request request)",
                         "[" + CLIENT_CREDENTIALS_MODE + "] client_id<" + clientId + "> or client_secret<" + clientSecret + "> not match"
                 )))
                 .filter(client -> client.getEnable() != 1)
                 .switchIfEmpty(Mono.error(new OAuth2ClientException(
                         this.getClass(),
-                        "fun Map<String, Object> executeClientCredentialsMode(TokenContext.Request request)",
+                        "fun Mono<Map<String, Object>> executeClientCredentialsMode(TokenContext.Request request)",
                         "[" + CLIENT_CREDENTIALS_MODE + "] client not enabled"
                 )))
                 .flatMap(client -> {
+                    if (!VerificationUtil.validateOAuth2Type(client.getType(), CLIENT_CREDENTIALS_MODE)) {
+                        return Mono.error(new OAuth2ClientException(
+                                this.getClass(),
+                                "fun Mono<Map<String, Object>> executeClientCredentialsMode(TokenContext.Request request)",
+                                "[" + CLIENT_CREDENTIALS_MODE + "] client type<" + CLIENT_CREDENTIALS_MODE + "> not support"
+                        ));
+                    }
                     final String fs = scope == null || scope.isEmpty() ? client.getScope() : scope;
-                    if (!VerificationUtil.validationOAuth2Scope(client.getScope(), fs)) {
+                    if (!VerificationUtil.validateOAuth2Scope(client.getScope(), fs)) {
                         return Mono.error(new OAuth2ScopeException(
                                 this.getClass(),
-                                "fun Map<String, Object> executeClientCredentialsMode(TokenContext.Request request)",
+                                "fun Mono<Map<String, Object>> executeClientCredentialsMode(TokenContext.Request request)",
                                 "[" + CLIENT_CREDENTIALS_MODE + "] scope<" + scope + "> not match"
                         ));
                     }
                     final String token = GeneratorUtil.uuid() + GeneratorUtil.random();
                     return authClientCache
-                            .set(clientId, token, scope, JsonUtil.toJson(client), 3600L)
+                            .set(clientId, token, scope, JsonUtil.toJson(client), expiration())
                             .switchIfEmpty(Mono.error(new CacheException(
                                     this.getClass(),
-                                    "fun Map<String, Object> executeClientCredentialsMode(TokenContext.Request request)",
+                                    "fun Mono<Map<String, Object>> executeClientCredentialsMode(TokenContext.Request request)",
                                     "[" + CLIENT_CREDENTIALS_MODE + "] auth cache error"
                             )))
                             .map(k -> new HashMap<>() {{
                                 put("scope", fs);
                                 put("token", token);
                                 put("type", "Bearer");
-                                put("expiration", 3600L);
+                                put("expiration", expiration());
                             }});
                 });
+    }
 
-
+    /**
+     * Expiration Time
+     *
+     * @return Expiration Time
+     */
+    protected long expiration() {
+        return 3600L;
     }
 
 }

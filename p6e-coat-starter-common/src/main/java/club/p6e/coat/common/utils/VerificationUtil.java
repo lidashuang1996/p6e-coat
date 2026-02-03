@@ -10,11 +10,11 @@ import java.util.regex.Pattern;
 @SuppressWarnings("ALL")
 public final class VerificationUtil {
 
-    public static boolean validationCode(String code) {
+    public static boolean validateCode(String code) {
         return code.length() == 6;
     }
 
-    public static boolean validationPassword(String password) {
+    public static boolean validatePassword(String password) {
         return password.length() >= 6;
     }
 
@@ -29,7 +29,7 @@ public final class VerificationUtil {
          * @param content 待验证的内容
          * @return 是否为手机号码
          */
-        public boolean validationPhone(String content);
+        public boolean validatePhone(String content);
 
         /**
          * 验证邮箱
@@ -37,7 +37,7 @@ public final class VerificationUtil {
          * @param content 待验证的内容
          * @return 是否为邮箱
          */
-        public boolean validationMailbox(String content);
+        public boolean validateMailbox(String content);
 
         /**
          * 验证 OAuth2 作用域
@@ -46,7 +46,7 @@ public final class VerificationUtil {
          * @param content 内容
          * @return 验证结果
          */
-        public boolean validationOAuth2Scope(String source, String content);
+        public boolean validateOAuth2Scope(String source, String content);
 
         /**
          * 验证 OAuth2 重定向 URI
@@ -55,7 +55,7 @@ public final class VerificationUtil {
          * @param content 内容
          * @return 验证结果
          */
-        public boolean validationOAuth2RedirectUri(String source, String content);
+        public boolean validateOAuth2RedirectUri(String source, String content);
     }
 
     /**
@@ -64,17 +64,17 @@ public final class VerificationUtil {
     public static class Implementation implements Definition {
 
         @Override
-        public boolean validationPhone(String content) {
+        public boolean validatePhone(String content) {
             return Pattern.matches("^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\\d{8}$", content);
         }
 
         @Override
-        public boolean validationMailbox(String content) {
+        public boolean validateMailbox(String content) {
             return Pattern.matches("^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$", content);
         }
 
         @Override
-        public boolean validationOAuth2Scope(String source, String content) {
+        public boolean validateOAuth2Scope(String source, String content) {
             if (source == null || content == null) {
                 return false;
             } else {
@@ -97,7 +97,7 @@ public final class VerificationUtil {
         }
 
         @Override
-        public boolean validationOAuth2RedirectUri(String source, String content) {
+        public boolean validateOAuth2RedirectUri(String source, String content) {
             if (source != null && content != null) {
                 final List<String> sList = List.of(source.split(","));
                 for (final String si : sList) {
@@ -130,8 +130,8 @@ public final class VerificationUtil {
      * @param content 待验证的内容
      * @return 是否为手机号码
      */
-    public static boolean validationPhone(String content) {
-        return DEFINITION.validationPhone(content);
+    public static boolean validatePhone(String content) {
+        return DEFINITION.validatePhone(content);
     }
 
     /**
@@ -140,8 +140,8 @@ public final class VerificationUtil {
      * @param content 待验证的内容
      * @return 是否为邮箱
      */
-    public static boolean validationMailbox(String content) {
-        return DEFINITION.validationMailbox(content);
+    public static boolean validateMailbox(String content) {
+        return DEFINITION.validateMailbox(content);
     }
 
     /**
@@ -151,8 +151,8 @@ public final class VerificationUtil {
      * @param content 内容
      * @return 验证结果
      */
-    public static boolean validationOAuth2Scope(String source, String content) {
-        return DEFINITION.validationOAuth2Scope(source, content);
+    public static boolean validateOAuth2Scope(String source, String content) {
+        return DEFINITION.validateOAuth2Scope(source, content);
     }
 
     /**
@@ -162,7 +162,19 @@ public final class VerificationUtil {
      * @param content 内容
      * @return 验证结果
      */
-    public static boolean validationOAuth2RedirectUri(String source, String content) {
-        return DEFINITION.validationOAuth2RedirectUri(source, content);
+    public static boolean validateOAuth2RedirectUri(String source, String content) {
+        return DEFINITION.validateOAuth2RedirectUri(source, content);
+    }
+
+    public static boolean validateOAuth2Type(String type, String content) {
+        if (type != null && content != null) {
+            final List<String> tList = List.of(type.split(","));
+            for (final String ti : tList) {
+                if (ti.equalsIgnoreCase(content)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

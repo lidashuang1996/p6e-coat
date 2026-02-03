@@ -152,6 +152,13 @@ public class BlockingTokenServiceImpl implements BlockingTokenService {
                     "[" + PASSWORD_MODE + "] client_id<" + clientId + "> or client_secret<" + clientSecret + "> not match"
             );
         }
+        if (!VerificationUtil.validateOAuth2Type(client.getType(), PASSWORD_MODE)) {
+            throw new OAuth2ClientException(
+                    this.getClass(),
+                    "fun Map<String, Object> executePasswordMode(TokenContext.Request request)",
+                    "[" + PASSWORD_MODE + "] client type<" + PASSWORD_MODE + "> not support"
+            );
+        }
         final User user = switch (Properties.getInstance().getMode()) {
             case PHONE -> userRepository.findByPhone(username);
             case MAILBOX -> userRepository.findByMailbox(username);
@@ -224,6 +231,13 @@ public class BlockingTokenServiceImpl implements BlockingTokenService {
                         "[" + AUTHORIZATION_CODE_MODE + "] client_secret<" + clientSecret + "> not match"
                 );
             }
+            if (!VerificationUtil.validateOAuth2Type(client.getType(), PASSWORD_MODE)) {
+                throw new OAuth2ClientException(
+                        this.getClass(),
+                        "fun Map<String, Object> executeAuthorizationCodeMode(TokenContext.Request request)",
+                        "[" + AUTHORIZATION_CODE_MODE + "] client type<" + AUTHORIZATION_CODE_MODE + "> not support"
+                );
+            }
             final User user = builder.create(cacheUser);
             final String token = GeneratorUtil.uuid() + GeneratorUtil.random();
             authUserCache.set(user.id(), token, cacheScope, cacheUser, expiration());
@@ -257,8 +271,15 @@ public class BlockingTokenServiceImpl implements BlockingTokenService {
                     "[" + CLIENT_CREDENTIALS_MODE + "] client_id<" + clientId + "> or client_secret<" + clientSecret + "> not match"
             );
         }
+        if (!VerificationUtil.validateOAuth2Type(client.getType(), PASSWORD_MODE)) {
+            throw new OAuth2ClientException(
+                    this.getClass(),
+                    "fun Map<String, Object> executeClientCredentialsMode(TokenContext.Request request)",
+                    "[" + CLIENT_CREDENTIALS_MODE + "] client type<" + CLIENT_CREDENTIALS_MODE + "> not support"
+            );
+        }
         scope = scope == null || scope.isEmpty() ? client.getScope() : scope;
-        if (!VerificationUtil.validationOAuth2Scope(client.getScope(), scope)) {
+        if (!VerificationUtil.validateOAuth2Scope(client.getScope(), scope)) {
             throw new OAuth2ScopeException(
                     this.getClass(),
                     "fun Map<String, Object> executeClientCredentialsMode(TokenContext.Request request)",

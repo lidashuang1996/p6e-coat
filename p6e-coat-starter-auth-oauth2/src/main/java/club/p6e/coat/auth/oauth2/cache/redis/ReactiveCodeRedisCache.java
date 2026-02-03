@@ -19,7 +19,7 @@ import java.util.Map;
  */
 @ConditionalOnMissingBean(ReactiveCodeRedisCache.class)
 @Component("club.p6e.coat.auth.oauth2.cache.redis.ReactiveCodeRedisCache")
-@ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
+@ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactiveCodeRedisCache implements ReactiveCodeCache {
 
     /**
