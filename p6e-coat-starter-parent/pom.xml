@@ -86,7 +86,7 @@
             <!-- Club P6e Coat Auth Client [START] -->
             <dependency>
                 <groupId>club.p6e.coat</groupId>
-                <artifactId>p6e-coat-starter-auth-client</artifactId>
+                <artifactId>p6e-coat-starter-auth-oauth2-client</artifactId>
                 <version>${p6e-coat.version}</version>
             </dependency>
             <!-- Club P6e Coat Auth Client [END] -->

@@ -1,6 +1,6 @@
 package club.p6e.coat.common;
 
-import club.p6e.coat.common.controller.config.WebExecuteErrorConfig;
+import club.p6e.coat.common.controller.WebExecuteErrorConfig;
 import club.p6e.coat.common.utils.SnowflakeIdUtil;
 import club.p6e.coat.common.utils.SpringUtil;
 import org.slf4j.Logger;

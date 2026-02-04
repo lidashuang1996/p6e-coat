@@ -1,0 +1,4 @@
+club.p6e.coat.auth.oauth2.client.AuthJsonWebTokenCipher
+club.p6e.coat.auth.oauth2.client.controller.BlockingOAuth2ClientController
+club.p6e.coat.auth.oauth2.client.controller.ReactiveOAuth2ClientController
+club.p6e.coat.auth.oauth2.client.Properties

@@ -9,7 +9,6 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <artifactId>p6e-coat-starter-auth-oauth2</artifactId>
-    <version>3.4.2</version>
     <name>p6e-coat-starter-auth-oauth2</name>
     <description>p6e-coat-starter-auth-oauth2</description>
 

@@ -1,8 +1,8 @@
 package club.p6e.coat.common.global;
 
 import club.p6e.coat.common.controller.BaseController;
-import club.p6e.coat.common.controller.BaseWebController;
-import club.p6e.coat.common.controller.BaseWebFluxController;
+import club.p6e.coat.common.controller.BlockingWebUtil;
+import club.p6e.coat.common.controller.ReactiveWebUtil;
 import club.p6e.coat.common.utils.JsonUtil;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 
@@ -88,7 +88,7 @@ public final class Globals {
                 } else {
                     String result = USER_THREAD_LOCAL.get();
                     if (result == null) {
-                        result = BaseWebController.getHeader(USER_INFO_HEADER);
+                        result = BlockingWebUtil.getHeader(USER_INFO_HEADER);
                     }
                     return (result == null || result.isEmpty()) ? null : JsonUtil.fromJson(result, GlobalUserInfo.class);
                 }
@@ -107,7 +107,7 @@ public final class Globals {
                 } else {
                     String result = USER_THREAD_LOCAL.get();
                     if (result == null) {
-                        result = BaseWebFluxController.getHeader(request, USER_INFO_HEADER);
+                        result = ReactiveWebUtil.getHeader(request, USER_INFO_HEADER);
                     }
                     return (result == null || result.isEmpty()) ? null : JsonUtil.fromJson(result, GlobalUserInfo.class);
                 }
@@ -126,7 +126,7 @@ public final class Globals {
                 } else {
                     String result = USER_THREAD_LOCAL.get();
                     if (result == null) {
-                        result = BaseWebController.getHeader(USER_INFO_HEADER);
+                        result = BlockingWebUtil.getHeader(USER_INFO_HEADER);
                     }
                     return (result == null || result.isEmpty()) ? null : result;
                 }
@@ -150,7 +150,7 @@ public final class Globals {
                 } else {
                     String result = PERMISSION_THREAD_LOCAL.get();
                     if (result == null) {
-                        result = BaseWebController.getHeader(USER_INFO_PERMISSION);
+                        result = BlockingWebUtil.getHeader(USER_INFO_PERMISSION);
                     }
                     return (result == null || result.isEmpty()) ? null : JsonUtil.fromJson(result, GlobalUserPermission.class);
                 }
@@ -169,7 +169,7 @@ public final class Globals {
                 } else {
                     String result = PERMISSION_THREAD_LOCAL.get();
                     if (result == null) {
-                        result = BaseWebFluxController.getHeader(request, USER_INFO_PERMISSION);
+                        result = ReactiveWebUtil.getHeader(request, USER_INFO_PERMISSION);
                     }
                     return (result == null || result.isEmpty()) ? null : JsonUtil.fromJson(result, GlobalUserPermission.class);
                 }
@@ -188,7 +188,7 @@ public final class Globals {
                 } else {
                     String result = PROJECT_THREAD_LOCAL.get();
                     if (result == null) {
-                        result = BaseWebController.getHeader(USER_PROJECT_HEADER);
+                        result = BlockingWebUtil.getHeader(USER_PROJECT_HEADER);
                     }
                     return (result == null || result.isEmpty()) ? null : result;
                 }
@@ -211,7 +211,7 @@ public final class Globals {
                 } else {
                     String result = ORGANIZATION_THREAD_LOCAL.get();
                     if (result == null) {
-                        result = BaseWebController.getHeader(USER_ORGANIZATION_HEADER);
+                        result = BlockingWebUtil.getHeader(USER_ORGANIZATION_HEADER);
                     }
                     return (result == null || result.isEmpty()) ? null : result;
                 }
@@ -232,7 +232,7 @@ public final class Globals {
                 if (DEBUG) {
                     return GlobalUserLanguage.DEBUG.getLanguage();
                 } else {
-                    return BaseWebController.getHeader(USER_LANGUAGE_HEADER);
+                    return BlockingWebUtil.getHeader(USER_LANGUAGE_HEADER);
                 }
             } catch (Exception e) {
                 return null;

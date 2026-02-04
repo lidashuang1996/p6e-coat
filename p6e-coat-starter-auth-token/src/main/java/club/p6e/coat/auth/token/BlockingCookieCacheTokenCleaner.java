@@ -1,29 +1,24 @@
 package club.p6e.coat.auth.token;
 
-import club.p6e.coat.auth.User;
-import club.p6e.coat.auth.UserBuilder;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.time.LocalDateTime;
+
 /**
- * Blocking Cookie Cache Token Validator
+ * Blocking Cookie Cache Token Cleaner
  *
  * @author lidashuang
  * @version 1.0
  */
 @SuppressWarnings("ALL")
-public class BlockingCookieCacheTokenValidator implements BlockingTokenValidator {
+public class BlockingCookieCacheTokenCleaner implements BlockingTokenCleaner {
 
     /**
      * Auth Cookie Name
      */
     protected static final String AUTH_COOKIE_NAME = "P6E_AUTH";
-
-    /**
-     * User Builder Object
-     */
-    protected final UserBuilder builder;
 
     /**
      * User Token Cache Object
@@ -33,42 +28,35 @@ public class BlockingCookieCacheTokenValidator implements BlockingTokenValidator
     /**
      * Constructor Initialization
      *
-     * @param builder User Builder Object
-     * @param cache   User Token Cache Object
+     * @param cache User Token Cache Object
      */
-    public BlockingCookieCacheTokenValidator(UserBuilder builder, BlockingUserTokenCache cache) {
+    public BlockingCookieCacheTokenCleaner(BlockingUserTokenCache cache) {
         this.cache = cache;
-        this.builder = builder;
     }
 
     @Override
-    public User execute(HttpServletRequest request, HttpServletResponse response) {
+    public Object execute(HttpServletRequest request, HttpServletResponse response) {
         final Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (final Cookie cookie : cookies) {
                 if (AUTH_COOKIE_NAME.equalsIgnoreCase(cookie.getName())) {
-                    final String content = execute(cookie);
-                    if (content != null) {
-                        return this.builder.create(content);
-                    }
+                    execute(cookie);
                 }
             }
         }
-        return null;
+        return LocalDateTime.now();
     }
 
     /**
      * Execute Token Content
      *
      * @param cookie Cookie Object
-     * @return User String Object
      */
-    public String execute(Cookie cookie) {
+    public void execute(Cookie cookie) {
         final BlockingUserTokenCache.Model model = cache.getToken(cookie.getValue());
         if (model != null) {
-            return cache.getUser(model.getUid());
+            cache.cleanToken(model.getToken());
         }
-        return null;
     }
 
 }

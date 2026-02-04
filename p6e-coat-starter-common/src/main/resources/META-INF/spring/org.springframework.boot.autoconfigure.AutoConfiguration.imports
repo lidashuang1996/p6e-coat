@@ -1,5 +1,5 @@
-club.p6e.coat.common.controller.config.WebExceptionConfig
-club.p6e.coat.common.controller.config.WebLocalDateTimeConfig
-club.p6e.coat.common.controller.BaseVersionController
+club.p6e.coat.common.controller.WebExceptionConfig
+club.p6e.coat.common.controller.WebLocalDateTimeConfig
+club.p6e.coat.common.controller.BlockingVersionController
 club.p6e.coat.common.ApplicationRunner
 club.p6e.coat.common.Properties

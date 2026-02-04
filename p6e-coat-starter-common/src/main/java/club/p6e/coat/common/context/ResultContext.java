@@ -13,7 +13,7 @@ import java.io.Serializable;
  */
 @Data
 @Accessors(chain = true)
-public final class ResultContext implements Serializable {
+public class ResultContext implements Serializable {
 
     /**
      * Default Code

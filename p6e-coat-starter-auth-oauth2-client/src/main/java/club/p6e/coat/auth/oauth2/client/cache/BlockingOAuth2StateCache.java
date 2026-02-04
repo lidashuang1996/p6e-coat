@@ -1,24 +1,22 @@
-package club.p6e.coat.auth.cache;
-
-import java.util.List;
+package club.p6e.coat.auth.oauth2.client.cache;
 
 /**
- * Blocking Forgot Password Verification Code Cache
+ * Blocking OAuth2 State Cache
  *
  * @author lidashuang
  * @version 1.0
  */
-public interface BlockingForgotPasswordVerificationCodeCache {
+public interface BlockingOAuth2StateCache {
 
     /**
      * Cache Expiration Time
      */
-    long EXPIRATION_TIME = 180L;
+    long EXPIRATION_TIME = 300L;
 
     /**
      * Cache Prefix
      */
-    String CACHE_PREFIX = "AUTH:FORGOT_PASSWORD:CODE:";
+    String CACHE_PREFIX = "OAUTH2:AUTH:STATE:";
 
     /**
      * Del Data
@@ -33,7 +31,7 @@ public interface BlockingForgotPasswordVerificationCodeCache {
      * @param key Key
      * @return Value
      */
-    List<String> get(String key);
+    String get(String key);
 
     /**
      * Set Data
