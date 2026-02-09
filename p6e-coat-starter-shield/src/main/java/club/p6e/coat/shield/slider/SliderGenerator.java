@@ -5,27 +5,28 @@ import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.shield.Generator;
 import club.p6e.coat.shield.Parameter;
 import club.p6e.coat.shield.Properties;
-import club.p6e.coat.shield.Signature;
 import club.p6e.coat.shield.cache.SliderCache;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.core.io.buffer.DataBufferUtils;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Flux;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.awt.image.DataBuffer;
+import java.io.OutputStream;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class SliderGenerator implements Generator {
 
-    protected SliderCore core = new SliderCore();
 
-    protected Properties properties;
-    protected SliderCache cache;
+    protected final SliderCache cache;
+
+    protected final Properties properties;
+
+    protected final SliderCore core = new SliderCore();
 
     public SliderGenerator(Properties properties, SliderCache cache) {
-        this.properties = properties;
         this.cache = cache;
+        this.properties = properties;
     }
 
     @Override
@@ -34,27 +35,50 @@ public class SliderGenerator implements Generator {
     }
 
     @Override
-    public OutputStream execute(HttpServletRequest request, HttpServletResponse response, Parameter parameter) {
+    public OutputStream execute(ServerWebExchange exchange, Parameter parameter) {
         final String value = getValue();
         final String resource = getResource();
-        final String shape = parameter.getQuery().getOrDefault("shape", "1");
+        final String client = parameter.getClientId();
+        final String shape = parameter.getQuery().getOrDefault("shape", "0");
         final String image = FileUtil.composePath(properties.getBaseResourcePath(), resource);
         final String token = GeneratorUtil.uuid() + GeneratorUtil.random(10, true, false);
-        final byte[] bytes = execute(image, shape, value);
-        cache.set(parameter.getClient(), token, resource, shape, value);
-        return getResult(Map.of("token", token), bytes);
+        cache.set(client, token, resource, shape, value);
+        try {
+            final OutputStream os = getResult(Map.of("token", token), execute(image, shape, value));
+            exchange.getResponse();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
+    /**
+     * Execute
+     *
+     * @param image Image Path
+     * @param shape Shape Type
+     * @param value Value Data
+     * @return Bytes Object
+     */
     protected byte[] execute(String image, String shape, String value) {
         return core.execute(image, shape, value);
     }
 
+    /**
+     * Get Value
+     *
+     * @return Value Data
+     */
     protected String getValue() {
         final int y = ThreadLocalRandom.current().nextInt(50, 120);
         final int x = ThreadLocalRandom.current().nextInt(100, 250);
         return x + "," + y;
     }
 
+    /**
+     * Get Resource
+     *
+     * @return Resource Data
+     */
     protected String getResource() {
         final int wil = cache.warehouse();
         final int wii = ThreadLocalRandom.current().nextInt(0, wil);
@@ -63,10 +87,14 @@ public class SliderGenerator implements Generator {
         return cache.warehouse(wii, wci);
     }
 
-    protected OutputStream getResult(Map<String, String> data, byte[] bytes) {
-        final int y = ThreadLocalRandom.current().nextInt(50, 120);
-        final int x = ThreadLocalRandom.current().nextInt(100, 250);
-        return x + "," + y;
+    /**
+     * Get Result
+     *
+     * @param data  Map Object
+     * @param bytes Bytes Object
+     */
+    protected Flux<DataBuffer> getResult(Map<String, String> data, byte[] bytes) {
+        return DataBufferUtils.jaadsoin(bytes);
     }
 
 }

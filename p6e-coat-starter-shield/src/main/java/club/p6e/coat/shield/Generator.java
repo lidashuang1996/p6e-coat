@@ -1,7 +1,6 @@
 package club.p6e.coat.shield;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.server.ServerWebExchange;
 
 import java.io.OutputStream;
 
@@ -18,6 +17,6 @@ public interface Generator {
       * @param exchange 上下文对象
       * @return 结果上下文对象
       */
-     OutputStream execute(HttpServletRequest request, HttpServletResponse response, Parameter parameter);
+     OutputStream execute(ServerWebExchange exchange, Parameter parameter);
 
 }
