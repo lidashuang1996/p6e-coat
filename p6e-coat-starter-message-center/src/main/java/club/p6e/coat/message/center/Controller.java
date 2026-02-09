@@ -1,7 +1,7 @@
 package club.p6e.coat.message.center;
 
 import club.p6e.coat.common.context.ResultContext;
-import club.p6e.coat.common.error.ParameterException;
+import club.p6e.coat.common.exception.ParameterException;
 import club.p6e.coat.common.utils.FileUtil;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.JsonUtil;

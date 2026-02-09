@@ -1,7 +1,7 @@
 package club.p6e.coat.resource.error;
 
-import club.p6e.coat.common.error.CustomException;
-import club.p6e.coat.common.error.DownloadNodeException;
+import club.p6e.coat.common.exception.CustomException;
+import club.p6e.coat.common.exception.DownloadNodeException;
 
 /**
  * @author lidashuang

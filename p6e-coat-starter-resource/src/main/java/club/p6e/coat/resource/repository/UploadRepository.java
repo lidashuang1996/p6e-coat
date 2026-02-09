@@ -1,7 +1,7 @@
 package club.p6e.coat.resource.repository;
 
 import club.p6e.DatabaseConfig;
-import club.p6e.coat.common.error.DataBaseException;
+import club.p6e.coat.common.exception.DataBaseException;
 import club.p6e.coat.common.utils.CopyUtil;
 import club.p6e.coat.common.utils.TransformationUtil;
 import club.p6e.coat.resource.model.UploadLogModel;

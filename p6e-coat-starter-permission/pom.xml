@@ -5,18 +5,17 @@
     <parent>
         <groupId>club.p6e.coat</groupId>
         <artifactId>p6e-coat-starter-parent</artifactId>
-        <version>3.4.2</version>
+        <version>4.0.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <artifactId>p6e-coat-starter-permission</artifactId>
-    <version>3.4.2</version>
     <name>p6e-coat-starter-permission</name>
     <description>p6e-coat-starter-permission</description>
 
     <dependencies>
 
-        <!-- Web [ START ] -->
+        <!-- Blocking [START] -->
         <!-- Spring Web [ START ] -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -40,9 +39,9 @@
             <optional>true</optional>
         </dependency>
         <!-- Spring JDBC [ END ] -->
-        <!-- Web [END] -->
+        <!-- Blocking [END] -->
 
-        <!-- Web Flux [ START ] -->
+        <!-- Reactive [START] -->
         <!-- Spring Web Flux [ START ] -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -66,7 +65,7 @@
             <optional>true</optional>
         </dependency>
         <!-- Spring R2DBC [ END ] -->
-        <!-- Web Flux [END] -->
+        <!-- Reactive [END] -->
 
         <!-- P6e Coat Common [START] -->
         <dependency>

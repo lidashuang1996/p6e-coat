@@ -3,7 +3,7 @@ package club.p6e.coat.auth.oauth2.service;
 import club.p6e.coat.auth.cache.BlockingVoucherCache;
 import club.p6e.coat.auth.oauth2.cache.BlockingCodeCache;
 import club.p6e.coat.auth.oauth2.context.ReconfirmContext;
-import club.p6e.coat.common.error.*;
+import club.p6e.coat.common.exception.*;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

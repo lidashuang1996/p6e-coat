@@ -3,7 +3,9 @@ package club.p6e.coat.common.controller;
 import club.p6e.coat.common.Properties;
 import club.p6e.coat.common.context.ResultContext;
 import club.p6e.coat.common.utils.JsonUtil;
+import club.p6e.coat.common.utils.WebUtil;
 import jakarta.servlet.*;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 
@@ -21,15 +23,10 @@ import java.nio.charset.StandardCharsets;
 public class BlockingVoucherFilter implements Filter {
 
     /**
-     * Voucher Header
-     */
-    private static final String VOUCHER_HEADER = "P6e-Voucher";
-
-    /**
      * Error Result Object
      */
     private static final ResultContext ERROR_RESULT =
-            ResultContext.build(401, "Unauthorized", "invalid voucher access");
+            ResultContext.build(401, "Unauthorized", "mismatched voucher request");
 
     /**
      * Error Result Content Object
@@ -54,7 +51,7 @@ public class BlockingVoucherFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
         final Properties.Security security = properties.getSecurity();
         if (security != null && security.isEnable()) {
-            final String voucher = BlockingWebUtil.getHeader(VOUCHER_HEADER);
+            final String voucher = WebUtil.getHeader((HttpServletRequest) servletRequest, security.getHeader());
             if (voucher != null) {
                 for (final String item : security.getVouchers()) {
                     if (item.equals(voucher)) {

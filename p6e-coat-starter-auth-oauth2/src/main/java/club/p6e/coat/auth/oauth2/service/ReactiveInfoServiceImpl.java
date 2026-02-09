@@ -3,7 +3,7 @@ package club.p6e.coat.auth.oauth2.service;
 import club.p6e.coat.auth.oauth2.cache.ReactiveAuthClientCache;
 import club.p6e.coat.auth.oauth2.cache.ReactiveAuthUserCache;
 import club.p6e.coat.auth.oauth2.context.InfoContext;
-import club.p6e.coat.common.error.AuthException;
+import club.p6e.coat.common.exception.AuthException;
 import club.p6e.coat.common.utils.JsonUtil;
 import club.p6e.coat.common.utils.VerificationUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;

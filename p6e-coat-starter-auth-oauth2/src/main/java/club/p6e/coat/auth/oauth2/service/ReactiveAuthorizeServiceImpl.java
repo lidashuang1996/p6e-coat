@@ -6,7 +6,7 @@ import club.p6e.coat.auth.context.IndexContext;
 import club.p6e.coat.auth.oauth2.context.AuthorizeContext;
 import club.p6e.coat.auth.oauth2.repository.ReactiveClientRepository;
 import club.p6e.coat.auth.oauth2.validator.ReactiveRequestParameterValidator;
-import club.p6e.coat.common.error.*;
+import club.p6e.coat.common.exception.*;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.TemplateParser;
 import club.p6e.coat.common.utils.VerificationUtil;

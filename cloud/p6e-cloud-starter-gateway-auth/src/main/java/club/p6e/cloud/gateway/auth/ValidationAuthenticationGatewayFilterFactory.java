@@ -1,6 +1,6 @@
 package club.p6e.cloud.gateway.auth;
 
-import club.p6e.coat.common.error.AuthException;
+import club.p6e.coat.common.exception.AuthException;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;

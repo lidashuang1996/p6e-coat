@@ -7,7 +7,7 @@ import club.p6e.coat.auth.cache.ReactiveForgotPasswordVerificationCodeCache;
 import club.p6e.coat.auth.context.ForgotPasswordContext;
 import club.p6e.coat.auth.password.PasswordEncryptor;
 import club.p6e.coat.auth.repository.ReactiveUserRepository;
-import club.p6e.coat.common.error.CacheException;
+import club.p6e.coat.common.exception.CacheException;
 import club.p6e.coat.common.utils.TransformationUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

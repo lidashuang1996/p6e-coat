@@ -2,7 +2,7 @@ package club.p6e.coat.auth.controller;
 
 import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.service.ReactiveIndexService;
-import club.p6e.coat.common.error.ServiceNotEnableException;
+import club.p6e.coat.common.exception.ServiceNotEnableException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.http.MediaType;

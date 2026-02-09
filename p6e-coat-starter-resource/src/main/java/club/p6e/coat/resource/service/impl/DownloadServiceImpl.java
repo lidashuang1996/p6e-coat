@@ -1,6 +1,6 @@
 package club.p6e.coat.resource.service.impl;
 
-import club.p6e.coat.common.error.ParameterException;
+import club.p6e.coat.common.exception.ParameterException;
 import club.p6e.coat.resource.*;
 import club.p6e.coat.resource.context.DownloadContext;
 import club.p6e.coat.resource.error.NodeException;

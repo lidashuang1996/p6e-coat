@@ -3,6 +3,7 @@ package club.p6e.coat.common.controller;
 import club.p6e.coat.common.Properties;
 import club.p6e.coat.common.context.ResultContext;
 import club.p6e.coat.common.utils.JsonUtil;
+import club.p6e.coat.common.utils.WebUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -22,11 +23,6 @@ import java.nio.charset.StandardCharsets;
  */
 @SuppressWarnings("ALL")
 public class ReactiveVoucherFilter implements WebFilter {
-
-    /**
-     * Voucher Header
-     */
-    private static final String VOUCHER_HEADER = "P6e-Voucher";
 
     /**
      * Error Result Object
@@ -60,10 +56,10 @@ public class ReactiveVoucherFilter implements WebFilter {
         if (security != null && security.isEnable()) {
             final ServerHttpRequest request = exchange.getRequest();
             final ServerHttpResponse response = exchange.getResponse();
-            String voucher = ReactiveWebUtil.getHeader(request, VOUCHER_HEADER);
+            final String voucher = WebUtil.getHeader(request, security.getHeader());
             if (voucher != null) {
                 for (final String item : security.getVouchers()) {
-                    if (item.equalsIgnoreCase(voucher)) {
+                    if (item.equals(voucher)) {
                         return chain.filter(exchange);
                     }
                 }

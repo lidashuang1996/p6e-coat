@@ -2,7 +2,7 @@ package club.p6e.coat.common.controller;
 
 import club.p6e.coat.common.Properties;
 import club.p6e.coat.common.context.ResultContext;
-import club.p6e.coat.common.error.CustomException;
+import club.p6e.coat.common.exception.CustomException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;

@@ -8,10 +8,9 @@ import club.p6e.coat.auth.token.BlockingTokenCleaner;
 import club.p6e.coat.auth.token.BlockingTokenGenerator;
 import club.p6e.coat.auth.token.BlockingTokenValidator;
 import club.p6e.coat.common.context.ResultContext;
-import club.p6e.coat.common.controller.BlockingWebUtil;
-import club.p6e.coat.common.error.CacheException;
-import club.p6e.coat.common.error.ParameterException;
-import club.p6e.coat.common.error.ResourceException;
+import club.p6e.coat.common.exception.CacheException;
+import club.p6e.coat.common.exception.ParameterException;
+import club.p6e.coat.common.exception.ResourceException;
 import club.p6e.coat.common.utils.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -87,12 +86,12 @@ public class BlockingOAuth2ClientController {
     }
 
     @RequestMapping("/sso/oauth2/auth")
-    public void auth(HttpServletResponse response) {
+    public void auth(HttpServletRequest request, HttpServletResponse response) {
         try {
             final Properties properties = Properties.getInstance();
-            final Map<String, String> params = BlockingWebUtil.getParams();
-            final String source = BlockingWebUtil.getParam("source");
-            final String redirectUri = BlockingWebUtil.getParam("redirect_uri", "redirectUri");
+            final Map<String, String> params = WebUtil.getParams(request);
+            final String source = WebUtil.getParam("source");
+            final String redirectUri = WebUtil.getParam("redirect_uri", "redirectUri");
             final String state = GeneratorUtil.random(8, true, false);
             stateCache.set(state, source == null ? "" : source);
             final StringBuilder extend = new StringBuilder();
@@ -117,8 +116,8 @@ public class BlockingOAuth2ClientController {
 
     @RequestMapping("/sso/oauth2/auth/callback")
     public ResultContext callback(HttpServletRequest request, HttpServletResponse response) {
-        final String code = BlockingWebUtil.getParam("code");
-        final String state = BlockingWebUtil.getParam("state");
+        final String code = WebUtil.getParam(request, "code");
+        final String state = WebUtil.getParam(request, "state");
         if (code == null || state == null) {
             throw new ParameterException(
                     this.getClass(),

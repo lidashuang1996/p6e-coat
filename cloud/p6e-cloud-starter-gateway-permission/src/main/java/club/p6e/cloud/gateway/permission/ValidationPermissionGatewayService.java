@@ -1,6 +1,6 @@
 package club.p6e.cloud.gateway.permission;
 
-import club.p6e.coat.common.error.PermissionException;
+import club.p6e.coat.common.exception.PermissionException;
 import club.p6e.coat.permission.PermissionDetails;
 import club.p6e.coat.permission.filter.ReactivePermissionFilter;
 import club.p6e.coat.permission.validator.PermissionValidator;

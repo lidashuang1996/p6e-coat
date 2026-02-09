@@ -7,7 +7,7 @@ import club.p6e.coat.auth.oauth2.context.AuthorizeContext;
 import club.p6e.coat.auth.oauth2.model.ClientModel;
 import club.p6e.coat.auth.oauth2.repository.BlockingClientRepository;
 import club.p6e.coat.auth.oauth2.validator.BlockingRequestParameterValidator;
-import club.p6e.coat.common.error.*;
+import club.p6e.coat.common.exception.*;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.TemplateParser;
 import club.p6e.coat.common.utils.VerificationUtil;

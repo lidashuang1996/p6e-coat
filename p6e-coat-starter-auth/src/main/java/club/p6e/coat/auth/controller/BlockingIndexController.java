@@ -3,7 +3,7 @@ package club.p6e.coat.auth.controller;
 import club.p6e.coat.auth.Properties;
 import club.p6e.coat.auth.context.IndexContext;
 import club.p6e.coat.auth.service.BlockingIndexService;
-import club.p6e.coat.common.error.ServiceNotEnableException;
+import club.p6e.coat.common.exception.ServiceNotEnableException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;

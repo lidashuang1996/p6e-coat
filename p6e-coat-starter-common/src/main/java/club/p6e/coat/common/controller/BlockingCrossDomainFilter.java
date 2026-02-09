@@ -3,6 +3,7 @@ package club.p6e.coat.common.controller;
 import club.p6e.coat.common.Properties;
 import club.p6e.coat.common.context.ResultContext;
 import club.p6e.coat.common.utils.JsonUtil;
+import club.p6e.coat.common.utils.WebUtil;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,9 +14,9 @@ import org.springframework.http.HttpStatus;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Blocking Cross Domain Filter
@@ -27,64 +28,10 @@ import java.util.stream.Collectors;
 public class BlockingCrossDomainFilter implements Filter {
 
     /**
-     * Access Control Delimiter
-     */
-    private static final String ACCESS_CONTROL_DELIMITER = ",";
-
-    /**
-     * Cross Domain Header General Content
-     */
-    private static final String CROSS_DOMAIN_HEADER_GENERAL_CONTENT = "*";
-
-    /**
-     * Access Control Max Age
-     */
-    private static final long ACCESS_CONTROL_MAX_AGE = 3600L;
-
-    /**
-     * Access Control Allow Origin
-     */
-    private static final String ACCESS_CONTROL_ALLOW_ORIGIN = "*";
-
-    /**
-     * Access Control Allow Credentials
-     */
-    private static final boolean ACCESS_CONTROL_ALLOW_CREDENTIALS = true;
-
-    /**
-     * Access Control Allow Headers
-     */
-    private static final String[] ACCESS_CONTROL_ALLOW_HEADERS = new String[]{
-            "Accept",
-            "Host",
-            "Origin",
-            "Referer",
-            "User-Agent",
-            "Content-Type",
-            "Authorization",
-            "X-Project",
-            "X-Voucher",
-            "X-Language",
-            "X-Token",
-            "X-Authorization"
-    };
-
-    /**
-     * Access Control Allow Methods
-     */
-    private static final HttpMethod[] ACCESS_CONTROL_ALLOW_METHODS = new HttpMethod[]{
-            HttpMethod.GET,
-            HttpMethod.POST,
-            HttpMethod.PUT,
-            HttpMethod.DELETE,
-            HttpMethod.OPTIONS,
-    };
-
-    /**
      * Error Result Object
      */
     private static final ResultContext ERROR_RESULT =
-            ResultContext.build(401, "Unauthorized", "unmatched origin cross domain requests");
+            ResultContext.build(401, "Unauthorized", "mismatched origin cross domain request");
 
     /**
      * Error Result Content Object
@@ -111,15 +58,13 @@ public class BlockingCrossDomainFilter implements Filter {
         if (crossDomain != null && crossDomain.isEnable()) {
             final HttpServletRequest request = (HttpServletRequest) servletRequest;
             final HttpServletResponse response = (HttpServletResponse) servletResponse;
-            String origin = BlockingWebUtil.getHeader(HttpHeaders.ORIGIN);
+            final String origin = WebUtil.getHeader(request, HttpHeaders.ORIGIN);
             if (validationOrigin(origin, List.of(crossDomain.getWhiteList()))) {
-                origin = origin == null ? ACCESS_CONTROL_ALLOW_ORIGIN : origin;
-                response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin);
-                response.setHeader(HttpHeaders.ACCESS_CONTROL_MAX_AGE, String.valueOf(ACCESS_CONTROL_MAX_AGE));
-                response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, String.valueOf(ACCESS_CONTROL_ALLOW_CREDENTIALS));
-                response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, String.join(ACCESS_CONTROL_DELIMITER, ACCESS_CONTROL_ALLOW_HEADERS));
-                response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS,
-                        Arrays.stream(ACCESS_CONTROL_ALLOW_METHODS).map(HttpMethod::name).collect(Collectors.joining(ACCESS_CONTROL_DELIMITER)));
+                response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin == null ? "*" : origin);
+                response.setHeader(HttpHeaders.ACCESS_CONTROL_MAX_AGE, getAccessControlMaxAge());
+                response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, getAccessControlAllowMethods());
+                response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, getAccessControlAllowHeaders());
+                response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, getAccessControlAllowCredentials());
                 if (HttpMethod.OPTIONS.matches(request.getMethod().toUpperCase())) {
                     response.setStatus(HttpStatus.OK.value());
                 } else {
@@ -146,12 +91,48 @@ public class BlockingCrossDomainFilter implements Filter {
     public boolean validationOrigin(String origin, List<String> whiteList) {
         if (whiteList != null && !whiteList.isEmpty()) {
             for (final String item : whiteList) {
-                if (item.equals(CROSS_DOMAIN_HEADER_GENERAL_CONTENT) || origin.startsWith(item)) {
+                if (item.equals("*") || origin.startsWith(item)) {
                     return true;
                 }
             }
         }
         return false;
+    }
+
+    /**
+     * Access Control Max Age
+     *
+     * @return Access Control Max Age
+     */
+    public static String getAccessControlMaxAge() {
+        return "3600";
+    }
+
+    /**
+     * Access Control Allow Credentials
+     *
+     * @return Access Control Allow Credentials
+     */
+    public static String getAccessControlAllowCredentials() {
+        return "true";
+    }
+
+    /**
+     * Access Control Allow Methods
+     *
+     * @return Access Control Allow Methods
+     */
+    public static String getAccessControlAllowMethods() {
+        return Stream.of(HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT, HttpMethod.DELETE, HttpMethod.OPTIONS).map(HttpMethod::name).collect(Collectors.joining(","));
+    }
+
+    /**
+     * Access Control Allow Headers
+     *
+     * @return Access Control Allow Headers
+     */
+    public static String getAccessControlAllowHeaders() {
+        return String.join(",", "Accept", "Host", "Origin", "Referer", "User-Agent", "Content-Type", "Authorization", "X-Project", "X-Voucher", "X-Language", "X-Token", "X-Authorization");
     }
 
 }

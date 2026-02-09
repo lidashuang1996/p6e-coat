@@ -1,6 +1,6 @@
 package club.p6e.coat.auth.token;
 
-import club.p6e.coat.common.error.JsonWebTokenSecretException;
+import club.p6e.coat.common.exception.JsonWebTokenSecretException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import lombok.Getter;

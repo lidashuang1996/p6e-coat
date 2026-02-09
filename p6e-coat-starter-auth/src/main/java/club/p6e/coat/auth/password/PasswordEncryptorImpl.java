@@ -1,6 +1,6 @@
 package club.p6e.coat.auth.password;
 
-import club.p6e.coat.common.error.PasswordException;
+import club.p6e.coat.common.exception.PasswordException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
 /**

@@ -5,17 +5,17 @@
     <parent>
         <groupId>club.p6e.coat</groupId>
         <artifactId>p6e-coat-starter-parent</artifactId>
-        <version>3.4.2</version>
+        <version>4.0.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <artifactId>p6e-coat-starter-sse</artifactId>
-    <version>3.4.2</version>
     <name>p6e-coat-starter-sse</name>
     <description>p6e-coat-starter-sse</description>
 
     <dependencies>
 
+        <!-- Blocking [START] -->
         <!-- Spring Web [ START ] -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -23,7 +23,9 @@
             <optional>true</optional>
         </dependency>
         <!-- Spring Web [ END ] -->
+        <!-- Blocking [END] -->
 
+        <!-- Reactive [START] -->
         <!-- Spring Web Flux [ START ] -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -31,6 +33,7 @@
             <optional>true</optional>
         </dependency>
         <!-- Spring Web Flux [ END ] -->
+        <!-- Reactive [END] -->
 
         <!-- Netty All [ START ] -->
         <dependency>

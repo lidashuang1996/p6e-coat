@@ -5,76 +5,84 @@
     <parent>
         <groupId>club.p6e.coat</groupId>
         <artifactId>p6e-coat-starter-parent</artifactId>
-        <version>3.4.2</version>
+        <version>4.0.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <artifactId>p6e-coat-starter-common</artifactId>
-    <version>3.4.2</version>
     <name>p6e-coat-starter-common</name>
     <description>p6e-coat-starter-common</description>
 
     <dependencies>
-
+        <!-- Http Components [START] -->
         <!-- Http Client [START] -->
-        <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <!-- scope provided dependency -->
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpmime</artifactId>
-            <version>4.5.14</version>
             <scope>provided</scope>
         </dependency>
         <!-- Http Client [END] -->
 
+        <!-- Http Mime [START] -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Http Mime [END] -->
+        <!-- Http Components [END] -->
+
+        <!-- JSON [START] -->
+        <!-- Spring Boot Jackson [START] -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-json</artifactId>
+        </dependency>
+        <!-- Spring Boot Jackson [END] -->
+
+        <!-- Jackson Data Type JSR310 [START] -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.21.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Jackson Data Type JSR310 [END] -->
+        <!-- JSON [END] -->
+
+        <!-- Blocking [ START ] -->
         <!-- Spring Web [ START ] -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <!-- scope provided dependency -->
             <scope>provided</scope>
         </dependency>
-        <!-- Spring Web [ END ] -->
-
-        <!-- Spring Web Flux [ START ] -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webflux</artifactId>
-            <!-- scope provided dependency -->
-            <scope>provided</scope>
-        </dependency>
-        <!-- Spring Web Flux [ END ] -->
 
         <!-- Spring Jpa [ START ] -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
-            <!-- scope provided dependency -->
             <scope>provided</scope>
         </dependency>
         <!-- Spring Jpa [ END ] -->
+        <!-- Blocking [ END ] -->
+
+        <!-- Reactive [ START ] -->
+        <!-- Spring Web Flux [ START ] -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Spring Web Flux [ END ] -->
+        <!-- Reactive [ END ] -->
 
         <!-- Spring Boot Configuration Processor [START] -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
-            <!-- scope provided dependency -->
-            <scope>provided</scope>
         </dependency>
         <!-- Spring Boot Configuration Processor [END] -->
 
-        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310 -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>2.18.0</version>
-        </dependency>
-
     </dependencies>
+
 </project>

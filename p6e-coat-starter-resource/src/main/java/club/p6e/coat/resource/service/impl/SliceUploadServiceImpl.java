@@ -1,8 +1,8 @@
 package club.p6e.coat.resource.service.impl;
 
-import club.p6e.coat.common.error.FileException;
-import club.p6e.coat.common.error.ParameterException;
-import club.p6e.coat.common.error.ResourceException;
+import club.p6e.coat.common.exception.FileException;
+import club.p6e.coat.common.exception.ParameterException;
+import club.p6e.coat.common.exception.ResourceException;
 import club.p6e.coat.common.utils.CopyUtil;
 import club.p6e.coat.common.utils.SpringUtil;
 import club.p6e.coat.resource.*;

@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.2</version>
+        <version>4.0.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -17,20 +17,18 @@
 
     <properties>
         <skip-tests>true</skip-tests>
-        <java.version>17</java.version>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <java.version>25</java.version>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <p6e-coat.version>3.4.2</p6e-coat.version>
-        <spring-boot.version>3.4.2</spring-boot.version>
-        <lombok.version>1.18.42</lombok.version>
-        <netty.version>4.1.107.Final</netty.version>
+        <p6e-coat.version>4.0.2</p6e-coat.version>
+        <spring-boot.version>4.0.2</spring-boot.version>
+        <netty.version>4.2.9.Final</netty.version>
         <http.client.version>4.5.14</http.client.version>
         <r2dbc-postgresql.version>1.0.2.RELEASE</r2dbc-postgresql.version>
         <java.auth.jwt>4.4.0</java.auth.jwt>
         <postgresql.version>42.7.7</postgresql.version>
-        <http.client.version>4.5.14</http.client.version>
         <r2dbc-postgresql.version>1.0.7.RELEASE</r2dbc-postgresql.version>
         <spring-framework.version>6.2.10</spring-framework.version>
         <java.jwt.version>4.4.0</java.jwt.version>
@@ -42,7 +40,6 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
         </dependency>
         <!-- lombok [END] -->
 
@@ -58,7 +55,6 @@
 
     <dependencyManagement>
         <dependencies>
-
             <!-- Club P6e Coat Common [START] -->
             <dependency>
                 <groupId>club.p6e.coat</groupId>
@@ -131,26 +127,32 @@
             </dependency>
             <!-- Club P6e Coat Web Socket [END] -->
 
+            <!-- Netty ALL [START] -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-all</artifactId>
                 <version>${netty.version}</version>
             </dependency>
+            <!-- Netty ALL [END] -->
+
+            <!-- Http Components [START] -->
+            <!-- Http Client [START] -->
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
                 <version>${http.client.version}</version>
             </dependency>
+            <!-- Http Client [END] -->
+
+            <!-- Http Mime [START] -->
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpmime</artifactId>
                 <version>${http.client.version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.auth0</groupId>
-                <artifactId>java-jwt</artifactId>
-                <version>4.4.0</version>
-            </dependency>
+            <!-- Http Mime [END] -->
+            <!-- Http Components [END] -->
+
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-aop</artifactId>
@@ -173,5 +175,27 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>UTF-8</encoding>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

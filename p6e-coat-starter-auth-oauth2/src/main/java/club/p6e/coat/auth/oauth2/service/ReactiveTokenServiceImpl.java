@@ -10,7 +10,7 @@ import club.p6e.coat.auth.oauth2.context.TokenContext;
 import club.p6e.coat.auth.oauth2.repository.ReactiveClientRepository;
 import club.p6e.coat.auth.oauth2.validator.ReactiveRequestParameterValidator;
 import club.p6e.coat.auth.repository.ReactiveUserRepository;
-import club.p6e.coat.common.error.*;
+import club.p6e.coat.common.exception.*;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.JsonUtil;
 import club.p6e.coat.common.utils.VerificationUtil;

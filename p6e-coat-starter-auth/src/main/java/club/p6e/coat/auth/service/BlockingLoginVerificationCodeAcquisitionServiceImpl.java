@@ -6,7 +6,7 @@ import club.p6e.coat.auth.cache.BlockingLoginVerificationCodeCache;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.event.BlockingPushVerificationCodeEvent;
 import club.p6e.coat.auth.repository.BlockingUserRepository;
-import club.p6e.coat.common.error.AccountException;
+import club.p6e.coat.common.exception.AccountException;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.VerificationUtil;
 import jakarta.servlet.http.HttpServletRequest;

@@ -5,22 +5,12 @@
     <parent>
         <groupId>club.p6e.coat</groupId>
         <artifactId>p6e-coat-starter-parent</artifactId>
-        <version>3.4.2</version>
+        <version>4.0.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <artifactId>p6e-coat-starter-auth-token</artifactId>
-    <version>3.4.2</version>
     <name>p6e-coat-starter-auth-token</name>
     <description>p6e-coat-starter-auth-token</description>
-
-    <properties>
-        <skipTests>true</skipTests>
-        <java.version>17</java.version>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    </properties>
 
     <dependencies>
 
@@ -31,7 +21,7 @@
         </dependency>
         <!-- Java JWT [END] -->
 
-        <!-- Web [START] -->
+        <!-- Blocking [START] -->
         <!-- Spring Web [START] -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -47,7 +37,7 @@
             <optional>true</optional>
         </dependency>
         <!-- Spring Redis [END] -->
-        <!-- Web [END] -->
+        <!-- Blocking [END] -->
 
         <!-- Reactive [START] -->
         <!-- Spring Web Flux [START] -->
@@ -71,8 +61,6 @@
         <dependency>
             <groupId>club.p6e.coat</groupId>
             <artifactId>p6e-coat-starter-common</artifactId>
-            <!-- scope provided dependency -->
-            <scope>provided</scope>
         </dependency>
         <!-- P6e Coat Common [ END ] -->
 

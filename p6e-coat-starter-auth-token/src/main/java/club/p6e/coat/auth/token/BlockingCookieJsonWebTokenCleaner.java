@@ -1,5 +1,6 @@
 package club.p6e.coat.auth.token;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -35,7 +36,31 @@ public class BlockingCookieJsonWebTokenCleaner implements BlockingTokenCleaner {
 
     @Override
     public Object execute(HttpServletRequest request, HttpServletResponse response) {
+        final Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (final Cookie cookie : cookies) {
+                final String name = cookie.getName();
+                if (AUTH_COOKIE_NAME.equalsIgnoreCase(name)) {
+                    response.addCookie(cookie(name, ""));
+                }
+            }
+        }
         return LocalDateTime.now();
+    }
+
+    /**
+     * Cookie
+     *
+     * @param name    Cookie Name
+     * @param content Cookie Content
+     * @return
+     */
+    public Cookie cookie(String name, String content) {
+        final Cookie cookie = new Cookie(name, content);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        cookie.setHttpOnly(true);
+        return cookie;
     }
 
 }

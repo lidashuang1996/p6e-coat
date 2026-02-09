@@ -57,6 +57,8 @@ public class Properties implements Serializable {
          */
         private String[] vouchers = new String[]{};
 
+        private String header = "P6e-Voucher";
+
     }
 
     /**

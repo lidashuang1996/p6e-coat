@@ -1,6 +1,6 @@
 package club.p6e.coat.resource;
 
-import club.p6e.coat.common.error.FileException;
+import club.p6e.coat.common.exception.FileException;
 import club.p6e.coat.resource.utils.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

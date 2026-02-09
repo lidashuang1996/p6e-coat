@@ -1,6 +1,7 @@
 package club.p6e.coat.auth.token;
 
 import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
 
 /**
  * Reactive Token Cleaner
@@ -16,6 +17,6 @@ public interface ReactiveTokenCleaner {
      * @param exchange Server Web Exchange Object
      * @return Result Object
      */
-    Object execute(ServerWebExchange exchange);
+    Mono<Object> execute(ServerWebExchange exchange);
 
 }

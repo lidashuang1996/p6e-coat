@@ -84,7 +84,7 @@ public class ReactiveCookieCacheTokenGenerator implements ReactiveTokenGenerator
      *
      * @param name    Cookie Name
      * @param content Cookie Content
-     * @return
+     * @return Response Cookie Object
      */
     public ResponseCookie cookie(String name, String content) {
         final int age = (int) duration();

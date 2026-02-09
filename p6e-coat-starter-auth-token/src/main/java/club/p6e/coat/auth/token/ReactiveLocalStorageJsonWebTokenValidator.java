@@ -60,8 +60,8 @@ public class ReactiveLocalStorageJsonWebTokenValidator implements ReactiveTokenV
     }
 
     @Override
-    public Mono<User> execute(ServerWebExchange context) {
-        final ServerHttpRequest request = context.getRequest();
+    public Mono<User> execute(ServerWebExchange exchange) {
+        final ServerHttpRequest request = exchange.getRequest();
         final List<String> hList = request.getHeaders().get(AUTHORIZATION_HEADER_NAME);
         final List<String> pList = request.getQueryParams().get(REQUEST_PARAMETER_NAME);
         final List<String> list = new ArrayList<>();

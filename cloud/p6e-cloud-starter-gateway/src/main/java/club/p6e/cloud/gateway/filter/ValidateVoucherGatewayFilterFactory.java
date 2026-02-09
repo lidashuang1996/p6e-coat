@@ -1,6 +1,6 @@
 package club.p6e.cloud.gateway.filter;
 
-import club.p6e.coat.common.error.VoucherException;
+import club.p6e.coat.common.exception.VoucherException;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.springframework.cloud.gateway.filter.GatewayFilter;

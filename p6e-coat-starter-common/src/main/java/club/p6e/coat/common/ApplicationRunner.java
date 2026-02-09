@@ -1,8 +1,9 @@
 package club.p6e.coat.common;
 
-import club.p6e.coat.common.controller.WebExecuteErrorConfig;
+import club.p6e.coat.common.controller.WebExecuteExceptionConfig;
 import club.p6e.coat.common.utils.SnowflakeIdUtil;
 import club.p6e.coat.common.utils.SpringUtil;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -40,9 +41,9 @@ public class ApplicationRunner implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) {
+    public void run(String @NonNull ... args) {
         SpringUtil.init(context);
-        WebExecuteErrorConfig.init();
+        WebExecuteExceptionConfig.init();
         final Properties properties = SpringUtil.getBean(Properties.class);
         for (final String name : properties.getSnowflake().keySet()) {
             final Properties.Snowflake snowflake = properties.getSnowflake().get(name);

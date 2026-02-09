@@ -1,7 +1,7 @@
 package club.p6e.coat.shield;
 
 import club.p6e.coat.common.context.ResultContext;
-import club.p6e.coat.common.error.ParameterException;
+import club.p6e.coat.common.exception.ParameterException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.buffer.DataBuffer;

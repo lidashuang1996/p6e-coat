@@ -1,6 +1,5 @@
 package club.p6e.coat.auth.oauth2.client.cache.redis;
 
-import club.p6e.coat.auth.cache.redis.ReactiveVoucherRedisCache;
 import club.p6e.coat.auth.oauth2.client.cache.ReactiveOAuth2StateCache;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -16,7 +15,7 @@ import java.time.Duration;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(ReactiveVoucherRedisCache.class)
+@ConditionalOnMissingBean(ReactiveAuthStateRedisCache.class)
 @Component("club.p6e.coat.auth.oauth2.client.cache.redis.ReactiveAuthStateRedisCache")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactiveAuthStateRedisCache implements ReactiveOAuth2StateCache {

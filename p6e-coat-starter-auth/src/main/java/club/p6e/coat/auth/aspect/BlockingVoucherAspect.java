@@ -1,7 +1,7 @@
 package club.p6e.coat.auth.aspect;
 
 import club.p6e.coat.auth.cache.BlockingVoucherCache;
-import club.p6e.coat.common.error.VoucherException;
+import club.p6e.coat.common.exception.VoucherException;
 import club.p6e.coat.common.utils.SpringUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;

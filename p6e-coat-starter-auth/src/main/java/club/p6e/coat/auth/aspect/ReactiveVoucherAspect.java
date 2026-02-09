@@ -1,8 +1,8 @@
 package club.p6e.coat.auth.aspect;
 
 import club.p6e.coat.auth.cache.ReactiveVoucherCache;
-import club.p6e.coat.common.error.CacheException;
-import club.p6e.coat.common.error.VoucherException;
+import club.p6e.coat.common.exception.CacheException;
+import club.p6e.coat.common.exception.VoucherException;
 import club.p6e.coat.common.utils.SpringUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;

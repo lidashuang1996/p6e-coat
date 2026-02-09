@@ -47,8 +47,8 @@ public class ReactiveCookieCacheTokenValidator implements ReactiveTokenValidator
     }
 
     @Override
-    public Mono<User> execute(ServerWebExchange context) {
-        final ServerHttpRequest request = context.getRequest();
+    public Mono<User> execute(ServerWebExchange exchange) {
+        final ServerHttpRequest request = exchange.getRequest();
         final MultiValueMap<String, HttpCookie> cookies = request.getCookies();
         if (!cookies.isEmpty()) {
             for (final String key : cookies.keySet()) {

@@ -6,7 +6,7 @@ import club.p6e.coat.auth.aspect.ReactiveVoucherAspect;
 import club.p6e.coat.auth.cache.ReactiveLoginVerificationCodeCache;
 import club.p6e.coat.auth.context.LoginContext;
 import club.p6e.coat.auth.repository.ReactiveUserRepository;
-import club.p6e.coat.common.error.CacheException;
+import club.p6e.coat.common.exception.CacheException;
 import club.p6e.coat.common.utils.TransformationUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

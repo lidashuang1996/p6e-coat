@@ -1,16 +1,14 @@
 package club.p6e.coat.auth.token;
 
-import club.p6e.coat.auth.User;
-import club.p6e.coat.auth.UserBuilder;
 import org.springframework.http.HttpCookie;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Reactive Cookie JSON Web Token Cleaner
@@ -18,7 +16,6 @@ import java.util.List;
  * @author lidashuang
  * @version 1.0
  */
-@SuppressWarnings("ALL")
 public class ReactiveCookieJsonWebTokenCleaner implements ReactiveTokenCleaner {
 
     /**
@@ -41,8 +38,29 @@ public class ReactiveCookieJsonWebTokenCleaner implements ReactiveTokenCleaner {
     }
 
     @Override
-    public Mono<User> execute(ServerWebExchange context) {
-        return Mono.empty();
+    public Mono<Object> execute(ServerWebExchange exchange) {
+        final ServerHttpRequest request = exchange.getRequest();
+        final ServerHttpResponse response = exchange.getResponse();
+        final MultiValueMap<String, HttpCookie> cookies = request.getCookies();
+        if (!cookies.isEmpty()) {
+            for (final String key : cookies.keySet()) {
+                if (AUTH_COOKIE_NAME.equalsIgnoreCase(key)) {
+                    response.addCookie(cookie(key, ""));
+                }
+            }
+        }
+        return Mono.just(LocalDateTime.now());
+    }
+
+    /**
+     * Cookie
+     *
+     * @param name    Cookie Name
+     * @param content Cookie Content
+     * @return Response Cookie Object
+     */
+    public ResponseCookie cookie(String name, String content) {
+        return ResponseCookie.from(name, content).path("/").maxAge(0).httpOnly(true).build();
     }
 
 }

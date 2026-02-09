@@ -39,7 +39,9 @@ public class BlockingCookieCacheTokenCleaner implements BlockingTokenCleaner {
         final Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (final Cookie cookie : cookies) {
+                final String name = cookie.getName();
                 if (AUTH_COOKIE_NAME.equalsIgnoreCase(cookie.getName())) {
+                    response.addCookie(cookie(name, ""));
                     execute(cookie);
                 }
             }
@@ -57,6 +59,21 @@ public class BlockingCookieCacheTokenCleaner implements BlockingTokenCleaner {
         if (model != null) {
             cache.cleanToken(model.getToken());
         }
+    }
+
+    /**
+     * Cookie
+     *
+     * @param name    Cookie Name
+     * @param content Cookie Content
+     * @return
+     */
+    public Cookie cookie(String name, String content) {
+        final Cookie cookie = new Cookie(name, content);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        cookie.setHttpOnly(true);
+        return cookie;
     }
 
 }

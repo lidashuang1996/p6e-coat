@@ -5,11 +5,11 @@ import club.p6e.coat.auth.oauth2.client.Properties;
 import club.p6e.coat.auth.oauth2.client.cache.ReactiveOAuth2StateCache;
 import club.p6e.coat.auth.token.*;
 import club.p6e.coat.common.context.ResultContext;
-import club.p6e.coat.common.controller.ReactiveWebUtil;
-import club.p6e.coat.common.error.*;
+import club.p6e.coat.common.exception.*;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.JsonUtil;
 import club.p6e.coat.common.utils.TemplateParser;
+import club.p6e.coat.common.utils.WebUtil;
 import club.p6e.coat.common.utils.reactor.HttpUtil;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -93,9 +93,9 @@ public class ReactiveOAuth2ClientController {
         final Properties properties = Properties.getInstance();
         final ServerHttpRequest request = exchange.getRequest();
         final ServerHttpResponse response = exchange.getResponse();
-        final Map<String, String> params = ReactiveWebUtil.getParams(request);
-        final String source = ReactiveWebUtil.getParam(request, "source");
-        final String redirectUri = ReactiveWebUtil.getParam(request, "redirect_uri", "redirectUri");
+        final Map<String, String> params = WebUtil.getParams(request);
+        final String source = WebUtil.getParam(request, "source");
+        final String redirectUri = WebUtil.getParam(request, "redirect_uri", "redirectUri");
         final String state = GeneratorUtil.random(8, true, false);
         return stateCache.set(state, source == null ? "" : source)
                 .switchIfEmpty(Mono.error(new CacheException(
@@ -129,9 +129,9 @@ public class ReactiveOAuth2ClientController {
         final Properties properties = Properties.getInstance();
         final ServerHttpRequest request = exchange.getRequest();
         final ServerHttpResponse response = exchange.getResponse();
-        final String code = ReactiveWebUtil.getParam(request, "code");
-        final String state = ReactiveWebUtil.getParam(request, "state");
-        final String redirectUri = ReactiveWebUtil.getParam(request, "redirect_uri", "redirectUri");
+        final String code = WebUtil.getParam(request, "code");
+        final String state = WebUtil.getParam(request, "state");
+        final String redirectUri = WebUtil.getParam(request, "redirect_uri", "redirectUri");
         if (code == null || state == null) {
             return Mono.error(new ParameterException(
                     this.getClass(),

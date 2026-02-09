@@ -1,4 +1,4 @@
-club.p6e.coat.sse.WebController
-club.p6e.coat.sse.WebFluxController
+club.p6e.coat.sse.BlockingWebController
+club.p6e.coat.sse.ReactiveWebController
 club.p6e.coat.sse.Application
 club.p6e.coat.sse.AuthServiceImpl

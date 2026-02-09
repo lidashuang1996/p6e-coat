@@ -3,7 +3,7 @@ package club.p6e.coat.auth.service;
 import club.p6e.coat.auth.aspect.BlockingVoucherAspect;
 import club.p6e.coat.auth.cache.BlockingPasswordSignatureCache;
 import club.p6e.coat.auth.context.PasswordSignatureContext;
-import club.p6e.coat.common.error.CodecException;
+import club.p6e.coat.common.exception.CodecException;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.JsonUtil;
 import club.p6e.coat.common.utils.RsaUtil;

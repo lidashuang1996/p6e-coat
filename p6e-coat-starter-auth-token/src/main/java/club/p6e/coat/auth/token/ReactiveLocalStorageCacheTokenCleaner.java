@@ -52,8 +52,8 @@ public class ReactiveLocalStorageCacheTokenCleaner implements ReactiveTokenClean
     }
 
     @Override
-    public Mono<Object> execute(ServerWebExchange context) {
-        final ServerHttpRequest request = context.getRequest();
+    public Mono<Object> execute(ServerWebExchange exchange) {
+        final ServerHttpRequest request = exchange.getRequest();
         final List<String> list = new ArrayList<>();
         final List<String> hList = request.getHeaders().get(AUTHORIZATION_HEADER_NAME);
         final List<String> pList = request.getQueryParams().get(REQUEST_PARAMETER_NAME);

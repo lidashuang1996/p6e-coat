@@ -57,7 +57,7 @@ public class ReactiveLocalStorageJsonWebTokenCleaner implements ReactiveTokenCle
     }
 
     @Override
-    public Mono<Object> execute(ServerWebExchange context) {
+    public Mono<Object> execute(ServerWebExchange exchange) {
         return Mono.just(LocalDateTime.now());
     }
 

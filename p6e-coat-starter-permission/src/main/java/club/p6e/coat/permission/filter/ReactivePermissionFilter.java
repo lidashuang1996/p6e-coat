@@ -1,6 +1,6 @@
 package club.p6e.coat.permission.filter;
 
-import club.p6e.coat.common.error.PermissionException;
+import club.p6e.coat.common.exception.PermissionException;
 import club.p6e.coat.common.utils.JsonUtil;
 import club.p6e.coat.permission.PermissionDetails;
 import club.p6e.coat.permission.validator.PermissionValidator;
