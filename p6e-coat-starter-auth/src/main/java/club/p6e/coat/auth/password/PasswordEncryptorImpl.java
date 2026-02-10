@@ -2,6 +2,7 @@ package club.p6e.coat.auth.password;
 
 import club.p6e.coat.common.exception.PasswordException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.stereotype.Component;
 
 /**
  * Password Encryptor Impl
@@ -9,6 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
  * @author lidashuang
  * @version 1.0
  */
+@Component("club.p6e.coat.auth.password.PasswordEncryptorImpl")
 public class PasswordEncryptorImpl implements PasswordEncryptor {
 
     @Override

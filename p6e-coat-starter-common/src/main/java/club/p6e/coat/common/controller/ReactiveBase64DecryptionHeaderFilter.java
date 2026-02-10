@@ -1,16 +1,18 @@
 package club.p6e.coat.common.controller;
 
+import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
-import org.springframework.lang.NonNull;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -31,7 +33,7 @@ public class ReactiveBase64DecryptionHeaderFilter implements WebFilter {
     public List<String> match(ServerHttpRequest request) {
         final List<String> result = new ArrayList<>();
         final HttpHeaders headers = request.getHeaders();
-        for (final String name : headers.keySet()) {
+        for (final String name : headers.headerNames()) {
             if (name.toLowerCase().startsWith("p6e-")) {
                 result.add(name);
             }
@@ -66,7 +68,7 @@ public class ReactiveBase64DecryptionHeaderFilter implements WebFilter {
             this.httpHeaders = new HttpHeaders();
             final HttpHeaders superHeaders = super.getHeaders();
             final List<String> pending = matcher.apply(delegate);
-            for (final String name : superHeaders.keySet()) {
+            for (final String name : superHeaders.headerNames()) {
                 final List<String> values = superHeaders.get(name);
                 if (values != null) {
                     if (pending.contains(name)) {

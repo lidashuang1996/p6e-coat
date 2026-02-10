@@ -13,7 +13,6 @@ import java.util.Map;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(UserBuilder.class)
 @Component("club.p6e.coat.auth.user.SimpleUserBuilder")
 public class SimpleUserBuilder implements UserBuilder {
 

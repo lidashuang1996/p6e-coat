@@ -111,7 +111,7 @@ public class WebUtil {
      */
     public static String getHeader(ServerHttpRequest request, String name) {
         if (name != null) {
-            for (final String key : request.getHeaders().keySet()) {
+            for (final String key : request.getHeaders().headerNames()) {
                 if (name.equalsIgnoreCase(key)) {
                     return request.getHeaders().getFirst(key);
                 }

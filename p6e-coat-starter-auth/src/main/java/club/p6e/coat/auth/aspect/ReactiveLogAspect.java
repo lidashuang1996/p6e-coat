@@ -23,7 +23,6 @@ import java.util.Map;
  */
 @Aspect
 @Order(Integer.MIN_VALUE + 10000)
-@ConditionalOnMissingBean(ReactiveLogAspect.class)
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactiveLogAspect {
 

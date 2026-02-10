@@ -15,10 +15,6 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(
-        value = ReactiveLoginAuthenticationService.class,
-        ignored = ReactiveLoginAuthenticationServiceImpl.class
-)
 @Component("club.p6e.coat.auth.service.ReactiveLoginAuthenticationServiceImpl")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactiveLoginAuthenticationServiceImpl implements ReactiveLoginAuthenticationService {

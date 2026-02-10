@@ -30,10 +30,6 @@ import java.util.Map;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(
-        value = ReactiveLoginAccountPasswordService.class,
-        ignored = ReactiveLoginAccountPasswordServiceImpl.class
-)
 @Component("club.p6e.coat.auth.service.ReactiveLoginAccountPasswordServiceImpl")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactiveLoginAccountPasswordServiceImpl implements ReactiveLoginAccountPasswordService {

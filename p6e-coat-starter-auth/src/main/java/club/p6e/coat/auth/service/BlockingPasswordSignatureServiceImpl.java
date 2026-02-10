@@ -21,10 +21,6 @@ import java.util.HashMap;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(
-        value = BlockingPasswordSignatureService.class,
-        ignored = BlockingPasswordSignatureServiceImpl.class
-)
 @Component("club.p6e.coat.auth.service.BlockingPasswordSignatureServiceImpl")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class BlockingPasswordSignatureServiceImpl implements BlockingPasswordSignatureService {

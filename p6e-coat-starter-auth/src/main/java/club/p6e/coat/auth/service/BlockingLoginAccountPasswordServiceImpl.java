@@ -29,10 +29,6 @@ import java.util.Map;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(
-        value = BlockingLoginAccountPasswordService.class,
-        ignored = BlockingLoginAccountPasswordServiceImpl.class
-)
 @Component("club.p6e.coat.auth.service.BlockingLoginAccountPasswordServiceImpl")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class BlockingLoginAccountPasswordServiceImpl implements BlockingLoginAccountPasswordService {

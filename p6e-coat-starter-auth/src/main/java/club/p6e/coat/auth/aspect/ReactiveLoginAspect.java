@@ -24,7 +24,6 @@ import reactor.core.publisher.Mono;
  */
 @Aspect
 @Order(Integer.MIN_VALUE + 20000)
-@ConditionalOnMissingBean(ReactiveLoginAspect.class)
 @Component("club.p6e.coat.auth.aspect.ReactiveLoginAspect")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactiveLoginAspect {

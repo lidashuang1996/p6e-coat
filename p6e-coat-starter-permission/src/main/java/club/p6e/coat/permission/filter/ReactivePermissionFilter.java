@@ -4,7 +4,7 @@ import club.p6e.coat.common.exception.PermissionException;
 import club.p6e.coat.common.utils.JsonUtil;
 import club.p6e.coat.permission.PermissionDetails;
 import club.p6e.coat.permission.validator.PermissionValidator;
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.core.Ordered;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
@@ -61,15 +61,15 @@ public class ReactivePermissionFilter implements WebFilter, Ordered {
         return 20000;
     }
 
-    @Nonnull
+    @NonNull
     @Override
-    public Mono<Void> filter(@Nonnull ServerWebExchange exchange, @Nonnull WebFilterChain chain) {
+    public Mono<Void> filter(@NonNull ServerWebExchange exchange, @NonNull WebFilterChain chain) {
         final ServerHttpRequest request = exchange.getRequest();
         final PermissionDetails details = validate(request);
         if (details == null) {
             return Mono.error(new PermissionException(
                     this.getClass(),
-                    "filter(ServerWebExchange exchange, WebFilterChain chain)",
+                    "fun Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain)",
                     "request permission exception"
             ));
         } else {

@@ -22,10 +22,6 @@ import java.util.List;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(
-        value = BlockingLoginVerificationCodeService.class,
-        ignored = BlockingLoginVerificationCodeServiceImpl.class
-)
 @Component("club.p6e.coat.auth.service.BlockingLoginVerificationCodeServiceImpl")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class BlockingLoginVerificationCodeServiceImpl implements BlockingLoginVerificationCodeService {

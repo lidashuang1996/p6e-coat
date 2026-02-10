@@ -20,7 +20,6 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(ReactiveRegisterController.class)
 @RestController("club.p6e.coat.auth.controller.ReactiveRegisterController")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactiveRegisterController {

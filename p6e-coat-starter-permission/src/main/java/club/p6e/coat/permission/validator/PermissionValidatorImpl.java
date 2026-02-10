@@ -49,7 +49,7 @@ public class PermissionValidatorImpl implements PermissionValidator {
                     final boolean gb = groups.contains(pg);
                     final boolean mb = USUAL_CHAR.equalsIgnoreCase(pm) || method.equalsIgnoreCase(pm);
                     if (gb && mb) {
-                        if (pp.contains("*")) {
+                        if (pp.contains(USUAL_CHAR)) {
                             vague = permission;
                         } else {
                             return permission;

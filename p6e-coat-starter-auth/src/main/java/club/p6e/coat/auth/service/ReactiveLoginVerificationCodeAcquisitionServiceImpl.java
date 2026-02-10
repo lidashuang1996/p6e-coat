@@ -26,10 +26,6 @@ import java.util.List;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(
-        value = ReactiveLoginVerificationCodeAcquisitionService.class,
-        ignored = ReactiveLoginVerificationCodeAcquisitionServiceImpl.class
-)
 @Component("club.p6e.coat.auth.service.ReactiveLoginVerificationCodeAcquisitionServiceImpl")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactiveLoginVerificationCodeAcquisitionServiceImpl implements ReactiveLoginVerificationCodeAcquisitionService {

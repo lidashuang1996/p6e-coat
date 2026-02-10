@@ -43,7 +43,7 @@ public class BlockingWebController {
         if (request == null || request.getContent() == null) {
             throw new ParameterException(
                     this.getClass(),
-                    "fun pushText(MessageContext.Request request)",
+                    "fun ResultContext pushText(MessageContext.Request request)",
                     "request parameter exception"
             );
         }

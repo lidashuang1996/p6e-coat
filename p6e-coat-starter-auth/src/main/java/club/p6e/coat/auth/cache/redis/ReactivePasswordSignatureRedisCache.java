@@ -15,7 +15,6 @@ import java.time.Duration;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(ReactivePasswordSignatureRedisCache.class)
 @Component("club.p6e.coat.auth.cache.redis.ReactivePasswordSignatureRedisCache")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactivePasswordSignatureRedisCache implements ReactivePasswordSignatureCache {

@@ -65,7 +65,7 @@ public class BlockingPermissionFilter implements Filter, Ordered {
         if (details == null) {
             throw new PermissionException(
                     this.getClass(),
-                    "fun doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)",
+                    "fun void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)",
                     "request permission exception"
             );
         } else {

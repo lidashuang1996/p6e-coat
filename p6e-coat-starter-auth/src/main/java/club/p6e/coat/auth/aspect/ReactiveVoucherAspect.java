@@ -8,15 +8,14 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-import reactor.util.annotation.NonNull;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -32,7 +31,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Aspect
 @Order(Integer.MIN_VALUE + 30000)
-@ConditionalOnMissingBean(ReactiveVoucherAspect.class)
 @Component("club.p6e.coat.auth.aspect.ReactiveVoucherAspect")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactiveVoucherAspect {

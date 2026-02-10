@@ -10,12 +10,11 @@
     </parent>
 
     <artifactId>p6e-cloud-starter-auth</artifactId>
-    <version>3.4.2</version>
     <name>p6e-cloud-starter-auth</name>
     <description>p6e-cloud-starter-auth</description>
 
     <dependencies>
-        
+
         <!-- P6e Coat Auth [START] -->
         <dependency>
             <groupId>club.p6e.coat</groupId>

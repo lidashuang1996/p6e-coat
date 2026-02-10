@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(BlockingLoginVerificationCodeAcquisitionController.class)
 @RestController("club.p6e.coat.auth.controller.BlockingLoginVerificationCodeAcquisitionController")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class BlockingLoginVerificationCodeAcquisitionController {

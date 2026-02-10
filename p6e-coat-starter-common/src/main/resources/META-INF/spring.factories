@@ -1,7 +1,4 @@
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-club.p6e.coat.common.controller.WebExceptionConfig,\
-club.p6e.coat.common.controller.WebLocalDateTimeConfig,\
-club.p6e.coat.common.controller.BlockingVersionController,\
-club.p6e.coat.common.ApplicationRunner,\
-club.p6e.coat.common.Properties
+club.p6e.coat.common.Properties,\
+club.p6e.coat.common.ApplicationRunner

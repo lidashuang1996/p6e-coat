@@ -33,7 +33,7 @@ public class ReactiveBase64EncryptionHeaderFilter implements WebFilter {
     public List<String> match(ServerHttpRequest request) {
         final List<String> result = new ArrayList<>();
         final HttpHeaders headers = request.getHeaders();
-        for (final String name : headers.keySet()) {
+        for (final String name : headers.headerNames()) {
             if (name.toLowerCase().startsWith("p6e-")) {
                 result.add(name);
             }
@@ -68,7 +68,7 @@ public class ReactiveBase64EncryptionHeaderFilter implements WebFilter {
             this.httpHeaders = new HttpHeaders();
             final HttpHeaders superHeaders = super.getHeaders();
             final List<String> pending = matcher.apply(delegate);
-            for (final String name : superHeaders.keySet()) {
+            for (final String name : superHeaders.headerNames()) {
                 final List<String> values = superHeaders.get(name);
                 if (values != null) {
                     if (pending.contains(name)) {

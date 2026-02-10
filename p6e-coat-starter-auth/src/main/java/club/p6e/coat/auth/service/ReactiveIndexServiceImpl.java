@@ -19,10 +19,6 @@ import java.util.HashMap;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(
-        value = ReactiveIndexService.class,
-        ignored = ReactiveIndexServiceImpl.class
-)
 @Component("club.p6e.coat.auth.service.ReactiveIndexServiceImpl")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactiveIndexServiceImpl implements ReactiveIndexService {

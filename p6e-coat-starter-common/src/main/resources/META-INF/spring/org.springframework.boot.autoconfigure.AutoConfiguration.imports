@@ -1,4 +1,2 @@
-club.p6e.coat.common.controller.WebExceptionConfig
-club.p6e.coat.common.controller.BlockingVersionController
-club.p6e.coat.common.controller.ReactiveVersionController
 club.p6e.coat.common.Properties
+club.p6e.coat.common.ApplicationRunner

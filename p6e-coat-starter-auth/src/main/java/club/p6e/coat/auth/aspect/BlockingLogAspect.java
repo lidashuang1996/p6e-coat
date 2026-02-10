@@ -10,7 +10,6 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.core.annotation.Order;
 
 import java.util.Enumeration;
@@ -25,7 +24,6 @@ import java.util.Map;
  */
 @Aspect
 @Order(Integer.MIN_VALUE + 10000)
-@ConditionalOnMissingBean(BlockingLogAspect.class)
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class BlockingLogAspect {
 

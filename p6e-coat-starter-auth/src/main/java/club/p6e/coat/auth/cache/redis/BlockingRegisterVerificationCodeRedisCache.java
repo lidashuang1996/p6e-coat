@@ -13,7 +13,6 @@ import java.util.List;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(BlockingRegisterVerificationCodeRedisCache.class)
 @Component("club.p6e.coat.auth.cache.redis.BlockingRegisterVerificationCodeRedisCache")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class BlockingRegisterVerificationCodeRedisCache implements BlockingRegisterVerificationCodeCache {

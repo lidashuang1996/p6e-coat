@@ -19,10 +19,6 @@ import java.util.HashMap;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(
-        value = BlockingIndexService.class,
-        ignored = BlockingIndexServiceImpl.class
-)
 @Component("club.p6e.coat.auth.service.BlockingIndexServiceImpl")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class BlockingIndexServiceImpl implements BlockingIndexService {

@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(BlockingPasswordSignatureController.class)
 @RestController("club.p6e.coat.auth.controller.BlockingPasswordSignatureController")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class BlockingPasswordSignatureController {

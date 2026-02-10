@@ -30,10 +30,6 @@ import java.util.List;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(
-        value = BlockingUserRepository.class,
-        ignored = BlockingUserRepositoryImpl.class
-)
 @Component("club.p6e.coat.auth.repository.BlockingUserRepositoryImpl")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class BlockingUserRepositoryImpl implements BlockingUserRepository {

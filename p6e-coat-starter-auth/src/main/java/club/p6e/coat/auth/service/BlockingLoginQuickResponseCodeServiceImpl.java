@@ -18,10 +18,6 @@ import org.springframework.stereotype.Component;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(
-        value = BlockingLoginQuickResponseCodeService.class,
-        ignored = BlockingLoginQuickResponseCodeServiceImpl.class
-)
 @Component("club.p6e.coat.auth.service.BlockingLoginQuickResponseCodeServiceImpl")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class BlockingLoginQuickResponseCodeServiceImpl implements BlockingLoginQuickResponseCodeService {

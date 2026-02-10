@@ -14,7 +14,6 @@ import java.time.Duration;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(BlockingLoginQuickResponseCodeRedisCache.class)
 @Component("club.p6e.coat.auth.cache.redis.BlockingLoginQuickResponseCodeRedisCache")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class BlockingLoginQuickResponseCodeRedisCache implements BlockingLoginQuickResponseCodeCache {

@@ -14,7 +14,6 @@ import java.util.List;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(ReactiveForgotPasswordVerificationCodeRedisCache.class)
 @Component("club.p6e.coat.auth.cache.redis.ReactiveForgotPasswordVerificationCodeRedisCache")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactiveForgotPasswordVerificationCodeRedisCache implements ReactiveForgotPasswordVerificationCodeCache {

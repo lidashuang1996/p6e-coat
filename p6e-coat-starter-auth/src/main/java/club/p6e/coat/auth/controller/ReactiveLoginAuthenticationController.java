@@ -20,7 +20,6 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(ReactiveLoginAuthenticationController.class)
 @RestController("club.p6e.coat.auth.controller.ReactiveLoginAuthenticationController")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactiveLoginAuthenticationController {

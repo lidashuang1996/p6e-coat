@@ -19,7 +19,6 @@ import java.nio.charset.StandardCharsets;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(ReactiveIndexController.class)
 @RestController("club.p6e.coat.auth.controller.ReactiveIndexController")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactiveIndexController {

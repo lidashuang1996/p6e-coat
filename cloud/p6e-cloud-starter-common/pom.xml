@@ -41,7 +41,7 @@
         <!-- Spring Cloud Alibaba Nacos Discovery [END] -->
         <!-- Spring Cloud Alibaba Nacos Service [END] -->
 
-        <!-- Redis Service [START] -->
+        <!-- Blocking [START] -->
         <!-- Spring Redis [START] -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -49,7 +49,9 @@
             <optional>true</optional>
         </dependency>
         <!-- Spring Redis [END] -->
+        <!-- Blocking [END] -->
 
+        <!-- Reactive [START] -->
         <!-- Spring Reactive Redis [START] -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -57,7 +59,7 @@
             <optional>true</optional>
         </dependency>
         <!-- Spring Reactive Redis [END] -->
-        <!-- Redis Service [END] -->
+        <!-- Reactive [END] -->
 
         <!-- P6e Coat Common [START] -->
         <dependency>
@@ -67,4 +69,5 @@
         <!-- P6e Coat Common [END] -->
 
     </dependencies>
+
 </project>

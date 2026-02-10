@@ -19,7 +19,6 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(ReactiveForgotPasswordVerificationCodeAcquisitionController.class)
 @RestController("club.p6e.coat.auth.controller.ReactiveForgotPasswordVerificationCodeAcquisitionController")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactiveForgotPasswordVerificationCodeAcquisitionController {

@@ -26,8 +26,6 @@
         <dependency>
             <groupId>club.p6e.cloud</groupId>
             <artifactId>p6e-cloud-starter-common</artifactId>
-            <!-- scope provided dependency -->
-            <scope>provided</scope>
         </dependency>
         <!-- P6e Cloud Common [END] -->
 

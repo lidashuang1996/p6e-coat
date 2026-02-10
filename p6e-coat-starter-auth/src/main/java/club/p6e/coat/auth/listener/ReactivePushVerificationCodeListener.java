@@ -16,7 +16,6 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(ReactivePushVerificationCodeListener.class)
 @Component("club.p6e.coat.auth.listener.ReactivePushVerificationCodeListener")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactivePushVerificationCodeListener implements ApplicationListener<ReactivePushVerificationCodeEvent> {

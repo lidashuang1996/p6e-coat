@@ -12,7 +12,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +23,6 @@ import org.springframework.stereotype.Component;
  */
 @Aspect
 @Order(Integer.MIN_VALUE + 20000)
-@ConditionalOnMissingBean(BlockingLoginAspect.class)
 @Component("club.p6e.coat.auth.aspect.BlockingLoginAspect")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class BlockingLoginAspect {

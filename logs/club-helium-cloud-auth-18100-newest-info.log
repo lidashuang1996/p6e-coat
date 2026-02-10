@@ -1,0 +1,6 @@
+2026-02-10 16:28:12 [main] INFO - Starting P6eCoatAuthApplication using Java 25.0.2 with PID 24148 (D:\CodeContents\p6e-coat\cloud\p6e-cloud-starter-auth\target\classes started by a1294 in D:\CodeContents\p6e-coat)
+2026-02-10 16:28:12 [main] INFO - No active profile set, falling back to 1 default profile: "default"
+2026-02-10 16:28:13 [main] INFO - Netty started on port 18100 (http)
+2026-02-10 16:28:13 [main] INFO - Started P6eCoatAuthApplication in 1.004 seconds (process running for 1.318)
+2026-02-10 16:28:47 [SpringApplicationShutdownHook] INFO - Commencing graceful shutdown. Waiting for active requests to complete
+2026-02-10 16:28:47 [netty-shutdown] INFO - Graceful shutdown complete

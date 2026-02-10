@@ -25,10 +25,6 @@ import java.util.List;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(
-        value = BlockingRegisterVerificationCodeAcquisitionService.class,
-        ignored = BlockingRegisterVerificationCodeAcquisitionServiceImpl.class
-)
 @Component("club.p6e.coat.auth.service.BlockingRegisterVerificationCodeAcquisitionServiceImpl")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class BlockingRegisterVerificationCodeAcquisitionServiceImpl implements BlockingRegisterVerificationCodeAcquisitionService {

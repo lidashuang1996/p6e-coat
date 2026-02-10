@@ -26,7 +26,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Aspect
 @Order(Integer.MIN_VALUE + 30000)
-@ConditionalOnMissingBean(BlockingVoucherAspect.class)
 @Component("club.p6e.coat.auth.aspect.BlockingVoucherAspect")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class BlockingVoucherAspect {

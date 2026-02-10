@@ -19,7 +19,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <optional>true</optional>
             <scope>provided</scope>
         </dependency>
         <!-- Spring Web [END] -->
@@ -28,7 +27,6 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <optional>true</optional>
             <scope>provided</scope>
         </dependency>
         <!-- Spring Data [END] -->
@@ -37,7 +35,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
-            <optional>true</optional>
             <scope>provided</scope>
         </dependency>
         <!-- Spring JDBC [ END ] -->
@@ -46,7 +43,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
-            <optional>true</optional>
             <scope>provided</scope>
         </dependency>
         <!-- Spring Redis [END] -->
@@ -57,7 +53,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
-            <optional>true</optional>
             <scope>provided</scope>
         </dependency>
         <!-- Spring Web Flux [END] -->
@@ -66,7 +61,6 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>r2dbc-postgresql</artifactId>
-            <optional>true</optional>
             <scope>provided</scope>
         </dependency>
         <!-- Spring Data [ END ] -->
@@ -75,7 +69,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-r2dbc</artifactId>
-            <optional>true</optional>
             <scope>provided</scope>
         </dependency>
         <!-- Spring R2DBC [ END ] -->
@@ -84,7 +77,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis-reactive</artifactId>
-            <optional>true</optional>
             <scope>provided</scope>
         </dependency>
         <!-- Spring Redis Reactive [END] -->
@@ -96,13 +88,6 @@
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
         <!-- Spring Aop [END] -->
-
-        <!-- P6e Coat Auth Token [ START ] -->
-        <dependency>
-            <groupId>club.p6e.coat</groupId>
-            <artifactId>p6e-coat-starter-auth-token</artifactId>
-        </dependency>
-        <!-- P6e Coat Auth Token [ END ] -->
 
         <!-- Spring Security [START] -->
         <dependency>
@@ -117,6 +102,13 @@
             <artifactId>p6e-coat-starter-common</artifactId>
         </dependency>
         <!-- P6e Coat Common [ END ] -->
+
+        <!-- P6e Coat Auth Token [ START ] -->
+        <dependency>
+            <groupId>club.p6e.coat</groupId>
+            <artifactId>p6e-coat-starter-auth-token</artifactId>
+        </dependency>
+        <!-- P6e Coat Auth Token [ END ] -->
 
     </dependencies>
 </project>

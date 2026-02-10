@@ -26,10 +26,6 @@ import java.util.List;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(
-        value = BlockingForgotPasswordVerificationCodeAcquisitionService.class,
-        ignored = BlockingForgotPasswordVerificationCodeAcquisitionServiceImpl.class
-)
 @Component("club.p6e.coat.auth.service.BlockingForgotPasswordVerificationCodeAcquisitionServiceImpl")
 @ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class BlockingForgotPasswordVerificationCodeAcquisitionServiceImpl implements BlockingForgotPasswordVerificationCodeAcquisitionService {

@@ -41,6 +41,17 @@ public abstract class DatabasePollingPropertiesRefresher {
     public DatabasePollingPropertiesRefresher(ConfigurableApplicationContext context) {
         context.addApplicationListener(new ReadyEventListener(this));
         context.addApplicationListener(new ClosedEventListener(this));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            executor.shutdown();
+            try {
+                if (!executor.awaitTermination(10, TimeUnit.SECONDS)) {
+                    executor.shutdownNow();
+                }
+            } catch (Exception e) {
+                executor.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
+        }));
     }
 
     /**
@@ -57,22 +68,26 @@ public abstract class DatabasePollingPropertiesRefresher {
      */
     protected void init() {
         this.executor.scheduleAtFixedRate(() -> {
+            boolean status = true;
             try {
                 final Config config = getBlockingData(CONFIG_TOPIC);
                 if (config != null && config.getFormat() != null && config.getContent() != null) {
+                    status = false;
                     config(config.getFormat(), config.getContent());
                     return;
                 }
             } catch (Exception e) {
                 // ignore exception
             }
-            try {
-                final Config config = getBlockingData(CONFIG_TOPIC);
-                if (config != null && config.getFormat() != null && config.getContent() != null) {
-                    config(config.getFormat(), config.getContent());
+            if (status) {
+                try {
+                    final Config config = getReactiveData(CONFIG_TOPIC).block();
+                    if (config != null && config.getFormat() != null && config.getContent() != null) {
+                        config(config.getFormat(), config.getContent());
+                    }
+                } catch (Exception e) {
+                    // ignore exception
                 }
-            } catch (Exception e) {
-                // ignore exception
             }
         }, 0L, interval(), TimeUnit.SECONDS);
     }

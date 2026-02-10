@@ -21,10 +21,6 @@ import java.util.HashMap;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(
-        value = ReactiveUserRepository.class,
-        ignored = ReactiveUserRepositoryImpl.class
-)
 @Component("club.p6e.coat.auth.repository.ReactiveUserRepositoryImpl")
 @ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactiveUserRepositoryImpl implements ReactiveUserRepository {
