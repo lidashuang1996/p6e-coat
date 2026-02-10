@@ -3,11 +3,13 @@ package club.p6e.coat.websocket;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.MultiThreadIoEventLoopGroup;
+import io.netty.channel.nio.NioIoHandler;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
@@ -84,7 +86,8 @@ public class Application implements ApplicationRunner {
     }
 
     @Override
-    public void run(ApplicationArguments args) {
+    public void run(@NonNull ApplicationArguments args) {
+        reset();
     }
 
     /**
@@ -105,8 +108,8 @@ public class Application implements ApplicationRunner {
             this.work = null;
         }
         SessionManager.init(this.properties.getManagerThreadPoolLength());
-        this.boss = new NioEventLoopGroup(this.properties.getBossThreads());
-        this.work = new NioEventLoopGroup(this.properties.getWorkerThreads());
+        this.boss = new MultiThreadIoEventLoopGroup(this.properties.getBossThreads(), NioIoHandler.newFactory());
+        this.work = new MultiThreadIoEventLoopGroup(this.properties.getWorkerThreads(), NioIoHandler.newFactory());
         for (final Properties.Channel channel : this.properties.getChannels()) {
             LOGGER.info("[ WEBSOCKET SERVICE ] RESET CHANNEL >>> {}", channel);
             AuthService auth = null;

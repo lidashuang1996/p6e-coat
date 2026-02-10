@@ -2,6 +2,7 @@ package club.p6e.coat.websocket;
 
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.EventLoop;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.Getter;
@@ -77,13 +78,26 @@ public class Session {
      *
      * @param data Message Content
      */
+    @SuppressWarnings("ALL")
     public void push(Object data) {
         if (context != null && !context.isRemoved()) {
             if (DataType.TEXT.name().equalsIgnoreCase(this.channelType) && data instanceof String content) {
-                context.writeAndFlush(new TextWebSocketFrame(content));
+                final io.netty.channel.Channel channel = context.channel();
+                if (channel != null) {
+                    final EventLoop el = channel.eventLoop();
+                    if (el != null) {
+                        el.execute(() -> channel.writeAndFlush(new TextWebSocketFrame(content)));
+                    }
+                }
             }
             if (DataType.BINARY.name().equalsIgnoreCase(this.channelType) && data instanceof byte[] bytes) {
-                context.writeAndFlush(new BinaryWebSocketFrame(Unpooled.wrappedBuffer(bytes)));
+                final io.netty.channel.Channel channel = context.channel();
+                if (channel != null && channel.isActive() && channel.isWritable()) {
+                    final EventLoop el = channel.eventLoop();
+                    if (el != null) {
+                        el.execute(() -> channel.writeAndFlush(new BinaryWebSocketFrame(Unpooled.wrappedBuffer(bytes))));
+                    }
+                }
             }
         }
     }

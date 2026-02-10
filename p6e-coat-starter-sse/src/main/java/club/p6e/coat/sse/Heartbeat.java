@@ -1,6 +1,7 @@
 package club.p6e.coat.sse;
 
 import club.p6e.coat.common.utils.JsonUtil;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +35,8 @@ public class Heartbeat {
     /**
      * Interval Time
      */
-    private long interval;
+    @Getter
+    private final long interval;
 
     /**
      * Constructor Initialization

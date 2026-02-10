@@ -1,5 +1,6 @@
 package club.p6e.coat.websocket;
 
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +45,8 @@ public class HeartbeatCallback implements Callback {
     /**
      * Interval Time
      */
-    private long interval;
+    @Getter
+    private final long interval;
 
     /**
      * Constructor Initialization

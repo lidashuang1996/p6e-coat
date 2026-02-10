@@ -34,7 +34,7 @@ public interface Callback {
      * Bytes Message
      *
      * @param session Session Object
-     * @param bytes   Bytes
+     * @param bytes   Byte Array Object
      */
     void onMessage(Session session, byte[] bytes);
 
