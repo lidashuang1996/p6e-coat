@@ -9,18 +9,18 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <artifactId>p6e-cloud-starter-gateway</artifactId>
-    <name>p6e-cloud-starter-gateway</name>
-    <description>p6e-cloud-starter-gateway</description>
+    <artifactId>p6e-cloud-starter-gateway-webflux-auth</artifactId>
+    <name>p6e-cloud-starter-gateway-webflux-auth</name>
+    <description>p6e-cloud-starter-gateway-webflux-auth</description>
 
     <dependencies>
 
-        <!-- Spring Cloud Gateway [START] -->
+        <!-- P6e Coat Auth Token [START] -->
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-gateway</artifactId>
+            <groupId>club.p6e.coat</groupId>
+            <artifactId>p6e-coat-starter-auth-token</artifactId>
         </dependency>
-        <!-- Spring Cloud Gateway [END] -->
+        <!-- P6e Coat Auth Token [END] -->
 
         <!-- P6e Cloud Common [START] -->
         <dependency>
@@ -28,6 +28,13 @@
             <artifactId>p6e-cloud-starter-common</artifactId>
         </dependency>
         <!-- P6e Cloud Common [END] -->
+
+        <!-- Spring Cloud Gateway Server Web Flux [START] -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-gateway-server-webflux</artifactId>
+        </dependency>
+        <!-- Spring Cloud Gateway Server Web Flux [END] -->
 
     </dependencies>
 </project>

@@ -1,11 +1,7 @@
 package club.p6e.coat.common.controller;
 
-import club.p6e.coat.common.Properties;
-import club.p6e.coat.common.context.ResultContext;
-import club.p6e.coat.common.utils.SpringUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.core.io.buffer.DataBufferFactory;
-import org.springframework.data.repository.init.ResourceReader;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
@@ -45,15 +41,16 @@ public class ReactiveVersionController {
         return response.writeWith(Mono.just(dataBufferFactory.wrap(version().getBytes(StandardCharsets.UTF_8))));
     }
 
-    @SuppressWarnings("ALL")
     private String version() {
         final StringBuilder content = new StringBuilder();
-        try (final InputStream inputStream = ResourceReader.class.getClassLoader().getResourceAsStream("version")) {
-            if (inputStream != null) {
+        try (final InputStream inputStream = ClassLoader.getSystemClassLoader().getResourceAsStream("version")) {
+            if (inputStream == null) {
+                content.append("UNKNOWN");
+            } else {
                 try (final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
                     String line;
                     while ((line = bufferedReader.readLine()) != null) {
-                        content.append(line);
+                        content.append(line).append("\r\n");
                     }
                 } catch (IOException e) {
                     throw new RuntimeException(e);

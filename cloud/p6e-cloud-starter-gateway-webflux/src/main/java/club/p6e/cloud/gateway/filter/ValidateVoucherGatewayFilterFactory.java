@@ -3,6 +3,7 @@ package club.p6e.cloud.gateway.filter;
 import club.p6e.coat.common.exception.VoucherException;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.jspecify.annotations.NonNull;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -50,6 +51,7 @@ public class ValidateVoucherGatewayFilterFactory extends AbstractGatewayFilterFa
         super(Config.class);
     }
 
+    @NonNull
     @Override
     public GatewayFilter apply(Config config) {
         return new CustomGatewayFilter(config);
@@ -74,8 +76,9 @@ public class ValidateVoucherGatewayFilterFactory extends AbstractGatewayFilterFa
             this.config = config;
         }
 
+        @NonNull
         @Override
-        public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        public Mono<Void> filter(ServerWebExchange exchange, @NonNull GatewayFilterChain chain) {
             final ServerHttpRequest request = exchange.getRequest();
             final List<String> vouchers = new ArrayList<>();
             final List<String> vh = request.getHeaders().get(X_VOUCHER_HEADER);

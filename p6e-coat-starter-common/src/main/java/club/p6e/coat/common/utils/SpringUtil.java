@@ -3,7 +3,6 @@ package club.p6e.coat.common.utils;
 import org.springframework.context.ApplicationContext;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**

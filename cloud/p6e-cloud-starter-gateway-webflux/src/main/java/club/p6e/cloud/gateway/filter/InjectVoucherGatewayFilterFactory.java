@@ -2,6 +2,7 @@ package club.p6e.cloud.gateway.filter;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.jspecify.annotations.NonNull;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -26,6 +27,7 @@ public class InjectVoucherGatewayFilterFactory extends AbstractGatewayFilterFact
         super(Config.class);
     }
 
+    @NonNull
     @Override
     public GatewayFilter apply(Config config) {
         return new CustomGatewayFilter(config);
@@ -50,6 +52,7 @@ public class InjectVoucherGatewayFilterFactory extends AbstractGatewayFilterFact
             this.config = config;
         }
 
+        @NonNull
         @Override
         public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
             final ServerHttpRequest.Builder builder = exchange.getRequest().mutate();

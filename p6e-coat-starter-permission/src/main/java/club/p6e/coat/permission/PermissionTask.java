@@ -1,11 +1,14 @@
 package club.p6e.coat.permission;
 
+import club.p6e.coat.common.utils.SpringUtil;
 import club.p6e.coat.permission.task.BlockingPermissionAutoRefreshTask;
 import club.p6e.coat.permission.task.ReactivePermissionAutoRefreshTask;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Permission Task
@@ -19,25 +22,9 @@ import org.springframework.stereotype.Component;
 public class PermissionTask {
 
     /**
-     * Blocking Permission Auto Refresh Task Object
+     * Counter Object
      */
-    private final BlockingPermissionAutoRefreshTask blockingPermissionAutoRefreshTask;
-
-    /**
-     * Reactive Permission Auto Refresh Task Object
-     */
-    private final ReactivePermissionAutoRefreshTask reactivePermissionAutoRefreshTask;
-
-    /**
-     * Constructor Initialization
-     *
-     * @param blockingPermissionAutoRefreshTask Blocking Permission Auto Refresh Task Object
-     * @param reactivePermissionAutoRefreshTask Reactive Permission Auto Refresh Task Object
-     */
-    public PermissionTask(BlockingPermissionAutoRefreshTask blockingPermissionAutoRefreshTask, ReactivePermissionAutoRefreshTask reactivePermissionAutoRefreshTask) {
-        this.blockingPermissionAutoRefreshTask = blockingPermissionAutoRefreshTask;
-        this.reactivePermissionAutoRefreshTask = reactivePermissionAutoRefreshTask;
-    }
+    private final AtomicLong counter = new AtomicLong(0);
 
     @Scheduled(initialDelay = 10000L, fixedRate = 3600000L)
     public void run() {
@@ -49,9 +36,17 @@ public class PermissionTask {
      */
     public synchronized void execute() {
         boolean run = false;
+        PermissionTaskCallback callback = null;
+        if (SpringUtil.exist(PermissionTaskCallback.class)) {
+            callback = SpringUtil.getBean(PermissionTaskCallback.class);
+        }
+        final long num = counter.getAndIncrement();
+        if (callback != null) {
+            callback.before(num);
+        }
         try {
             Class.forName("org.springframework.web.servlet.package-info");
-            blockingPermissionAutoRefreshTask.execute();
+            SpringUtil.getBean(BlockingPermissionAutoRefreshTask.class).execute();
             run = true;
         } catch (ClassNotFoundException e) {
             // ignore exception
@@ -59,10 +54,13 @@ public class PermissionTask {
         if (!run) {
             try {
                 Class.forName("org.springframework.web.reactive.package-info");
-                reactivePermissionAutoRefreshTask.execute().block();
+                SpringUtil.getBean(ReactivePermissionAutoRefreshTask.class).execute().block();
             } catch (ClassNotFoundException e) {
                 // ignore exception
             }
+        }
+        if (callback != null) {
+            callback.after(num);
         }
     }
 

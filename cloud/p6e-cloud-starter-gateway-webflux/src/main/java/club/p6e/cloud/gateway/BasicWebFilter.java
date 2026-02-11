@@ -3,6 +3,7 @@ package club.p6e.cloud.gateway;
 import club.p6e.coat.common.utils.JsonUtil;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.jspecify.annotations.NonNull;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,6 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.http.server.reactive.ServerHttpResponseDecorator;
-import org.springframework.lang.NonNull;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
@@ -203,7 +203,7 @@ public class BasicWebFilter implements WebFilter, Ordered {
             // request header is used internally for calling
             // prohibit sending requests that carry this request header to downstream services
             final List<String> keys = new ArrayList<>();
-            for (final String key : this.getHeaders().keySet()) {
+            for (final String key : this.getHeaders().headerNames()) {
                 if (key.toLowerCase().startsWith("p6e-")) {
                     keys.add(key);
                 }
@@ -231,7 +231,7 @@ public class BasicWebFilter implements WebFilter, Ordered {
             }
             final AtomicBoolean status = new AtomicBoolean(false);
             final List<String> types = request.getHeaders().get(HttpHeaders.CONTENT_TYPE);
-            final String type = (types == null || types.isEmpty()) ? "unknown" : types.get(0);
+            final String type = (types == null || types.isEmpty()) ? "unknown" : types.getFirst();
             return super.getBody()
                     .map(buffer -> {
                         final byte[] bytes = new byte[buffer.readableByteCount()];
@@ -269,16 +269,16 @@ public class BasicWebFilter implements WebFilter, Ordered {
         public String ip(ServerHttpRequest request) {
             final HttpHeaders httpHeaders = request.getHeaders();
             List<String> list = httpHeaders.get(IP_HEADER_X_FORWARDED_FOR);
-            if (list == null || list.isEmpty() || IP_UNKNOWN.equalsIgnoreCase(list.get(0))) {
+            if (list == null || list.isEmpty() || IP_UNKNOWN.equalsIgnoreCase(list.getFirst())) {
                 list = httpHeaders.get(IP_HEADER_PROXY_CLIENT_IP);
             }
-            if (list == null || list.isEmpty() || IP_UNKNOWN.equalsIgnoreCase(list.get(0))) {
+            if (list == null || list.isEmpty() || IP_UNKNOWN.equalsIgnoreCase(list.getFirst())) {
                 list = httpHeaders.get(IP_HEADER_WL_PROXY_CLIENT_IP);
             }
-            if (list == null || list.isEmpty() || IP_UNKNOWN.equalsIgnoreCase(list.get(0))) {
+            if (list == null || list.isEmpty() || IP_UNKNOWN.equalsIgnoreCase(list.getFirst())) {
                 list = httpHeaders.get(IP_HEADER_X_REQUEST_IP);
             }
-            if (list == null || list.isEmpty() || IP_UNKNOWN.equalsIgnoreCase(list.get(0))) {
+            if (list == null || list.isEmpty() || IP_UNKNOWN.equalsIgnoreCase(list.getFirst())) {
                 final InetSocketAddress inetSocketAddress = request.getRemoteAddress();
                 if (inetSocketAddress != null
                         && inetSocketAddress.getAddress() != null
@@ -296,7 +296,7 @@ public class BasicWebFilter implements WebFilter, Ordered {
                 }
             }
             if (list != null && !list.isEmpty()) {
-                return list.get(0);
+                return list.getFirst();
             }
             return IP_UNKNOWN;
         }
@@ -348,12 +348,12 @@ public class BasicWebFilter implements WebFilter, Ordered {
         public @NonNull Mono<Void> writeWith(@NonNull Publisher<? extends DataBuffer> body) {
             // only response headers
             final HttpHeaders httpHeaders = response.getHeaders();
-            for (final String key : httpHeaders.keySet()) {
+            for (final String key : httpHeaders.headerNames()) {
                 final List<String> value = httpHeaders.get(key);
                 if (value != null && value.size() > 1) {
                     for (final String item : ONLY_RESPONSE_HEADERS) {
                         if (key.equalsIgnoreCase(item)) {
-                            httpHeaders.set(key, value.get(0));
+                            httpHeaders.set(key, value.getFirst());
                         }
                     }
                 }
@@ -363,7 +363,7 @@ public class BasicWebFilter implements WebFilter, Ordered {
             }
             final AtomicBoolean status = new AtomicBoolean(false);
             final List<String> types = response.getHeaders().get(HttpHeaders.CONTENT_TYPE);
-            final String type = (types == null || types.isEmpty()) ? "unknown" : types.get(0);
+            final String type = (types == null || types.isEmpty()) ? "unknown" : types.getFirst();
             return super.writeWith(Flux
                     .from(body)
                     .cast(DataBuffer.class)

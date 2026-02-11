@@ -9,36 +9,33 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <artifactId>p6e-cloud-starter-gateway-auth</artifactId>
-    <name>p6e-cloud-starter-gateway-auth</name>
-    <description>p6e-cloud-starter-gateway-auth</description>
+    <artifactId>p6e-cloud-starter-gateway-webflux-permission</artifactId>
+    <name>p6e-cloud-starter-gateway-webflux-permission</name>
+    <description>p6e-cloud-starter-gateway-webflux-permission</description>
 
     <dependencies>
 
-        <!-- P6e Coat Auth Token [START] -->
+        <!-- P6e Coat Permission [START] -->
         <dependency>
             <groupId>club.p6e.coat</groupId>
-            <artifactId>p6e-coat-starter-auth-token</artifactId>
+            <artifactId>p6e-coat-starter-permission</artifactId>
         </dependency>
-        <!-- P6e Coat Auth Token [END] -->
+        <!-- P6e Coat Permission [END] -->
 
         <!-- P6e Cloud Common [START] -->
         <dependency>
             <groupId>club.p6e.cloud</groupId>
             <artifactId>p6e-cloud-starter-common</artifactId>
-            <!-- scope provided dependency -->
-            <scope>provided</scope>
         </dependency>
         <!-- P6e Cloud Common [END] -->
 
-        <!-- Spring Cloud Gateway [START] -->
+        <!-- Spring Cloud Gateway Server Web Flux [START] -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-gateway</artifactId>
-            <!-- scope provided dependency -->
-            <scope>provided</scope>
+            <artifactId>spring-cloud-starter-gateway-server-webflux</artifactId>
         </dependency>
-        <!-- Spring Cloud Gateway [END] -->
+        <!-- Spring Cloud Gateway Server Web Flux [END] -->
 
     </dependencies>
+
 </project>

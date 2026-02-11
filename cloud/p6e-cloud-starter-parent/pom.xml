@@ -23,33 +23,39 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <p6e-cloud.version>${p6e-coat.version}</p6e-cloud.version>
-        <spring-cloud.version>2024.0.0</spring-cloud.version>
-        <spring-cloud-alibaba.version>2022.0.0.0</spring-cloud-alibaba.version>
-        <spring-boot-dubbo.version>3.2.7</spring-boot-dubbo.version>
+        <spring-cloud.version>2025.1.1</spring-cloud.version>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>spring-release</id>
+            <name>Spring Release Repository</name>
+            <url>https://repo.spring.io/release</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>spring-release</id>
+            <name>Spring Release Repository</name>
+            <url>https://repo.spring.io/release</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 
     <dependencyManagement>
         <dependencies>
-
-            <!-- Spring Boot Dubbo [START] -->
-            <dependency>
-                <groupId>org.apache.dubbo</groupId>
-                <artifactId>dubbo-spring-boot-starter</artifactId>
-                <version>${spring-boot-dubbo.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <!-- Spring Boot Dubbo [END] -->
-
-            <!-- Spring Cloud ALiBaba [START] -->
-            <dependency>
-                <groupId>com.alibaba.cloud</groupId>
-                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
-                <version>${spring-cloud-alibaba.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <!-- Spring Cloud ALiBaba [END] -->
 
             <!-- Spring Cloud Dependencies [START] -->
             <dependency>
@@ -96,7 +102,7 @@
             <!-- P6e Cloud Gateway [START] -->
             <dependency>
                 <groupId>club.p6e.cloud</groupId>
-                <artifactId>p6e-cloud-starter-gateway</artifactId>
+                <artifactId>p6e-cloud-starter-gateway-webflux</artifactId>
                 <version>${p6e-cloud.version}</version>
             </dependency>
             <!-- P6e Cloud Gateway [END] -->
@@ -104,7 +110,7 @@
             <!-- P6e Cloud Gateway Auth [START] -->
             <dependency>
                 <groupId>club.p6e.cloud</groupId>
-                <artifactId>p6e-cloud-starter-gateway-auth</artifactId>
+                <artifactId>p6e-cloud-starter-gateway-webflux-auth</artifactId>
                 <version>${p6e-cloud.version}</version>
             </dependency>
             <!-- P6e Cloud Gateway Auth [END] -->
@@ -112,7 +118,7 @@
             <!-- P6e Cloud Gateway Permission [START] -->
             <dependency>
                 <groupId>club.p6e.cloud</groupId>
-                <artifactId>p6e-cloud-starter-gateway-permission</artifactId>
+                <artifactId>p6e-cloud-starter-gateway-webflux-permission</artifactId>
                 <version>${p6e-cloud.version}</version>
             </dependency>
             <!-- P6e Cloud Gateway Permission [END] -->

@@ -1,5 +1,6 @@
 package club.p6e.cloud.gateway;
 
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.gateway.event.RefreshRoutesEvent;
 import org.springframework.cloud.gateway.route.RouteDefinition;
@@ -54,11 +55,13 @@ public class RouteLocator implements RouteDefinitionRepository {
         }
     }
 
+    @NonNull
     @Override
     public Flux<RouteDefinition> getRouteDefinitions() {
         return Flux.fromIterable(routeDefinitions);
     }
 
+    @NonNull
     @Override
     public Mono<Void> save(Mono<RouteDefinition> mr) {
         synchronized (this) {
@@ -66,12 +69,13 @@ public class RouteLocator implements RouteDefinitionRepository {
         }
     }
 
+    @NonNull
     @Override
     public Mono<Void> delete(Mono<String> ms) {
         return ms.map(r -> {
             synchronized (this) {
                 for (final RouteDefinition item : routeDefinitions) {
-                    if (item.getId().equalsIgnoreCase(r)) {
+                    if (item.getId() != null && item.getId().equalsIgnoreCase(r)) {
                         routeDefinitions.remove(item);
                         break;
                     }

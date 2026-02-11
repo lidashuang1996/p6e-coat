@@ -9,18 +9,11 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <artifactId>p6e-cloud-starter-gateway-permission</artifactId>
-    <name>p6e-cloud-starter-gateway-permission</name>
-    <description>p6e-cloud-starter-gateway-permission</description>
+    <artifactId>p6e-cloud-starter-gateway-webflux</artifactId>
+    <name>p6e-cloud-starter-gateway-webflux</name>
+    <description>p6e-cloud-starter-gateway-webflux</description>
 
     <dependencies>
-
-        <!-- P6e Coat Permission [START] -->
-        <dependency>
-            <groupId>club.p6e.coat</groupId>
-            <artifactId>p6e-coat-starter-permission</artifactId>
-        </dependency>
-        <!-- P6e Coat Permission [END] -->
 
         <!-- P6e Cloud Common [START] -->
         <dependency>
@@ -29,15 +22,12 @@
         </dependency>
         <!-- P6e Cloud Common [END] -->
 
-        <!-- Spring Cloud Gateway [START] -->
+        <!-- Spring Cloud Gateway Server Web Flux [START] -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-gateway</artifactId>
-            <!-- scope provided dependency -->
-            <scope>provided</scope>
+            <artifactId>spring-cloud-starter-gateway-server-webflux</artifactId>
         </dependency>
-        <!-- Spring Cloud Gateway [END] -->
+        <!-- Spring Cloud Gateway Server Web Flux [END] -->
 
     </dependencies>
-
 </project>

@@ -1,5 +1,6 @@
 package club.p6e.cloud.gateway.filter;
 
+import org.jspecify.annotations.NonNull;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -52,6 +53,7 @@ public class InjectOrganizationProjectGatewayFilterFactory extends AbstractGatew
     @SuppressWarnings("ALL")
     private static final String PROJECT_HEADER = "P6e-Project";
 
+    @NonNull
     @Override
     public GatewayFilter apply(Object config) {
         return new CustomGatewayFilter();
@@ -62,6 +64,7 @@ public class InjectOrganizationProjectGatewayFilterFactory extends AbstractGatew
      */
     public static class CustomGatewayFilter implements GatewayFilter {
 
+        @NonNull
         @Override
         public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
             final ServerHttpRequest request = exchange.getRequest();

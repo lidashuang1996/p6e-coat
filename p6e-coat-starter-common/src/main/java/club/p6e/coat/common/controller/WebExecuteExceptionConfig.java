@@ -1,10 +1,10 @@
 package club.p6e.coat.common.controller;
 
 import club.p6e.coat.common.exception.CustomException;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.reactive.resource.NoResourceFoundException;
 
 /**
- * 异常捕获处理
+ * Web Execute Exception Config
  *
  * @author lidashuang
  * @version 1.0
@@ -12,40 +12,23 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 public final class WebExecuteExceptionConfig {
 
     /**
-     * 初始化
+     * Init
      */
     public static void init() {
-        boolean bool = true;
-        try {
-            Class.forName("javax.servlet.ServletRequest");
-        } catch (ClassNotFoundException e) {
-            bool = false;
-        }
-        if (bool) {
-            CustomException.registerTransformer(HttpRequestMethodNotSupportedException.class, new ExtendException1());
-        }
+        CustomException.registerTransformer(NoResourceFoundException.class, new ExtendException1());
     }
 
     /**
-     * 扩展异常类
+     * Extend Exception Transformer
      */
     public static class ExtendException1 extends CustomException {
-
-        /**
-         * 默认的代码
-         */
-        public static final int DEFAULT_CODE = 405;
-
-        /**
-         * 默认的简述
-         */
-        private static final String DEFAULT_SKETCH = "HTTP_REQUEST_METHOD_NOT_SUPPORTED_EXCEPTION";
+        public static final int DEFAULT_CODE = 404;
+        private static final String DEFAULT_SKETCH = "NOT_FOUND";
 
         public ExtendException1() {
-            super(HttpRequestMethodNotSupportedException.class, ExtendException1.class,
-                    "HTTP_REQUEST_METHOD_NOT_SUPPORTED_EXCEPTION", DEFAULT_CODE, DEFAULT_SKETCH, "不支持的请求方法");
+            super(NoResourceFoundException.class, ExtendException1.class,
+                    "NOT_FOUND", DEFAULT_CODE, DEFAULT_SKETCH, "NOT_FOUND");
         }
-
     }
 
 }

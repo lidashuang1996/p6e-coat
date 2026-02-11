@@ -42,11 +42,12 @@ public class BlockingVersionController {
         }
     }
 
-    @SuppressWarnings("ALL")
     private String version() {
         final StringBuilder content = new StringBuilder();
         try (final InputStream inputStream = ResourceReader.class.getClassLoader().getResourceAsStream("version")) {
-            if (inputStream != null) {
+            if (inputStream == null) {
+                content.append("UNKNOWN");
+            } else {
                 try (final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
                     String line;
                     while ((line = bufferedReader.readLine()) != null) {

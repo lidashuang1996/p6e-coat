@@ -12,20 +12,20 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- * Web Exception Config
+ * Blocking Web Exception Config
  *
  * @author lidashuang
  * @version 1.0
  */
 @ControllerAdvice
-@Component("club.p6e.coat.common.controller.WebExceptionConfig")
+@Component("club.p6e.coat.common.controller.BlockingWebExceptionConfig")
 @ConditionalOnClass(name = "org.springframework.web.servlet.package-info")
-public class WebExceptionConfig {
+public class BlockingWebExceptionConfig {
 
     /**
      * Inject Log Object
      */
-    private final static Logger LOGGER = LoggerFactory.getLogger(WebExceptionConfig.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(BlockingWebExceptionConfig.class);
 
     /**
      * Properties Object
@@ -37,18 +37,28 @@ public class WebExceptionConfig {
      *
      * @param properties Properties Object
      */
-    public WebExceptionConfig(Properties properties) {
+    public BlockingWebExceptionConfig(Properties properties) {
         this.properties = properties;
     }
 
+    @SuppressWarnings("ALL")
     @ResponseBody
     @ExceptionHandler(value = Exception.class)
     public Object def(Exception exception) {
-        LOGGER.error(exception.getMessage());
-        if (exception instanceof final CustomException ce) {
+        if (CustomException.transformation(exception) instanceof final CustomException ce) {
+            if (properties.isDebug()) {
+                LOGGER.info(ce.getMessage());
+            }
             return ResultContext.build(ce.getCode(), ce.getSketch(), ce.getContent());
+        } else {
+            LOGGER.error("[{}] >>> {}", exception.getClass(), exception.getMessage());
+            if (properties.isDebug()) {
+                exception.printStackTrace();
+                return ResultContext.build(500, "SERVICE_EXCEPTION", exception.getMessage());
+            } else {
+                return ResultContext.build(500, "SERVICE_EXCEPTION", null);
+            }
         }
-        return ResultContext.build(500, "SERVICE_EXCEPTION", properties.isDebug() ? exception.getMessage() : null);
     }
 
 }
