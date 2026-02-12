@@ -41,7 +41,8 @@ public class ReactiveVoucherAspect {
     private static final List<String> WHITE_LIST = List.of(
             "club.p6e.coat.auth.controller.ReactiveIndexController.def1()",
             "club.p6e.coat.auth.controller.ReactiveIndexController.def2()",
-            "club.p6e.coat.auth.controller.ReactiveIndexController.def3()"
+            "club.p6e.coat.auth.controller.ReactiveIndexController.def3()",
+            "club.p6e.coat.auth.controller.ReactiveLogoutController.def()"
     );
 
     /**
@@ -78,17 +79,17 @@ public class ReactiveVoucherAspect {
         } else {
             MyServerHttpRequestDecorator request = null;
             final Object[] args = joinPoint.getArgs();
-            for (final Object arg : args) {
-                if (arg instanceof ServerWebExchange swe) {
+            for (int i = 0; i < args.length; i++) {
+                if (joinPoint.getArgs()[i] instanceof ServerWebExchange swe) {
                     request = new MyServerHttpRequestDecorator(swe.getRequest());
-                    swe.mutate().request(request).build();
+                    joinPoint.getArgs()[i] = swe.mutate().request(request).build();
                     break;
                 }
             }
             final Object result = joinPoint.proceed(args);
             if (request != null && result instanceof final Mono<?> mono) {
                 final MyServerHttpRequestDecorator r = request;
-                return r.init().then(mono).flatMap(o -> r.save().map(t -> o));
+                return r.init().then(mono).flatMap(o -> r.save().map(_ -> o));
             }
             return result;
         }
@@ -230,7 +231,7 @@ public class ReactiveVoucherAspect {
         public Mono<MyServerHttpRequestDecorator> save() {
             final Map<String, String> content = new HashMap<>();
             if (this.attributes.containsKey(DELETE)) {
-                return delete().map(d -> this);
+                return delete().map(_ -> this);
             } else {
                 this.attributes.forEach((k, v) -> content.put(k, String.valueOf(v)));
                 return SpringUtil
@@ -241,7 +242,7 @@ public class ReactiveVoucherAspect {
                                 "fun Mono<MyServerHttpRequestDecorator> save()",
                                 "request voucher cache data save exception"
                         )))
-                        .map(b -> this);
+                        .map(_ -> this);
             }
         }
 
@@ -251,7 +252,7 @@ public class ReactiveVoucherAspect {
          * @return Server Http Request Object
          */
         public Mono<MyServerHttpRequestDecorator> delete() {
-            return SpringUtil.getBean(ReactiveVoucherCache.class).del(this.mark).map(b -> this);
+            return SpringUtil.getBean(ReactiveVoucherCache.class).del(this.mark).map(_ -> this);
         }
 
         /**

@@ -2,7 +2,6 @@ package club.p6e.coat.auth.cache.redis;
 
 import club.p6e.coat.auth.cache.ReactivePasswordSignatureCache;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -47,7 +46,7 @@ public class ReactivePasswordSignatureRedisCache implements ReactivePasswordSign
     @Override
     public Mono<String> set(String key, String value) {
         final String nk = CACHE_PREFIX + key;
-        return template.opsForValue().set(nk, value, Duration.ofSeconds(EXPIRATION_TIME)).map(b -> nk);
+        return template.opsForValue().set(nk, value, Duration.ofSeconds(EXPIRATION_TIME)).map(_ -> nk);
     }
 
 }

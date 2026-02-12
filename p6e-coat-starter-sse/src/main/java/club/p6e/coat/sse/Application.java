@@ -80,7 +80,6 @@ public class Application implements ApplicationRunner {
 
     @Override
     public void run(@NonNull ApplicationArguments args) {
-        reset();
     }
 
     /**

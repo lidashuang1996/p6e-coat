@@ -11,7 +11,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -36,7 +35,8 @@ public class BlockingVoucherAspect {
     private static final List<String> WHITE_LIST = new ArrayList<>(List.of(
             "club.p6e.coat.auth.controller.BlockingIndexController.def1()",
             "club.p6e.coat.auth.controller.BlockingIndexController.def2()",
-            "club.p6e.coat.auth.controller.BlockingIndexController.def3()"
+            "club.p6e.coat.auth.controller.BlockingIndexController.def3()",
+            "club.p6e.coat.auth.controller.BlockingLogoutController.def()"
     ));
 
     /**
@@ -74,11 +74,12 @@ public class BlockingVoucherAspect {
             return joinPoint.proceed();
         } else {
             final Object[] args = joinPoint.getArgs();
-            for (final Object arg : args) {
-                if (arg instanceof HttpServletRequest hsr) {
+            for (int i = 0; i < args.length; i++) {
+                if (joinPoint.getArgs()[i] instanceof HttpServletRequest hsr) {
                     request = new MyHttpServletRequestWrapper(hsr);
+
                 }
-                if (arg instanceof HttpServletResponse hsr) {
+                if (joinPoint.getArgs()[i] instanceof HttpServletResponse hsr) {
                     response = hsr;
                 }
             }

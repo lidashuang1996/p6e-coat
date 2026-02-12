@@ -22,5 +22,12 @@
         </dependency>
         <!-- P6e Coat Web Socket [END] -->
 
+        <!-- P6e Cloud Common [START] -->
+        <dependency>
+            <groupId>club.p6e.cloud</groupId>
+            <artifactId>p6e-cloud-starter-common</artifactId>
+        </dependency>
+        <!-- P6e Cloud Common [END] -->
+
     </dependencies>
 </project>

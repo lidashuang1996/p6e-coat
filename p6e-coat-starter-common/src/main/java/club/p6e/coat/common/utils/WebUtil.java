@@ -10,6 +10,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.server.ServerWebExchange;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -102,6 +104,21 @@ public class WebUtil {
             }
         }
         return null;
+    }
+
+    public static Map<String, String> getUrlParams(String url) {
+        final Map<String, String> result = new HashMap<>();
+        if (url != null && !url.isEmpty()) {
+            final String content = URLDecoder.decode(url, StandardCharsets.UTF_8);
+            final String[] params = content.split("&");
+            for (final String param : params) {
+                final String[] ps = param.split("=");
+                if (ps.length == 2) {
+                    result.put(ps[0], URLDecoder.decode(ps[1], StandardCharsets.UTF_8));
+                }
+            }
+        }
+        return result;
     }
 
     /**
