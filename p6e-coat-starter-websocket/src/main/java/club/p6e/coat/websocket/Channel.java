@@ -189,11 +189,13 @@ public class Channel implements ChannelInboundHandler {
      * @param session Session Object
      */
     private void executeCallbackOpen(Session session) {
-        for (Callback callback : this.callbacks) {
-            try {
-                callback.onOpen(session);
-            } catch (Exception e) {
-                LOGGER.error("[ CALLBACK ERROR ] OPEN => {}", e.getMessage(), e);
+        if (session != null) {
+            for (Callback callback : this.callbacks) {
+                try {
+                    callback.onOpen(session);
+                } catch (Exception e) {
+                    LOGGER.error("[ CALLBACK ERROR ] OPEN => {}", e.getMessage(), e);
+                }
             }
         }
     }
@@ -204,11 +206,13 @@ public class Channel implements ChannelInboundHandler {
      * @param session Session Object
      */
     private void executeCallbackClose(Session session) {
-        for (Callback callback : this.callbacks) {
-            try {
-                callback.onClose(session);
-            } catch (Exception e) {
-                LOGGER.error("[ CALLBACK ERROR ] CLOSE => {}", e.getMessage(), e);
+        if (session != null) {
+            for (Callback callback : this.callbacks) {
+                try {
+                    callback.onClose(session);
+                } catch (Exception e) {
+                    LOGGER.error("[ CALLBACK ERROR ] CLOSE => {}", e.getMessage(), e);
+                }
             }
         }
     }
@@ -220,11 +224,13 @@ public class Channel implements ChannelInboundHandler {
      * @param throwable Throwable Object
      */
     private void executeCallbackError(Session session, Throwable throwable) {
-        for (Callback callback : this.callbacks) {
-            try {
-                callback.onError(session, throwable);
-            } catch (Exception e) {
-                LOGGER.error("[ CALLBACK ERROR ] ERROR => {}", e.getMessage(), e);
+        if (session != null) {
+            for (Callback callback : this.callbacks) {
+                try {
+                    callback.onError(session, throwable);
+                } catch (Exception e) {
+                    LOGGER.error("[ CALLBACK ERROR ] ERROR => {}", e.getMessage(), e);
+                }
             }
         }
     }
@@ -236,11 +242,13 @@ public class Channel implements ChannelInboundHandler {
      * @param text    String Object
      */
     private void executeCallbackMessage(Session session, String text) {
-        for (Callback callback : this.callbacks) {
-            try {
-                callback.onMessage(session, text);
-            } catch (Exception e) {
-                LOGGER.error("[ CALLBACK ERROR ] MESSAGE TEXT => {}", e.getMessage(), e);
+        if (session != null) {
+            for (Callback callback : this.callbacks) {
+                try {
+                    callback.onMessage(session, text);
+                } catch (Exception e) {
+                    LOGGER.error("[ CALLBACK ERROR ] MESSAGE TEXT => {}", e.getMessage(), e);
+                }
             }
         }
     }
@@ -252,11 +260,13 @@ public class Channel implements ChannelInboundHandler {
      * @param bytes   Bytes Object
      */
     private void executeCallbackMessage(Session session, byte[] bytes) {
-        for (Callback callback : this.callbacks) {
-            try {
-                callback.onMessage(session, bytes);
-            } catch (Exception e) {
-                LOGGER.error("[ CALLBACK ERROR ] MESSAGE BYTES => {}", e.getMessage(), e);
+        if (session != null) {
+            for (Callback callback : this.callbacks) {
+                try {
+                    callback.onMessage(session, bytes);
+                } catch (Exception e) {
+                    LOGGER.error("[ CALLBACK ERROR ] MESSAGE BYTES => {}", e.getMessage(), e);
+                }
             }
         }
     }
