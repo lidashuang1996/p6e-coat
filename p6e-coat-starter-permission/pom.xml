@@ -15,6 +15,13 @@
 
     <dependencies>
 
+        <!-- P6e Coat Common [START] -->
+        <dependency>
+            <groupId>club.p6e.coat</groupId>
+            <artifactId>p6e-coat-starter-common</artifactId>
+        </dependency>
+        <!-- P6e Coat Common [END] -->
+
         <!-- Blocking [START] -->
         <!-- Spring Web [ START ] -->
         <dependency>
@@ -66,13 +73,6 @@
         </dependency>
         <!-- Spring R2DBC [ END ] -->
         <!-- Reactive [END] -->
-
-        <!-- P6e Coat Common [START] -->
-        <dependency>
-            <groupId>club.p6e.coat</groupId>
-            <artifactId>p6e-coat-starter-common</artifactId>
-        </dependency>
-        <!-- P6e Coat Common [END] -->
 
     </dependencies>
 </project>

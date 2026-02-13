@@ -4,62 +4,46 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
+ * Verification Util
+ *
  * @author lidashuang
  * @version 1.0
  */
-@SuppressWarnings("ALL")
 public final class VerificationUtil {
 
-    public static boolean validateCode(String code) {
-        return code.length() == 6;
-    }
-
-    public static boolean validatePassword(String password) {
-        return password.length() >= 6;
-    }
-
     /**
-     * 定义类
+     * Definition
      */
     public interface Definition {
 
         /**
-         * 验证手机号码
+         * Validate Phone
          *
-         * @param content 待验证的内容
-         * @return 是否为手机号码
+         * @param content Phone
+         * @return Validate Result
          */
-        public boolean validatePhone(String content);
+        boolean validatePhone(String content);
 
         /**
-         * 验证邮箱
+         * Validate Mailbox
          *
-         * @param content 待验证的内容
-         * @return 是否为邮箱
+         * @param content Mailbox
+         * @return Validate Result
          */
-        public boolean validateMailbox(String content);
+        boolean validateMailbox(String content);
 
         /**
-         * 验证 OAuth2 作用域
+         * Validate String Belong Comma Separated String
          *
-         * @param source  源
-         * @param content 内容
-         * @return 验证结果
+         * @param reference Comma Separated String
+         * @param source    Source String
+         * @return Validate Result
          */
-        public boolean validateOAuth2Scope(String source, String content);
-
-        /**
-         * 验证 OAuth2 重定向 URI
-         *
-         * @param source  源
-         * @param content 内容
-         * @return 验证结果
-         */
-        public boolean validateOAuth2RedirectUri(String source, String content);
+        boolean validateStringBelongCommaSeparatedString(String reference, String source);
     }
 
     /**
-     * 实现类
+     * Implementation
      */
     public static class Implementation implements Definition {
 
@@ -74,16 +58,16 @@ public final class VerificationUtil {
         }
 
         @Override
-        public boolean validateOAuth2Scope(String source, String content) {
-            if (source == null || content == null) {
+        public boolean validateStringBelongCommaSeparatedString(String reference, String source) {
+            if (reference == null || source == null) {
                 return false;
             } else {
                 final List<String> sList = List.of(source.split(","));
-                final List<String> cList = List.of(content.split(","));
-                for (final String ci : cList) {
+                final List<String> rList = List.of(reference.split(","));
+                for (final String s : sList) {
                     boolean bool = false;
-                    for (final String si : sList) {
-                        if (si.equalsIgnoreCase(ci)) {
+                    for (final String r : rList) {
+                        if (s.equals(r)) {
                             bool = true;
                             break;
                         }
@@ -95,86 +79,51 @@ public final class VerificationUtil {
                 return true;
             }
         }
-
-        @Override
-        public boolean validateOAuth2RedirectUri(String source, String content) {
-            if (source != null && content != null) {
-                final List<String> sList = List.of(source.split(","));
-                for (final String si : sList) {
-                    if (si.equalsIgnoreCase(content)) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
     }
 
     /**
-     * 默认的验证实现的对象
+     * Default Definition Implementation Object
      */
     private static Definition DEFINITION = new Implementation();
 
     /**
-     * 设置验证的对象
+     * Set Definition Implementation Object
      *
-     * @param implementation 验证的对象
+     * @param implementation Definition Implementation Object
      */
     public static void set(Definition implementation) {
         DEFINITION = implementation;
     }
 
     /**
-     * 验证手机号码
+     * Validate Phone
      *
-     * @param content 待验证的内容
-     * @return 是否为手机号码
+     * @param content Phone
+     * @return Validate Result
      */
     public static boolean validatePhone(String content) {
         return DEFINITION.validatePhone(content);
     }
 
     /**
-     * 验证邮箱
+     * Validate Mailbox
      *
-     * @param content 待验证的内容
-     * @return 是否为邮箱
+     * @param content Mailbox
+     * @return Validate Result
      */
     public static boolean validateMailbox(String content) {
         return DEFINITION.validateMailbox(content);
     }
 
     /**
-     * 验证 scope
+     * Validate String Belong Comma Separated String
      *
-     * @param source  源
-     * @param content 内容
-     * @return 验证结果
+     * @param reference Comma Separated String
+     * @param source    Source String
+     * @return Validate Result
      */
-    public static boolean validateOAuth2Scope(String source, String content) {
-        return DEFINITION.validateOAuth2Scope(source, content);
+    public static boolean validateStringBelongCommaSeparatedString(String reference, String source) {
+        return DEFINITION.validateStringBelongCommaSeparatedString(reference, source);
     }
 
-    /**
-     * 验证 OAuth2 重定向 URI
-     *
-     * @param source  源
-     * @param content 内容
-     * @return 验证结果
-     */
-    public static boolean validateOAuth2RedirectUri(String source, String content) {
-        return DEFINITION.validateOAuth2RedirectUri(source, content);
-    }
-
-    public static boolean validateOAuth2Type(String type, String content) {
-        if (type != null && content != null) {
-            final List<String> tList = List.of(type.split(","));
-            for (final String ti : tList) {
-                if (ti.equalsIgnoreCase(content)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 }

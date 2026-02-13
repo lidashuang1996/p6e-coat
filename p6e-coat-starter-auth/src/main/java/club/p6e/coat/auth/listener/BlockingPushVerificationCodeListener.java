@@ -1,11 +1,10 @@
 package club.p6e.coat.auth.listener;
 
 import club.p6e.coat.auth.event.BlockingPushVerificationCodeEvent;
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +24,7 @@ public class BlockingPushVerificationCodeListener implements ApplicationListener
     private final Logger LOGGER = LoggerFactory.getLogger(BlockingPushVerificationCodeListener.class);
 
     @Override
-    public void onApplicationEvent(@Nonnull BlockingPushVerificationCodeEvent event) {
+    public void onApplicationEvent(@NonNull BlockingPushVerificationCodeEvent event) {
         LOGGER.info("[PVC_EVENT] ===================================== ");
         LOGGER.info("[PVC_EVENT] EVENT: {}", event);
         LOGGER.info("[PVC_EVENT] EVENT >>> RECIPIENTS: {}", event.getRecipients());

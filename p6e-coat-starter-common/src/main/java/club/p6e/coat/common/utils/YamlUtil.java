@@ -1,6 +1,5 @@
 package club.p6e.coat.common.utils;
 
-import java.util.Locale;
 import java.util.Map;
 
 /**

@@ -1,9 +1,9 @@
 package club.p6e.coat.common.utils;
 
-import javax.crypto.*;
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -15,7 +15,7 @@ import java.util.Base64;
  * @author lidashuang
  * @version 1.0
  */
-//@SuppressWarnings("ALL")
+@SuppressWarnings("ALL")
 public final class AesUtil {
 
     /**

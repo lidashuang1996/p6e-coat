@@ -2,356 +2,378 @@ package club.p6e.coat.common.utils;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpCookie;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.server.ServerWebExchange;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
- * Base Web Flux Controller
+ * Web Util
  *
  * @author lidashuang
  * @version 1.0
  */
+@SuppressWarnings("ALL")
 public class WebUtil {
 
-    public static String AUTH_HEADER = "Authorization";
-    public static String AUTH_HEADER_TOKEN_TYPE = "Bearer";
-    public static String AUTH_HEADER_TOKEN_PREFIX = AUTH_HEADER_TOKEN_TYPE + " ";
-    public static String ACCESS_TOKEN_PARAM1 = "accessToken";
-    public static String ACCESS_TOKEN_PARAM2 = "access_token";
-    public static String ACCESS_TOKEN_PARAM3 = "access-token";
-    public static String REFRESH_TOKEN_PARAM1 = "refreshToken";
-    public static String REFRESH_TOKEN_PARAM2 = "refresh_token";
-    public static String REFRESH_TOKEN_PARAM3 = "refresh-token";
-    public static String COOKIE_ACCESS_TOKEN = "ACCESS_TOKEN";
-    public static String COOKIE_REFRESH_TOKEN = "REFRESH_TOKEN";
-    public static final String CONTENT_DISPOSITION_ATTACHMENT = "attachment";
-
     /**
-     * 获取 ACCESS TOKEN 内容
-     *
-     * @param exchange ServerWebExchange 对象
-     * @return ACCESS TOKEN 内容
+     * Definition
      */
-    public static String getAccessToken(ServerWebExchange exchange) {
-        return getAccessToken(exchange.getRequest());
+    public interface Definition {
+
+        /**
+         * Get Token
+         *
+         * @param request Server Http Request Object
+         * @return Token
+         */
+        String getToken(ServerHttpRequest request);
+
+        /**
+         * Get Token
+         *
+         * @param request Http Servlet Request Object
+         * @return Token
+         */
+        String getToken(HttpServletRequest request);
+
+        /**
+         * Get Param
+         *
+         * @param request Server Http Request Object
+         * @param params  Param Array Object
+         * @return param
+         */
+        String getParam(ServerHttpRequest request, String... params);
+
+        /**
+         * Get Param
+         *
+         * @param request Http Servlet Request Object
+         * @param params  Param Array Object
+         * @return param
+         */
+        String getParam(HttpServletRequest request, String... params);
+
+        /**
+         * Get Header
+         *
+         * @param request Server Http Request Object
+         * @param headers Header Array Object
+         * @return header
+         */
+        String getHeader(ServerHttpRequest request, String... headers);
+
+        /**
+         * Get Header
+         *
+         * @param request Http Servlet Request Object
+         * @param headers Header Array Object
+         * @return header
+         */
+        String getHeader(HttpServletRequest request, String... headers);
+
+        /**
+         * Get Cookie
+         *
+         * @param request Server Http Request Object
+         * @param cookies Cookie Array Object
+         * @return Http Cookie Object
+         */
+        HttpCookie getCookie(ServerHttpRequest request, String... cookies);
+
+        /**
+         * Get Cookie
+         *
+         * @param request Http Servlet Request Object
+         * @param cookies Cookie Array Object
+         * @return Cookie Object
+         */
+        Cookie getCookie(HttpServletRequest request, String... cookies);
+
+        /**
+         * Get Url Params
+         *
+         * @param url Url String
+         * @return Url Params Map Object
+         */
+        Map<String, String> getUrlParams(String url);
+
     }
 
     /**
-     * 获取 ACCESS TOKEN 内容
-     *
-     * @param request ServerHttpRequest 对象
-     * @return ACCESS TOKEN 内容
+     * Implementation
      */
-    public static String getAccessToken(ServerHttpRequest request) {
-        String accessToken = getParam(request, ACCESS_TOKEN_PARAM1, ACCESS_TOKEN_PARAM2, ACCESS_TOKEN_PARAM3);
-        if (accessToken == null) {
-            accessToken = getHeaderToken(request);
-        }
-        if (accessToken == null) {
-            accessToken = getCookieAccessToken(request);
-        }
-        return accessToken;
-    }
+    public static class Implementation implements Definition {
 
-    /**
-     * 获取 REFRESH TOKEN 内容
-     *
-     * @param exchange ServerWebExchange 对象
-     * @return REFRESH TOKEN 内容
-     */
-    public static String getRefreshToken(ServerWebExchange exchange) {
-        return getRefreshToken(exchange.getRequest());
-    }
+        /**
+         * Token Param
+         */
+        private static final String TOKEN_PARAM = "token";
 
-    /**
-     * 获取 REFRESH TOKEN 内容
-     *
-     * @param request ServerHttpRequest 对象
-     * @return REFRESH TOKEN 内容
-     */
-    public static String getRefreshToken(ServerHttpRequest request) {
-        String refreshToken = getParam(request, REFRESH_TOKEN_PARAM1, REFRESH_TOKEN_PARAM2, REFRESH_TOKEN_PARAM3);
-        if (refreshToken == null) {
-            refreshToken = getCookieRefreshToken(request);
-        }
-        return refreshToken;
-    }
+        /**
+         * Auth Header
+         */
+        private static final String AUTH_HEADER = "Authorization";
 
-    /**
-     * 通过多个参数名称去获取 URL 路径上面的参数值
-     *
-     * @param params 参数名称
-     * @return 读取的参数名称对应的值
-     */
-    public static String getParam(ServerHttpRequest request, String... params) {
-        String value;
-        for (String param : params) {
-            value = request.getQueryParams().getFirst(param);
-            if (value != null) {
-                return value;
-            }
-        }
-        return null;
-    }
+        /**
+         * Auth Header Type
+         */
+        private static final String AUTH_HEADER_TOKEN_TYPE = "Bearer";
 
-    public static Map<String, String> getUrlParams(String url) {
-        final Map<String, String> result = new HashMap<>();
-        if (url != null && !url.isEmpty()) {
-            final String content = URLDecoder.decode(url, StandardCharsets.UTF_8);
-            final String[] params = content.split("&");
-            for (final String param : params) {
-                final String[] ps = param.split("=");
-                if (ps.length == 2) {
-                    result.put(ps[0], URLDecoder.decode(ps[1], StandardCharsets.UTF_8));
+        /**
+         * Auth Header Token Prefix
+         */
+        private static final String AUTH_HEADER_TOKEN_PREFIX = AUTH_HEADER_TOKEN_TYPE + " ";
+
+        /**
+         * Get Token
+         *
+         * @param param  Param
+         * @param header Header
+         * @return Token
+         */
+        private String getToken(String param, String header) {
+            String token = param;
+            if (token == null) {
+                token = header;
+                if (token != null && token.startsWith(AUTH_HEADER_TOKEN_PREFIX)) {
+                    token = token.substring(AUTH_HEADER_TOKEN_PREFIX.length());
                 }
             }
+            return token;
         }
-        return result;
-    }
 
-    /**
-     * 获取请求头部的信息
-     *
-     * @return 请求头部的信息
-     */
-    public static String getHeader(ServerHttpRequest request, String name) {
-        if (name != null) {
-            for (final String key : request.getHeaders().headerNames()) {
-                if (name.equalsIgnoreCase(key)) {
-                    return request.getHeaders().getFirst(key);
+        @Override
+        public String getToken(ServerHttpRequest request) {
+            return getToken(getParam(request, TOKEN_PARAM), getHeader(request, AUTH_HEADER));
+        }
+
+        @Override
+        public String getToken(HttpServletRequest request) {
+            return getToken(getParam(request, TOKEN_PARAM), getHeader(request, AUTH_HEADER));
+        }
+
+        @Override
+        public String getParam(ServerHttpRequest request, String... params) {
+            String value = null;
+            if (request != null) {
+                for (final String param : params) {
+                    value = request.getQueryParams().getFirst(param);
+                    if (value != null) {
+                        break;
+                    }
                 }
             }
+            return value;
         }
-        return null;
-    }
 
-    /**
-     * 获取请求头部存在的 TOKEN 信息
-     *
-     * @return 头部的 TOKEN 信息
-     */
-    public static String getHeaderToken(ServerHttpRequest request) {
-        final String requestHeaderContent = getHeader(request, AUTH_HEADER);
-        if (requestHeaderContent != null
-                && requestHeaderContent.startsWith(AUTH_HEADER_TOKEN_PREFIX)) {
-            return requestHeaderContent.substring(AUTH_HEADER_TOKEN_PREFIX.length());
-        }
-        return null;
-    }
-
-    /**
-     * 获取 COOKIE 的信息
-     *
-     * @return COOKIE 的信息
-     */
-    public static List<HttpCookie> getCookie(ServerHttpRequest request, String name) {
-        return request.getCookies().get(name);
-    }
-
-    /**
-     * 获取 COOKIE 的 TOKEN 信息
-     *
-     * @return COOKIE 的 ACCESS TOKEN 信息
-     */
-    public static String getCookieAccessToken(ServerHttpRequest request) {
-        final List<HttpCookie> cookies = getCookie(request, COOKIE_ACCESS_TOKEN);
-        if (cookies != null && !cookies.isEmpty()) {
-            return cookies.get(0).getValue();
-        }
-        return null;
-    }
-
-    /**
-     * 获取 COOKIE 的 TOKEN 信息
-     *
-     * @return COOKIE 的 REFRESH TOKEN 信息
-     */
-    public static String getCookieRefreshToken(ServerHttpRequest request) {
-        return null;
-    }
-
-    public static Map<String, String> getParams(ServerHttpRequest request) {
-        final Map<String, String> result = new HashMap<>();
-        final MultiValueMap<String, String> params = request.getQueryParams();
-        if (params != null) {
-            for (final String key : params.keySet()) {
-                result.put(key, params.getFirst(key));
-            }
-        }
-        return result;
-    }
-
-
-    /**
-     * 获取 HttpServletRequest 对象
-     *
-     * @return HttpServletRequest 对象
-     */
-    public static HttpServletRequest getRequest() {
-        final ServletRequestAttributes servletRequestAttributes =
-                (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (servletRequestAttributes != null) {
-            return servletRequestAttributes.getRequest();
-        }
-        throw new RuntimeException(" -> getRequest() HttpServletRequest error!");
-    }
-
-    /**
-     * 获取 HttpServletResponse 对象
-     *
-     * @return HttpServletResponse 对象
-     */
-    public static HttpServletResponse getResponse() {
-        final ServletRequestAttributes servletRequestAttributes =
-                (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (servletRequestAttributes != null) {
-            return servletRequestAttributes.getResponse();
-        }
-        throw new RuntimeException(" -> getResponse() HttpServletResponse error!");
-    }
-
-    /**
-     * 获取 ACCESS TOKEN 内容
-     *
-     * @return ACCESS TOKEN 内容
-     */
-    public static String getAccessToken() {
-        String accessToken = getParam(ACCESS_TOKEN_PARAM1, ACCESS_TOKEN_PARAM2, ACCESS_TOKEN_PARAM3);
-        if (accessToken == null) {
-            accessToken = getHeaderToken();
-        }
-        if (accessToken == null) {
-            accessToken = getCookieAccessToken();
-        }
-        return accessToken;
-    }
-
-    /**
-     * 获取 REFRESH TOKEN 内容
-     *
-     * @return REFRESH TOKEN 内容
-     */
-    public static String getRefreshToken() {
-        String refreshToken = getParam(REFRESH_TOKEN_PARAM1, REFRESH_TOKEN_PARAM2, REFRESH_TOKEN_PARAM3);
-        if (refreshToken == null) {
-            refreshToken = getCookieRefreshToken();
-        }
-        return refreshToken;
-    }
-
-    /**
-     * 通过多个参数名称去获取 URL 路径上面的参数值
-     *
-     * @param params 参数名称
-     * @return 读取的参数名称对应的值
-     */
-    public static String getParam(String... params) {
-        String value;
-        final HttpServletRequest request = getRequest();
-        for (String param : params) {
-            value = request.getParameter(param);
-            if (value != null) {
-                return value;
-            }
-        }
-        return null;
-    }
-
-    public static String getParam(HttpServletRequest request, String... params) {
-        String value;
-        for (String param : params) {
-            value = request.getParameter(param);
-            if (value != null) {
-                return value;
-            }
-        }
-        return null;
-    }
-
-    public static Map<String, String> getParams(HttpServletRequest request) {
-        final Map<String, String> params = new HashMap<>();
-        final Enumeration<String> enumeration = request.getParameterNames();
-        if (enumeration != null) {
-            while (enumeration.hasMoreElements()) {
-                final String key = enumeration.nextElement();
-                final String value = request.getParameter(key);
-                params.put(key, value);
-            }
-        }
-        return params;
-    }
-
-    /**
-     * 获取请求头部的信息
-     *
-     * @return 请求头部的信息
-     */
-    public static String getHeader(HttpServletRequest request, String name) {
-        if (name != null) {
-            final Enumeration<String> enumeration = request.getHeaderNames();
-            while (enumeration.hasMoreElements()) {
-                final String element = enumeration.nextElement();
-                if (name.equalsIgnoreCase(element)) {
-                    return request.getHeader(element);
+        @Override
+        public String getParam(HttpServletRequest request, String... params) {
+            String value = null;
+            if (request != null) {
+                for (final String param : params) {
+                    value = request.getParameter(param);
+                    if (value != null) {
+                        break;
+                    }
                 }
             }
+            return value;
         }
-        return null;
-    }
 
-    /**
-     * 获取请求头部存在的 TOKEN 信息
-     *
-     * @return 头部的 TOKEN 信息
-     */
-    public static String getHeaderToken() {
-        return null;
-    }
-
-    /**
-     * 获取 COOKIE 的信息
-     *
-     * @return COOKIE 的信息
-     */
-    public static Cookie getCookie(String name) {
-        return null;
-    }
-
-    /**
-     * 获取 COOKIE 的 ACCESS TOKEN 信息
-     *
-     * @return COOKIE 的 ACCESS TOKEN 信息
-     */
-    public static String getCookieAccessToken() {
-        final Cookie cookie = getCookie(COOKIE_ACCESS_TOKEN);
-        if (cookie != null) {
-            return cookie.getValue();
+        @Override
+        public String getHeader(ServerHttpRequest request, String... headers) {
+            String value = null;
+            if (request != null) {
+                for (final String header : headers) {
+                    value = request.getHeaders().getFirst(header);
+                    if (value != null) {
+                        break;
+                    }
+                }
+            }
+            return value;
         }
-        return null;
+
+        @Override
+        public String getHeader(HttpServletRequest request, String... headers) {
+            String value = null;
+            if (request != null) {
+                for (final String header : headers) {
+                    value = request.getHeader(header);
+                    if (value != null) {
+                        break;
+                    }
+                }
+            }
+            return value;
+        }
+
+        @Override
+        public HttpCookie getCookie(ServerHttpRequest request, String... cookies) {
+            HttpCookie value = null;
+            if (request != null) {
+                final MultiValueMap<String, HttpCookie> httpCookies = request.getCookies();
+                for (final String cookie : cookies) {
+                    value = httpCookies.getFirst(cookie);
+                    if (value != null) {
+                        break;
+                    }
+                }
+            }
+            return value;
+        }
+
+        @Override
+        public Cookie getCookie(HttpServletRequest request, String... cookies) {
+            Cookie value = null;
+            if (request != null) {
+                final Cookie[] httpCookies = request.getCookies();
+                if (httpCookies != null) {
+                    for (final String cookie : cookies) {
+                        for (final Cookie httpCookie : httpCookies) {
+                            if (httpCookie != null && httpCookie.getName().equals(cookie)) {
+                                value = httpCookie;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            return value;
+        }
+
+        @Override
+        public Map<String, String> getUrlParams(String url) {
+            final Map<String, String> result = new HashMap<>();
+            if (url != null && !url.isEmpty()) {
+                final String content = URLDecoder.decode(url, StandardCharsets.UTF_8);
+                final String[] params = content.split("&");
+                for (final String param : params) {
+                    final String[] ps = param.split("=");
+                    if (ps.length == 2) {
+                        result.put(ps[0], URLDecoder.decode(ps[1], StandardCharsets.UTF_8));
+                    }
+                }
+            }
+            return result;
+        }
+
     }
 
     /**
-     * 获取 COOKIE 的 REFRESH TOKEN 信息
-     *
-     * @return COOKIE 的 REFRESH TOKEN 信息
+     * Default Definition Implementation Object
      */
-    public static String getCookieRefreshToken() {
-        final Cookie cookie = getCookie(COOKIE_REFRESH_TOKEN);
-        if (cookie != null) {
-            return cookie.getValue();
-        }
-        return null;
+    private static Definition DEFINITION = new Implementation();
+
+    /**
+     * Set Definition Implementation Object
+     *
+     * @param implementation Definition Implementation Object
+     */
+    public static void set(Definition implementation) {
+        DEFINITION = implementation;
     }
+
+    /**
+     * Get Token
+     *
+     * @param request Server Http Request Object
+     * @return Token
+     */
+    public static String getToken(ServerHttpRequest request) {
+        return DEFINITION.getToken(request);
+    }
+
+    /**
+     * Get Token
+     *
+     * @param request Http Servlet Request Object
+     * @return Token
+     */
+    public static String getToken(HttpServletRequest request) {
+        return DEFINITION.getToken(request);
+    }
+
+    /**
+     * Get Param
+     *
+     * @param request Server Http Request Object
+     * @param params  Param Array Object
+     * @return param
+     */
+    public String getParam(ServerHttpRequest request, String... params) {
+        return DEFINITION.getParam(request, params);
+    }
+
+    /**
+     * Get Param
+     *
+     * @param request Http Servlet Request Object
+     * @param params  Param Array Object
+     * @return param
+     */
+    public String getParam(HttpServletRequest request, String... params) {
+        return DEFINITION.getParam(request, params);
+    }
+
+    /**
+     * Get Header
+     *
+     * @param request Server Http Request Object
+     * @param headers Header Array Object
+     * @return header
+     */
+    public String getHeader(ServerHttpRequest request, String... headers) {
+        return DEFINITION.getHeader(request, headers);
+    }
+
+    /**
+     * Get Header
+     *
+     * @param request Http Servlet Request Object
+     * @param headers Header Array Object
+     * @return header
+     */
+    public String getHeader(HttpServletRequest request, String... headers) {
+        return DEFINITION.getHeader(request, headers);
+    }
+
+    /**
+     * Get Cookie
+     *
+     * @param request Server Http Request Object
+     * @param cookies Cookie Array Object
+     * @return Http Cookie Object
+     */
+    public HttpCookie getCookie(ServerHttpRequest request, String... cookies) {
+        return DEFINITION.getCookie(request, cookies);
+    }
+
+    /**
+     * Get Cookie
+     *
+     * @param request Http Servlet Request Object
+     * @param cookies Cookie Array Object
+     * @return Cookie Object
+     */
+    public Cookie getCookie(HttpServletRequest request, String... cookies) {
+        return DEFINITION.getCookie(request, cookies);
+    }
+
+    /**
+     * Get Url Params
+     *
+     * @param url Url String
+     * @return Url Params Map Object
+     */
+    public Map<String, String> getUrlParams(String url) {
+        return DEFINITION.getUrlParams(url);
+    }
+
 }

@@ -7,11 +7,10 @@ import java.util.concurrent.ThreadLocalRandom;
  * @author lidashuang
  * @version 1.0
  */
-@SuppressWarnings("ALL")
 public final class GeneratorUtil {
 
     /**
-     * 定义类
+     * Definition
      */
     public interface Definition {
 
@@ -20,7 +19,7 @@ public final class GeneratorUtil {
          *
          * @return UUID
          */
-        public String uuid();
+        String uuid();
 
         /**
          * 生成随机数据
@@ -47,7 +46,7 @@ public final class GeneratorUtil {
     }
 
     /**
-     * 实现类
+     * Implementation
      */
     private static class Implementation implements Definition {
 
@@ -92,21 +91,21 @@ public final class GeneratorUtil {
     }
 
     /**
-     * 默认的随机数实现的对象
+     * Default Definition Implementation Object
      */
     private static Definition DEFINITION = new Implementation();
 
     /**
-     * 设置随机数实现的对象
+     * Set Definition Implementation Object
      *
-     * @param implementation 随机数实现的对象
+     * @param implementation Definition Implementation Object
      */
     public static void set(Definition implementation) {
         DEFINITION = implementation;
     }
 
     /**
-     * 生成 UUID 数据
+     * Generate UUID
      *
      * @return UUID
      */
@@ -115,27 +114,43 @@ public final class GeneratorUtil {
     }
 
     /**
-     * 生成长度为 6 位数字格式的随机数
+     * Generate Random 6 Number String
+     *
+     * @return Random 6 Number String
      */
     public static String random() {
         return DEFINITION.random(6, false, false);
     }
 
     /**
-     * 生成随机数据
+     * Generate Random String
      *
-     * @param len      数据长度
-     * @param isLetter 是否包含字母
-     * @param isCase   是否包含大小写
+     * @param len      Data Length
+     * @param isLetter Data Contains Letter
+     * @param isCase   Data Contains Case
+     * @return Random String
      */
     public static String random(int len, boolean isLetter, boolean isCase) {
         return DEFINITION.random(len, isLetter, isCase);
     }
 
+    /**
+     * Generate Password
+     *
+     * @param len Password Length
+     * @return Password Length Content
+     */
     public static String password(int len) {
         return DEFINITION.password(len);
     }
 
+    /**
+     * Generate Password
+     *
+     * @param len    Password Length
+     * @param source Password Source
+     * @return Password Length Content
+     */
     public static String password(int len, char[] source) {
         return DEFINITION.password(len, source);
     }

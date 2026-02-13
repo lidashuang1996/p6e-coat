@@ -25,7 +25,7 @@ import java.nio.charset.StandardCharsets;
 @RestController
 @RequestMapping("/__version__")
 @Component(value = "club.p6e.coat.common.controller.ReactiveVersionController")
-@ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
+@ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
 public class ReactiveVersionController {
 
     @RequestMapping("")

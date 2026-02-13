@@ -1,8 +1,8 @@
 package club.p6e.cloud.common;
 
-import jakarta.annotation.Nonnull;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -186,7 +186,7 @@ public abstract class DatabasePollingPropertiesRefresher {
         }
 
         @Override
-        public void onApplicationEvent(@Nonnull ContextClosedEvent event) {
+        public void onApplicationEvent(@NonNull ContextClosedEvent event) {
             refresher.close();
         }
 

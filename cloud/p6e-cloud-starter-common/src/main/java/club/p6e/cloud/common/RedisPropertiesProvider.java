@@ -1,9 +1,9 @@
 package club.p6e.cloud.common;
 
 import club.p6e.coat.common.utils.JsonUtil;
-import jakarta.annotation.Nonnull;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -204,7 +204,7 @@ public abstract class RedisPropertiesProvider {
         }
 
         @Override
-        public void onApplicationEvent(@Nonnull ApplicationReadyEvent event) {
+        public void onApplicationEvent(@NonNull ApplicationReadyEvent event) {
             provider.init();
         }
 
@@ -230,7 +230,7 @@ public abstract class RedisPropertiesProvider {
         }
 
         @Override
-        public void onApplicationEvent(@Nonnull ContextClosedEvent event) {
+        public void onApplicationEvent(@NonNull ContextClosedEvent event) {
             provider.close();
         }
 

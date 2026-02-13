@@ -15,6 +15,20 @@
 
     <dependencies>
 
+        <!-- Netty All [ START ] -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+        </dependency>
+        <!-- Netty All [ END ] -->
+
+        <!-- P6e Coat Common [ START ] -->
+        <dependency>
+            <groupId>club.p6e.coat</groupId>
+            <artifactId>p6e-coat-starter-common</artifactId>
+        </dependency>
+        <!-- P6e Coat Common [ END ] -->
+
         <!-- Blocking [START] -->
         <!-- Spring Web [ START ] -->
         <dependency>
@@ -35,19 +49,13 @@
         <!-- Spring Web Flux [ END ] -->
         <!-- Reactive [END] -->
 
-        <!-- Netty All [ START ] -->
+        <!-- Spring Configuration Processor [ START ] -->
         <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
         </dependency>
-        <!-- Netty All [ END ] -->
-
-        <!-- P6e Coat Common [ START ] -->
-        <dependency>
-            <groupId>club.p6e.coat</groupId>
-            <artifactId>p6e-coat-starter-common</artifactId>
-        </dependency>
-        <!-- P6e Coat Common [ END ] -->
+        <!-- Spring Configuration Processor [ END ] -->
 
     </dependencies>
 </project>

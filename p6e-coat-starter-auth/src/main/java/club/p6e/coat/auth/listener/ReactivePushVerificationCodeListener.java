@@ -1,7 +1,7 @@
 package club.p6e.coat.auth.listener;
 
 import club.p6e.coat.auth.event.ReactivePushVerificationCodeEvent;
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -26,7 +26,7 @@ public class ReactivePushVerificationCodeListener implements ApplicationListener
     private final Logger LOGGER = LoggerFactory.getLogger(ReactivePushVerificationCodeListener.class);
 
     @Override
-    public void onApplicationEvent(@Nonnull ReactivePushVerificationCodeEvent event) {
+    public void onApplicationEvent(@NonNull ReactivePushVerificationCodeEvent event) {
         event.setCallback(() -> {
             LOGGER.info("[PVC_REACTIVE_EVENT] ===================================== ");
             LOGGER.info("[PVC_REACTIVE_EVENT] EVENT: {}", event);

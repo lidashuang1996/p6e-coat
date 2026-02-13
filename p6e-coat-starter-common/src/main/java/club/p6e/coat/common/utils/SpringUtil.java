@@ -6,59 +6,65 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Spring Util
+ *
  * @author lidashuang
  * @version 1.0
  */
-@SuppressWarnings("ALL")
 public final class SpringUtil {
 
     /**
-     * 定义类
+     * Definition
      */
     public interface Definition {
 
-        public ApplicationContext getApplicationContext();
         /**
-         * 初始化 Spring Boot 的上下文对象
+         * Init Application Context Object
          *
-         * @param application Spring Boot 的上下文对象
+         * @param application Application Context Object
          */
-        public void init(ApplicationContext application);
+        void init(ApplicationContext application);
 
         /**
-         * 通过 Spring Boot 的上下文对象判断 Bean 是否存在
+         * Exist Bean Judgment
          *
-         * @param tClass Bean 的类型
-         * @return boolean 是否存在 Bean
+         * @param tClass Bean Class
+         * @return boolean Exist Bean
          */
-        public boolean exist(Class<?> tClass);
+        boolean exist(Class<?> tClass);
 
         /**
-         * 通过 Spring Boot 的上下文对象获取 Bean 对象
+         * Get Bean Object
          *
-         * @param tClass Bean 的类型
-         * @param <T>    Bean 的类型泛型
-         * @return Bean 对象
+         * @param tClass Bean Class
+         * @return Bean Object
          */
-        public <T> T getBean(Class<T> tClass);
+        <T> T getBean(Class<T> tClass);
 
         /**
-         * 通过 Spring Boot 的上下文对象获取 Bean 对象集合
+         * Get Bean Object Collection
          *
-         * @param tClass Bean 的类型
-         * @param <T>    Bean 的类型泛型
-         * @return Bean 对象集合
+         * @param tClass Bean Class
+         * @return Bean Object Collection
          */
-        public <T> Map<String, T> getBeans(Class<T> tClass);
+        <T> Map<String, T> getBeans(Class<T> tClass);
+
+        /**
+         * Get Application Context Object
+         *
+         * @return Application Context Object
+         */
+        ApplicationContext getApplicationContext();
+
     }
 
     /**
-     * 实现类
+     * Implementation
      */
     public static class Implementation implements Definition {
 
         /**
-         * 全局的 Spring Boot 的上下文对象
+         * Application Context Object
          */
         private ApplicationContext application = null;
 
@@ -94,62 +100,66 @@ public final class SpringUtil {
     }
 
     /**
-     * 默认的 SPRING 上下文实现类
+     * Default Definition Implementation Object
      */
     private static Definition DEFINITION = new Implementation();
 
     /**
-     * 设置 SPRING 上下文实现类
+     * Set Definition Implementation Object
      *
-     * @param implementation SPRING 上下文实现类
+     * @param implementation Definition Implementation Object
      */
     public static void set(Definition implementation) {
         DEFINITION = implementation;
     }
 
     /**
-     * 初始化 Spring Boot 的上下文对象
+     * Init Application Context Object
      *
-     * @param application Spring Boot 的上下文对象
+     * @param application Application Context Object
      */
     public static void init(ApplicationContext application) {
         DEFINITION.init(application);
     }
 
     /**
-     * 通过 Spring Boot 的上下文对象判断 Bean 是否存在
+     * Exist Bean Judgment
      *
-     * @param tClass Bean 的类型
-     * @return boolean 是否存在 Bean
+     * @param tClass Bean Class
+     * @return boolean Exist Bean
      */
     public static boolean exist(Class<?> tClass) {
         return DEFINITION.exist(tClass);
     }
 
-    public static ApplicationContext getApplicationContext() {
-        return DEFINITION.getApplicationContext();
-    }
-
     /**
-     * 通过 Spring Boot 的上下文对象获取 Bean 对象
+     * Get Bean Object
      *
-     * @param tClass Bean 的类型
-     * @param <T>    Bean 的类型泛型
-     * @return Bean 对象
+     * @param tClass Bean Class
+     * @return Bean Object
      */
     public static <T> T getBean(Class<T> tClass) {
         return DEFINITION.getBean(tClass);
     }
 
     /**
-     * 通过 Spring Boot 的上下文对象获取 Bean 对象集合
+     * Get Bean Object Collection
      *
-     * @param tClass Bean 的类型
-     * @param <T>    Bean 的类型泛型
-     * @return Bean 对象集合
+     * @param tClass Bean Class
+     * @return Bean Object Collection
      */
     public static <T> Map<String, T> getBeans(Class<T> tClass) {
         return DEFINITION.getBeans(tClass);
+    }
+
+    /**
+     * Get Application Context Object
+     *
+     * @return Application Context Object
+     */
+    @SuppressWarnings("ALL")
+    public static ApplicationContext getApplicationContext() {
+        return DEFINITION.getApplicationContext();
     }
 
 }

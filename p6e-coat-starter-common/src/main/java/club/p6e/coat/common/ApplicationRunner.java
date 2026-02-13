@@ -12,7 +12,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
- * Spring Boot 初始化之后钩子函数
+ * Application Runner
  *
  * @author lidashuang
  * @version 1.0
@@ -22,19 +22,19 @@ import org.springframework.stereotype.Component;
 public class ApplicationRunner implements CommandLineRunner {
 
     /**
-     * 注入日志对象
+     * Inject Log Object
      */
     private final static Logger LOGGER = LoggerFactory.getLogger(ApplicationRunner.class);
 
     /**
-     * ApplicationContext object
+     * Application Context Object
      */
     private final ApplicationContext context;
 
     /**
-     * 构造方法初始化
+     * Constructor Initialization
      *
-     * @param context ApplicationContext object
+     * @param context Application Context Object
      */
     public ApplicationRunner(ApplicationContext context) {
         this.context = context;
@@ -48,7 +48,7 @@ public class ApplicationRunner implements CommandLineRunner {
         for (final String name : properties.getSnowflake().keySet()) {
             final Properties.Snowflake snowflake = properties.getSnowflake().get(name);
             SnowflakeIdUtil.register(name, snowflake.getWorkerId(), snowflake.getDataCenterId());
-            LOGGER.info("P6E INIT SNOWFLAKE [ WORKER ID: {}, DATACENTER ID: {} ] ==> {}", snowflake.getWorkerId(), snowflake.getDataCenterId(), name);
+            LOGGER.info("P6E COMMON INIT SNOWFLAKE [ WORKER ID: {}, DATACENTER ID: {} ] ==> {}", snowflake.getWorkerId(), snowflake.getDataCenterId(), name);
         }
     }
 

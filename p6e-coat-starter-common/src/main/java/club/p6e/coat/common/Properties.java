@@ -6,7 +6,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,22 +23,23 @@ import java.util.Map;
 @Component(value = "club.p6e.coat.common.Properties")
 public class Properties implements Serializable {
 
+    /**
+     * Debug
+     */
     private boolean debug = false;
 
     /**
-     * 版本号
-     */
-    private String version = "unknown";
-    /**
-     * 安全
+     * Security
      */
     private Security security = new Security();
+
     /**
-     * 安全
+     * Cross Domain
      */
     private CrossDomain crossDomain = new CrossDomain();
+
     /**
-     * 雪花
+     * Snowflake
      */
     private Map<String, Snowflake> snowflake = new HashMap<>();
 
@@ -48,16 +51,19 @@ public class Properties implements Serializable {
     public static class Security implements Serializable {
 
         /**
-         * 是否启用
+         * Enable
          */
         private boolean enable = false;
 
         /**
-         * 凭证
+         * Header
          */
-        private String[] vouchers = new String[]{};
-
         private String header = "P6e-Voucher";
+
+        /**
+         * Vouchers
+         */
+        private List<String> vouchers = new ArrayList<>();
 
     }
 
@@ -67,15 +73,17 @@ public class Properties implements Serializable {
     @Data
     @Accessors(chain = true)
     public static class CrossDomain implements Serializable {
+
         /**
-         * 是否启动
+         * Enable
          */
         private boolean enable = false;
 
         /**
-         * 白名单
+         * White List
          */
-        private String[] whiteList = new String[]{};
+        private List<String> whiteList = new ArrayList<>();
+
     }
 
     /**
@@ -84,8 +92,17 @@ public class Properties implements Serializable {
     @Data
     @Accessors(chain = true)
     public static class Snowflake implements Serializable {
+
+        /**
+         * Worker ID
+         */
         private Integer workerId;
+
+        /**
+         * Data Center ID
+         */
         private Integer dataCenterId;
+
     }
 
 }

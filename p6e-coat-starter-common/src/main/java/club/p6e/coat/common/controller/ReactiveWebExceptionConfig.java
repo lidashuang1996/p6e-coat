@@ -20,7 +20,7 @@ import reactor.core.publisher.Mono;
  */
 @ControllerAdvice
 @Component("club.p6e.coat.common.controller.ReactiveWebExceptionConfig")
-@ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
+@ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
 public class ReactiveWebExceptionConfig {
 
     /**

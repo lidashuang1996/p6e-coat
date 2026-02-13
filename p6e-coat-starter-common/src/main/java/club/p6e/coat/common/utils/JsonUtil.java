@@ -15,12 +15,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * JSON 序列化和反序列化帮助类
+ * Json Util
  *
  * @author lidashuang
  * @version 1.0
  */
-@SuppressWarnings("ALL")
 public final class JsonUtil {
 
     /**
@@ -34,7 +33,7 @@ public final class JsonUtil {
          * @param o 对象
          * @return 序列化内容
          */
-        public String toJson(Object o);
+        String toJson(Object o);
 
         /**
          * 反序列化 JSON 到对象
@@ -44,7 +43,7 @@ public final class JsonUtil {
          * @param <T>    类型
          * @return 对象
          */
-        public <T> T fromJson(String json, Class<T> tClass);
+        <T> T fromJson(String json, Class<T> tClass);
 
         /**
          * 反序列化 JSON 到对象
@@ -54,7 +53,7 @@ public final class JsonUtil {
          * @param <T>         类型
          * @return 对象
          */
-        public <T> T fromJson(InputStream inputStream, Class<T> tClass);
+        <T> T fromJson(InputStream inputStream, Class<T> tClass);
 
         /**
          * 反序列化 JSON 到对象
@@ -64,7 +63,7 @@ public final class JsonUtil {
          * @param <I>    key 对象类型
          * @return 对象
          */
-        public <I> List<I> fromJsonToList(String json, Class<I> iClass);
+        <I> List<I> fromJsonToList(String json, Class<I> iClass);
 
         /**
          * 反序列化 JSON 到对象
@@ -76,7 +75,7 @@ public final class JsonUtil {
          * @param <V>    value 对象类型
          * @return 对象
          */
-        public <K, V> Map<K, V> fromJsonToMap(String json, Class<K> kClass, Class<V> vClass);
+        <K, V> Map<K, V> fromJsonToMap(String json, Class<K> kClass, Class<V> vClass);
 
     }
 

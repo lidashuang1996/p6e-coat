@@ -24,13 +24,12 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <p6e-coat.version>4.0.2</p6e-coat.version>
         <spring-boot.version>4.0.2</spring-boot.version>
+        <spring-boot-aop.version>3.5.10</spring-boot-aop.version>
         <netty.version>4.2.9.Final</netty.version>
+        <java-jwt.version>4.5.0</java-jwt.version>
         <http.client.version>4.5.14</http.client.version>
-        <r2dbc-postgresql.version>1.0.2.RELEASE</r2dbc-postgresql.version>
-        <java.auth.jwt>4.4.0</java.auth.jwt>
-        <postgresql.version>42.7.7</postgresql.version>
-        <r2dbc-postgresql.version>1.0.7.RELEASE</r2dbc-postgresql.version>
-        <java.jwt.version>4.4.0</java.jwt.version>
+        <postgresql.version>42.7.10</postgresql.version>
+        <r2dbc-postgresql.version>1.1.1.RELEASE</r2dbc-postgresql.version>
     </properties>
 
     <dependencies>
@@ -53,6 +52,7 @@
     </dependencies>
     <dependencyManagement>
         <dependencies>
+
             <!-- Club P6e Coat Common [START] -->
             <dependency>
                 <groupId>club.p6e.coat</groupId>
@@ -77,29 +77,21 @@
             </dependency>
             <!-- Club P6e Coat Auth Token [END] -->
 
-            <!-- Club P6e Coat Auth Client [START] -->
+            <!-- Club P6e Coat Auth OAuth2 [START] -->
+            <dependency>
+                <groupId>club.p6e.coat</groupId>
+                <artifactId>p6e-coat-starter-auth-oauth2</artifactId>
+                <version>${p6e-coat.version}</version>
+            </dependency>
+            <!-- Club P6e Coat Auth OAuth2 [END] -->
+
+            <!-- Club P6e Coat Auth OAuth2 Client [START] -->
             <dependency>
                 <groupId>club.p6e.coat</groupId>
                 <artifactId>p6e-coat-starter-auth-oauth2-client</artifactId>
                 <version>${p6e-coat.version}</version>
             </dependency>
-            <!-- Club P6e Coat Auth Client [END] -->
-
-            <!-- Club P6e Coat Message Center [START] -->
-            <dependency>
-                <groupId>club.p6e.coat</groupId>
-                <artifactId>p6e-coat-starter-message-center</artifactId>
-                <version>${p6e-coat.version}</version>
-            </dependency>
-            <!-- Club P6e Coat Message Center [END] -->
-
-            <!-- Club P6e Coat Message Center [START] -->
-            <dependency>
-                <groupId>club.p6e.coat</groupId>
-                <artifactId>p6e-coat-starter-file</artifactId>
-                <version>${p6e-coat.version}</version>
-            </dependency>
-            <!-- Club P6e Coat Message Center [END] -->
+            <!-- Club P6e Coat Auth OAuth2 Client [END] -->
 
             <!-- Club P6e Coat Permission [START] -->
             <dependency>
@@ -125,6 +117,14 @@
             </dependency>
             <!-- Club P6e Coat Web Socket [END] -->
 
+            <!-- Club P6e Coat Message Center [START] -->
+            <dependency>
+                <groupId>club.p6e.coat</groupId>
+                <artifactId>p6e-coat-starter-message-center</artifactId>
+                <version>${p6e-coat.version}</version>
+            </dependency>
+            <!-- Club P6e Coat Message Center [END] -->
+
             <!-- Netty ALL [START] -->
             <dependency>
                 <groupId>io.netty</groupId>
@@ -132,6 +132,38 @@
                 <version>${netty.version}</version>
             </dependency>
             <!-- Netty ALL [END] -->
+
+            <!-- Spring AOP [START] -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-aop</artifactId>
+                <version>${spring-boot-aop.version}</version>
+            </dependency>
+            <!-- Spring AOP [END] -->
+
+            <!-- Java JWT [START] -->
+            <dependency>
+                <groupId>com.auth0</groupId>
+                <artifactId>java-jwt</artifactId>
+                <version>${java-jwt.version}</version>
+            </dependency>
+            <!-- Java JWT [END] -->
+
+            <!-- PostgreSQL [START] -->
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>${postgresql.version}</version>
+            </dependency>
+            <!-- PostgreSQL [END] -->
+
+            <!-- R2dbc PostgreSQL [START] -->
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>r2dbc-postgresql</artifactId>
+                <version>${r2dbc-postgresql.version}</version>
+            </dependency>
+            <!-- R2dbc PostgreSQL [END] -->
 
             <!-- Http Components [START] -->
             <!-- Http Client [START] -->
@@ -151,26 +183,6 @@
             <!-- Http Mime [END] -->
             <!-- Http Components [END] -->
 
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-aop</artifactId>
-                <version>3.4.4</version>
-            </dependency>
-            <dependency>
-                <groupId>com.auth0</groupId>
-                <artifactId>java-jwt</artifactId>
-                <version>${java.jwt.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.postgresql</groupId>
-                <artifactId>postgresql</artifactId>
-                <version>${postgresql.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.postgresql</groupId>
-                <artifactId>r2dbc-postgresql</artifactId>
-                <version>${r2dbc-postgresql.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
