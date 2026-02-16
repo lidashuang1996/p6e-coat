@@ -169,7 +169,7 @@ public final class JsonUtil {
      * @param o Object
      * @return Serialization String
      */
-    public String toJson(Object o) {
+    public static String toJson(Object o) {
         return DEFINITION.toJson(o);
     }
 
@@ -181,7 +181,7 @@ public final class JsonUtil {
      * @param <T>    Object Object
      * @return Serialization String
      */
-    public <T> T fromJson(String json, Class<T> tClass) {
+    public static <T> T fromJson(String json, Class<T> tClass) {
         return DEFINITION.fromJson(json, tClass);
     }
 
@@ -193,7 +193,7 @@ public final class JsonUtil {
      * @param <T>         Object Object
      * @return Deserialization T
      */
-    public <T> T fromJson(InputStream inputStream, Class<T> tClass) {
+    public static <T> T fromJson(InputStream inputStream, Class<T> tClass) {
         return DEFINITION.fromJson(inputStream, tClass);
     }
 
@@ -205,7 +205,7 @@ public final class JsonUtil {
      * @param <I>    List Item Object
      * @return Deserialization T
      */
-    public <I> List<I> fromJsonToList(String json, Class<I> iClass) {
+    public static <I> List<I> fromJsonToList(String json, Class<I> iClass) {
         return DEFINITION.fromJsonToList(json, iClass);
     }
 
@@ -219,7 +219,7 @@ public final class JsonUtil {
      * @param <V>    Map Value Object
      * @return Deserialization T
      */
-    public <K, V> Map<K, V> fromJsonToMap(String json, Class<K> kClass, Class<V> vClass) {
+    public static <K, V> Map<K, V> fromJsonToMap(String json, Class<K> kClass, Class<V> vClass) {
         return DEFINITION.fromJsonToMap(json, kClass, vClass);
     }
 

@@ -42,12 +42,12 @@ public class ApplicationRunner implements CommandLineRunner {
 
     @Override
     public void run(String @NonNull ... args) {
-        SpringUtil.init(context);
+        SpringUtil.init(this.context);
         WebExceptionExecuteConfig.init();
         final Properties properties = SpringUtil.getBean(Properties.class);
         for (final String name : properties.getSnowflake().keySet()) {
             final Properties.Snowflake snowflake = properties.getSnowflake().get(name);
-            SnowflakeIdUtil.register(name, snowflake.getWorkerId(), snowflake.getDataCenterId());
+            SnowflakeIdUtil.register(name, new SnowflakeIdUtil.Implementation(snowflake.getWorkerId(), snowflake.getDataCenterId()));
             LOGGER.info("P6E COMMON INIT SNOWFLAKE [ WORKER ID: {}, DATACENTER ID: {} ] ==> {}", snowflake.getWorkerId(), snowflake.getDataCenterId(), name);
         }
     }

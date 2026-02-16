@@ -154,7 +154,7 @@ public final class RsaUtil {
      *
      * @return RSA Key Pair
      */
-    public KeyModel generateKeyPair() {
+    public static KeyModel generateKeyPair() {
         return DEFINITION.generateKeyPair();
     }
 
@@ -165,7 +165,7 @@ public final class RsaUtil {
      * @param text          Text
      * @return Cipher Text
      */
-    public String publicKeyEncryption(String publicKeyText, String text) {
+    public static String publicKeyEncryption(String publicKeyText, String text) {
         return DEFINITION.publicKeyEncryption(publicKeyText, text);
     }
 
@@ -176,7 +176,7 @@ public final class RsaUtil {
      * @param text           Text
      * @return Cipher Text
      */
-    public String privateKeyEncryption(String privateKeyText, String text) {
+    public static String privateKeyEncryption(String privateKeyText, String text) {
         return DEFINITION.privateKeyEncryption(privateKeyText, text);
     }
 
@@ -187,7 +187,7 @@ public final class RsaUtil {
      * @param text           Text
      * @return Plain Text
      */
-    public String privateKeyDecryption(String privateKeyText, String text) {
+    public static String privateKeyDecryption(String privateKeyText, String text) {
         return DEFINITION.privateKeyDecryption(privateKeyText, text);
     }
 
