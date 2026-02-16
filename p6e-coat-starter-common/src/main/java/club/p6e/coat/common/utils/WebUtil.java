@@ -3,13 +3,15 @@ package club.p6e.coat.common.utils;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpCookie;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.util.MultiValueMap;
 
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
 
 /**
  * Web Util
@@ -78,6 +80,24 @@ public class WebUtil {
         String getHeader(HttpServletRequest request, String... headers);
 
         /**
+         * Get Headers Value
+         *
+         * @param request Server Http Request Object
+         * @param filter  Filter Object
+         * @return headers
+         */
+        List<String> getHeader(ServerHttpRequest request, Function<String, Boolean> filter);
+
+        /**
+         * Get Headers Value
+         *
+         * @param request Http Servlet Request Object
+         * @param filter  Filter Object
+         * @return headers
+         */
+        List<String> getHeader(HttpServletRequest request, Function<String, Boolean> filter);
+
+        /**
          * Get Cookie
          *
          * @param request Server Http Request Object
@@ -102,6 +122,15 @@ public class WebUtil {
          * @return Url Params Map Object
          */
         Map<String, String> getUrlParams(String url);
+
+        /**
+         * Merge Url Params
+         *
+         * @param url    Url String
+         * @param params Params Map Object
+         * @return Complete Url
+         */
+        String mergeUrlParams(String url, Map<String, String> params);
 
     }
 
@@ -215,6 +244,35 @@ public class WebUtil {
         }
 
         @Override
+        public List<String> getHeader(ServerHttpRequest request, Function<String, Boolean> filter) {
+            final List<String> result = new ArrayList<>();
+            final HttpHeaders httpHeaders = request.getHeaders();
+            for (final String key : httpHeaders.headerNames()) {
+                final String value = httpHeaders.getFirst(key);
+                final Boolean bool = filter.apply(key + "=" + value);
+                if (bool != null && bool) {
+                    result.add(key);
+                }
+            }
+            return result;
+        }
+
+        @Override
+        public List<String> getHeader(HttpServletRequest request, Function<String, Boolean> filter) {
+            final List<String> result = new ArrayList<>();
+            final Enumeration<String> enumeration = request.getHeaderNames();
+            while (enumeration.hasMoreElements()) {
+                final String key = enumeration.nextElement();
+                final String value = request.getHeader(key);
+                final Boolean bool = filter.apply(key + "=" + value);
+                if (bool != null && bool) {
+                    result.add(key);
+                }
+            }
+            return result;
+        }
+
+        @Override
         public HttpCookie getCookie(ServerHttpRequest request, String... cookies) {
             HttpCookie value = null;
             if (request != null) {
@@ -264,6 +322,17 @@ public class WebUtil {
             return result;
         }
 
+        @Override
+        public String mergeUrlParams(String url, Map<String, String> params) {
+            if (params != null) {
+                final String content = params.entrySet().stream().map(entry ->
+                        entry.getKey() + "=" + URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8)
+                ).reduce((a, b) -> a + "&" + b).orElse("");
+                return (url.lastIndexOf("?") >= 0 ? "&" : "?") + content;
+            }
+            return url;
+        }
+
     }
 
     /**
@@ -307,7 +376,7 @@ public class WebUtil {
      * @param params  Param Array Object
      * @return param
      */
-    public String getParam(ServerHttpRequest request, String... params) {
+    public static String getParam(ServerHttpRequest request, String... params) {
         return DEFINITION.getParam(request, params);
     }
 
@@ -318,7 +387,7 @@ public class WebUtil {
      * @param params  Param Array Object
      * @return param
      */
-    public String getParam(HttpServletRequest request, String... params) {
+    public static String getParam(HttpServletRequest request, String... params) {
         return DEFINITION.getParam(request, params);
     }
 
@@ -329,7 +398,7 @@ public class WebUtil {
      * @param headers Header Array Object
      * @return header
      */
-    public String getHeader(ServerHttpRequest request, String... headers) {
+    public static String getHeader(ServerHttpRequest request, String... headers) {
         return DEFINITION.getHeader(request, headers);
     }
 
@@ -340,8 +409,30 @@ public class WebUtil {
      * @param headers Header Array Object
      * @return header
      */
-    public String getHeader(HttpServletRequest request, String... headers) {
+    public static String getHeader(HttpServletRequest request, String... headers) {
         return DEFINITION.getHeader(request, headers);
+    }
+
+    /**
+     * Get Headers Value
+     *
+     * @param request Server Http Request Object
+     * @param filter  Filter Object
+     * @return headers
+     */
+    public static List<String> getHeader(ServerHttpRequest request, Function<String, Boolean> filter) {
+        return DEFINITION.getHeader(request, filter);
+    }
+
+    /**
+     * Get Headers Value
+     *
+     * @param request Http Servlet Request Object
+     * @param filter  Filter Object
+     * @return headers
+     */
+    public static List<String> getHeader(HttpServletRequest request, Function<String, Boolean> filter) {
+        return DEFINITION.getHeader(request, filter);
     }
 
     /**
@@ -351,7 +442,7 @@ public class WebUtil {
      * @param cookies Cookie Array Object
      * @return Http Cookie Object
      */
-    public HttpCookie getCookie(ServerHttpRequest request, String... cookies) {
+    public static HttpCookie getCookie(ServerHttpRequest request, String... cookies) {
         return DEFINITION.getCookie(request, cookies);
     }
 
@@ -362,7 +453,7 @@ public class WebUtil {
      * @param cookies Cookie Array Object
      * @return Cookie Object
      */
-    public Cookie getCookie(HttpServletRequest request, String... cookies) {
+    public static Cookie getCookie(HttpServletRequest request, String... cookies) {
         return DEFINITION.getCookie(request, cookies);
     }
 
@@ -372,8 +463,19 @@ public class WebUtil {
      * @param url Url String
      * @return Url Params Map Object
      */
-    public Map<String, String> getUrlParams(String url) {
+    public static Map<String, String> getUrlParams(String url) {
         return DEFINITION.getUrlParams(url);
+    }
+
+    /**
+     * Merge Url Params
+     *
+     * @param url    Url String
+     * @param params Params Map Object
+     * @return Complete Url
+     */
+    public static String mergeUrlParams(String url, Map<String, String> params) {
+        return DEFINITION.mergeUrlParams(url, params);
     }
 
 }

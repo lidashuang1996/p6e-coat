@@ -60,7 +60,7 @@ public class ReactiveCrossDomainFilter implements WebFilter {
             final ServerHttpRequest request = exchange.getRequest();
             final ServerHttpResponse response = exchange.getResponse();
             String origin = WebUtil.getHeader(request, HttpHeaders.ORIGIN);
-            if (validationOrigin(origin, List.of(crossDomain.getWhiteList()))) {
+            if (validationOrigin(origin, List.copyOf(crossDomain.getWhiteList()))) {
                 response.getHeaders().setAccessControlAllowOrigin(origin == null ? "*" : origin);
                 response.getHeaders().setAccessControlMaxAge(getAccessControlMaxAge());
                 response.getHeaders().setAccessControlAllowMethods(getAccessControlAllowMethods());

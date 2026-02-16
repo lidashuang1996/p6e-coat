@@ -4,9 +4,12 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
+ * Generator Util
+ *
  * @author lidashuang
  * @version 1.0
  */
+@SuppressWarnings("ALL")
 public final class GeneratorUtil {
 
     /**
@@ -15,25 +18,38 @@ public final class GeneratorUtil {
     public interface Definition {
 
         /**
-         * 生成 UUID 数据
+         * Generate UUID
          *
          * @return UUID
          */
         String uuid();
 
         /**
-         * 生成随机数据
+         * Generate Random String
          *
-         * @param len      数据长度
-         * @param isLetter 是否包含字母
-         * @param isCase   是否包含大小写
+         * @param len      Data Length
+         * @param isLetter Data Contains Letter
+         * @param isCase   Data Contains Case
+         * @return Random String
          */
-        public String random(int len, boolean isLetter, boolean isCase);
+        String random(int len, boolean isLetter, boolean isCase);
 
+        /**
+         * Generate Password
+         *
+         * @param len    Password Length
+         * @param source Password Source
+         * @return Password Length Content
+         */
+        String password(int len, char[] source);
 
-        public String password(int len, char[] source);
-
-        public default String password(int len) {
+        /**
+         * Generate Password
+         *
+         * @param len Password Length
+         * @return Password Length Content
+         */
+        default String password(int len) {
             return password(len, new char[]{
                     '2', '3', '4', '5', '6', '7', '8', '9',
                     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j', 'k', 'm',
@@ -43,6 +59,7 @@ public final class GeneratorUtil {
                     '!', '@', '#', '$', '%', '^', '&', '*', '+', '-'
             });
         }
+
     }
 
     /**
@@ -51,7 +68,7 @@ public final class GeneratorUtil {
     private static class Implementation implements Definition {
 
         /**
-         * 基础的字符模型
+         * Base Char Data
          */
         private static final String[] BASE_DATA = new String[]{
                 "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",

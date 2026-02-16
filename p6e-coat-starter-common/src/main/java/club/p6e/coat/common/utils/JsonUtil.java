@@ -20,67 +20,68 @@ import java.util.Map;
  * @author lidashuang
  * @version 1.0
  */
+@SuppressWarnings("ALL")
 public final class JsonUtil {
 
     /**
-     * 定义类
+     * Definition
      */
     public interface Definition {
 
         /**
-         * 序列化对象
+         * To JSON
          *
-         * @param o 对象
-         * @return 序列化内容
+         * @param o Object
+         * @return Serialization String
          */
         String toJson(Object o);
 
         /**
-         * 反序列化 JSON 到对象
+         * From JSON To Object
          *
-         * @param json   json 内容
-         * @param tClass 对象类型
-         * @param <T>    类型
-         * @return 对象
+         * @param json   JSON Content
+         * @param tClass Object Class Object
+         * @param <T>    Object Object
+         * @return Serialization String
          */
         <T> T fromJson(String json, Class<T> tClass);
 
         /**
-         * 反序列化 JSON 到对象
+         * From JSON To T
          *
-         * @param inputStream json 内容流
-         * @param tClass      对象类型
-         * @param <T>         类型
-         * @return 对象
+         * @param inputStream Input Stream Object
+         * @param tClass      Object Class Object
+         * @param <T>         Object Object
+         * @return Deserialization T
          */
         <T> T fromJson(InputStream inputStream, Class<T> tClass);
 
         /**
-         * 反序列化 JSON 到对象
+         * From JSON To List
          *
-         * @param json   json 内容
-         * @param iClass key 对象类型
-         * @param <I>    key 对象类型
-         * @return 对象
+         * @param json   JSON Content
+         * @param iClass List Item Class Object
+         * @param <I>    List Item Object
+         * @return Deserialization T
          */
         <I> List<I> fromJsonToList(String json, Class<I> iClass);
 
         /**
-         * 反序列化 JSON 到对象
+         * From JSON To Map
          *
-         * @param json   json 内容
-         * @param kClass key 对象类型
-         * @param vClass value 对象类型
-         * @param <K>    key 对象类型
-         * @param <V>    value 对象类型
-         * @return 对象
+         * @param json   JSON Content
+         * @param kClass Map Key Class Object
+         * @param vClass Map Value Class Object
+         * @param <K>    Map Key Object
+         * @param <V>    Map Value Object
+         * @return Deserialization T
          */
         <K, V> Map<K, V> fromJsonToMap(String json, Class<K> kClass, Class<V> vClass);
 
     }
 
     /**
-     * 实现类
+     * Implementation
      */
     private static class Implementation implements Definition {
 
@@ -148,71 +149,78 @@ public final class JsonUtil {
         }
     }
 
-
     /**
-     * 默认的 JSON 实现的对象
+     * Default Definition Implementation Object
      */
     private static Definition DEFINITION = new Implementation();
 
     /**
-     * 设置 JSON 实现的对象
+     * Set Definition Implementation Object
      *
-     * @param implementation JSON 实现的对象
+     * @param implementation Definition Implementation Object
      */
     public static void set(Definition implementation) {
         DEFINITION = implementation;
     }
 
     /**
-     * 序列化对象
+     * To JSON
      *
-     * @param o 对象
-     * @return 序列化内容
+     * @param o Object
+     * @return Serialization String
      */
-    public static String toJson(Object o) {
+    public String toJson(Object o) {
         return DEFINITION.toJson(o);
     }
 
     /**
-     * 反序列化 JSON 到对象
+     * From JSON To Object
      *
-     * @param json   json 内容
-     * @param tClass 对象类型
-     * @param <T>    类型
-     * @return 对象
+     * @param json   JSON Content
+     * @param tClass Object Class Object
+     * @param <T>    Object Object
+     * @return Serialization String
      */
-    public static <T> T fromJson(String json, Class<T> tClass) {
+    public <T> T fromJson(String json, Class<T> tClass) {
         return DEFINITION.fromJson(json, tClass);
     }
 
     /**
-     * 反序列化 JSON 到对象
+     * From JSON To T
      *
-     * @param inputStream json 内容流
-     * @param tClass      对象类型
-     * @param <T>         类型
-     * @return 对象
+     * @param inputStream Input Stream Object
+     * @param tClass      Object Class Object
+     * @param <T>         Object Object
+     * @return Deserialization T
      */
-    public static <T> T fromJson(InputStream inputStream, Class<T> tClass) {
+    public <T> T fromJson(InputStream inputStream, Class<T> tClass) {
         return DEFINITION.fromJson(inputStream, tClass);
     }
 
     /**
-     * 反序列化 JSON 到对象
+     * From JSON To List
      *
-     * @param json   json 内容
-     * @param kClass key 对象类型
-     * @param vClass value 对象类型
-     * @param <K>    key 对象类型
-     * @param <V>    value 对象类型
-     * @return 对象
+     * @param json   JSON Content
+     * @param iClass List Item Class Object
+     * @param <I>    List Item Object
+     * @return Deserialization T
      */
-    public static <K, V> Map<K, V> fromJsonToMap(String json, Class<K> kClass, Class<V> vClass) {
-        return DEFINITION.fromJsonToMap(json, kClass, vClass);
+    public <I> List<I> fromJsonToList(String json, Class<I> iClass) {
+        return DEFINITION.fromJsonToList(json, iClass);
     }
 
-    public static <I> List<I> fromJsonToList(String json, Class<I> iClass) {
-        return DEFINITION.fromJsonToList(json, iClass);
+    /**
+     * From JSON To Map
+     *
+     * @param json   JSON Content
+     * @param kClass Map Key Class Object
+     * @param vClass Map Value Class Object
+     * @param <K>    Map Key Object
+     * @param <V>    Map Value Object
+     * @return Deserialization T
+     */
+    public <K, V> Map<K, V> fromJsonToMap(String json, Class<K> kClass, Class<V> vClass) {
+        return DEFINITION.fromJsonToMap(json, kClass, vClass);
     }
 
 }

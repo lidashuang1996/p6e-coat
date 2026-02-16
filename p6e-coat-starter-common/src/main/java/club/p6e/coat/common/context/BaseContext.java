@@ -24,7 +24,12 @@ public class BaseContext implements Serializable {
     @Data
     @Accessors(chain = true)
     public static class ExtensionParam implements Serializable {
+
+        /**
+         * Extension
+         */
         private List<String> extension;
+
     }
 
     /**
@@ -33,8 +38,20 @@ public class BaseContext implements Serializable {
     @Data
     @Accessors(chain = true)
     public static class PagingParam implements Serializable {
+
+        /**
+         * All
+         */
         private String all;
+
+        /**
+         * Size
+         */
         private Integer size;
+
+        /**
+         * Page
+         */
         private Integer page;
 
         /**
@@ -53,9 +70,25 @@ public class BaseContext implements Serializable {
     @Data
     @Accessors(chain = true)
     public static class PagingExtensionParam implements Serializable {
+
+        /**
+         * All
+         */
         private String all;
+
+        /**
+         * Size
+         */
         private Integer size;
+
+        /**
+         * Page
+         */
         private Integer page;
+
+        /**
+         * Extension
+         */
         private List<String> extension;
 
         /**
@@ -74,9 +107,22 @@ public class BaseContext implements Serializable {
     @Data
     @Accessors(chain = true)
     public static class ListResult implements Serializable {
+
+        /**
+         * Total
+         */
         private Long total;
+
+        /**
+         * Size
+         */
         private Integer size;
+
+        /**
+         * Page
+         */
         private Integer page;
+
     }
 
     /**
@@ -85,7 +131,12 @@ public class BaseContext implements Serializable {
     @Data
     @Accessors(chain = true)
     public static class ExtensionResult implements Serializable {
+
+        /**
+         * Extension
+         */
         private Map<String, Object> extension = new HashMap<>();
+
     }
 
 }

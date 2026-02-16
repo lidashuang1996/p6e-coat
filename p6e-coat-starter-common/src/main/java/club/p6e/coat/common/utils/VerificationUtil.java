@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
  * @author lidashuang
  * @version 1.0
  */
+@SuppressWarnings("ALL")
 public final class VerificationUtil {
 
     /**

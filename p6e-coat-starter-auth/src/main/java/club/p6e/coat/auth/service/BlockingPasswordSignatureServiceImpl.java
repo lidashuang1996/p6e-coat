@@ -10,7 +10,6 @@ import club.p6e.coat.common.utils.RsaUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -49,8 +48,8 @@ public class BlockingPasswordSignatureServiceImpl implements BlockingPasswordSig
         String privateKey;
         try {
             final RsaUtil.KeyModel model = RsaUtil.generateKeyPair();
-            publicKey = model.getPublicKey();
-            privateKey = model.getPrivateKey();
+            publicKey = model.publicKey();
+            privateKey = model.privateKey();
         } catch (Exception e) {
             throw new CodecException(
                     this.getClass(),

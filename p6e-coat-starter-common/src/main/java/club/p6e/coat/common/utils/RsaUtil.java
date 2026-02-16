@@ -1,6 +1,5 @@
 package club.p6e.coat.common.utils;
 
-import lombok.Data;
 import lombok.experimental.Accessors;
 
 import javax.crypto.Cipher;
@@ -19,170 +18,176 @@ import java.util.Base64;
  * @author lidashuang
  * @version 1.0
  */
+@SuppressWarnings("ALL")
 public final class RsaUtil {
 
     /**
-     * 密钥对象
+     * Key Model
      */
-    @Data
     @Accessors(chain = true)
-    public static class KeyModel implements Serializable {
-        private final String publicKey;
-        private final String privateKey;
-
-        public KeyModel(String publicKey, String privateKey) {
-            this.publicKey = publicKey;
-            this.privateKey = privateKey;
-        }
+    public record KeyModel(String publicKey, String privateKey) implements Serializable {
     }
 
     /**
-     * 定义类
+     * Definition
      */
     public interface Definition {
 
         /**
-         * 构建 RSA 密钥对
+         * Generate RSA Key Pair
          *
-         * @return RSA 密钥对
+         * @return RSA Key Pair
          */
-        public KeyModel generateKeyPair() throws Exception;
+        KeyModel generateKeyPair();
 
         /**
-         * 公钥加密
+         * Public Key Encryption
          *
-         * @param publicKeyText 公钥字符内容
-         * @param text          待加密内容
-         * @return 密文
+         * @param publicKeyText Public Key String
+         * @param text          Text
+         * @return Cipher Text
          */
-        public String publicKeyEncryption(String publicKeyText, String text) throws Exception;
+        String publicKeyEncryption(String publicKeyText, String text);
 
         /**
-         * 私钥加密
+         * Private Key Encryption
          *
-         * @param privateKeyText 私钥字符内容
-         * @param text           待加密内容
-         * @return 密文
+         * @param privateKeyText Private Key String
+         * @param text           Text
+         * @return Cipher Text
          */
-        public String privateKeyEncryption(String privateKeyText, String text) throws Exception;
+        String privateKeyEncryption(String privateKeyText, String text);
 
         /**
-         * 私钥解密
+         * Private Key Decryption
          *
-         * @param privateKeyText 私钥字符内容
-         * @param text           待解密内容
-         * @return 明文
+         * @param privateKeyText Private Key String
+         * @param text           Text
+         * @return Plain Text
          */
-        public String privateKeyDecryption(String privateKeyText, String text) throws Exception;
+        String privateKeyDecryption(String privateKeyText, String text);
 
     }
 
     /**
-     * 实现类
+     * Implementation
      */
     private static class Implementation implements Definition {
 
         @Override
-        public KeyModel generateKeyPair() throws Exception {
-            final KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-            keyPairGenerator.initialize(1024);
-            final KeyPair keyPair = keyPairGenerator.generateKeyPair();
-            final RSAPublicKey rsaPublicKey = (RSAPublicKey) keyPair.getPublic();
-            final RSAPrivateKey rsaPrivateKey = (RSAPrivateKey) keyPair.getPrivate();
-            return new KeyModel(
-                    Base64.getEncoder().encodeToString(rsaPublicKey.getEncoded()),
-                    Base64.getEncoder().encodeToString(rsaPrivateKey.getEncoded())
-            );
+        public KeyModel generateKeyPair() {
+            try {
+                final KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+                keyPairGenerator.initialize(1024);
+                final KeyPair keyPair = keyPairGenerator.generateKeyPair();
+                final RSAPublicKey rsaPublicKey = (RSAPublicKey) keyPair.getPublic();
+                final RSAPrivateKey rsaPrivateKey = (RSAPrivateKey) keyPair.getPrivate();
+                return new KeyModel(
+                        Base64.getEncoder().encodeToString(rsaPublicKey.getEncoded()),
+                        Base64.getEncoder().encodeToString(rsaPrivateKey.getEncoded())
+                );
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
 
         @Override
-        public String publicKeyEncryption(String publicKeyText, String text) throws Exception {
-            final X509EncodedKeySpec x509EncodedKeySpec =
-                    new X509EncodedKeySpec(Base64.getDecoder().decode(publicKeyText));
-            final KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            final PublicKey publicKey = keyFactory.generatePublic(x509EncodedKeySpec);
-            final Cipher cipher = Cipher.getInstance("RSA");
-            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-            return Base64.getEncoder().encodeToString(cipher.doFinal(text.getBytes(StandardCharsets.UTF_8)));
+        public String publicKeyEncryption(String publicKeyText, String text) {
+            try {
+                final X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(Base64.getDecoder().decode(publicKeyText));
+                final KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+                final PublicKey publicKey = keyFactory.generatePublic(x509EncodedKeySpec);
+                final Cipher cipher = Cipher.getInstance("RSA");
+                cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+                return Base64.getEncoder().encodeToString(cipher.doFinal(text.getBytes(StandardCharsets.UTF_8)));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
 
         @Override
-        public String privateKeyEncryption(String privateKeyText, String text) throws Exception {
-            final PKCS8EncodedKeySpec pkcs8EncodedKeySpec =
-                    new PKCS8EncodedKeySpec(Base64.getDecoder().decode(privateKeyText));
-            final KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            final PrivateKey privateKey = keyFactory.generatePrivate(pkcs8EncodedKeySpec);
-            final Cipher cipher = Cipher.getInstance("RSA");
-            cipher.init(Cipher.ENCRYPT_MODE, privateKey);
-            return new String(cipher.doFinal(text.getBytes()), StandardCharsets.UTF_8);
+        public String privateKeyEncryption(String privateKeyText, String text) {
+            try {
+                final PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(privateKeyText));
+                final KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+                final PrivateKey privateKey = keyFactory.generatePrivate(pkcs8EncodedKeySpec);
+                final Cipher cipher = Cipher.getInstance("RSA");
+                cipher.init(Cipher.ENCRYPT_MODE, privateKey);
+                return new String(cipher.doFinal(text.getBytes()), StandardCharsets.UTF_8);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
 
         @Override
-        public String privateKeyDecryption(String privateKeyText, String text) throws Exception {
-            final PKCS8EncodedKeySpec pkcs8EncodedKeySpec5 =
-                    new PKCS8EncodedKeySpec(Base64.getDecoder().decode(privateKeyText));
-            final KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            final PrivateKey privateKey = keyFactory.generatePrivate(pkcs8EncodedKeySpec5);
-            final Cipher cipher = Cipher.getInstance("RSA");
-            cipher.init(Cipher.DECRYPT_MODE, privateKey);
-            return new String(cipher.doFinal(Base64.getDecoder().decode(text)), StandardCharsets.UTF_8);
+        public String privateKeyDecryption(String privateKeyText, String text) {
+            try {
+                final PKCS8EncodedKeySpec pkcs8EncodedKeySpec5 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(privateKeyText));
+                final KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+                final PrivateKey privateKey = keyFactory.generatePrivate(pkcs8EncodedKeySpec5);
+                final Cipher cipher = Cipher.getInstance("RSA");
+                cipher.init(Cipher.DECRYPT_MODE, privateKey);
+                return new String(cipher.doFinal(Base64.getDecoder().decode(text)), StandardCharsets.UTF_8);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
 
     }
 
     /**
-     * 默认的 RSA 实现的对象
+     * Default Definition Implementation Object
      */
     private static Definition DEFINITION = new Implementation();
 
     /**
-     * 设置 RSA 实现的对象
+     * Set Definition Implementation Object
      *
-     * @param implementation RSA 实现的对象
+     * @param implementation Definition Implementation Object
      */
     public static void set(Definition implementation) {
         DEFINITION = implementation;
     }
 
     /**
-     * 构建 RSA 密钥对
+     * Generate RSA Key Pair
      *
-     * @return RSA 密钥对
+     * @return RSA Key Pair
      */
-    public static KeyModel generateKeyPair() throws Exception {
+    public KeyModel generateKeyPair() {
         return DEFINITION.generateKeyPair();
     }
 
     /**
-     * 公钥加密
+     * Public Key Encryption
      *
-     * @param publicKeyText 公钥字符内容
-     * @param text          待加密内容
-     * @return 密文
+     * @param publicKeyText Public Key String
+     * @param text          Text
+     * @return Cipher Text
      */
-    public static String publicKeyEncryption(String publicKeyText, String text) throws Exception {
+    public String publicKeyEncryption(String publicKeyText, String text) {
         return DEFINITION.publicKeyEncryption(publicKeyText, text);
     }
 
     /**
-     * 私钥加密
+     * Private Key Encryption
      *
-     * @param privateKeyText 私钥字符内容
-     * @param text           待加密内容
-     * @return 密文
+     * @param privateKeyText Private Key String
+     * @param text           Text
+     * @return Cipher Text
      */
-    public static String privateKeyEncryption(String privateKeyText, String text) throws Exception {
+    public String privateKeyEncryption(String privateKeyText, String text) {
         return DEFINITION.privateKeyEncryption(privateKeyText, text);
     }
 
     /**
-     * 私钥解密
+     * Private Key Decryption
      *
-     * @param privateKeyText 私钥字符内容
-     * @param text           待解密内容
-     * @return 明文
+     * @param privateKeyText Private Key String
+     * @param text           Text
+     * @return Plain Text
      */
-    public static String privateKeyDecryption(String privateKeyText, String text) throws Exception {
+    public String privateKeyDecryption(String privateKeyText, String text) {
         return DEFINITION.privateKeyDecryption(privateKeyText, text);
     }
 

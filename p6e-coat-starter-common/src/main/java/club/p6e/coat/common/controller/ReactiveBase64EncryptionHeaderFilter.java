@@ -1,5 +1,6 @@
 package club.p6e.coat.common.controller;
 
+import club.p6e.coat.common.utils.WebUtil;
 import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -10,7 +11,6 @@ import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.function.Function;
@@ -31,14 +31,7 @@ public class ReactiveBase64EncryptionHeaderFilter implements WebFilter {
      * @return Match Header List Result
      */
     public List<String> match(ServerHttpRequest request) {
-        final List<String> result = new ArrayList<>();
-        final HttpHeaders headers = request.getHeaders();
-        for (final String name : headers.headerNames()) {
-            if (name.toLowerCase().startsWith("p6e-")) {
-                result.add(name);
-            }
-        }
-        return result;
+        return WebUtil.getHeader(request, (data) -> data.toLowerCase().startsWith("p6e-"));
     }
 
     @NonNull

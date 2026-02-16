@@ -1,5 +1,6 @@
 package club.p6e.coat.common.controller;
 
+import club.p6e.coat.common.utils.WebUtil;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
@@ -25,15 +26,7 @@ public class BlockingBase64DecryptionHeaderFilter implements Filter {
      * @return Match Header List Result
      */
     public List<String> match(HttpServletRequest request) {
-        final List<String> result = new ArrayList<>();
-        final Enumeration<String> enumeration = request.getHeaderNames();
-        while (enumeration.hasMoreElements()) {
-            final String name = enumeration.nextElement();
-            if (name != null && name.toLowerCase().startsWith("p6e-")) {
-                result.add(name);
-            }
-        }
-        return result;
+        return WebUtil.getHeader(request, (data) -> data.toLowerCase().startsWith("p6e-"));
     }
 
     @Override

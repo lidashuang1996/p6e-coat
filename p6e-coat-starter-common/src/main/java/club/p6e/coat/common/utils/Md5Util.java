@@ -1,35 +1,147 @@
 package club.p6e.coat.common.utils;
 
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.util.Base64;
+import java.util.HexFormat;
 
 /**
+ * Md5 Util
+ *
  * @author lidashuang
  * @version 1.0
  */
+@SuppressWarnings("ALL")
 public final class Md5Util {
 
-    public static String execute(String content) {
-        try {
-            return bytesToHex(MessageDigest.getInstance("MD5").digest(content.getBytes()));
-        } catch (Exception e) {
-            return null;
-        }
+    /**
+     * Definition
+     */
+    public interface Definition {
+
+        /**
+         * Execute
+         *
+         * @param bytes Byte Array Object
+         * @return Byte Array Object
+         */
+        byte[] execute(byte[] bytes);
+
+        /**
+         * Execute
+         *
+         * @return Sha256 Message Digest Object
+         */
+        MessageDigest execute();
+
     }
 
-    public static String execute(byte[] bytes) {
-        try {
-            return bytesToHex(MessageDigest.getInstance("MD5").digest(bytes));
-        } catch (Exception e) {
-            return null;
+    /**
+     * Implementation
+     */
+    private static class Implementation implements Definition {
+
+        @Override
+        public byte[] execute(byte[] content) {
+            try {
+                return MessageDigest.getInstance("MD5").digest(content);
+            } catch (Exception e) {
+                return null;
+            }
         }
+
+        @Override
+        public MessageDigest execute() {
+            try {
+                return MessageDigest.getInstance("MD5");
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
     }
 
-    private static String bytesToHex(byte[] bytes) {
-        StringBuilder hexStringBuilder = new StringBuilder(2 * bytes.length);
-        for (byte b : bytes) {
-            hexStringBuilder.append(String.format("%02x", b & 0xff));
-        }
-        return hexStringBuilder.toString();
+    /**
+     * Default Definition Implementation Object
+     */
+    private static Definition DEFINITION = new Implementation();
+
+    /**
+     * Set Definition Implementation Object
+     *
+     * @param implementation Definition Implementation Object
+     */
+    public static void set(Definition implementation) {
+        DEFINITION = implementation;
+    }
+
+    /**
+     * Execute
+     *
+     * @return Message Digest Object
+     */
+    public static MessageDigest execute() {
+        return DEFINITION.execute();
+    }
+
+    /**
+     * Execute
+     *
+     * @param bytes Byte Array Object
+     * @return Byte Array Object
+     */
+    public static byte[] execute(byte[] bytes) {
+        return DEFINITION.execute(bytes);
+    }
+
+    /**
+     * Execute
+     *
+     * @param bytes Byte Array Object
+     * @return Hex String
+     */
+    public static String executeToHex(byte[] bytes) {
+        return HexFormat.of().formatHex(DEFINITION.execute(bytes));
+    }
+
+    /**
+     * Execute
+     *
+     * @param bytes Byte Array Object
+     * @return Base64 String
+     */
+    public static String executeToBase64(byte[] bytes) {
+        return Base64.getEncoder().encodeToString(DEFINITION.execute(bytes));
+    }
+
+    /**
+     * Execute
+     *
+     * @param content Content Data
+     * @return Byte Array Object
+     */
+    public static byte[] execute(String content) {
+        return DEFINITION.execute(content.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * Execute
+     *
+     * @param content Content String
+     * @return Hex String
+     */
+    public static String executeToHex(String content) {
+        return HexFormat.of().formatHex(DEFINITION.execute(content.getBytes(StandardCharsets.UTF_8)));
+    }
+
+    /**
+     * Execute
+     *
+     * @param content Content String
+     * @return Base64 String
+     */
+    public static String executeToBase64(String content) {
+        return Base64.getEncoder().encodeToString(DEFINITION.execute(content.getBytes(StandardCharsets.UTF_8)));
     }
 
 }

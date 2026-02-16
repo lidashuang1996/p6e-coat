@@ -1,5 +1,6 @@
 package club.p6e.cloud.common;
 
+import jakarta.annotation.Nonnull;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.jspecify.annotations.NonNull;

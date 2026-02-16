@@ -1,171 +1,205 @@
 package club.p6e.coat.common.utils;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * 雪花算法的帮助类
+ * Snowflake ID Util
  *
  * @author lidashuang
  * @version 1.0
  */
+@SuppressWarnings("ALL")
 public final class SnowflakeIdUtil {
 
     /**
-     * 单例
-     * 机器ID
-     * 数据中心ID
+     * Definition
      */
-    private static final SnowflakeIdUtil INSTANCE = new SnowflakeIdUtil(0, 0);
+    public abstract static class Definition {
 
-    /**
-     * 实例的缓存
-     */
-    private static final Map<String, SnowflakeIdUtil> INSTANCE_CACHE = new HashMap<>(16);
+        /**
+         * Worker ID
+         */
+        protected final long workerId;
 
-    /**
-     * 起始的时间戳
-     * 2022/01/01 00:00:00
-     */
-    private final static long STARTED = 1640966400000L;
+        /**
+         * Data Center ID
+         */
+        protected final long datacenterId;
 
-    /**
-     * 每一部分占用的位数
-     */
-    private final static long WORKER_ID_BITS = 5L;
-    private final static long DATACENTER_ID_BITS = 5L;
-    private final static long SEQUENCE_BITS = 10L;
-
-    /**
-     * 每一部分的最大值
-     */
-    private final static long MAX_WORKER_ID = ~(-1L << WORKER_ID_BITS);
-    private final static long MAX_DATACENTER_ID = ~(-1L << DATACENTER_ID_BITS);
-    private final static long MAX_SEQUENCE = ~(-1L << SEQUENCE_BITS);
-
-    /**
-     * 每一部分向左的位移
-     */
-    private final static long WORKER_ID_SHIFT = SEQUENCE_BITS;
-    private final static long DATACENTER_ID_SHIFT = SEQUENCE_BITS + WORKER_ID_BITS;
-    private final static long TIMESTAMP_SHIFT = SEQUENCE_BITS + WORKER_ID_BITS + DATACENTER_ID_BITS;
-
-    /**
-     * 机器ID
-     */
-    private final long workerId;
-    /**
-     * 数据中心ID
-     */
-    private final long datacenterId;
-    /**
-     * 序列号
-     */
-    private long sequence = 0L;
-    /**
-     * 上一次时间戳
-     */
-    private long lastTimestamp = -1L;
-
-    /**
-     * 私有化构造方法
-     *
-     * @param workerId     机器ID
-     * @param datacenterId 数据中心ID
-     */
-    public SnowflakeIdUtil(long workerId, long datacenterId) {
-        if (workerId > MAX_WORKER_ID || workerId < 0) {
-            throw new IllegalArgumentException(
-                    String.format("worker Id can't be greater than %d or less than 0", MAX_WORKER_ID));
+        /**
+         * Constructor Initialization
+         *
+         * @param workerId     Worker ID
+         * @param datacenterId Data Center ID
+         */
+        public Definition(long workerId, long datacenterId) {
+            this.workerId = workerId;
+            this.datacenterId = datacenterId;
         }
-        if (datacenterId > MAX_DATACENTER_ID || datacenterId < 0) {
-            throw new IllegalArgumentException(
-                    String.format("datacenter Id can't be greater than %d or less than 0", MAX_DATACENTER_ID));
-        }
-        this.workerId = workerId;
-        this.datacenterId = datacenterId;
+
     }
 
     /**
-     * 获取类
+     * Implementation
      */
-    public static SnowflakeIdUtil getInstance() {
-        return INSTANCE;
-    }
+    public static class Implementation extends Definition {
 
-    /**
-     * 获取注册的类的实例
-     *
-     * @param name 名称
-     * @return 类的实例
-     */
-    public static SnowflakeIdUtil getInstance(String name) {
-        return INSTANCE_CACHE.get(name);
-    }
+        /**
+         * Starting Timestamp
+         * 2022/01/01 00:00:00
+         */
+        private final static long STARTED = 1640966400000L;
 
-    /**
-     * 注册
-     *
-     * @param name         名称
-     * @param workerId     机器ID
-     * @param datacenterId 数据中心ID
-     */
-    public static void register(String name, long workerId, long datacenterId) {
-        INSTANCE_CACHE.put(name, new SnowflakeIdUtil(workerId, datacenterId));
-    }
+        /**
+         * BITS
+         */
+        private final static long WORKER_ID_BITS = 5L;
+        private final static long DATACENTER_ID_BITS = 5L;
+        private final static long SEQUENCE_BITS = 10L;
 
-    /**
-     * 获取 ID
-     *
-     * @return 生成的 ID
-     */
-    public synchronized long nextId() {
-        long timestamp = timeGen();
-        if (timestamp < lastTimestamp) {
-            throw new RuntimeException(String.format(
-                    "Clock moved backwards.  Refusing to generate id for %d milliseconds", lastTimestamp - timestamp));
-        }
-        if (timestamp == lastTimestamp) {
-            sequence = (sequence + 1) & MAX_SEQUENCE;
-            if (sequence == 0L) {
-                timestamp = tilNextMillis();
+        /**
+         * MAX
+         */
+        private final static long MAX_WORKER_ID = ~(-1L << WORKER_ID_BITS);
+        private final static long MAX_DATACENTER_ID = ~(-1L << DATACENTER_ID_BITS);
+        private final static long MAX_SEQUENCE = ~(-1L << SEQUENCE_BITS);
+
+        /**
+         * SHIFT
+         */
+        private final static long WORKER_ID_SHIFT = SEQUENCE_BITS;
+        private final static long DATACENTER_ID_SHIFT = SEQUENCE_BITS + WORKER_ID_BITS;
+        private final static long TIMESTAMP_SHIFT = SEQUENCE_BITS + WORKER_ID_BITS + DATACENTER_ID_BITS;
+
+        /**
+         * Sequence
+         */
+        private long sequence = 0L;
+
+        /**
+         * Last Timestamp
+         */
+        private long lastTimestamp = -1L;
+
+        /**
+         * Constructor Initialization
+         *
+         * @param workerId     Worker ID
+         * @param datacenterId Data Center ID
+         */
+        public Implementation(long workerId, long datacenterId) {
+            super(workerId, datacenterId);
+            if (workerId > MAX_WORKER_ID || workerId < 0) {
+                throw new IllegalArgumentException(
+                        String.format("worker Id can't be greater than %d or less than 0", MAX_WORKER_ID));
             }
-        } else {
-            sequence = 0L;
+            if (datacenterId > MAX_DATACENTER_ID || datacenterId < 0) {
+                throw new IllegalArgumentException(
+                        String.format("datacenter Id can't be greater than %d or less than 0", MAX_DATACENTER_ID));
+            }
         }
-        lastTimestamp = timestamp;
-        sequence = sequence << 2 | (ThreadLocalRandom.current().nextLong(0, 4));
-        return
-                // 时间戳部分
-                (timestamp - STARTED) << TIMESTAMP_SHIFT
-                        // 数据中心部分
-                        | datacenterId << DATACENTER_ID_SHIFT
-                        // 机器标识部分
-                        | workerId << WORKER_ID_SHIFT
-                        // 序列号部分
-                        | sequence;
+
+        /**
+         * Next ID
+         *
+         * @return ID
+         */
+        public synchronized long nextId() {
+            long timestamp = timeGen();
+            if (timestamp < lastTimestamp) {
+                throw new RuntimeException(String.format(
+                        "Clock moved backwards.  Refusing to generate id for %d milliseconds", lastTimestamp - timestamp));
+            }
+            if (timestamp == lastTimestamp) {
+                sequence = (sequence + 1) & MAX_SEQUENCE;
+                if (sequence == 0L) {
+                    timestamp = tilNextMillis();
+                }
+            } else {
+                sequence = 0L;
+            }
+            lastTimestamp = timestamp;
+            sequence = sequence << 2 | (ThreadLocalRandom.current().nextLong(0, 4));
+            return (timestamp - STARTED) << TIMESTAMP_SHIFT
+                    | datacenterId << DATACENTER_ID_SHIFT
+                    | workerId << WORKER_ID_SHIFT
+                    | sequence;
+        }
+
+        /**
+         * Til Next Millis
+         *
+         * @return Til Next Millis
+         */
+        private long tilNextMillis() {
+            long timestamp = timeGen();
+            while (timestamp <= lastTimestamp) {
+                timestamp = timeGen();
+            }
+            return timestamp;
+        }
+
+        /**
+         * Time Gen
+         *
+         * @return Timestamp
+         */
+        private long timeGen() {
+            return System.currentTimeMillis();
+        }
+
     }
 
     /**
-     * 等带获取下一个时间戳
-     *
-     * @return 下一个时间戳时间
+     * Definition
+     * Worker ID - 0
+     * Data Center ID - 0
      */
-    private long tilNextMillis() {
-        long timestamp = timeGen();
-        while (timestamp <= lastTimestamp) {
-            timestamp = timeGen();
-        }
-        return timestamp;
+    private static Definition DEFINITION = new Implementation(0, 0);
+
+    /**
+     * Cache Snowflake ID Util Object
+     */
+    private static final Map<String, Definition> DEFINITION_CACHE = new ConcurrentHashMap<>();
+
+    /**
+     * Set Definition Implementation Object
+     *
+     * @param implementation Definition Implementation Object
+     */
+    public static void set(Definition implementation) {
+        DEFINITION = implementation;
     }
 
     /**
-     * 获取当前时间戳
+     * Register
      *
-     * @return 获取时间戳时间
+     * @param name           Name
+     * @param implementation Definition Implementation Object
      */
-    private long timeGen() {
-        return System.currentTimeMillis();
+    public static void register(String name, Definition implementation) {
+        DEFINITION_CACHE.put(name, implementation);
     }
+
+    /**
+     * Get Definition
+     *
+     * @return Definition Object
+     */
+    public static Definition get() {
+        return DEFINITION;
+    }
+
+    /**
+     * Get Cache Register Definition
+     *
+     * @param name Cache Name
+     * @return Definition Object
+     */
+    public static Definition get(String name) {
+        return DEFINITION_CACHE.get(name);
+    }
+
 }

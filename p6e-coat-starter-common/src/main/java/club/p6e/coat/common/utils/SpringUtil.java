@@ -11,6 +11,7 @@ import java.util.Map;
  * @author lidashuang
  * @version 1.0
  */
+@SuppressWarnings("ALL")
 public final class SpringUtil {
 
     /**
@@ -157,7 +158,6 @@ public final class SpringUtil {
      *
      * @return Application Context Object
      */
-    @SuppressWarnings("ALL")
     public static ApplicationContext getApplicationContext() {
         return DEFINITION.getApplicationContext();
     }
