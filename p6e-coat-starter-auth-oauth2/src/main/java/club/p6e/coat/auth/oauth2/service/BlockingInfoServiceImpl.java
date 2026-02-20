@@ -63,7 +63,7 @@ public class BlockingInfoServiceImpl implements BlockingInfoService {
         final String token = request.getToken();
         final BlockingAuthUserCache.Model model = authUserCache.getToken(token);
         if (model != null) {
-            if (VerificationUtil.validateOAuth2Scope(model.getScope(), USER_INFO_SCOPE)) {
+            if (VerificationUtil.validateStringBelongCommaSeparatedString(model.getScope(), USER_INFO_SCOPE)) {
                 final String user = authUserCache.getUser(model.getUid());
                 if (user != null) {
                     final Map<String, Object> result = JsonUtil.fromJsonToMap(user, String.class, Object.class);
@@ -91,7 +91,7 @@ public class BlockingInfoServiceImpl implements BlockingInfoService {
         final String token = request.getToken();
         final BlockingAuthClientCache.Model model = authClientCache.getToken(token);
         if (model != null) {
-            if (VerificationUtil.validateOAuth2Scope(model.getScope(), CLIENT_INFO_SCOPE)) {
+            if (VerificationUtil.validateStringBelongCommaSeparatedString(model.getScope(), CLIENT_INFO_SCOPE)) {
                 final String client = authClientCache.getClient(model.getCid());
                 if (client != null) {
                     final Map<String, Object> result = JsonUtil.fromJsonToMap(client, String.class, Object.class);

@@ -93,7 +93,7 @@ public class ReactiveOAuth2ClientController {
         final Properties properties = Properties.getInstance();
         final ServerHttpRequest request = exchange.getRequest();
         final ServerHttpResponse response = exchange.getResponse();
-        final Map<String, String> params = WebUtil.getParams(request);
+        final Map<String, String> params = WebUtil.getRequestQueryParams(request);
         final String source = WebUtil.getParam(request, "source");
         final String redirectUri = WebUtil.getParam(request, "redirect_uri", "redirectUri");
         final String state = GeneratorUtil.random(8, true, false);

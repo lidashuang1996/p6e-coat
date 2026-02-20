@@ -156,7 +156,7 @@ public class ReactiveTokenServiceImpl implements ReactiveTokenService {
                         "[" + PASSWORD_MODE + "] client not enabled"
                 )))
                 .flatMap(client -> {
-                    if (!VerificationUtil.validateOAuth2Type(client.getType(), PASSWORD_MODE)) {
+                    if (!VerificationUtil.validateStringBelongCommaSeparatedString(client.getType(), PASSWORD_MODE)) {
                         return Mono.error(new OAuth2ClientException(
                                 this.getClass(),
                                 "fun Mono<Map<String, Object>> executePasswordMode(TokenContext.Request request)",
@@ -248,7 +248,7 @@ public class ReactiveTokenServiceImpl implements ReactiveTokenService {
                                     "[" + AUTHORIZATION_CODE_MODE + "] client not enabled"
                             )))
                             .flatMap(client -> {
-                                if (!VerificationUtil.validateOAuth2Type(client.getType(), AUTHORIZATION_CODE_MODE)) {
+                                if (!VerificationUtil.validateStringBelongCommaSeparatedString(client.getType(), AUTHORIZATION_CODE_MODE)) {
                                     return Mono.error(new OAuth2ClientException(
                                             this.getClass(),
                                             "fun Mono<Map<String, Object>> executeAuthorizationCodeMode(TokenContext.Request request)",
@@ -307,7 +307,7 @@ public class ReactiveTokenServiceImpl implements ReactiveTokenService {
                         "[" + CLIENT_CREDENTIALS_MODE + "] client not enabled"
                 )))
                 .flatMap(client -> {
-                    if (!VerificationUtil.validateOAuth2Type(client.getType(), CLIENT_CREDENTIALS_MODE)) {
+                    if (!VerificationUtil.validateStringBelongCommaSeparatedString(client.getType(), CLIENT_CREDENTIALS_MODE)) {
                         return Mono.error(new OAuth2ClientException(
                                 this.getClass(),
                                 "fun Mono<Map<String, Object>> executeClientCredentialsMode(TokenContext.Request request)",
@@ -315,7 +315,7 @@ public class ReactiveTokenServiceImpl implements ReactiveTokenService {
                         ));
                     }
                     final String fs = scope == null || scope.isEmpty() ? client.getScope() : scope;
-                    if (!VerificationUtil.validateOAuth2Scope(client.getScope(), fs)) {
+                    if (!VerificationUtil.validateStringBelongCommaSeparatedString(client.getScope(), fs)) {
                         return Mono.error(new OAuth2ScopeException(
                                 this.getClass(),
                                 "fun Mono<Map<String, Object>> executeClientCredentialsMode(TokenContext.Request request)",

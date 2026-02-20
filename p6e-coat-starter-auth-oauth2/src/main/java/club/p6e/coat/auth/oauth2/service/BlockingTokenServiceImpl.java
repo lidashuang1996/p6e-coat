@@ -152,7 +152,7 @@ public class BlockingTokenServiceImpl implements BlockingTokenService {
                     "[" + PASSWORD_MODE + "] client_id<" + clientId + "> or client_secret<" + clientSecret + "> not match"
             );
         }
-        if (!VerificationUtil.validateOAuth2Type(client.getType(), PASSWORD_MODE)) {
+        if (!VerificationUtil.validateStringBelongCommaSeparatedString(client.getType(), PASSWORD_MODE)) {
             throw new OAuth2ClientException(
                     this.getClass(),
                     "fun Map<String, Object> executePasswordMode(TokenContext.Request request)",
@@ -231,7 +231,7 @@ public class BlockingTokenServiceImpl implements BlockingTokenService {
                         "[" + AUTHORIZATION_CODE_MODE + "] client_secret<" + clientSecret + "> not match"
                 );
             }
-            if (!VerificationUtil.validateOAuth2Type(client.getType(), PASSWORD_MODE)) {
+            if (!VerificationUtil.validateStringBelongCommaSeparatedString(client.getType(), PASSWORD_MODE)) {
                 throw new OAuth2ClientException(
                         this.getClass(),
                         "fun Map<String, Object> executeAuthorizationCodeMode(TokenContext.Request request)",
@@ -271,7 +271,7 @@ public class BlockingTokenServiceImpl implements BlockingTokenService {
                     "[" + CLIENT_CREDENTIALS_MODE + "] client_id<" + clientId + "> or client_secret<" + clientSecret + "> not match"
             );
         }
-        if (!VerificationUtil.validateOAuth2Type(client.getType(), PASSWORD_MODE)) {
+        if (!VerificationUtil.validateStringBelongCommaSeparatedString(client.getType(), PASSWORD_MODE)) {
             throw new OAuth2ClientException(
                     this.getClass(),
                     "fun Map<String, Object> executeClientCredentialsMode(TokenContext.Request request)",
@@ -279,7 +279,7 @@ public class BlockingTokenServiceImpl implements BlockingTokenService {
             );
         }
         scope = scope == null || scope.isEmpty() ? client.getScope() : scope;
-        if (!VerificationUtil.validateOAuth2Scope(client.getScope(), scope)) {
+        if (!VerificationUtil.validateStringBelongCommaSeparatedString(client.getScope(), scope)) {
             throw new OAuth2ScopeException(
                     this.getClass(),
                     "fun Map<String, Object> executeClientCredentialsMode(TokenContext.Request request)",

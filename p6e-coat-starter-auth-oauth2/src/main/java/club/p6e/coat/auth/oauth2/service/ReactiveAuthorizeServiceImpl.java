@@ -89,21 +89,21 @@ public class ReactiveAuthorizeServiceImpl implements ReactiveAuthorizeService {
                                             "[" + CODE_MODE + "] client not enabled"
                                     ));
                                 }
-                                if (!VerificationUtil.validateOAuth2Type(client.getType(), CODE_MODE)) {
+                                if (!VerificationUtil.validateStringBelongCommaSeparatedString(client.getType(), CODE_MODE)) {
                                     return Mono.error(new OAuth2ClientException(
                                             this.getClass(),
                                             "fun Mono<IndexContext.Dto> execute(ServerWebExchange exchange, AuthorizeContext.Request request)",
                                             "[" + CODE_MODE + "] type<" + CODE_MODE + "> not support"
                                     ));
                                 }
-                                if (!VerificationUtil.validateOAuth2Scope(client.getScope(), scope)) {
+                                if (!VerificationUtil.validateStringBelongCommaSeparatedString(client.getScope(), scope)) {
                                     return Mono.error(new OAuth2ScopeException(
                                             this.getClass(),
                                             "fun Mono<IndexContext.Dto> execute(ServerWebExchange exchange, AuthorizeContext.Request request)",
                                             "[" + CODE_MODE + "] scope<" + scope + "> not match"
                                     ));
                                 }
-                                if (!VerificationUtil.validateOAuth2RedirectUri(client.getRedirectUri(), redirectUri)) {
+                                if (!VerificationUtil.validateStringBelongCommaSeparatedString(client.getRedirectUri(), redirectUri)) {
                                     return Mono.error(new OAuth2RedirectUriException(
                                             this.getClass(),
                                             "fun Mono<IndexContext.Dto> execute(ServerWebExchange exchange, AuthorizeContext.Request request)",

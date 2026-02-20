@@ -30,16 +30,12 @@ public class Properties extends club.p6e.coat.common.Properties implements Seria
      */
     private static void init(
             Properties properties,
-            String version,
             Boolean securityEnable,
             List<Object> securityVouchers,
             Boolean crossDomainEnable,
             List<Object> crossDomainWhiteList,
             Map<String, Object> snowflake
     ) {
-        if (version != null) {
-            properties.setVersion(version);
-        }
         if (securityEnable != null) {
             properties.getSecurity().setEnable(securityEnable);
         }
@@ -48,7 +44,7 @@ public class Properties extends club.p6e.coat.common.Properties implements Seria
             for (final Object item : securityVouchers) {
                 vouchers.add(TransformationUtil.objectToString(item));
             }
-            properties.getSecurity().setVouchers(vouchers.toArray(new String[0]));
+            properties.getSecurity().setVouchers(vouchers);
         }
         if (crossDomainEnable != null) {
             properties.getCrossDomain().setEnable(crossDomainEnable);
@@ -58,7 +54,7 @@ public class Properties extends club.p6e.coat.common.Properties implements Seria
             for (Object item : crossDomainWhiteList) {
                 whiteList.add(TransformationUtil.objectToString(item));
             }
-            properties.getCrossDomain().setWhiteList(whiteList.toArray(new String[0]));
+            properties.getCrossDomain().setWhiteList(whiteList);
         }
         if (snowflake != null) {
             for (final Map.Entry<String, Object> entry : snowflake.entrySet()) {
@@ -79,13 +75,12 @@ public class Properties extends club.p6e.coat.common.Properties implements Seria
         final Properties result = new Properties();
         final Object config = YamlUtil.paths(data, "p6e.cloud.common");
         final Map<String, Object> cmap = TransformationUtil.objectToMap(config);
-        final String version = TransformationUtil.objectToString(YamlUtil.paths(cmap, "version"));
         final Boolean securityEnable = TransformationUtil.objectToBoolean(YamlUtil.paths(cmap, "security.enable"));
         final List<Object> securityVouchers = TransformationUtil.objectToList(YamlUtil.paths(cmap, "security.vouchers"));
         final Boolean crossDomainEnable = TransformationUtil.objectToBoolean(YamlUtil.paths(cmap, "cross-domain.enable"));
         final List<Object> crossDomainWhiteList = TransformationUtil.objectToList(YamlUtil.paths(cmap, "cross-domain.white-list"));
         final Map<String, Object> snowflake = TransformationUtil.objectToMap(YamlUtil.paths(cmap, "snowflake"));
-        init(result, version, securityEnable, securityVouchers, crossDomainEnable, crossDomainWhiteList, snowflake);
+        init(result, securityEnable, securityVouchers, crossDomainEnable, crossDomainWhiteList, snowflake);
         return result;
     }
 
@@ -96,7 +91,6 @@ public class Properties extends club.p6e.coat.common.Properties implements Seria
     public static Properties initProperties(java.util.Properties properties) {
         final Properties result = new Properties();
         properties = PropertiesUtil.matchProperties("p6e.cloud.common", properties);
-        final String version = PropertiesUtil.getStringProperty(properties, "version");
         final java.util.Properties securityProperties = PropertiesUtil.matchProperties("security", properties);
         final Boolean securityEnable = PropertiesUtil.getBooleanProperty(securityProperties, "enable");
         final List<Object> securityVouchers = PropertiesUtil.getListObjectProperty(securityProperties, "vouchers");
@@ -104,7 +98,7 @@ public class Properties extends club.p6e.coat.common.Properties implements Seria
         final Boolean crossDomainEnable = PropertiesUtil.getBooleanProperty(crossDomainProperties, "enable");
         final List<Object> crossDomainWhiteList = PropertiesUtil.getListObjectProperty(crossDomainProperties, "white-list");
         final Map<String, Object> snowflake = PropertiesUtil.getMapProperty(properties, "snowflake");
-        init(result, version, securityEnable, securityVouchers, crossDomainEnable, crossDomainWhiteList, snowflake);
+        init(result, securityEnable, securityVouchers, crossDomainEnable, crossDomainWhiteList, snowflake);
         return result;
     }
 

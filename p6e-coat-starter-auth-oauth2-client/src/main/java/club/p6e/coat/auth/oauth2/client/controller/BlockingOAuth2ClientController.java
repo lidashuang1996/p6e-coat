@@ -18,7 +18,8 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.Serializable;
 import java.net.URLEncoder;
@@ -89,9 +90,9 @@ public class BlockingOAuth2ClientController {
     public void auth(HttpServletRequest request, HttpServletResponse response) {
         try {
             final Properties properties = Properties.getInstance();
-            final Map<String, String> params = WebUtil.getParams(request);
-            final String source = WebUtil.getParam("source");
-            final String redirectUri = WebUtil.getParam("redirect_uri", "redirectUri");
+            final Map<String, String> params = WebUtil.getRequestQueryParams(request);
+            final String source = WebUtil.getParam(request, "source");
+            final String redirectUri = WebUtil.getParam(request, "redirect_uri", "redirectUri");
             final String state = GeneratorUtil.random(8, true, false);
             stateCache.set(state, source == null ? "" : source);
             final StringBuilder extend = new StringBuilder();

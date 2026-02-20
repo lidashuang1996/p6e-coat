@@ -63,7 +63,7 @@ public class ReactiveInfoServiceImpl implements ReactiveInfoService {
     public Mono<Map<String, Object>> getUserInfo(ServerWebExchange exchange, InfoContext.Request request) {
         final String token = request.getToken();
         return authUserCache.getToken(token)
-                .filter(m -> VerificationUtil.validateOAuth2Scope(m.getScope(), USER_INFO_SCOPE))
+                .filter(m -> VerificationUtil.validateStringBelongCommaSeparatedString(m.getScope(), USER_INFO_SCOPE))
                 .switchIfEmpty(Mono.error(new AuthException(
                         this.getClass(),
                         "fun Mono<Map<String, Object>> getUserInfo(ServerWebExchange exchange, InfoContext.Request request)",
@@ -89,7 +89,7 @@ public class ReactiveInfoServiceImpl implements ReactiveInfoService {
     public Mono<Map<String, Object>> getClientInfo(ServerWebExchange exchange, InfoContext.Request request) {
         final String token = request.getToken();
         return authClientCache.getToken(token)
-                .filter(m -> VerificationUtil.validateOAuth2Scope(m.getScope(), CLIENT_INFO_SCOPE))
+                .filter(m -> VerificationUtil.validateStringBelongCommaSeparatedString(m.getScope(), CLIENT_INFO_SCOPE))
                 .switchIfEmpty(Mono.error(new AuthException(
                         this.getClass(),
                         "fun Mono<Map<String, Object>> getClientInfo(ServerWebExchange exchange, InfoContext.Request request)",

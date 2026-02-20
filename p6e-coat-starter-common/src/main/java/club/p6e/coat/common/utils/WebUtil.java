@@ -124,6 +124,22 @@ public class WebUtil {
         Map<String, String> getUrlParams(String url);
 
         /**
+         * Get Request Query Params
+         *
+         * @param request Server Http Request Object
+         * @return Url Params Map Object
+         */
+        Map<String, String> getRequestQueryParams(ServerHttpRequest request);
+
+        /**
+         * Get Request Query Params
+         *
+         * @param request Http Servlet Request Object
+         * @return Url Params Map Object
+         */
+        Map<String, String> getRequestQueryParams(HttpServletRequest request);
+
+        /**
          * Merge Url Params
          *
          * @param url    Url String
@@ -310,7 +326,7 @@ public class WebUtil {
         public Map<String, String> getUrlParams(String url) {
             final Map<String, String> result = new HashMap<>();
             if (url != null && !url.isEmpty()) {
-                final String content = URLDecoder.decode(url, StandardCharsets.UTF_8);
+                final String content = url.substring(url.indexOf("?") + 1);
                 final String[] params = content.split("&");
                 for (final String param : params) {
                     final String[] ps = param.split("=");
@@ -320,6 +336,16 @@ public class WebUtil {
                 }
             }
             return result;
+        }
+
+        @Override
+        public Map<String, String> getRequestQueryParams(ServerHttpRequest request) {
+            return getUrlParams(request.getURI().getRawQuery());
+        }
+
+        @Override
+        public Map<String, String> getRequestQueryParams(HttpServletRequest request) {
+            return getUrlParams(request.getQueryString());
         }
 
         @Override
@@ -465,6 +491,26 @@ public class WebUtil {
      */
     public static Map<String, String> getUrlParams(String url) {
         return DEFINITION.getUrlParams(url);
+    }
+
+    /**
+     * Get Request Query Params
+     *
+     * @param request Server Http Request Object
+     * @return Url Params Map Object
+     */
+    public static Map<String, String> getRequestQueryParams(ServerHttpRequest request) {
+        return DEFINITION.getRequestQueryParams(request);
+    }
+
+    /**
+     * Get Request Query Params
+     *
+     * @param request Http Servlet Request Object
+     * @return Url Params Map Object
+     */
+    public static Map<String, String> getRequestQueryParams(HttpServletRequest request) {
+        return DEFINITION.getRequestQueryParams(request);
     }
 
     /**
