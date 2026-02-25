@@ -1,4 +1,4 @@
-package club.p6e.coat.common.old.pageable.search;
+package club.p6e.coat.common.searchable;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,7 +16,7 @@ import java.util.List;
  * @version 1.0
  */
 @Getter
-public abstract class SearchableAbstract<I extends club.p6e.coat.common.searchable.SearchableAbstract.Option> extends ArrayList<I> implements Serializable {
+public abstract class SearchableAbstract<I extends SearchableAbstract.Option> extends ArrayList<I> implements Serializable {
 
     @Data
     @AllArgsConstructor
@@ -112,7 +112,7 @@ public abstract class SearchableAbstract<I extends club.p6e.coat.common.searchab
      * @param options 请求参数
      * @return 选项参数
      */
-    public static List<Mixin> extractOptions(club.p6e.coat.common.searchable.SearchableAbstract<?> options) {
+    public static List<Mixin> extractOptions(SearchableAbstract<?> options) {
         if (options == null) {
             return new ArrayList<>();
         } else {
@@ -178,7 +178,7 @@ public abstract class SearchableAbstract<I extends club.p6e.coat.common.searchab
      * @param context 排序上下文对象
      * @return 参数是否合法
      */
-    protected boolean validationOptionsToMappings(Class<?> clazz, club.p6e.coat.common.searchable.SearchableAbstract<?> context) {
+    protected boolean validationOptionsToMappings(Class<?> clazz, SearchableAbstract<?> context) {
         if (clazz == null || context == null) {
             return false;
         } else {

@@ -62,7 +62,7 @@ public class BlockingPermissionAutoRefreshTaskImpl implements BlockingPermission
         LOGGER.info("[ PERMISSION AUTO REFRESH TASK ] START EXECUTE PERMISSION UPDATE TASK");
         final long result = execute(this.version.incrementAndGet());
         this.matcher.cleanExpiredVersionData(this.version.get());
-        LOGGER.info("[ PERMISSION AUTO REFRESH TASK ] COMPLETE PERMISSION UPDATE TASK, VERSION >>> {}", this.version.get());
+        LOGGER.info("[ PERMISSION AUTO REFRESH TASK ] COMPLETE PERMISSION UPDATE TASK, COUNT >>> {}, VERSION >>> {}", result, this.version.get());
         return result;
     }
 

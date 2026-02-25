@@ -63,7 +63,7 @@ public class ReactivePermissionAutoRefreshTaskImpl implements ReactivePermission
         LOGGER.info("[ PERMISSION AUTO REFRESH TASK ] START EXECUTE PERMISSION UPDATE TASK");
         return execute(this.version.incrementAndGet()).map(l -> {
             this.matcher.cleanExpiredVersionData(this.version.get());
-            LOGGER.info("[ PERMISSION AUTO REFRESH TASK ] COMPLETE PERMISSION UPDATE TASK, VERSION >>> {}", this.version.get());
+            LOGGER.info("[ PERMISSION AUTO REFRESH TASK ] COMPLETE PERMISSION UPDATE TASK, COUNT >>> {}, VERSION >>> {}", l, this.version.get());
             return l;
         });
     }
