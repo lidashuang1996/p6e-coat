@@ -195,7 +195,7 @@ public final class Globals {
      *
      * @return Organization
      */
-    public static String getUserOrganization() {
+    public static String getOrganization() {
         return ORGANIZATION_THREAD_LOCAL.get();
     }
 
