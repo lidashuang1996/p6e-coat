@@ -100,7 +100,7 @@ public final class Globals {
     /**
      * User Builder Object
      */
-    private static final UserBuilder<?> USER_BUILDER = (UserBuilder<UserModel>) content -> {
+    private static UserBuilder<?> USER_BUILDER = (UserBuilder<UserModel>) content -> {
         if (content == null) {
             return null;
         } else {
@@ -114,7 +114,7 @@ public final class Globals {
     /**
      * Permission Builder Object
      */
-    private static final PermissionBuilder<?> PERMISSION_BUILDER = (PermissionBuilder<PermissionModel>) content -> {
+    private static PermissionBuilder<?> PERMISSION_BUILDER = (PermissionBuilder<PermissionModel>) content -> {
         if (content == null) {
             return null;
         } else {
@@ -159,6 +159,24 @@ public final class Globals {
      */
     public static void setOrganization(String content) {
         ORGANIZATION_THREAD_LOCAL.set(content);
+    }
+
+    /**
+     * Set User Builder
+     *
+     * @param builder User Builder Object
+     */
+    public static void setUserBuilder(UserBuilder<?> builder) {
+        USER_BUILDER = builder;
+    }
+
+    /**
+     * Set Permission Builder
+     *
+     * @param builder Permission Builder Object
+     */
+    public static void setPermissionBuilder(PermissionBuilder<?> builder) {
+        PERMISSION_BUILDER = builder;
     }
 
     /**
