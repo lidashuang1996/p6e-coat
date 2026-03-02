@@ -1,0 +1,8 @@
+# Auto Configure
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+club.p6e.cloud.gateway.permission.InjectPermissionGatewayFilterFactory,\
+club.p6e.cloud.gateway.user.token.ValidationUserTokenGatewayService,\
+club.p6e.cloud.gateway.user.token.ValidationUserTokenGatewayFilterFactory
+
+
+

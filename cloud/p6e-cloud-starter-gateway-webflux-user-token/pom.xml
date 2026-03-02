@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>club.p6e.cloud</groupId>
+        <artifactId>p6e-cloud-starter-parent</artifactId>
+        <version>4.0.2</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <artifactId>p6e-cloud-starter-gateway-webflux-user-token</artifactId>
+    <name>p6e-cloud-starter-gateway-webflux-user-token</name>
+    <description>p6e-cloud-starter-gateway-webflux-user-token</description>
+
+    <dependencies>
+
+        <!-- R2DBC PostgresSQL [ START ] -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>r2dbc-postgresql</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- R2DBC PostgresSQL [ END ] -->
+
+        <!-- Spring R2DBC [ START ] -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-r2dbc</artifactId>
+        </dependency>
+        <!-- Spring R2DBC [ END ] -->
+
+        <!-- P6e Cloud Common [START] -->
+        <dependency>
+            <groupId>club.p6e.cloud</groupId>
+            <artifactId>p6e-cloud-starter-common</artifactId>
+        </dependency>
+        <!-- P6e Cloud Common [END] -->
+
+        <!-- P6e Coat Auth Token [ START ] -->
+        <dependency>
+            <groupId>club.p6e.coat</groupId>
+            <artifactId>p6e-coat-starter-auth-token</artifactId>
+        </dependency>
+        <!-- P6e Coat Auth Token [ END ] -->
+
+        <!-- Spring Cloud Gateway Server Web Flux [START] -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-gateway-server-webflux</artifactId>
+        </dependency>
+        <!-- Spring Cloud Gateway Server Web Flux [END] -->
+
+    </dependencies>
+
+</project>
