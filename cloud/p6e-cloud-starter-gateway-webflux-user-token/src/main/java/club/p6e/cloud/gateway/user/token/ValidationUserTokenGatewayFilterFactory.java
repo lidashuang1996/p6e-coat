@@ -8,7 +8,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * Validation Permission Gateway Filter Factory
+ * Validation User Token Gateway Filter Factory
  *
  * @author lidashuang
  * @version 1.0
@@ -16,14 +16,14 @@ import reactor.core.publisher.Mono;
 public class ValidationUserTokenGatewayFilterFactory extends AbstractGatewayFilterFactory<Object> {
 
     /**
-     * Validation Permission Gateway Service Object
+     * Validation User Token Gateway Service Object
      */
     private final ValidationUserTokenGatewayService service;
 
     /**
      * Constructor Initialization
      *
-     * @param service Validation Permission Gateway Service Object
+     * @param service Validation User Token Gateway Service Object
      */
     public ValidationUserTokenGatewayFilterFactory(ValidationUserTokenGatewayService service) {
         this.service = service;
@@ -37,7 +37,7 @@ public class ValidationUserTokenGatewayFilterFactory extends AbstractGatewayFilt
     /**
      * Custom Gateway Filter
      *
-     * @param service Validation Permission Gateway Service Object
+     * @param service Validation User Token Gateway Service Object
      */
     public record CustomGatewayFilter(ValidationUserTokenGatewayService service) implements GatewayFilter {
 

@@ -40,18 +40,29 @@ public class UserTokenRepositoryImpl implements UserTokenRepository {
         return "p6e_user_token";
     }
 
+    @SuppressWarnings("ALL")
     @Override
     public Mono<UserTokenModel> get(String token) {
         return client.sql(TemplateParser.execute(TemplateParser.execute("""
-                        
-                        """, "TABLE1", getUserTokenTableName()
+                        SELECT
+                            _user_token.id_,
+                            _user_token.uid_,
+                            _user_token.content_
+                        FROM
+                            @{TABLE} AS _user_token
+                        WHERE
+                            content_ = '123'
+                        WHERE 
+                            _user_token.content_ = :TOKEN
+                        ;  
+                        """, "TABLE", getUserTokenTableName()
                 )))
                 .bind("TOKEN", token)
-                .map((row) -> {
+                .map((readable) -> {
                     final UserTokenModel model = new UserTokenModel();
-                    model.setId(TransformationUtil.objectToInteger(row.get("id")));
-                    model.setUid(TransformationUtil.objectToInteger(row.get("uid")));
-                    model.setContent(TransformationUtil.objectToString(row.get("content")));
+                    model.setId(TransformationUtil.objectToInteger(readable.get("id_")));
+                    model.setUid(TransformationUtil.objectToInteger(readable.get("uid_")));
+                    model.setContent(TransformationUtil.objectToString(readable.get("content_")));
                     return model;
                 })
                 .one();

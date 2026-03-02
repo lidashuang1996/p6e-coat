@@ -2,9 +2,11 @@ package club.p6e.cloud.gateway.auth;
 
 import club.p6e.coat.auth.User;
 import club.p6e.coat.common.utils.JsonUtil;
+import org.jspecify.annotations.NonNull;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -93,18 +95,16 @@ public class InjectAuthenticationGatewayFilterFactory extends AbstractGatewayFil
         };
 
         @Override
-        public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-            return service
-                    .execute(exchange)
-                    // if the user is not logged in, the default is anonymous
-                    .defaultIfEmpty(ANONYMOUS)
-                    .flatMap(u -> chain.filter(exchange.mutate().request(
-                            exchange.getRequest().mutate()
-                                    .header(USER_INFO_HEADER, u.serialize())
-                                    // mark user 0: anonymous, 1: login
-                                    .header(AUTHENTICATION_HEADER, ANONYMOUS == u ? "0" : "1")
-                                    .build()
-                    ).build()));
+        public @NonNull Mono<Void> filter(@NonNull ServerWebExchange exchange, @NonNull GatewayFilterChain chain) {
+            final ServerHttpRequest request = exchange.getRequest();
+            final String userInfo = request.getHeaders().getFirst(USER_INFO_HEADER);
+            final String authentication = request.getHeaders().getFirst(AUTHENTICATION_HEADER);
+            final boolean status = authentication != null && !authentication.isEmpty();
+            if (status && ("1".equalsIgnoreCase(authentication) || "MQ==".equalsIgnoreCase(authentication)) && userInfo != null && !userInfo.isEmpty()) {
+                return chain.filter(exchange);
+            } else {
+                return service.execute(exchange).defaultIfEmpty(ANONYMOUS).flatMap(u -> chain.filter(exchange.mutate().request(exchange.getRequest().mutate().header(USER_INFO_HEADER, u.serialize()).header(AUTHENTICATION_HEADER, ANONYMOUS == u ? "0" : "1").build()).build()));
+            }
         }
 
     }

@@ -1,6 +1,5 @@
 package club.p6e.cloud.gateway.user.token;
 
-import club.p6e.coat.auth.User;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
@@ -14,10 +13,10 @@ import java.util.Map;
 public interface UserRepository {
 
     /**
-     * Get User Token Model Object
+     * Get User Data Object
      *
-     * @param id ID
-     * @return User Token Model Object
+     * @param id User ID
+     * @return User Data Object
      */
     Mono<Map<String, Object>> get(Integer id);
 

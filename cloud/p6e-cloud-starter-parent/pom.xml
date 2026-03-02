@@ -95,6 +95,15 @@
             </dependency>
             <!-- P6e Cloud Gateway Permission [END] -->
 
+
+            <!-- P6e Cloud Gateway Permission [START] -->
+            <dependency>
+                <groupId>club.p6e.cloud</groupId>
+                <artifactId>p6e-cloud-starter-gateway-webflux-user-token</artifactId>
+                <version>${p6e-cloud.version}</version>
+            </dependency>
+            <!-- P6e Cloud Gateway Permission [END] -->
+
             <!-- P6e Cloud SSE [START] -->
             <dependency>
                 <groupId>club.p6e.cloud</groupId>

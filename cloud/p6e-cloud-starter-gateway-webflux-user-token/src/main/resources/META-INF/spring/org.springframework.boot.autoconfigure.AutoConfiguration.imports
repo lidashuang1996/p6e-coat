@@ -1,3 +1,4 @@
-club.p6e.cloud.gateway.permission.InjectPermissionGatewayFilterFactory
+club.p6e.cloud.gateway.user.token.UserRepositoryImpl
+club.p6e.cloud.gateway.user.token.UserTokenRepositoryImpl
 club.p6e.cloud.gateway.user.token.ValidationUserTokenGatewayService
 club.p6e.cloud.gateway.user.token.ValidationUserTokenGatewayFilterFactory
