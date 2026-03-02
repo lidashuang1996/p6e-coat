@@ -139,19 +139,31 @@ public class Channel implements ChannelInboundHandler {
 
     @Override
     public void handlerRemoved(ChannelHandlerContext context) {
-        if (DataType.TEXT.name().equalsIgnoreCase(this.type)) {
-            context.writeAndFlush(new TextWebSocketFrame(LOGOUT_CONTENT_TEXT));
-        } else if (DataType.BINARY.name().equalsIgnoreCase(this.type)) {
-            context.writeAndFlush(new BinaryWebSocketFrame(Unpooled.wrappedBuffer(LOGOUT_CONTENT_BYTES)));
+        try {
+            if (context != null && !context.isRemoved()) {
+                if (DataType.TEXT.name().equalsIgnoreCase(this.type)) {
+                    context.writeAndFlush(new TextWebSocketFrame(LOGOUT_CONTENT_TEXT));
+                } else if (DataType.BINARY.name().equalsIgnoreCase(this.type)) {
+                    context.writeAndFlush(new BinaryWebSocketFrame(Unpooled.wrappedBuffer(LOGOUT_CONTENT_BYTES)));
+                }
+            }
+            final Session session = SessionManager.get(this.id);
+            if (session != null) {
+                executeCallbackClose(session);
+            }
+        } finally {
+            if (this.id != null) {
+                SessionManager.unregister(this.id);
+            }
         }
-        executeCallbackClose(SessionManager.get(this.id));
-        SessionManager.unregister(this.id);
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext context, Throwable e) {
-        LOGGER.error("[ CHANNEL ERROR ] {} => {}", this.id, e.getMessage(), e);
-        executeCallbackError(SessionManager.get(this.id), e);
+        final Session session = SessionManager.get(this.id);
+        if (session != null) {
+            executeCallbackError(session, e);
+        }
         context.close();
     }
 

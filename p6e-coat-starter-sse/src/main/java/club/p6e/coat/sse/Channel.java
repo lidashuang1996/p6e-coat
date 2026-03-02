@@ -112,7 +112,9 @@ public class Channel implements ChannelInboundHandler {
                 session.push("LOGOUT", JsonUtil.toJson(Map.of("type", "LOGOUT", "data", "SUCCESS")));
             }
         } finally {
-            SessionManager.unregister(this.id);
+            if (this.id != null) {
+                SessionManager.unregister(this.id);
+            }
         }
     }
 

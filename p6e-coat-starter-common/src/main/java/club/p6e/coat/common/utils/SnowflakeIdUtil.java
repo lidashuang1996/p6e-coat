@@ -39,6 +39,13 @@ public final class SnowflakeIdUtil {
             this.datacenterId = datacenterId;
         }
 
+        /**
+         * Get Next ID
+         *
+         * @return Next ID
+         */
+        public abstract long nextId();
+
     }
 
     /**
@@ -106,6 +113,7 @@ public final class SnowflakeIdUtil {
          *
          * @return ID
          */
+        @Override
         public synchronized long nextId() {
             long timestamp = timeGen();
             if (timestamp < lastTimestamp) {

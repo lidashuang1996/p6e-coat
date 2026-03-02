@@ -5,7 +5,6 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
 
@@ -28,7 +27,7 @@ public final class AesUtil {
          *
          * @return Aes Key Object
          */
-        Key generateKey() throws NoSuchAlgorithmException;
+        Key generateKey();
 
         /**
          * Execute Key To String
@@ -72,12 +71,16 @@ public final class AesUtil {
     private static class Implementation implements Definition {
 
         @Override
-        public Key generateKey() throws NoSuchAlgorithmException {
-            final KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-            final SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");
-            secureRandom.setSeed(GeneratorUtil.random().getBytes(StandardCharsets.UTF_8));
-            keyGenerator.init(256, secureRandom);
-            return keyGenerator.generateKey();
+        public Key generateKey() {
+            try {
+                final KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+                final SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");
+                secureRandom.setSeed(GeneratorUtil.random().getBytes(StandardCharsets.UTF_8));
+                keyGenerator.init(256, secureRandom);
+                return keyGenerator.generateKey();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
 
         @Override
@@ -133,7 +136,7 @@ public final class AesUtil {
      *
      * @return Aes Key Object
      */
-    public static Key generateKey() throws NoSuchAlgorithmException {
+    public static Key generateKey() {
         return DEFINITION.generateKey();
     }
 
