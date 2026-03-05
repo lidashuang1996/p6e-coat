@@ -84,7 +84,7 @@ public class BlockingBase64DecryptionHeaderFilter implements Filter {
          * @param value Header Value
          */
         public void addHeader(String name, String value) {
-            this.headers.put(name, value);
+            this.headers.put(name.toLowerCase(), value);
         }
 
     }
