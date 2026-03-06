@@ -1,12 +1,5 @@
 package club.p6e.coat.common.utils;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.http.HttpCookie;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.util.MultiValueMap;
-
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -33,7 +26,7 @@ public class WebUtil {
          * @param request Server Http Request Object
          * @return Token
          */
-        String getToken(ServerHttpRequest request);
+        String getToken(org.springframework.http.server.reactive.ServerHttpRequest request);
 
         /**
          * Get Token
@@ -41,7 +34,7 @@ public class WebUtil {
          * @param request Http Servlet Request Object
          * @return Token
          */
-        String getToken(HttpServletRequest request);
+        String getToken(jakarta.servlet.http.HttpServletRequest request);
 
         /**
          * Get Param
@@ -50,7 +43,7 @@ public class WebUtil {
          * @param params  Param Array Object
          * @return param
          */
-        String getParam(ServerHttpRequest request, String... params);
+        String getParam(org.springframework.http.server.reactive.ServerHttpRequest request, String... params);
 
         /**
          * Get Param
@@ -59,7 +52,7 @@ public class WebUtil {
          * @param params  Param Array Object
          * @return param
          */
-        String getParam(HttpServletRequest request, String... params);
+        String getParam(jakarta.servlet.http.HttpServletRequest request, String... params);
 
         /**
          * Get Header
@@ -68,7 +61,7 @@ public class WebUtil {
          * @param headers Header Array Object
          * @return header
          */
-        String getHeader(ServerHttpRequest request, String... headers);
+        String getHeader(org.springframework.http.server.reactive.ServerHttpRequest request, String... headers);
 
         /**
          * Get Header
@@ -77,7 +70,7 @@ public class WebUtil {
          * @param headers Header Array Object
          * @return header
          */
-        String getHeader(HttpServletRequest request, String... headers);
+        String getHeader(jakarta.servlet.http.HttpServletRequest request, String... headers);
 
         /**
          * Get Headers Value
@@ -86,7 +79,7 @@ public class WebUtil {
          * @param filter  Filter Object
          * @return headers
          */
-        List<String> getHeader(ServerHttpRequest request, Function<String, Boolean> filter);
+        List<String> getHeader(org.springframework.http.server.reactive.ServerHttpRequest request, Function<String, Boolean> filter);
 
         /**
          * Get Headers Value
@@ -95,7 +88,7 @@ public class WebUtil {
          * @param filter  Filter Object
          * @return headers
          */
-        List<String> getHeader(HttpServletRequest request, Function<String, Boolean> filter);
+        List<String> getHeader(jakarta.servlet.http.HttpServletRequest request, Function<String, Boolean> filter);
 
         /**
          * Get Cookie
@@ -104,7 +97,7 @@ public class WebUtil {
          * @param cookies Cookie Array Object
          * @return Http Cookie Object
          */
-        HttpCookie getCookie(ServerHttpRequest request, String... cookies);
+        org.springframework.http.HttpCookie getCookie(org.springframework.http.server.reactive.ServerHttpRequest request, String... cookies);
 
         /**
          * Get Cookie
@@ -113,7 +106,7 @@ public class WebUtil {
          * @param cookies Cookie Array Object
          * @return Cookie Object
          */
-        Cookie getCookie(HttpServletRequest request, String... cookies);
+        jakarta.servlet.http.Cookie getCookie(jakarta.servlet.http.HttpServletRequest request, String... cookies);
 
         /**
          * Get Url Params
@@ -129,7 +122,7 @@ public class WebUtil {
          * @param request Server Http Request Object
          * @return Url Params Map Object
          */
-        Map<String, String> getRequestQueryParams(ServerHttpRequest request);
+        Map<String, String> getRequestQueryParams(org.springframework.http.server.reactive.ServerHttpRequest request);
 
         /**
          * Get Request Query Params
@@ -137,7 +130,7 @@ public class WebUtil {
          * @param request Http Servlet Request Object
          * @return Url Params Map Object
          */
-        Map<String, String> getRequestQueryParams(HttpServletRequest request);
+        Map<String, String> getRequestQueryParams(jakarta.servlet.http.HttpServletRequest request);
 
         /**
          * Merge Url Params
@@ -194,17 +187,17 @@ public class WebUtil {
         }
 
         @Override
-        public String getToken(ServerHttpRequest request) {
+        public String getToken(org.springframework.http.server.reactive.ServerHttpRequest request) {
             return getToken(getParam(request, TOKEN_PARAM), getHeader(request, AUTH_HEADER));
         }
 
         @Override
-        public String getToken(HttpServletRequest request) {
+        public String getToken(jakarta.servlet.http.HttpServletRequest request) {
             return getToken(getParam(request, TOKEN_PARAM), getHeader(request, AUTH_HEADER));
         }
 
         @Override
-        public String getParam(ServerHttpRequest request, String... params) {
+        public String getParam(org.springframework.http.server.reactive.ServerHttpRequest request, String... params) {
             String value = null;
             if (request != null) {
                 for (final String param : params) {
@@ -218,7 +211,7 @@ public class WebUtil {
         }
 
         @Override
-        public String getParam(HttpServletRequest request, String... params) {
+        public String getParam(jakarta.servlet.http.HttpServletRequest request, String... params) {
             String value = null;
             if (request != null) {
                 for (final String param : params) {
@@ -232,7 +225,7 @@ public class WebUtil {
         }
 
         @Override
-        public String getHeader(ServerHttpRequest request, String... headers) {
+        public String getHeader(org.springframework.http.server.reactive.ServerHttpRequest request, String... headers) {
             String value = null;
             if (request != null) {
                 for (final String header : headers) {
@@ -246,7 +239,7 @@ public class WebUtil {
         }
 
         @Override
-        public String getHeader(HttpServletRequest request, String... headers) {
+        public String getHeader(jakarta.servlet.http.HttpServletRequest request, String... headers) {
             String value = null;
             if (request != null) {
                 for (final String header : headers) {
@@ -260,9 +253,9 @@ public class WebUtil {
         }
 
         @Override
-        public List<String> getHeader(ServerHttpRequest request, Function<String, Boolean> filter) {
+        public List<String> getHeader(org.springframework.http.server.reactive.ServerHttpRequest request, Function<String, Boolean> filter) {
             final List<String> result = new ArrayList<>();
-            final HttpHeaders httpHeaders = request.getHeaders();
+            final org.springframework.http.HttpHeaders httpHeaders = request.getHeaders();
             for (final String key : httpHeaders.headerNames()) {
                 final String value = httpHeaders.getFirst(key);
                 final Boolean bool = filter.apply(key + "=" + value);
@@ -274,7 +267,7 @@ public class WebUtil {
         }
 
         @Override
-        public List<String> getHeader(HttpServletRequest request, Function<String, Boolean> filter) {
+        public List<String> getHeader(jakarta.servlet.http.HttpServletRequest request, Function<String, Boolean> filter) {
             final List<String> result = new ArrayList<>();
             final Enumeration<String> enumeration = request.getHeaderNames();
             while (enumeration.hasMoreElements()) {
@@ -289,10 +282,10 @@ public class WebUtil {
         }
 
         @Override
-        public HttpCookie getCookie(ServerHttpRequest request, String... cookies) {
-            HttpCookie value = null;
+        public org.springframework.http.HttpCookie getCookie(org.springframework.http.server.reactive.ServerHttpRequest request, String... cookies) {
+            org.springframework.http.HttpCookie value = null;
             if (request != null) {
-                final MultiValueMap<String, HttpCookie> httpCookies = request.getCookies();
+                final org.springframework.util.MultiValueMap<String, org.springframework.http.HttpCookie> httpCookies = request.getCookies();
                 for (final String cookie : cookies) {
                     value = httpCookies.getFirst(cookie);
                     if (value != null) {
@@ -304,13 +297,13 @@ public class WebUtil {
         }
 
         @Override
-        public Cookie getCookie(HttpServletRequest request, String... cookies) {
-            Cookie value = null;
+        public jakarta.servlet.http.Cookie getCookie(jakarta.servlet.http.HttpServletRequest request, String... cookies) {
+            jakarta.servlet.http.Cookie value = null;
             if (request != null) {
-                final Cookie[] httpCookies = request.getCookies();
+                final jakarta.servlet.http.Cookie[] httpCookies = request.getCookies();
                 if (httpCookies != null) {
                     for (final String cookie : cookies) {
-                        for (final Cookie httpCookie : httpCookies) {
+                        for (final jakarta.servlet.http.Cookie httpCookie : httpCookies) {
                             if (httpCookie != null && httpCookie.getName().equals(cookie)) {
                                 value = httpCookie;
                                 break;
@@ -339,12 +332,12 @@ public class WebUtil {
         }
 
         @Override
-        public Map<String, String> getRequestQueryParams(ServerHttpRequest request) {
+        public Map<String, String> getRequestQueryParams(org.springframework.http.server.reactive.ServerHttpRequest request) {
             return getUrlParams(request.getURI().getRawQuery());
         }
 
         @Override
-        public Map<String, String> getRequestQueryParams(HttpServletRequest request) {
+        public Map<String, String> getRequestQueryParams(jakarta.servlet.http.HttpServletRequest request) {
             return getUrlParams(request.getQueryString());
         }
 
@@ -381,7 +374,7 @@ public class WebUtil {
      * @param request Server Http Request Object
      * @return Token
      */
-    public static String getToken(ServerHttpRequest request) {
+    public static String getToken(org.springframework.http.server.reactive.ServerHttpRequest request) {
         return DEFINITION.getToken(request);
     }
 
@@ -391,7 +384,7 @@ public class WebUtil {
      * @param request Http Servlet Request Object
      * @return Token
      */
-    public static String getToken(HttpServletRequest request) {
+    public static String getToken(jakarta.servlet.http.HttpServletRequest request) {
         return DEFINITION.getToken(request);
     }
 
@@ -402,7 +395,7 @@ public class WebUtil {
      * @param params  Param Array Object
      * @return param
      */
-    public static String getParam(ServerHttpRequest request, String... params) {
+    public static String getParam(org.springframework.http.server.reactive.ServerHttpRequest request, String... params) {
         return DEFINITION.getParam(request, params);
     }
 
@@ -413,7 +406,7 @@ public class WebUtil {
      * @param params  Param Array Object
      * @return param
      */
-    public static String getParam(HttpServletRequest request, String... params) {
+    public static String getParam(jakarta.servlet.http.HttpServletRequest request, String... params) {
         return DEFINITION.getParam(request, params);
     }
 
@@ -424,7 +417,7 @@ public class WebUtil {
      * @param headers Header Array Object
      * @return header
      */
-    public static String getHeader(ServerHttpRequest request, String... headers) {
+    public static String getHeader(org.springframework.http.server.reactive.ServerHttpRequest request, String... headers) {
         return DEFINITION.getHeader(request, headers);
     }
 
@@ -435,7 +428,7 @@ public class WebUtil {
      * @param headers Header Array Object
      * @return header
      */
-    public static String getHeader(HttpServletRequest request, String... headers) {
+    public static String getHeader(jakarta.servlet.http.HttpServletRequest request, String... headers) {
         return DEFINITION.getHeader(request, headers);
     }
 
@@ -446,7 +439,7 @@ public class WebUtil {
      * @param filter  Filter Object
      * @return headers
      */
-    public static List<String> getHeader(ServerHttpRequest request, Function<String, Boolean> filter) {
+    public static List<String> getHeader(org.springframework.http.server.reactive.ServerHttpRequest request, Function<String, Boolean> filter) {
         return DEFINITION.getHeader(request, filter);
     }
 
@@ -457,7 +450,7 @@ public class WebUtil {
      * @param filter  Filter Object
      * @return headers
      */
-    public static List<String> getHeader(HttpServletRequest request, Function<String, Boolean> filter) {
+    public static List<String> getHeader(jakarta.servlet.http.HttpServletRequest request, Function<String, Boolean> filter) {
         return DEFINITION.getHeader(request, filter);
     }
 
@@ -468,7 +461,7 @@ public class WebUtil {
      * @param cookies Cookie Array Object
      * @return Http Cookie Object
      */
-    public static HttpCookie getCookie(ServerHttpRequest request, String... cookies) {
+    public static org.springframework.http.HttpCookie getCookie(org.springframework.http.server.reactive.ServerHttpRequest request, String... cookies) {
         return DEFINITION.getCookie(request, cookies);
     }
 
@@ -479,7 +472,7 @@ public class WebUtil {
      * @param cookies Cookie Array Object
      * @return Cookie Object
      */
-    public static Cookie getCookie(HttpServletRequest request, String... cookies) {
+    public static jakarta.servlet.http.Cookie getCookie(jakarta.servlet.http.HttpServletRequest request, String... cookies) {
         return DEFINITION.getCookie(request, cookies);
     }
 
@@ -499,7 +492,7 @@ public class WebUtil {
      * @param request Server Http Request Object
      * @return Url Params Map Object
      */
-    public static Map<String, String> getRequestQueryParams(ServerHttpRequest request) {
+    public static Map<String, String> getRequestQueryParams(org.springframework.http.server.reactive.ServerHttpRequest request) {
         return DEFINITION.getRequestQueryParams(request);
     }
 
@@ -509,7 +502,7 @@ public class WebUtil {
      * @param request Http Servlet Request Object
      * @return Url Params Map Object
      */
-    public static Map<String, String> getRequestQueryParams(HttpServletRequest request) {
+    public static Map<String, String> getRequestQueryParams(jakarta.servlet.http.HttpServletRequest request) {
         return DEFINITION.getRequestQueryParams(request);
     }
 

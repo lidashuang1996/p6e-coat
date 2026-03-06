@@ -158,7 +158,7 @@ public class ValidationUserTokenGatewayService {
         private static final String PRESET_USER_TOKEN_CACHE_PREFIX = "PRESET_USER_TOKEN:";
 
         public Mono<String> register(String token, String content, long timeout) {
-            return template.opsForValue().set(PRESET_USER_TOKEN_CACHE_PREFIX + token, content, Duration.ofSeconds(timeout)).map(_ -> token);
+            return template.opsForValue().set(PRESET_USER_TOKEN_CACHE_PREFIX + token, content, Duration.ofSeconds(timeout)).map(_ -> content);
         }
 
         public Mono<String> verification(String token) {

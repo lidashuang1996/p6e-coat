@@ -13,9 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -165,7 +163,7 @@ public final class HttpUtil {
                     try {
                         if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                             if (httpResponse.getEntity() != null && httpResponse.getEntity().getContent() != null) {
-                                return httpResponse.getEntity().getContent();
+                                return copyInputStream(httpResponse.getEntity().getContent());
                             } else {
                                 return null;
                             }
@@ -204,7 +202,7 @@ public final class HttpUtil {
                     try {
                         if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                             if (httpResponse.getEntity() != null && httpResponse.getEntity().getContent() != null) {
-                                return httpResponse.getEntity().getContent();
+                                return copyInputStream(httpResponse.getEntity().getContent());
                             } else {
                                 return null;
                             }
@@ -240,7 +238,7 @@ public final class HttpUtil {
                     try {
                         if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                             if (httpResponse.getEntity() != null && httpResponse.getEntity().getContent() != null) {
-                                return httpResponse.getEntity().getContent();
+                                return copyInputStream(httpResponse.getEntity().getContent());
                             } else {
                                 return null;
                             }
@@ -279,7 +277,7 @@ public final class HttpUtil {
                     try {
                         if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                             if (httpResponse.getEntity() != null && httpResponse.getEntity().getContent() != null) {
-                                return httpResponse.getEntity().getContent();
+                                return copyInputStream(httpResponse.getEntity().getContent());
                             } else {
                                 return null;
                             }
@@ -306,6 +304,25 @@ public final class HttpUtil {
                 LOGGER.error("[ HTTP UTIL ] <NETWORK> ERROR >>> ", e);
                 return null;
             }
+        }
+
+        private InputStream copyInputStream(InputStream inputStream) {
+            if (inputStream != null) {
+                try (
+                        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                ) {
+                    int len;
+                    byte[] buffer = new byte[1024];
+                    while ((len = inputStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, len);
+                    }
+                    outputStream.flush();
+                    return new ByteArrayInputStream(outputStream.toByteArray());
+                } catch (Exception e) {
+                    // ignore exception
+                }
+            }
+            return null;
         }
 
     }
