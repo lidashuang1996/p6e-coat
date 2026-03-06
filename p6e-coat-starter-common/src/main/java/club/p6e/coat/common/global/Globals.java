@@ -223,7 +223,8 @@ public final class Globals {
      * @return User Model Object
      */
     public static UserModel getUser() {
-        return USER_BUILDER.build(getUserContent());
+        final String content = getUserContent();
+        return content == null ? null : USER_BUILDER.build(content);
     }
 
     /**
@@ -241,7 +242,8 @@ public final class Globals {
      * @return Permission Model Object
      */
     public static PermissionModel getPermission() {
-        return PERMISSION_BUILDER.build(getPermissionContent());
+        final String content = getPermissionContent();
+        return content == null ? null : PERMISSION_BUILDER.build(content);
     }
 
     /**

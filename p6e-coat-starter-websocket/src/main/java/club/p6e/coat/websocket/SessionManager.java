@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.function.Function;
 
 /**
@@ -34,6 +36,8 @@ public class SessionManager {
      * Channel Name Cache Object
      */
     private static final Map<String, Map<String, Session>> CHANNELS = new ConcurrentHashMap<>();
+
+    private static final ScheduledThreadPoolExecutor EXECUTOR = new ScheduledThreadPoolExecutor(3);
 
     /**
      * Slot Number
@@ -191,7 +195,7 @@ public class SessionManager {
      * @param content  Content Data
      */
     private static void submit(List<Session> sessions, Function<User, Boolean> filter, String name, Object content) {
-        Thread.startVirtualThread(() -> {
+        EXECUTOR.submit(() -> {
             for (final Session session : sessions) {
                 if (filter != null && name.equalsIgnoreCase(session.getChannelName())) {
                     final Boolean result = filter.apply(session.getUser());
@@ -200,7 +204,7 @@ public class SessionManager {
                     }
                 }
             }
-        }).start();
+        });
     }
 
 }
