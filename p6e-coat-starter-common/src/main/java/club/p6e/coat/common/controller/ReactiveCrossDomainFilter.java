@@ -60,28 +60,17 @@ public class ReactiveCrossDomainFilter implements WebFilter {
             final ServerHttpRequest request = exchange.getRequest();
             final ServerHttpResponse response = exchange.getResponse();
             String origin = WebUtil.getHeader(request, HttpHeaders.ORIGIN);
-            System.out.println("xxx >> " + validationOrigin(origin, List.copyOf(crossDomain.getWhiteList())));
             if (validationOrigin(origin, List.copyOf(crossDomain.getWhiteList()))) {
                 response.getHeaders().setAccessControlAllowOrigin(origin == null ? "*" : origin);
                 response.getHeaders().setAccessControlMaxAge(getAccessControlMaxAge());
                 response.getHeaders().setAccessControlAllowMethods(getAccessControlAllowMethods());
                 response.getHeaders().setAccessControlAllowHeaders(getAccessControlAllowHeaders());
                 response.getHeaders().setAccessControlAllowCredentials(getAccessControlAllowCredentials());
-                System.out.println("1111");
                 if (HttpMethod.OPTIONS.matches(request.getMethod().name().toUpperCase())) {
                     response.setStatusCode(HttpStatus.OK);
                     return Mono.empty();
                 }
-                System.out.println("22222222222222222");
-                ServerWebExchange  xxx = exchange.mutate().response(response).build();
-                System.out.println("8989898989899");
-                HttpHeaders httpHeaders = xxx.getResponse().getHeaders();
-                httpHeaders.headerNames().forEach(name -> {
-                    System.out.println(
-                            name + " : " + httpHeaders.getFirst(name)
-                    );
-                });
-                return chain.filter(xxx);
+                return chain.filter(exchange.mutate().response(response).build());
             } else {
                 response.setStatusCode(HttpStatus.FORBIDDEN);
                 return response.writeWith(Mono.just(response.bufferFactory()

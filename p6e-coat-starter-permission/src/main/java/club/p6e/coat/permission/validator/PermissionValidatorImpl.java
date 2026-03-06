@@ -38,13 +38,11 @@ public class PermissionValidatorImpl implements PermissionValidator {
 
     @Override
     public PermissionDetails execute(String path, String method, List<String> groups) {
-        System.out.println("groups >>> " + groups);
         PermissionDetails vague = null;
         if (groups != null) {
             final List<PermissionDetails> permissions = this.matcher.match(path);
             if (permissions != null && !permissions.isEmpty()) {
                 for (final PermissionDetails permission : permissions) {
-                    System.out.println(permission);
                     final String pp = permission.getPath();
                     final String pm = permission.getMethod();
                     final String pg = String.valueOf(permission.getGid());

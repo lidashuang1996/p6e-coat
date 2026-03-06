@@ -404,6 +404,7 @@ public class BasicWebFilter implements WebFilter, Ordered {
                             final long e = model.getResponseDateTime().atZone(ZoneOffset.systemDefault()).toInstant().toEpochMilli();
                             model.setIntervalDateTime(e - s);
                         }
+                        LOGGER.info("YYY >>>> " + model.toJsonString());
                         if (properties.getLog().isDetails()) {
                             LOGGER.info(model.toJsonString());
                         } else {

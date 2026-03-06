@@ -60,7 +60,7 @@ public class BlockingCrossDomainFilter implements Filter {
             final HttpServletResponse response = (HttpServletResponse) servletResponse;
             final String origin = WebUtil.getHeader(request, HttpHeaders.ORIGIN);
             if (validationOrigin(origin, List.copyOf(crossDomain.getWhiteList()))) {
-                response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin == null ? "*" : origin);
+                response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin == null ? "https://dongdongne.com/" : origin);
                 response.setHeader(HttpHeaders.ACCESS_CONTROL_MAX_AGE, getAccessControlMaxAge());
                 response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, getAccessControlAllowMethods());
                 response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, getAccessControlAllowHeaders());

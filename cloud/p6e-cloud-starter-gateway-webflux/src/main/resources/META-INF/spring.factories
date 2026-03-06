@@ -2,7 +2,6 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 club.p6e.cloud.gateway.Properties,\
 club.p6e.cloud.gateway.RouteLocator,\
-club.p6e.cloud.gateway.BasicWebFilter,\
 club.p6e.cloud.gateway.PropertiesRefresher,\
 club.p6e.cloud.gateway.filter.InjectVoucherGatewayFilterFactory,\
 club.p6e.cloud.gateway.filter.InjectLanguageGatewayFilterFactory,\

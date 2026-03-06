@@ -7,9 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
  * Blocking Web Exception Config
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author lidashuang
  * @version 1.0
  */
-@ControllerAdvice
+@RestControllerAdvice
 @Component("club.p6e.coat.common.controller.BlockingWebExceptionConfig")
 @ConditionalOnClass(name = "org.springframework.web.servlet.package-info")
 public class BlockingWebExceptionConfig {

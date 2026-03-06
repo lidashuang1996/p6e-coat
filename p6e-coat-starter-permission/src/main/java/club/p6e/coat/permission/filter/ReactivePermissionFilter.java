@@ -89,10 +89,7 @@ public class ReactivePermissionFilter implements WebFilter, Ordered {
         final List<String> permissions = new ArrayList<>();
         final String path = request.getPath().value();
         final String method = request.getMethod().name().toUpperCase();
-        System.out.println("path >> " + path);
-        System.out.println("method >> " + method);
         final List<String> list = request.getHeaders().get(USER_PERMISSION_HEADER);
-        System.out.println("list >> " + list);
         if (list != null) {
             for (final String item : list) {
                 final List<String> data = JsonUtil.fromJsonToList(item, String.class);
