@@ -219,7 +219,7 @@ public class Channel implements ChannelInboundHandler {
      */
     private void executeCallbackClose(Session session) {
         if (session != null) {
-            for (Callback callback : this.callbacks) {
+            for (final Callback callback : this.callbacks) {
                 try {
                     callback.onClose(session);
                 } catch (Exception e) {
@@ -237,7 +237,7 @@ public class Channel implements ChannelInboundHandler {
      */
     private void executeCallbackError(Session session, Throwable throwable) {
         if (session != null) {
-            for (Callback callback : this.callbacks) {
+            for (final Callback callback : this.callbacks) {
                 try {
                     callback.onError(session, throwable);
                 } catch (Exception e) {
@@ -255,7 +255,7 @@ public class Channel implements ChannelInboundHandler {
      */
     private void executeCallbackMessage(Session session, String text) {
         if (session != null) {
-            for (Callback callback : this.callbacks) {
+            for (final Callback callback : this.callbacks) {
                 try {
                     callback.onMessage(session, text);
                 } catch (Exception e) {
@@ -273,7 +273,7 @@ public class Channel implements ChannelInboundHandler {
      */
     private void executeCallbackMessage(Session session, byte[] bytes) {
         if (session != null) {
-            for (Callback callback : this.callbacks) {
+            for (final Callback callback : this.callbacks) {
                 try {
                     callback.onMessage(session, bytes);
                 } catch (Exception e) {

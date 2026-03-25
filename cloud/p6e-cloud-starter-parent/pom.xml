@@ -22,7 +22,7 @@
         <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <p6e-cloud.version>${p6e-coat.version}</p6e-cloud.version>
+        <p6e-cloud.version>4.0.2</p6e-cloud.version>
         <spring-cloud.version>2025.1.1</spring-cloud.version>
     </properties>
 

@@ -5,6 +5,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 /**
@@ -36,9 +39,28 @@ public class SessionManager {
     private static final Map<String, Map<String, Session>> CHANNELS = new ConcurrentHashMap<>();
 
     /**
+     * Executor
+     */
+    private static final ThreadPoolExecutor EXECUTOR = new ThreadPoolExecutor(3, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<>());
+
+    /**
      * Slot Number
      */
     private static int SLOT_NUM = 15;
+
+    static {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            EXECUTOR.shutdown();
+            try {
+                if (!EXECUTOR.awaitTermination(10, TimeUnit.SECONDS)) {
+                    EXECUTOR.shutdownNow();
+                }
+            } catch (Exception e) {
+                EXECUTOR.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
+        }));
+    }
 
     /**
      * Init
@@ -187,7 +209,7 @@ public class SessionManager {
      * @param content  Content Data
      */
     private static void submit(List<Session> sessions, Function<User, Boolean> filter, String name, Object content) {
-        Thread.startVirtualThread(() -> {
+        EXECUTOR.submit(() -> {
             for (final Session session : sessions) {
                 if (filter != null && name.equalsIgnoreCase(session.getChannelName())) {
                     final Boolean result = filter.apply(session.getUser());
@@ -196,7 +218,7 @@ public class SessionManager {
                     }
                 }
             }
-        }).start();
+        });
     }
 
 }

@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,7 @@ import java.util.function.Function;
  * @author lidashuang
  * @version 1.0
  */
+@Component
 @EnableConfigurationProperties(Properties.class)
 public class Application implements ApplicationRunner {
 

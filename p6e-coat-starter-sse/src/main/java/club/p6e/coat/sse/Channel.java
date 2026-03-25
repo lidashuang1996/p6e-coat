@@ -62,7 +62,7 @@ public class Channel implements ChannelInboundHandler {
     @Override
     public void channelRead(ChannelHandlerContext context, Object o) {
         if (o instanceof final FullHttpRequest request) {
-            final Properties.Channel.CrossDomain pcc = psc.getCrossDomain();
+            final Properties.Channel.CrossDomain pcc = this.psc.getCrossDomain();
             final FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
             if (pcc.getEnable()) {
                 final String origin = request.headers().get(HttpHeaderNames.ORIGIN);

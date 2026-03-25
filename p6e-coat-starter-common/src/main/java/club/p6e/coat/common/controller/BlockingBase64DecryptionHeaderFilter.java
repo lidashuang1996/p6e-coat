@@ -39,51 +39,55 @@ public class BlockingBase64DecryptionHeaderFilter implements Filter {
      */
     private static class CustomHttpServletRequest extends HttpServletRequestWrapper {
 
-        /**
-         * Headers Object
-         */
-        private final Map<String, String> headers = new HashMap<>();
+            /**
+             * Headers Object
+             */
+            private final Map<String, String> headers = new HashMap<>();
 
-        /**
-         * Constructor Initialization
-         *
-         * @param request Http Servlet Request Object
-         * @param matcher Matcher Object
-         */
-        public CustomHttpServletRequest(HttpServletRequest request, Function<HttpServletRequest, List<String>> matcher) {
-            super(request);
-            final List<String> pending = matcher.apply(request);
-            final Enumeration<String> enumeration = request.getHeaderNames();
-            while (enumeration.hasMoreElements()) {
-                final String name = enumeration.nextElement();
-                final String value = request.getHeader(name);
-                if (name != null && value != null) {
-                    if (pending.contains(name)) {
-                        addHeader(name, new String(Base64.getDecoder().decode(value), StandardCharsets.UTF_8));
-                    } else {
-                        addHeader(name, value);
+            /**
+             * Constructor Initialization
+             *
+             * @param request Http Servlet Request Object
+             * @param matcher Matcher Object
+             */
+            public CustomHttpServletRequest(HttpServletRequest request, Function<HttpServletRequest, List<String>> matcher) {
+                super(request);
+                try {
+                    final List<String> pending = matcher.apply(request);
+                    final Enumeration<String> enumeration = request.getHeaderNames();
+                    while (enumeration.hasMoreElements()) {
+                        final String name = enumeration.nextElement();
+                        final String value = request.getHeader(name);
+                        if (name != null && value != null) {
+                            if (pending.contains(name)) {
+                                addHeader(name, new String(Base64.getDecoder().decode(value), StandardCharsets.UTF_8));
+                            } else {
+                                addHeader(name, value);
+                            }
+                        }
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
-        }
 
-        @Override
-        public String getHeader(String name) {
-            return headers.get(name.toLowerCase());
-        }
+            @Override
+            public String getHeader(String name) {
+                return headers.get(name.toLowerCase());
+            }
 
-        @Override
-        public Enumeration<String> getHeaderNames() {
-            return Collections.enumeration(headers.keySet());
-        }
+            @Override
+            public Enumeration<String> getHeaderNames() {
+                return Collections.enumeration(headers.keySet());
+            }
 
-        /**
-         * Add Header
-         *
-         * @param name  Header Name
-         * @param value Header Value
-         */
-        public void addHeader(String name, String value) {
+            /**
+             * Add Header
+             *
+             * @param name  Header Name
+             * @param value Header Value
+             */
+            public void addHeader(String name, String value) {
             this.headers.put(name.toLowerCase(), value);
         }
 
