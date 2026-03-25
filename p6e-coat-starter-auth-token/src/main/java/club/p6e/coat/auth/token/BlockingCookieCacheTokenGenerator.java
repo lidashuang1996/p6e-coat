@@ -18,28 +18,19 @@ import java.time.LocalDateTime;
 public class BlockingCookieCacheTokenGenerator implements BlockingTokenGenerator {
 
     /**
-     * Auth Cookie Name
-     */
-    protected static final String AUTH_COOKIE_NAME = "P6E_AUTH";
-
-    /**
      * Device Header Name
-     * Request Header Of the Current Device
-     * Request Header Is Customized By The Program And Not Carried By The User Request
-     * When Receiving Requests, It Is Necessary To Clear The Request Header Carried By The User To Ensure Program Security
      */
-    @SuppressWarnings("ALL")
     protected static final String DEVICE_HEADER_NAME = "P6e-Device";
 
     /**
-     * User Token Cache Object
+     * Blocking User Token Cache Object
      */
     protected final BlockingUserTokenCache cache;
 
     /**
      * Constructor Initialization
      *
-     * @param cache User Token Cache Object
+     * @param cache Blocking User Token Cache Object
      */
     public BlockingCookieCacheTokenGenerator(BlockingUserTokenCache cache) {
         this.cache = cache;
@@ -51,41 +42,49 @@ public class BlockingCookieCacheTokenGenerator implements BlockingTokenGenerator
         final long duration = duration();
         final String device = request.getHeader(DEVICE_HEADER_NAME);
         cache.set(user.id(), device == null ? "PC" : device, token, user.serialize(), duration);
-        response.addCookie(cookie(AUTH_COOKIE_NAME, token));
+        response.addCookie(cookie(name(), token));
         return LocalDateTime.now();
     }
 
     /**
-     * Cache Duration
+     * Get Cookie Name
      *
-     * @return Cache Duration Number
+     * @return Cookie Name
      */
-    public long duration() {
-        return 3600L;
+    public String name() {
+        return "P6E_AUTH";
     }
 
     /**
-     * Token Content
+     * Get Cookie Duration
+     *
+     * @return Cookie Duration
+     */
+    public int duration() {
+        return 3600;
+    }
+
+    /**
+     * Get Token Content
      *
      * @return Token Content
      */
     public String token() {
-        return GeneratorUtil.uuid() + GeneratorUtil.random(8, true, false);
+        return GeneratorUtil.uuid() + System.currentTimeMillis() + GeneratorUtil.random(8, true, false);
     }
 
     /**
-     * Cookie
+     * Set Cookie
      *
      * @param name    Cookie Name
      * @param content Cookie Content
-     * @return
+     * @return Cookie Object
      */
     public Cookie cookie(String name, String content) {
-        final int age = (int) duration();
         final Cookie cookie = new Cookie(name, content);
         cookie.setPath("/");
-        cookie.setMaxAge(age);
         cookie.setHttpOnly(true);
+        cookie.setMaxAge(duration());
         return cookie;
     }
 

@@ -43,7 +43,7 @@ public class BlockingLocalStorageCacheTokenCleaner implements BlockingTokenClean
     protected final UserBuilder builder;
 
     /**
-     * User Token Cache Object
+     * Blocking User Token Cache Object
      */
     protected final BlockingUserTokenCache cache;
 
@@ -70,28 +70,19 @@ public class BlockingLocalStorageCacheTokenCleaner implements BlockingTokenClean
             list.add(qt);
         }
         if (!list.isEmpty()) {
-            execute(list);
+            for (final String item : list) {
+                final BlockingUserTokenCache.Model model;
+                if (item.startsWith(AUTHORIZATION_PREFIX)) {
+                    model = cache.getToken(item.substring(AUTHORIZATION_PREFIX.length()));
+                } else {
+                    model = cache.getToken(item);
+                }
+                if (model != null) {
+                    cache.cleanToken(item);
+                }
+            }
         }
         return LocalDateTime.now();
-    }
-
-    /**
-     * Execute Token Content
-     *
-     * @param list Token List Object
-     */
-    public void execute(List<String> list) {
-        for (final String item : list) {
-            final BlockingUserTokenCache.Model model;
-            if (item.startsWith(AUTHORIZATION_PREFIX)) {
-                model = cache.getToken(item.substring(AUTHORIZATION_PREFIX.length()));
-            } else {
-                model = cache.getToken(item);
-            }
-            if (model != null) {
-                cache.cleanToken(item);
-            }
-        }
     }
 
 }

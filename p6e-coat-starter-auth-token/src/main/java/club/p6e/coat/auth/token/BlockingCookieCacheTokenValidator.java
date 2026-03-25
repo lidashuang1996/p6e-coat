@@ -16,17 +16,12 @@ import jakarta.servlet.http.HttpServletResponse;
 public class BlockingCookieCacheTokenValidator implements BlockingTokenValidator {
 
     /**
-     * Auth Cookie Name
-     */
-    protected static final String AUTH_COOKIE_NAME = "P6E_AUTH";
-
-    /**
      * User Builder Object
      */
     protected final UserBuilder builder;
 
     /**
-     * User Token Cache Object
+     * Blocking User Token Cache Object
      */
     protected final BlockingUserTokenCache cache;
 
@@ -34,7 +29,7 @@ public class BlockingCookieCacheTokenValidator implements BlockingTokenValidator
      * Constructor Initialization
      *
      * @param builder User Builder Object
-     * @param cache   User Token Cache Object
+     * @param cache   Blocking User Token Cache Object
      */
     public BlockingCookieCacheTokenValidator(UserBuilder builder, BlockingUserTokenCache cache) {
         this.cache = cache;
@@ -43,13 +38,17 @@ public class BlockingCookieCacheTokenValidator implements BlockingTokenValidator
 
     @Override
     public User execute(HttpServletRequest request, HttpServletResponse response) {
+        final String name = name();
         final Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (final Cookie cookie : cookies) {
-                if (AUTH_COOKIE_NAME.equalsIgnoreCase(cookie.getName())) {
-                    final String content = execute(cookie);
-                    if (content != null) {
-                        return this.builder.create(content);
+                if (name.equalsIgnoreCase(cookie.getName())) {
+                    final BlockingUserTokenCache.Model model = cache.getToken(cookie.getValue());
+                    if (model != null) {
+                        final String content = cache.getUser(model.getUid());
+                        if (content != null) {
+                            return this.builder.create(content);
+                        }
                     }
                 }
             }
@@ -58,17 +57,12 @@ public class BlockingCookieCacheTokenValidator implements BlockingTokenValidator
     }
 
     /**
-     * Execute Token Content
+     * Name
      *
-     * @param cookie Cookie Object
-     * @return User String Object
+     * @return Name
      */
-    public String execute(Cookie cookie) {
-        final BlockingUserTokenCache.Model model = cache.getToken(cookie.getValue());
-        if (model != null) {
-            return cache.getUser(model.getUid());
-        }
-        return null;
+    public String name() {
+        return "P6E_AUTH";
     }
 
 }

@@ -16,19 +16,14 @@ import java.time.LocalDateTime;
 public class BlockingCookieCacheTokenCleaner implements BlockingTokenCleaner {
 
     /**
-     * Auth Cookie Name
-     */
-    protected static final String AUTH_COOKIE_NAME = "P6E_AUTH";
-
-    /**
-     * User Token Cache Object
+     * Blocking User Token Cache Object
      */
     protected final BlockingUserTokenCache cache;
 
     /**
      * Constructor Initialization
      *
-     * @param cache User Token Cache Object
+     * @param cache Blocking User Token Cache Object
      */
     public BlockingCookieCacheTokenCleaner(BlockingUserTokenCache cache) {
         this.cache = cache;
@@ -36,13 +31,16 @@ public class BlockingCookieCacheTokenCleaner implements BlockingTokenCleaner {
 
     @Override
     public Object execute(HttpServletRequest request, HttpServletResponse response) {
+        final String name = name();
         final Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (final Cookie cookie : cookies) {
-                final String name = cookie.getName();
-                if (AUTH_COOKIE_NAME.equalsIgnoreCase(cookie.getName())) {
-                    response.addCookie(cookie(name, ""));
-                    execute(cookie);
+                if (name.equalsIgnoreCase(cookie.getName())) {
+                    response.addCookie(cookie(cookie.getName(), ""));
+                    final BlockingUserTokenCache.Model model = cache.getToken(cookie.getValue());
+                    if (model != null) {
+                        cache.cleanToken(model.getToken());
+                    }
                 }
             }
         }
@@ -50,23 +48,20 @@ public class BlockingCookieCacheTokenCleaner implements BlockingTokenCleaner {
     }
 
     /**
-     * Execute Token Content
+     * Get Cookie Name
      *
-     * @param cookie Cookie Object
+     * @return Cookie Name
      */
-    public void execute(Cookie cookie) {
-        final BlockingUserTokenCache.Model model = cache.getToken(cookie.getValue());
-        if (model != null) {
-            cache.cleanToken(model.getToken());
-        }
+    public String name() {
+        return "P6E_AUTH";
     }
 
     /**
-     * Cookie
+     * Set Cookie
      *
      * @param name    Cookie Name
      * @param content Cookie Content
-     * @return
+     * @return Cookie Object
      */
     public Cookie cookie(String name, String content) {
         final Cookie cookie = new Cookie(name, content);

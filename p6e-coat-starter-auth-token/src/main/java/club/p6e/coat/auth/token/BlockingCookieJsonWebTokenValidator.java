@@ -16,11 +16,6 @@ import jakarta.servlet.http.HttpServletResponse;
 public class BlockingCookieJsonWebTokenValidator implements BlockingTokenValidator {
 
     /**
-     * Auth Cookie Name
-     */
-    protected static final String AUTH_COOKIE_NAME = "P6E_AUTH";
-
-     /**
      * User Builder Object
      */
     protected final UserBuilder builder;
@@ -43,10 +38,11 @@ public class BlockingCookieJsonWebTokenValidator implements BlockingTokenValidat
 
     @Override
     public User execute(HttpServletRequest request, HttpServletResponse response) {
+        final String name = name();
         final Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (final Cookie cookie : cookies) {
-                if (AUTH_COOKIE_NAME.equalsIgnoreCase(cookie.getName())) {
+                if (name.equalsIgnoreCase(cookie.getName())) {
                     String content = codec.decryption(cookie.getValue());
                     if (content != null) {
                         content = content.substring(content.indexOf("@") + 1);
@@ -56,6 +52,15 @@ public class BlockingCookieJsonWebTokenValidator implements BlockingTokenValidat
             }
         }
         return null;
+    }
+
+    /**
+     * Name
+     *
+     * @return Name
+     */
+    public String name() {
+        return "P6E_AUTH";
     }
 
 }

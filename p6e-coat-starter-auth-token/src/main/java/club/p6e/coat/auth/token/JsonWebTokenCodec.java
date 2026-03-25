@@ -26,7 +26,7 @@ public class JsonWebTokenCodec {
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonWebTokenCodec.class);
 
     /**
-     * Is Init
+     * Init Status
      */
     private final boolean init;
 
@@ -50,7 +50,7 @@ public class JsonWebTokenCodec {
      *
      * @return Json Web Token Algorithm Object
      */
-    private Algorithm algorithm() {
+    public Algorithm algorithm() {
         return Algorithm.HMAC256(secret);
     }
 

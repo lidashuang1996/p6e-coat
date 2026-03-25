@@ -17,17 +17,8 @@ import java.time.LocalDateTime;
 public class BlockingCookieJsonWebTokenGenerator implements BlockingTokenGenerator {
 
     /**
-     * Auth Cookie Name
-     */
-    protected static final String AUTH_COOKIE_NAME = "P6E_AUTH";
-
-    /**
      * Device Header Name
-     * Request Header Of the Current Device
-     * Request Header Is Customized By The Program And Not Carried By The User Request
-     * When Receiving Requests, It Is Necessary To Clear The Request Header Carried By The User To Ensure Program Security
      */
-    @SuppressWarnings("ALL")
     protected static final String DEVICE_HEADER_NAME = "P6e-Device";
 
     /**
@@ -49,17 +40,26 @@ public class BlockingCookieJsonWebTokenGenerator implements BlockingTokenGenerat
         final long duration = duration();
         final String device = request.getHeader(DEVICE_HEADER_NAME);
         final String content = codec.encryption(user.id(), (device == null ? "PC" : device) + "@" + user.serialize(), duration);
-        response.addCookie(cookie(AUTH_COOKIE_NAME, content));
+        response.addCookie(cookie(name(), content));
         return LocalDateTime.now();
     }
 
     /**
-     * Cache Duration
+     * Get Cookie Name
      *
-     * @return Cache Duration Number
+     * @return Cookie Name
      */
-    public long duration() {
-        return 3600L;
+    public String name() {
+        return "P6E_AUTH";
+    }
+
+    /**
+     * Get Cookie Duration
+     *
+     * @return Cookie Duration
+     */
+    public int duration() {
+        return 3600;
     }
 
     /**
@@ -67,14 +67,13 @@ public class BlockingCookieJsonWebTokenGenerator implements BlockingTokenGenerat
      *
      * @param name    Cookie Name
      * @param content Cookie Content
-     * @return
+     * @return Cookie Object
      */
     public Cookie cookie(String name, String content) {
-        final int age = (int) duration();
         final Cookie cookie = new Cookie(name, content);
         cookie.setPath("/");
-        cookie.setMaxAge(age);
         cookie.setHttpOnly(true);
+        cookie.setMaxAge(duration());
         return cookie;
     }
 

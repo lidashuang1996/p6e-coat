@@ -16,11 +16,6 @@ import java.time.LocalDateTime;
 public class BlockingCookieJsonWebTokenCleaner implements BlockingTokenCleaner {
 
     /**
-     * Auth Cookie Name
-     */
-    protected static final String AUTH_COOKIE_NAME = "P6E_AUTH";
-
-    /**
      * JSON Web Token Codec Object
      */
     protected final JsonWebTokenCodec codec;
@@ -36,16 +31,25 @@ public class BlockingCookieJsonWebTokenCleaner implements BlockingTokenCleaner {
 
     @Override
     public Object execute(HttpServletRequest request, HttpServletResponse response) {
+        final String name = name();
         final Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (final Cookie cookie : cookies) {
-                final String name = cookie.getName();
-                if (AUTH_COOKIE_NAME.equalsIgnoreCase(name)) {
+                if (name.equalsIgnoreCase(cookie.getName())) {
                     response.addCookie(cookie(name, ""));
                 }
             }
         }
         return LocalDateTime.now();
+    }
+
+    /**
+     * Name
+     *
+     * @return Name
+     */
+    public String name() {
+        return "P6E_AUTH";
     }
 
     /**
