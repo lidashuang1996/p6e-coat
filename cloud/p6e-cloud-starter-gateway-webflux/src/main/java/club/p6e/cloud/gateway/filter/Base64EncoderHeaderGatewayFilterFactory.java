@@ -1,5 +1,7 @@
 package club.p6e.cloud.gateway.filter;
 
+import jakarta.validation.constraints.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -19,8 +21,9 @@ import java.util.Base64;
  */
 public class Base64EncoderHeaderGatewayFilterFactory extends AbstractGatewayFilterFactory<Object> {
 
+    @NonNull
     @Override
-    public GatewayFilter apply(Object config) {
+    public GatewayFilter apply(@NotNull Object config) {
         return new CustomGatewayFilter();
     }
 
@@ -29,17 +32,17 @@ public class Base64EncoderHeaderGatewayFilterFactory extends AbstractGatewayFilt
      */
     public static class CustomGatewayFilter implements GatewayFilter {
 
+        @NonNull
         @Override
-        public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        public Mono<Void> filter(ServerWebExchange exchange, @NonNull GatewayFilterChain chain) {
             final ServerHttpRequest request = exchange.getRequest();
             final HttpHeaders httpHeaders = request.getHeaders();
             final ServerHttpRequest.Builder builder = request.mutate();
             for (final String name : httpHeaders.headerNames()) {
                 // all request headers starting from p6e-
-                if (name != null && name.toLowerCase().startsWith("p6e-")) {
+                if (name.toLowerCase().startsWith("p6e-")) {
                     final String value = httpHeaders.getFirst(name);
                     if (value != null) {
-                        // base64 encoder
                         builder.header(name, Base64.getEncoder().encodeToString(value.getBytes(StandardCharsets.UTF_8)));
                     }
                 }

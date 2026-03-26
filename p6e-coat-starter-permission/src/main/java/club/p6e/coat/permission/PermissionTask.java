@@ -8,8 +8,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.atomic.AtomicLong;
-
 /**
  * Permission Task
  *
@@ -22,10 +20,8 @@ import java.util.concurrent.atomic.AtomicLong;
 public class PermissionTask {
 
     /**
-     * Counter Object
+     * Permission Task Run
      */
-    private final AtomicLong counter = new AtomicLong(0);
-
     @Scheduled(initialDelay = 10000L, fixedRate = 3600000L)
     public void run() {
         execute();
@@ -40,13 +36,16 @@ public class PermissionTask {
         if (SpringUtil.exist(PermissionTaskCallback.class)) {
             callback = SpringUtil.getBean(PermissionTaskCallback.class);
         }
-        final long num = counter.getAndIncrement();
-        if (callback != null) {
-            callback.before(num);
-        }
         try {
             Class.forName("org.springframework.web.servlet.package-info");
-            SpringUtil.getBean(BlockingPermissionAutoRefreshTask.class).execute();
+            final BlockingPermissionAutoRefreshTask task = SpringUtil.getBean(BlockingPermissionAutoRefreshTask.class);
+            if (callback != null) {
+                callback.before(task.version());
+            }
+            task.execute();
+            if (callback != null) {
+                callback.after(task.version());
+            }
             run = true;
         } catch (ClassNotFoundException e) {
             // ignore exception
@@ -54,13 +53,17 @@ public class PermissionTask {
         if (!run) {
             try {
                 Class.forName("org.springframework.web.reactive.package-info");
-                SpringUtil.getBean(ReactivePermissionAutoRefreshTask.class).execute().block();
+                final ReactivePermissionAutoRefreshTask task = SpringUtil.getBean(ReactivePermissionAutoRefreshTask.class);
+                if (callback != null) {
+                    callback.before(task.version());
+                }
+                task.execute().block();
+                if (callback != null) {
+                    callback.after(task.version());
+                }
             } catch (ClassNotFoundException e) {
                 // ignore exception
             }
-        }
-        if (callback != null) {
-            callback.after(num);
         }
     }
 

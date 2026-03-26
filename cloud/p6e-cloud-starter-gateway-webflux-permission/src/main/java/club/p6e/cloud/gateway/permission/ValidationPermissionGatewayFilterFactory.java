@@ -1,6 +1,7 @@
 package club.p6e.cloud.gateway.permission;
 
 import club.p6e.coat.common.utils.JsonUtil;
+import org.jspecify.annotations.NonNull;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -30,6 +31,7 @@ public class ValidationPermissionGatewayFilterFactory extends AbstractGatewayFil
         this.service = service;
     }
 
+    @NonNull
     @Override
     public GatewayFilter apply(Object config) {
         return new CustomGatewayFilter(service);
@@ -44,15 +46,13 @@ public class ValidationPermissionGatewayFilterFactory extends AbstractGatewayFil
 
         /**
          * Permission Header
-         * Save The Request Header Of The Permission Information Used In The Current Request
-         * Request Header Is Customized By The Program And Not Carried By The User Request
-         * When Receiving Requests, It Is Necessary To Clear The Request Header Carried By The User To Ensure Program Security
          */
         @SuppressWarnings("ALL")
         private static final String PERMISSION_HEADER = "P6e-Permission";
 
+        @NonNull
         @Override
-        public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        public Mono<Void> filter(ServerWebExchange exchange, @NonNull GatewayFilterChain chain) {
             final ServerHttpRequest request = exchange.getRequest();
             return service.execute(exchange).flatMap(p ->
                     chain.filter(exchange.mutate().request(request.mutate()

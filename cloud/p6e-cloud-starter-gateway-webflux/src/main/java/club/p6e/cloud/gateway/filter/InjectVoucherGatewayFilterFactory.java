@@ -54,7 +54,7 @@ public class InjectVoucherGatewayFilterFactory extends AbstractGatewayFilterFact
 
         @NonNull
         @Override
-        public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        public Mono<Void> filter(ServerWebExchange exchange, @NonNull GatewayFilterChain chain) {
             final ServerHttpRequest.Builder builder = exchange.getRequest().mutate();
             if (this.config != null && this.config.getKey() != null && this.config.getValue() != null) {
                 final String key = this.config.getKey().trim();

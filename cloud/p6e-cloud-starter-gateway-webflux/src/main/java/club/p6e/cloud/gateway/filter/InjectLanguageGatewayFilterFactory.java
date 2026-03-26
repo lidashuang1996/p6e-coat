@@ -18,23 +18,18 @@ public class InjectLanguageGatewayFilterFactory extends AbstractGatewayFilterFac
 
     /**
      * Language Param Name
-     * Request To Carry Language Parameter
      */
     @SuppressWarnings("ALL")
     private static final String LANGUAGE_PARAM = "language";
 
     /**
      * Language Header Name
-     * Request To Carry Language Request Header
      */
     @SuppressWarnings("ALL")
     private static final String X_LANGUAGE_HEADER = "X-Language";
 
     /**
      * Language Header Name
-     * Request Header For The User Current Language
-     * Request Header Is Customized By The Program And Not Carried By The User Request
-     * When Receiving Requests, It Is Necessary To Clear The Request Header Carried By The User To Ensure Program Security
      */
     @SuppressWarnings("ALL")
     private static final String LANGUAGE_HEADER = "P6e-Language";
@@ -52,7 +47,7 @@ public class InjectLanguageGatewayFilterFactory extends AbstractGatewayFilterFac
 
         @NonNull
         @Override
-        public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        public Mono<Void> filter(ServerWebExchange exchange, @NonNull GatewayFilterChain chain) {
             final ServerHttpRequest request = exchange.getRequest();
             String language = request.getQueryParams().getFirst(LANGUAGE_PARAM);
             if (language == null) {

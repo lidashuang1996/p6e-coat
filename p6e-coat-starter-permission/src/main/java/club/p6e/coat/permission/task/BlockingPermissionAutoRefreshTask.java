@@ -15,4 +15,11 @@ public interface BlockingPermissionAutoRefreshTask {
      */
     Long execute();
 
+    /**
+     * Get Version
+     *
+     * @return Version
+     */
+    Integer version();
+
 }

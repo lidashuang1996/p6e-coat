@@ -11,14 +11,14 @@ public interface PermissionTaskCallback {
     /**
      * Before
      *
-     * @param num Num
+     * @param num Version Num
      */
     void before(long num);
 
     /**
      * After
      *
-     * @param num Num
+     * @param num Version Num
      */
     void after(long num);
 

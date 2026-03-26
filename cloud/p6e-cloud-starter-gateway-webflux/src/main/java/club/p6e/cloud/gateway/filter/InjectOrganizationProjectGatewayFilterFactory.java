@@ -18,37 +18,30 @@ public class InjectOrganizationProjectGatewayFilterFactory extends AbstractGatew
 
     /**
      * Project Param Name
-     * Request To Carry Project Parameter [pid/1]
      */
     @SuppressWarnings("ALL")
     private static final String PROJECT_PARAM_1 = "pid";
 
     /**
      * Project Param Name
-     * Request To Carry Project Parameter [project/2]
      */
     @SuppressWarnings("ALL")
     private static final String PROJECT_PARAM_2 = "project";
 
     /**
      * Project Param Name
-     * Request To Carry Project Parameter [projectId/3]
      */
     @SuppressWarnings("ALL")
     private static final String PROJECT_PARAM_3 = "projectId";
 
     /**
      * Project Header Name
-     * Request To Carry Project Request Header
      */
     @SuppressWarnings("ALL")
     private static final String X_PROJECT_HEADER = "X-Project";
 
     /**
      * Project Header Name
-     * Request Header For The User Current Project
-     * Request Header Is Customized By The Program And Not Carried By The User Request
-     * When Receiving Requests, It Is Necessary To Clear The Request Header Carried By The User To Ensure Program Security
      */
     @SuppressWarnings("ALL")
     private static final String PROJECT_HEADER = "P6e-Project";
@@ -66,7 +59,7 @@ public class InjectOrganizationProjectGatewayFilterFactory extends AbstractGatew
 
         @NonNull
         @Override
-        public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        public Mono<Void> filter(ServerWebExchange exchange, @NonNull GatewayFilterChain chain) {
             final ServerHttpRequest request = exchange.getRequest();
             String project = request.getQueryParams().getFirst(PROJECT_PARAM_1);
             if (project == null) {

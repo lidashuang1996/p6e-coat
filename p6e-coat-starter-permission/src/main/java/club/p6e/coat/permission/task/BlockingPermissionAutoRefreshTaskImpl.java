@@ -42,7 +42,7 @@ public class BlockingPermissionAutoRefreshTaskImpl implements BlockingPermission
     /**
      * Version Object
      */
-    private final AtomicInteger version = new AtomicInteger(1);
+    private final AtomicInteger version = new AtomicInteger(0);
 
     /**
      * Constructor Initialization
@@ -64,6 +64,11 @@ public class BlockingPermissionAutoRefreshTaskImpl implements BlockingPermission
         this.matcher.cleanExpiredVersionData(this.version.get());
         LOGGER.info("[ PERMISSION AUTO REFRESH TASK ] COMPLETE PERMISSION UPDATE TASK, COUNT >>> {}, VERSION >>> {}", result, this.version.get());
         return result;
+    }
+
+    @Override
+    public Integer version() {
+        return this.version.get();
     }
 
     /**

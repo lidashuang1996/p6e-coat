@@ -43,7 +43,7 @@ public class ReactivePermissionAutoRefreshTaskImpl implements ReactivePermission
     /**
      * Version Object
      */
-    private final AtomicInteger version = new AtomicInteger(1);
+    private final AtomicInteger version = new AtomicInteger(0);
 
     /**
      * Constructor Initialization
@@ -66,6 +66,11 @@ public class ReactivePermissionAutoRefreshTaskImpl implements ReactivePermission
             LOGGER.info("[ PERMISSION AUTO REFRESH TASK ] COMPLETE PERMISSION UPDATE TASK, COUNT >>> {}, VERSION >>> {}", l, this.version.get());
             return l;
         });
+    }
+
+    @Override
+    public Integer version() {
+        return this.version.get();
     }
 
     /**

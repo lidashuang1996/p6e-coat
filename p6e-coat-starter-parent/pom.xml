@@ -133,14 +133,6 @@
             </dependency>
             <!-- Netty ALL [END] -->
 
-            <!-- Spring AOP [START] -->
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-aop</artifactId>
-                <version>${spring-boot-aop.version}</version>
-            </dependency>
-            <!-- Spring AOP [END] -->
-
             <!-- Java JWT [START] -->
             <dependency>
                 <groupId>com.auth0</groupId>
@@ -148,6 +140,14 @@
                 <version>${java-jwt.version}</version>
             </dependency>
             <!-- Java JWT [END] -->
+
+            <!-- Spring AOP [START] -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-aop</artifactId>
+                <version>${spring-boot-aop.version}</version>
+            </dependency>
+            <!-- Spring AOP [END] -->
 
             <!-- PostgreSQL [START] -->
             <dependency>

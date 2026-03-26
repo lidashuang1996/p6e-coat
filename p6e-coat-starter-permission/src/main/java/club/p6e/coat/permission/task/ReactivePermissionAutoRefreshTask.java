@@ -17,4 +17,11 @@ public interface ReactivePermissionAutoRefreshTask {
      */
     Mono<Long> execute();
 
+    /**
+     * Get Version
+     *
+     * @return Version
+     */
+    Integer version();
+
 }

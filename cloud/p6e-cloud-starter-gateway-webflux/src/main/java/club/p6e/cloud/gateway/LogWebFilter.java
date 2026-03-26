@@ -1,13 +1,13 @@
 package club.p6e.cloud.gateway;
 
 import club.p6e.coat.common.utils.JsonUtil;
+import club.p6e.coat.common.utils.TransformationUtil;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.jspecify.annotations.NonNull;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferFactory;
@@ -15,10 +15,12 @@ import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.core.io.buffer.DefaultDataBufferFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.http.server.reactive.ServerHttpResponseDecorator;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
@@ -36,20 +38,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Pattern;
 
 /**
- * Basic Web Filter
+ * Log Web Filter
  *
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(BasicWebFilter.class)
-public class BasicWebFilter implements WebFilter, Ordered {
+@SuppressWarnings("ALL")
+public class LogWebFilter implements WebFilter, Ordered {
 
     /**
      * Inject Log Object
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(BasicWebFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LogWebFilter.class);
 
     /**
      * Data Buffer Factory Object
@@ -57,28 +60,20 @@ public class BasicWebFilter implements WebFilter, Ordered {
     private static final DataBufferFactory DATA_BUFFER_FACTORY = new DefaultDataBufferFactory();
 
     /**
+     * Token Pattern
+     */
+    private static final Pattern TOKEN_PATTERN = Pattern.compile("(\"token\":\")([^\"]+)(\")");
+
+    /**
      * Order
      */
-    private static final int ORDER = Integer.MIN_VALUE + 3000;
+    private static final int ORDER = Integer.MIN_VALUE + 1000;
 
     /**
      * User Info Header Name
      */
     @SuppressWarnings("ALL")
     private static final String USER_INFO_HEADER = "P6e-User-Info";
-
-    /**
-     * Only Response Header
-     */
-    private static final String[] ONLY_RESPONSE_HEADERS = new String[]{
-            "Content-Type",
-            "Access-Control",
-            "Access-Control-Max-Age",
-            "Access-Control-Allow-Origin",
-            "Access-Control-Allow-Headers",
-            "Access-Control-Allow-Methods",
-            "Access-Control-Allow-Credentials"
-    };
 
     /**
      * Properties Object
@@ -90,7 +85,7 @@ public class BasicWebFilter implements WebFilter, Ordered {
      *
      * @param properties Properties Object
      */
-    public BasicWebFilter(Properties properties) {
+    public LogWebFilter(Properties properties) {
         this.properties = properties;
     }
 
@@ -199,18 +194,6 @@ public class BasicWebFilter implements WebFilter, Ordered {
             this.model = model;
             this.properties = properties;
             this.request = exchange.getRequest();
-
-            // request header is used internally for calling
-            // prohibit sending requests that carry this request header to downstream services
-            final List<String> keys = new ArrayList<>();
-            for (final String key : this.getHeaders().headerNames()) {
-                if (key.toLowerCase().startsWith("p6e-")) {
-                    keys.add(key);
-                }
-            }
-            keys.forEach(key -> this.getHeaders().remove(key));
-
-            // log info
             if (properties.getLog().isEnable()) {
                 model.setIp(ip(request));
                 model.setId(request.getId());
@@ -346,18 +329,6 @@ public class BasicWebFilter implements WebFilter, Ordered {
 
         @Override
         public @NonNull Mono<Void> writeWith(@NonNull Publisher<? extends DataBuffer> body) {
-            // only response headers
-            final HttpHeaders httpHeaders = response.getHeaders();
-            for (final String key : httpHeaders.headerNames()) {
-                final List<String> value = httpHeaders.get(key);
-                if (value != null && value.size() > 1) {
-                    for (final String item : ONLY_RESPONSE_HEADERS) {
-                        if (key.equalsIgnoreCase(item)) {
-                            httpHeaders.set(key, value.getFirst());
-                        }
-                    }
-                }
-            }
             if (!properties.getLog().isEnable()) {
                 return super.writeWith(body);
             }
@@ -378,42 +349,52 @@ public class BasicWebFilter implements WebFilter, Ordered {
                         if (status.get()) {
                             return DATA_BUFFER_FACTORY.wrap(bytes);
                         }
-                        status.set(true);
-                        final Map<String, String> rBodyMap = new HashMap<>(2);
-                        rBodyMap.put("type", type);
-                        final byte[] content = new byte[Math.min(bytes.length, 1024 * 5)];
-                        System.arraycopy(bytes, 0, content, 0, content.length);
-                        if (type.startsWith(MediaType.APPLICATION_JSON_VALUE)) {
-                            rBodyMap.put("content", new String(content, StandardCharsets.UTF_8)
-                                    .replaceAll("\r", "").replaceAll("\n", ""));
-                        } else {
-                            rBodyMap.put("content", new String(content, StandardCharsets.UTF_8));
-                        }
-                        model.setResponseDateTime(LocalDateTime.now());
-                        model.setResponseBody(JsonUtil.toJson(rBodyMap));
-                        model.setResponseHeaders(JsonUtil.toJson(response.getHeaders()));
-                        model.setResponseCookies(JsonUtil.toJson(response.getCookies()));
-                        // ===== USER INFO ========================================
-                        final List<String> userInfoData = request.getHeaders().get(USER_INFO_HEADER);
-                        if (userInfoData != null) {
-                            model.setUser(JsonUtil.toJson(userInfoData));
-                        }
-                        // ===== USER INFO ========================================
-                        if (model.getRequestDateTime() != null && model.getResponseDateTime() != null) {
-                            final long s = model.getRequestDateTime().atZone(ZoneOffset.systemDefault()).toInstant().toEpochMilli();
-                            final long e = model.getResponseDateTime().atZone(ZoneOffset.systemDefault()).toInstant().toEpochMilli();
-                            model.setIntervalDateTime(e - s);
-                        }
-                        LOGGER.info("YYY >>>> " + model.toJsonString());
-                        if (properties.getLog().isDetails()) {
-                            LOGGER.info(model.toJsonString());
-                        } else {
-                            LOGGER.info("{} >>> [{}] {} ::: {}",
-                                    model.getIp(),
-                                    model.getRequestMethod(),
-                                    model.getPath(),
-                                    model.getIntervalDateTime()
-                            );
+                        try {
+                            status.set(true);
+                            final Map<String, String> rBodyMap = new HashMap<>(2);
+                            rBodyMap.put("type", type);
+                            final byte[] contentBytes = new byte[Math.min(bytes.length, 1024 * 5)];
+                            System.arraycopy(bytes, 0, contentBytes, 0, contentBytes.length);
+                            String contentString = new String(contentBytes, StandardCharsets.UTF_8);
+                            contentString = TOKEN_PATTERN.matcher(contentString).replaceAll("******");
+                            if (type.startsWith(MediaType.APPLICATION_JSON_VALUE)) {
+                                rBodyMap.put("content", contentString.replaceAll("\r", "").replaceAll("\n", ""));
+                            } else {
+                                rBodyMap.put("content", contentString);
+                            }
+                            model.setResponseDateTime(LocalDateTime.now());
+                            model.setResponseBody(JsonUtil.toJson(rBodyMap));
+                            model.setResponseHeaders(JsonUtil.toJson(response.getHeaders()));
+                            final List<ResponseCookie> cookies = new ArrayList<>();
+                            final MultiValueMap<String, ResponseCookie> cmm = response.getCookies();
+                            for (final String key : cmm.keySet()) {
+                                if (!key.toLowerCase().startsWith("p6e")) {
+                                    cookies.addAll(cmm.get(key));
+                                }
+                            }
+                            model.setResponseCookies(JsonUtil.toJson(cookies));
+                            final String userInfoData = request.getHeaders().getFirst(USER_INFO_HEADER);
+                            if (userInfoData != null) {
+                                final Map<String, Object> userInfoMapData = JsonUtil.fromJsonToMap(userInfoData, String.class, Object.class);
+                                model.setUser(TransformationUtil.objectToString(userInfoMapData.get("id")));
+                            }
+                            if (model.getRequestDateTime() != null && model.getResponseDateTime() != null) {
+                                final long s = model.getRequestDateTime().atZone(ZoneOffset.systemDefault()).toInstant().toEpochMilli();
+                                final long e = model.getResponseDateTime().atZone(ZoneOffset.systemDefault()).toInstant().toEpochMilli();
+                                model.setIntervalDateTime(e - s);
+                            }
+                            if (properties.getLog().isDetails()) {
+                                LOGGER.info(model.toJsonString());
+                            } else {
+                                LOGGER.info("{} >>> [{}] {} ::: {}",
+                                        model.getIp(),
+                                        model.getRequestMethod(),
+                                        model.getPath(),
+                                        model.getIntervalDateTime()
+                                );
+                            }
+                        } catch (Exception e) {
+                            // ignore exception
                         }
                         return DATA_BUFFER_FACTORY.wrap(bytes);
                     }));
