@@ -22,19 +22,14 @@ import java.util.List;
 public class ReactiveCookieCacheTokenCleaner implements ReactiveTokenCleaner {
 
     /**
-     * Auth Cookie Name
-     */
-    protected static final String AUTH_COOKIE_NAME = "P6E_AUTH";
-
-    /**
-     * User Token Cache Object
+     * Reactive User Token Cache Object
      */
     protected final ReactiveUserTokenCache cache;
 
     /**
      * Constructor Initialization
      *
-     * @param cache User Token Cache Object
+     * @param cache Reactive User Token Cache Object
      */
     public ReactiveCookieCacheTokenCleaner(ReactiveUserTokenCache cache) {
         this.cache = cache;
@@ -42,13 +37,14 @@ public class ReactiveCookieCacheTokenCleaner implements ReactiveTokenCleaner {
 
     @Override
     public Mono<Object> execute(ServerWebExchange exchange) {
+        final String name = name();
         final ServerHttpRequest request = exchange.getRequest();
         final ServerHttpResponse response = exchange.getResponse();
         final MultiValueMap<String, HttpCookie> cookies = request.getCookies();
         if (!cookies.isEmpty()) {
             final List<HttpCookie> list = new ArrayList<>();
             for (final String key : cookies.keySet()) {
-                if (AUTH_COOKIE_NAME.equalsIgnoreCase(key)) {
+                if (name.equalsIgnoreCase(key)) {
                     list.addAll(cookies.get(key));
                     response.addCookie(cookie(key, ""));
                 }
@@ -59,7 +55,7 @@ public class ReactiveCookieCacheTokenCleaner implements ReactiveTokenCleaner {
     }
 
     /**
-     * Execute Token Content
+     * Execute Token Cleaner
      *
      * @param list Http Cookie List Object
      * @return Token String Object
@@ -74,7 +70,16 @@ public class ReactiveCookieCacheTokenCleaner implements ReactiveTokenCleaner {
     }
 
     /**
-     * Cookie
+     * Get Cookie Name
+     *
+     * @return Cookie Name
+     */
+    public String name() {
+        return "P6E_AUTH";
+    }
+
+    /**
+     * Set Cookie
      *
      * @param name    Cookie Name
      * @param content Cookie Content

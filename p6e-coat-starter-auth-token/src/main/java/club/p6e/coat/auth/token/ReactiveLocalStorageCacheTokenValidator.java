@@ -44,14 +44,14 @@ public class ReactiveLocalStorageCacheTokenValidator implements ReactiveTokenVal
     private final UserBuilder builder;
 
     /**
-     * User Token Cache Object
+     * Reactive User Token Cache Object
      */
     protected final ReactiveUserTokenCache cache;
 
     /**
      * Constructor Initialization
      *
-     * @param cache User Token Cache Object
+     * @param cache Reactive User Token Cache Object
      */
     public ReactiveLocalStorageCacheTokenValidator(UserBuilder builder, ReactiveUserTokenCache cache) {
         this.cache = cache;
@@ -77,7 +77,7 @@ public class ReactiveLocalStorageCacheTokenValidator implements ReactiveTokenVal
     }
 
     /**
-     * Execute Token Content
+     * Execute Token Validator
      *
      * @param list Token List Object
      * @return User String Object

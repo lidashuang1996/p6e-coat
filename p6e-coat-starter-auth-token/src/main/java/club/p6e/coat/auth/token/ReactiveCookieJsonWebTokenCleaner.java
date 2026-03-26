@@ -16,12 +16,8 @@ import java.time.LocalDateTime;
  * @author lidashuang
  * @version 1.0
  */
+@SuppressWarnings("ALL")
 public class ReactiveCookieJsonWebTokenCleaner implements ReactiveTokenCleaner {
-
-    /**
-     * Auth Cookie Name
-     */
-    protected static final String AUTH_COOKIE_NAME = "P6E_AUTH";
 
     /**
      * JSON Web Token Codec Object
@@ -39,12 +35,13 @@ public class ReactiveCookieJsonWebTokenCleaner implements ReactiveTokenCleaner {
 
     @Override
     public Mono<Object> execute(ServerWebExchange exchange) {
+        final String name = name();
         final ServerHttpRequest request = exchange.getRequest();
         final ServerHttpResponse response = exchange.getResponse();
         final MultiValueMap<String, HttpCookie> cookies = request.getCookies();
         if (!cookies.isEmpty()) {
             for (final String key : cookies.keySet()) {
-                if (AUTH_COOKIE_NAME.equalsIgnoreCase(key)) {
+                if (name.equalsIgnoreCase(key)) {
                     response.addCookie(cookie(key, ""));
                 }
             }
@@ -53,7 +50,16 @@ public class ReactiveCookieJsonWebTokenCleaner implements ReactiveTokenCleaner {
     }
 
     /**
-     * Cookie
+     * Get Cookie Name
+     *
+     * @return Cookie Name
+     */
+    public String name() {
+        return "P6E_AUTH";
+    }
+
+    /**
+     * Set Cookie
      *
      * @param name    Cookie Name
      * @param content Cookie Content

@@ -38,14 +38,14 @@ public class ReactiveLocalStorageCacheTokenCleaner implements ReactiveTokenClean
     protected static final String AUTHORIZATION_HEADER_NAME = "Authorization";
 
     /**
-     * User Token Cache Object
+     * Reactive User Token Cache Object
      */
     protected final ReactiveUserTokenCache cache;
 
     /**
      * Constructor Initialization
      *
-     * @param cache User Token Cache Object
+     * @param cache Reactive User Token Cache Object
      */
     public ReactiveLocalStorageCacheTokenCleaner(ReactiveUserTokenCache cache) {
         this.cache = cache;

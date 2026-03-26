@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 
 /**
- * Blocking Local Storage JSON Web Token Cleaner
+ * Blocking Local Storage Json Web Token Cleaner
  *
  * @author lidashuang
  * @version 1.0
@@ -41,14 +41,14 @@ public class BlockingLocalStorageJsonWebTokenCleaner implements BlockingTokenCle
     protected final UserBuilder builder;
 
     /**
-     * JSON Web Token Codec Object
+     * Json Web Token Codec Object
      */
     protected final JsonWebTokenCodec codec;
 
     /**
      * Constructor Initialization
      *
-     * @param codec JSON Web Token Codec Object
+     * @param codec Json Web Token Codec Object
      */
     public BlockingLocalStorageJsonWebTokenCleaner(UserBuilder builder, JsonWebTokenCodec codec) {
         this.codec = codec;

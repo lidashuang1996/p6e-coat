@@ -18,11 +18,6 @@ import java.time.LocalDateTime;
 public class BlockingCookieCacheTokenGenerator implements BlockingTokenGenerator {
 
     /**
-     * Device Header Name
-     */
-    protected static final String DEVICE_HEADER_NAME = "P6e-Device";
-
-    /**
      * Blocking User Token Cache Object
      */
     protected final BlockingUserTokenCache cache;
@@ -40,10 +35,21 @@ public class BlockingCookieCacheTokenGenerator implements BlockingTokenGenerator
     public Object execute(HttpServletRequest request, HttpServletResponse response, User user) {
         final String token = token();
         final long duration = duration();
-        final String device = request.getHeader(DEVICE_HEADER_NAME);
+        final String device = device(request, response);
         cache.set(user.id(), device == null ? "PC" : device, token, user.serialize(), duration);
         response.addCookie(cookie(name(), token));
         return LocalDateTime.now();
+    }
+
+    /**
+     * Get Device Content
+     *
+     * @param request  Http Servlet Request Object
+     * @param response Http Servlet Response Object
+     * @return Device Content
+     */
+    public String device(HttpServletRequest request, HttpServletResponse response) {
+        return request.getHeader("P6e-Device");
     }
 
     /**

@@ -18,11 +18,6 @@ import reactor.core.publisher.Mono;
 public class ReactiveCookieJsonWebTokenValidator implements ReactiveTokenValidator {
 
     /**
-     * Auth Cookie Name
-     */
-    protected static final String AUTH_COOKIE_NAME = "P6E_AUTH";
-
-    /**
      * User Builder Object
      */
     protected final UserBuilder builder;
@@ -45,11 +40,12 @@ public class ReactiveCookieJsonWebTokenValidator implements ReactiveTokenValidat
 
     @Override
     public Mono<User> execute(ServerWebExchange exchange) {
+        final String name = name();
         final ServerHttpRequest request = exchange.getRequest();
         final MultiValueMap<String, HttpCookie> cookies = request.getCookies();
         if (!cookies.isEmpty()) {
             for (final String key : cookies.keySet()) {
-                if (AUTH_COOKIE_NAME.equalsIgnoreCase(key)) {
+                if (name.equalsIgnoreCase(key)) {
                     for (final HttpCookie cookie : cookies.get(key)) {
                         String content = this.codec.decryption(cookie.getValue());
                         if (content != null) {
@@ -61,6 +57,15 @@ public class ReactiveCookieJsonWebTokenValidator implements ReactiveTokenValidat
             }
         }
         return Mono.empty();
+    }
+
+    /**
+     * Get Cookie Name
+     *
+     * @return Cookie Name
+     */
+    public String name() {
+        return "P6E_AUTH";
     }
 
 }

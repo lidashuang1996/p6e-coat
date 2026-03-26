@@ -77,8 +77,7 @@ public class BlockingLocalStorageJsonWebTokenValidator implements BlockingTokenV
                     content = this.codec.decryption(item);
                 }
                 if (content != null) {
-                    content = content.substring(content.indexOf("@") + 1);
-                    return this.builder.create(content);
+                    return this.builder.create(content.substring(content.indexOf("@") + 1));
                 }
             }
         }

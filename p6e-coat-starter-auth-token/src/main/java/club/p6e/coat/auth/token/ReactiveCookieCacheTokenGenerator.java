@@ -20,20 +20,6 @@ import java.time.LocalDateTime;
 public class ReactiveCookieCacheTokenGenerator implements ReactiveTokenGenerator {
 
     /**
-     * Auth Cookie Name
-     */
-    protected static final String AUTH_COOKIE_NAME = "P6E_AUTH";
-
-    /**
-     * Device Header Name
-     * Request Header Of the Current Device
-     * Request Header Is Customized By The Program And Not Carried By The User Request
-     * When Receiving Requests, It Is Necessary To Clear The Request Header Carried By The User To Ensure Program Security
-     */
-    @SuppressWarnings("ALL")
-    protected static final String DEVICE_HEADER_NAME = "P6e-Device";
-
-    /**
      * User Token Cache Object
      */
     protected final ReactiveUserTokenCache cache;
@@ -41,7 +27,7 @@ public class ReactiveCookieCacheTokenGenerator implements ReactiveTokenGenerator
     /**
      * Constructor Initialization
      *
-     * @param cache User Token Cache Object
+     * @param cache Reactive User Token Cache Object
      */
     public ReactiveCookieCacheTokenGenerator(ReactiveUserTokenCache cache) {
         this.cache = cache;
@@ -50,11 +36,11 @@ public class ReactiveCookieCacheTokenGenerator implements ReactiveTokenGenerator
     @Override
     public Mono<Object> execute(ServerWebExchange exchange, User user) {
         final String token = token();
+        final String device = device(exchange);
         final ServerHttpRequest request = exchange.getRequest();
         final ServerHttpResponse response = exchange.getResponse();
-        final String device = request.getHeaders().getFirst(DEVICE_HEADER_NAME);
         return this.cache.set(user.id(), device == null ? "PC" : device, token, user.serialize(), duration())
-                .flatMap(m -> Mono.just(cookie(AUTH_COOKIE_NAME, token)))
+                .flatMap(m -> Mono.just(cookie(name(), token)))
                 .flatMap(c -> {
                     response.addCookie(c);
                     return Mono.just(LocalDateTime.now());
@@ -62,33 +48,51 @@ public class ReactiveCookieCacheTokenGenerator implements ReactiveTokenGenerator
     }
 
     /**
-     * Cache Duration
+     * Get Device Content
      *
-     * @return Cache Duration Number
+     * @param exchange Server Web Exchange Object
+     * @return Device Content
      */
-    public long duration() {
-        return 3600L;
+    public String device(ServerWebExchange exchange) {
+        return exchange.getRequest().getHeaders().getFirst("P6e-Device");
     }
 
     /**
-     * Token Content
+     * Get Cookie Name
+     *
+     * @return Cookie Name
+     */
+    public String name() {
+        return "P6E_AUTH";
+    }
+
+    /**
+     * Get Cookie Duration
+     *
+     * @return Cookie Duration
+     */
+    public int duration() {
+        return 3600;
+    }
+
+    /**
+     * Get Token Content
      *
      * @return Token Content
      */
     public String token() {
-        return GeneratorUtil.uuid() + GeneratorUtil.random(8, true, false);
+        return GeneratorUtil.uuid() + System.currentTimeMillis() + GeneratorUtil.random(8, true, false);
     }
 
     /**
-     * Cookie
+     * Set Cookie
      *
      * @param name    Cookie Name
      * @param content Cookie Content
      * @return Response Cookie Object
      */
     public ResponseCookie cookie(String name, String content) {
-        final int age = (int) duration();
-        return ResponseCookie.from(name, content).path("/").maxAge(age).httpOnly(true).build();
+        return ResponseCookie.from(name, content).path("/").maxAge(duration()).httpOnly(true).build();
     }
 
 }

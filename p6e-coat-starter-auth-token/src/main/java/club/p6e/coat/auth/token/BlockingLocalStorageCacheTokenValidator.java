@@ -43,7 +43,7 @@ public class BlockingLocalStorageCacheTokenValidator implements BlockingTokenVal
     protected final UserBuilder builder;
 
     /**
-     * User Token Cache Object
+     * Blocking User Token Cache Object
      */
     protected final BlockingUserTokenCache cache;
 
@@ -51,7 +51,7 @@ public class BlockingLocalStorageCacheTokenValidator implements BlockingTokenVal
      * Constructor Initialization
      *
      * @param builder User Builder Object
-     * @param cache   User Token Cache Object
+     * @param cache   Blocking User Token Cache Object
      */
     public BlockingLocalStorageCacheTokenValidator(UserBuilder builder, BlockingUserTokenCache cache) {
         this.builder = builder;
@@ -70,37 +70,22 @@ public class BlockingLocalStorageCacheTokenValidator implements BlockingTokenVal
             list.add(qt);
         }
         if (!list.isEmpty()) {
-            final String content = execute(list);
-            if (content != null) {
-                return builder.create(content);
+            for (final String item : list) {
+                final BlockingUserTokenCache.Model model;
+                if (item.startsWith(AUTHORIZATION_PREFIX)) {
+                    model = cache.getToken(item.substring(AUTHORIZATION_PREFIX.length()));
+                } else {
+                    model = cache.getToken(item);
+                }
+                if (model != null) {
+                    final String content = cache.getUser(model.getUid());
+                    if (content != null) {
+                        return builder.create(content);
+                    }
+                }
             }
         }
         return null;
-    }
-
-    /**
-     * Execute Token Content
-     *
-     * @param list Token List Object
-     * @return User String Object
-     */
-    public String execute(List<String> list) {
-        String result = null;
-        for (final String item : list) {
-            final BlockingUserTokenCache.Model model;
-            if (item.startsWith(AUTHORIZATION_PREFIX)) {
-                model = cache.getToken(item.substring(AUTHORIZATION_PREFIX.length()));
-            } else {
-                model = cache.getToken(item);
-            }
-            if (model != null) {
-                result = cache.getUser(model.getUid());
-            }
-            if (result != null) {
-                break;
-            }
-        }
-        return result;
     }
 
 }

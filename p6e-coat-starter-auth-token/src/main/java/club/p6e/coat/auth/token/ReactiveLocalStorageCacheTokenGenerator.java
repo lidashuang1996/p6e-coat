@@ -17,23 +17,14 @@ import java.util.HashMap;
 public class ReactiveLocalStorageCacheTokenGenerator implements ReactiveTokenGenerator {
 
     /**
-     * Device Header Name
-     * Request Header Of the Current Device
-     * Request Header Is Customized By The Program And Not Carried By The User Request
-     * When Receiving Requests, It Is Necessary To Clear The Request Header Carried By The User To Ensure Program Security
-     */
-    @SuppressWarnings("ALL")
-    protected static final String DEVICE_HEADER_NAME = "P6e-Device";
-
-    /**
-     * User Token Cache Object
+     * Reactive User Token Cache Object
      */
     protected final ReactiveUserTokenCache cache;
 
     /**
      * Constructor Initialization
      *
-     * @param cache User Token Cache Object
+     * @param cache Reactive User Token Cache Object
      */
     public ReactiveLocalStorageCacheTokenGenerator(ReactiveUserTokenCache cache) {
         this.cache = cache;
@@ -42,8 +33,8 @@ public class ReactiveLocalStorageCacheTokenGenerator implements ReactiveTokenGen
     @Override
     public Mono<Object> execute(ServerWebExchange exchange, User user) {
         final String token = token();
-        final long duration = duration();
-        final String device = exchange.getRequest().getHeaders().getFirst(DEVICE_HEADER_NAME);
+        final int duration = duration();
+        final String device = device(exchange);
         return cache.set(user.id(), device == null ? "PC" : device, token, user.serialize(), duration).map(m -> new HashMap<>() {{
             put("token", token);
             put("type", "Bearer");
@@ -52,16 +43,35 @@ public class ReactiveLocalStorageCacheTokenGenerator implements ReactiveTokenGen
     }
 
     /**
-     * Cache Duration
+     * Get Device Content
      *
-     * @return Cache Duration Number
+     * @param exchange Server Web Exchange Object
+     * @return Device Content
      */
-    public long duration() {
-        return 3600L;
+    public String device(ServerWebExchange exchange) {
+        return exchange.getRequest().getHeaders().getFirst("P6e-Device");
     }
 
     /**
-     * Token Content
+     * Get Cookie Name
+     *
+     * @return Cookie Name
+     */
+    public String name() {
+        return "P6E_AUTH";
+    }
+
+    /**
+     * Get Cookie Duration
+     *
+     * @return Cookie Duration
+     */
+    public int duration() {
+        return 3600;
+    }
+
+    /**
+     * Get Token Content
      *
      * @return Token Content
      */

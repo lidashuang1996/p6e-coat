@@ -19,20 +19,6 @@ import java.time.LocalDateTime;
 public class ReactiveCookieJsonWebTokenGenerator implements ReactiveTokenGenerator {
 
     /**
-     * Auth Cookie Name
-     */
-    protected static final String AUTH_COOKIE_NAME = "P6E_AUTH";
-
-    /**
-     * Device Header Name
-     * Request Header Of the Current Device
-     * Request Header Is Customized By The Program And Not Carried By The User Request
-     * When Receiving Requests, It Is Necessary To Clear The Request Header Carried By The User To Ensure Program Security
-     */
-    @SuppressWarnings("ALL")
-    protected static final String DEVICE_HEADER_NAME = "P6e-Device";
-
-    /**
      * Json Web Token Codec Object
      */
     protected final JsonWebTokenCodec codec;
@@ -48,14 +34,14 @@ public class ReactiveCookieJsonWebTokenGenerator implements ReactiveTokenGenerat
 
     @Override
     public Mono<Object> execute(ServerWebExchange exchange, User user) {
-        final long duration = duration();
+        final int duration = duration();
+        final String device = device(exchange);
         final ServerHttpRequest request = exchange.getRequest();
         final ServerHttpResponse response = exchange.getResponse();
-        final String device = request.getHeaders().getFirst(DEVICE_HEADER_NAME);
         final String content = this.codec.encryption(user.id(), (device == null ? "PC" : device) + "@" + user.serialize(), duration);
         return Mono
                 .just(content)
-                .flatMap(c -> Mono.just(cookie(AUTH_COOKIE_NAME, c)))
+                .flatMap(c -> Mono.just(cookie(name(), c)))
                 .flatMap(c -> {
                     response.addCookie(c);
                     return Mono.just(LocalDateTime.now());
@@ -63,24 +49,42 @@ public class ReactiveCookieJsonWebTokenGenerator implements ReactiveTokenGenerat
     }
 
     /**
-     * Cache Duration
+     * Get Device Content
      *
-     * @return Cache Duration Number
+     * @param exchange Server Web Exchange Object
+     * @return Device Content
      */
-    public long duration() {
-        return 3600L;
+    public String device(ServerWebExchange exchange) {
+        return exchange.getRequest().getHeaders().getFirst("P6e-Device");
     }
 
     /**
-     * Cookie
+     * Get Cookie Name
+     *
+     * @return Cookie Name
+     */
+    public String name() {
+        return "P6E_AUTH";
+    }
+
+    /**
+     * Get Cookie Duration
+     *
+     * @return Cookie Duration
+     */
+    public int duration() {
+        return 3600;
+    }
+
+    /**
+     * Set Cookie
      *
      * @param name    Cookie Name
      * @param content Cookie Content
      * @return Response Cookie Object
      */
     public ResponseCookie cookie(String name, String content) {
-        final int age = (int) duration();
-        return ResponseCookie.from(name, content).path("/").maxAge(age).httpOnly(true).build();
+        return ResponseCookie.from(name, content).path("/").maxAge(duration()).httpOnly(true).build();
     }
 
 }

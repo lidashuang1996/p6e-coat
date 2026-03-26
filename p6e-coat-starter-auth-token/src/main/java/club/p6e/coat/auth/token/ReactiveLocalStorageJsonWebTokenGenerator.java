@@ -16,15 +16,6 @@ import java.util.HashMap;
 public class ReactiveLocalStorageJsonWebTokenGenerator implements ReactiveTokenGenerator {
 
     /**
-     * Device Header Name
-     * Request Header Of the Current Device
-     * Request Header Is Customized By The Program And Not Carried By The User Request
-     * When Receiving Requests, It Is Necessary To Clear The Request Header Carried By The User To Ensure Program Security
-     */
-    @SuppressWarnings("ALL")
-    protected static final String DEVICE_HEADER_NAME = "P6e-Device";
-
-    /**
      * Json Web Token Codec Object
      */
     protected final JsonWebTokenCodec codec;
@@ -40,8 +31,8 @@ public class ReactiveLocalStorageJsonWebTokenGenerator implements ReactiveTokenG
 
     @Override
     public Mono<Object> execute(ServerWebExchange exchange, User user) {
-        final long duration = duration();
-        final String device = exchange.getRequest().getHeaders().getFirst(DEVICE_HEADER_NAME);
+        final int duration = duration();
+        final String device = device(exchange);
         final String content = this.codec.encryption(user.id(), (device == null ? "PC" : device) + "@" + user.serialize(), duration);
         return Mono.just(content).map(m -> new HashMap<>() {{
             put("token", content);
@@ -51,12 +42,22 @@ public class ReactiveLocalStorageJsonWebTokenGenerator implements ReactiveTokenG
     }
 
     /**
-     * Cache Duration
+     * Get Device Content
      *
-     * @return Cache Duration Number
+     * @param exchange Server Web Exchange Object
+     * @return Device Content
      */
-    public long duration() {
-        return 3600L;
+    public String device(ServerWebExchange exchange) {
+        return exchange.getRequest().getHeaders().getFirst("P6e-Device");
+    }
+
+    /**
+     * Get Cookie Duration
+     *
+     * @return Cookie Duration
+     */
+    public int duration() {
+        return 3600;
     }
 
 }

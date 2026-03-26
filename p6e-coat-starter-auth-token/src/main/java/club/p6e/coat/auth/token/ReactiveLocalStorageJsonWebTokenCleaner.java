@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDateTime;
 
 /**
- * Reactive Local Storage JSON Web Token Cleaner
+ * Reactive Local Storage Json Web Token Cleaner
  *
  * @author lidashuang
  * @version 1.0
@@ -41,7 +41,7 @@ public class ReactiveLocalStorageJsonWebTokenCleaner implements ReactiveTokenCle
     protected final UserBuilder builder;
 
     /**
-     * JSON Web Token Codec Object
+     * Json Web Token Codec Object
      */
     protected final JsonWebTokenCodec codec;
 
@@ -49,7 +49,7 @@ public class ReactiveLocalStorageJsonWebTokenCleaner implements ReactiveTokenCle
      * Constructor Initialization
      *
      * @param builder User Builder Object
-     * @param codec   JSON Web Token Codec Object
+     * @param codec   Json Web Token Codec Object
      */
     public ReactiveLocalStorageJsonWebTokenCleaner(UserBuilder builder, JsonWebTokenCodec codec) {
         this.codec = codec;
