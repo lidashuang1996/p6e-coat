@@ -1,4 +1,4 @@
-package club.p6e.coat.common.pageable;
+package club.p6e.coat.pageable;
 
 import lombok.Data;
 import lombok.experimental.Accessors;

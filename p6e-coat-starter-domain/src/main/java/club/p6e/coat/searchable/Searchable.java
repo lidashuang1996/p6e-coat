@@ -1,4 +1,4 @@
-package club.p6e.coat.common.sortable;
+package club.p6e.coat.searchable;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -11,12 +11,12 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Sortable {
+public @interface Searchable {
 
     /**
-     * 排序的名称
+     * 搜索的名称
      *
-     * @return 排序的名称
+     * @return 搜索的名称
      */
     String name() default "";
 

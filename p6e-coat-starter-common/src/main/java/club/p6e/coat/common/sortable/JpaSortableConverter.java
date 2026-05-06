@@ -1,5 +1,7 @@
 package club.p6e.coat.common.sortable;
 
+import club.p6e.coat.sortable.AbstractSortable;
+import club.p6e.coat.sortable.SortableContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Order;
@@ -36,11 +38,11 @@ public class JpaSortableConverter {
             return sort;
         }
         final List<Sort.Order> orders = new ArrayList<>();
-        for (final SortableAbstract.Option option : context) {
-            if (SortableAbstract.ASC.equals(option.getCondition())) {
+        for (final AbstractSortable.Option option : context) {
+            if (AbstractSortable.ASC.equals(option.getCondition())) {
                 orders.add(Sort.Order.asc(option.getContent()));
             }
-            if (SortableAbstract.DESC.equals(option.getCondition())) {
+            if (AbstractSortable.DESC.equals(option.getCondition())) {
                 orders.add(Sort.Order.desc(option.getContent()));
             }
         }
@@ -54,11 +56,11 @@ public class JpaSortableConverter {
     public static void execute(Root<?> root, CriteriaQuery<?> query, CriteriaBuilder builder, SortableContext context, Sort sort) {
         final List<Order> orders = new ArrayList<>();
         if (context != null) {
-            for (final SortableAbstract.Option option : context) {
-                if (SortableAbstract.ASC.equals(option.getCondition())) {
+            for (final AbstractSortable.Option option : context) {
+                if (AbstractSortable.ASC.equals(option.getCondition())) {
                     orders.add(builder.asc(root.get(option.getContent())));
                 }
-                if (SortableAbstract.DESC.equals(option.getCondition())) {
+                if (AbstractSortable.DESC.equals(option.getCondition())) {
                     orders.add(builder.desc(root.get(option.getContent())));
                 }
             }

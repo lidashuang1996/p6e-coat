@@ -61,6 +61,14 @@
             </dependency>
             <!-- Club P6e Coat Common [END] -->
 
+            <!-- Club P6e Coat Common [START] -->
+            <dependency>
+                <groupId>club.p6e.coat</groupId>
+                <artifactId>p6e-coat-starter-domain</artifactId>
+                <version>${p6e-coat.version}</version>
+            </dependency>
+            <!-- Club P6e Coat Common [END] -->
+
             <!-- Club P6e Coat Auth [START] -->
             <dependency>
                 <groupId>club.p6e.coat</groupId>

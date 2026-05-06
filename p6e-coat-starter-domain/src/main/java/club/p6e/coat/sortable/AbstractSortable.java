@@ -1,9 +1,8 @@
-package club.p6e.coat.common.sortable;
+package club.p6e.coat.sortable;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -15,7 +14,7 @@ import java.util.List;
  * @version 1.0
  */
 @Getter
-public abstract class SortableAbstract<I extends SortableAbstract.Option> extends ArrayList<I> implements Serializable {
+public abstract class AbstractSortable<I extends AbstractSortable.Option> extends ArrayList<I> implements Serializable {
 
     @Data
     @AllArgsConstructor
@@ -75,9 +74,9 @@ public abstract class SortableAbstract<I extends SortableAbstract.Option> extend
                 final Sortable sortable = field.getAnnotation(Sortable.class);
                 if (sortable != null) {
                     mappers.add(new Mapper(
-                            StringUtils.hasText(sortable.name()) ? sortable.name() : field.getName(),
-                            StringUtils.hasText(sortable.column()) ? sortable.column() : field.getName())
-                    );
+                            sortable.name() == null || sortable.name().isEmpty() ? field.getName() : sortable.name(),
+                            sortable.column() == null || sortable.column().isEmpty() ? field.getName() : sortable.column()
+                    ));
                 }
             }
         }
@@ -105,7 +104,7 @@ public abstract class SortableAbstract<I extends SortableAbstract.Option> extend
      * @param context 排序上下文对象
      * @return 参数是否合法
      */
-    protected boolean validationOptionsToMappings(Class<?> clazz, SortableAbstract<?> context) {
+    protected boolean validationOptionsToMappings(Class<?> clazz, AbstractSortable<?> context) {
         if (clazz == null || context == null) {
             return false;
         } else {
@@ -125,7 +124,7 @@ public abstract class SortableAbstract<I extends SortableAbstract.Option> extend
      * @param options 请求参数
      * @return 参数是否合法
      */
-    protected boolean validationOptionsToMappings(SortableAbstract<?> options, List<Mapper> mappers) {
+    protected boolean validationOptionsToMappings(AbstractSortable<?> options, List<Mapper> mappers) {
         if (mappers == null || mappers.isEmpty()) {
             return false;
         } else if (options == null || options.isEmpty()) {
@@ -135,12 +134,12 @@ public abstract class SortableAbstract<I extends SortableAbstract.Option> extend
                 boolean bool = false;
                 String content = option.getContent();
                 String condition = option.getCondition();
-                if (StringUtils.hasText(content)) {
+                if (content != null && !content.isEmpty()) {
                     content = content.toLowerCase();
                 } else {
                     return false;
                 }
-                if (StringUtils.hasText(condition)) {
+                if (condition != null && !condition.isEmpty()) {
                     condition = condition.toUpperCase();
                     condition = condition.equals(DESC) ? DESC : ASC;
                 } else {

@@ -47,6 +47,14 @@
             </dependency>
             <!-- P6e Cloud Auth [END] -->
 
+            <!-- P6e Cloud Domain [START] -->
+            <dependency>
+                <groupId>club.p6e.cloud</groupId>
+                <artifactId>p6e-cloud-starter-domain</artifactId>
+                <version>${p6e-cloud.version}</version>
+            </dependency>
+            <!-- P6e Cloud Domain [END] -->
+
             <!-- P6e Cloud Auth Client [START] -->
             <dependency>
                 <groupId>club.p6e.cloud</groupId>

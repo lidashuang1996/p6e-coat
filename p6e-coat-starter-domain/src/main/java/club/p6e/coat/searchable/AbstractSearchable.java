@@ -1,9 +1,8 @@
-package club.p6e.coat.common.searchable;
+package club.p6e.coat.searchable;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -16,7 +15,7 @@ import java.util.List;
  * @version 1.0
  */
 @Getter
-public abstract class SearchableAbstract<I extends SearchableAbstract.Option> extends ArrayList<I> implements Serializable {
+public abstract class AbstractSearchable<I extends AbstractSearchable.Option> extends ArrayList<I> implements Serializable {
 
     @Data
     @AllArgsConstructor
@@ -98,9 +97,9 @@ public abstract class SearchableAbstract<I extends SearchableAbstract.Option> ex
             final Searchable searchable = field.getAnnotation(Searchable.class);
             if (searchable != null) {
                 mappers.add(new Mapper(
-                        StringUtils.hasText(searchable.name()) ? searchable.name() : field.getName(),
-                        StringUtils.hasText(searchable.column()) ? searchable.column() : field.getName())
-                );
+                        searchable.name() == null || searchable.name().isEmpty() ? field.getName() : searchable.name(),
+                        searchable.column() == null || searchable.column().isEmpty() ? field.getName() : searchable.column()
+                ));
             }
         }
         return mappers;
@@ -112,7 +111,7 @@ public abstract class SearchableAbstract<I extends SearchableAbstract.Option> ex
      * @param options 请求参数
      * @return 选项参数
      */
-    public static List<Mixin> extractOptions(SearchableAbstract<?> options) {
+    public static List<Mixin> extractOptions(AbstractSearchable<?> options) {
         if (options == null) {
             return new ArrayList<>();
         } else {
@@ -141,7 +140,7 @@ public abstract class SearchableAbstract<I extends SearchableAbstract.Option> ex
     /**
      * 构造方法
      */
-    public SearchableAbstract() {
+    public AbstractSearchable() {
         super();
         this.relationship = AND_RELATIONSHIP_TYPE;
     }
@@ -151,7 +150,7 @@ public abstract class SearchableAbstract<I extends SearchableAbstract.Option> ex
      *
      * @param relationship 关联关系
      */
-    public SearchableAbstract(String relationship) {
+    public AbstractSearchable(String relationship) {
         super();
         this.relationship = OR_RELATIONSHIP_TYPE.equalsIgnoreCase(
                 relationship) ? OR_RELATIONSHIP_TYPE : AND_RELATIONSHIP_TYPE;
@@ -178,7 +177,7 @@ public abstract class SearchableAbstract<I extends SearchableAbstract.Option> ex
      * @param context 排序上下文对象
      * @return 参数是否合法
      */
-    protected boolean validationOptionsToMappings(Class<?> clazz, SearchableAbstract<?> context) {
+    protected boolean validationOptionsToMappings(Class<?> clazz, AbstractSearchable<?> context) {
         if (clazz == null || context == null) {
             return false;
         } else {

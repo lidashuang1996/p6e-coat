@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>club.p6e.cloud</groupId>
+        <artifactId>p6e-cloud-starter-parent</artifactId>
+        <version>4.0.2</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <artifactId>p6e-cloud-starter-domain</artifactId>
+    <name>p6e-cloud-starter-domain</name>
+    <description>p6e-cloud-starter-domain</description>
+
+    <dependencies>
+
+        <!-- P6e Coat Domain [START] -->
+        <dependency>
+            <groupId>club.p6e.coat</groupId>
+            <artifactId>p6e-coat-starter-domain</artifactId>
+        </dependency>
+        <!-- P6e Coat Domain [END] -->
+
+    </dependencies>
+</project>

@@ -1,6 +1,6 @@
 package club.p6e.coat.common.context;
 
-import club.p6e.coat.common.pageable.PageableContext;
+import club.p6e.coat.pageable.PageableContext;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
