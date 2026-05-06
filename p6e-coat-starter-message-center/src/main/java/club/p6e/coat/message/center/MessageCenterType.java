@@ -1,7 +1,7 @@
 package club.p6e.coat.message.center;
 
 /**
- * MessageCenterType
+ * Message Center Type
  *
  * @author lidashuang
  * @version 1.0

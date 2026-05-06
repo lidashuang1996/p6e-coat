@@ -69,7 +69,7 @@ public class MailMessageDefaultLauncherService implements MailMessageLauncherSer
      * Construct Initialization
      *
      * @param logService Log Service
-     * @param threadPool Thread Pool Object
+     * @param threadPool Message Center Thread Pool Object
      */
     public MailMessageDefaultLauncherService(LogService logService, MessageCenterThreadPool threadPool) {
         this.logService = logService;
@@ -98,6 +98,7 @@ public class MailMessageDefaultLauncherService implements MailMessageLauncherSer
                     LOGGER.info("[ MAIL LAUNCHER ] >>> MAIL CLIENT: {}", JsonUtil.toJson(config));
                     LOGGER.info("[ MAIL LAUNCHER ] >>> MAIL TEMPLATE TITLE: {}", ltm.getMessageTitle());
                     LOGGER.info("[ MAIL LAUNCHER ] >>> MAIL TEMPLATE CONTENT: {}", ltm.getMessageContent());
+                    LOGGER.info("[ MAIL LAUNCHER ] >>> MAIL TEMPLATE JSON CONTENT: {}", JsonUtil.toJson(ltm));
                     // execute the operation of sending emails
                     send(client(config), config.getFrom(), recipient, ltm);
                 } finally {
@@ -111,35 +112,35 @@ public class MailMessageDefaultLauncherService implements MailMessageLauncherSer
     /**
      * Validate Config Model
      *
-     * @param config Config Model
+     * @param config Mail Message Config Model
      */
     protected void validate(MailMessageConfigModel config) {
         if (config == null) {
             throw new LauncherParamException(
                     this.getClass(),
-                    "fun validateConfig(MailMessageConfigModel config).",
-                    "validate config [MailMessageConfigModel] value is null."
+                    "fun validate(MailMessageConfigModel config)",
+                    "validate config value is null"
             );
         }
         if (config.getHost() == null) {
             throw new LauncherParamException(
                     this.getClass(),
-                    "fun validateConfig(MailMessageConfigModel config).",
-                    "validate config [MailMessageConfigModel] host value is null."
+                    "fun validate(MailMessageConfigModel config)",
+                    "validate config host is null"
             );
         }
         if (config.getFrom() == null) {
             throw new LauncherParamException(
                     this.getClass(),
-                    "fun validateConfig(MailMessageConfigModel config).",
-                    "validate config [MailMessageConfigModel] from value is null."
+                    "fun validate(MailMessageConfigModel config)",
+                    "validate config from is null."
             );
         }
         if (config.getPassword() == null) {
             throw new LauncherParamException(
                     this.getClass(),
-                    "fun validateConfig(MailMessageConfigModel config).",
-                    "validate config [MailMessageConfigModel] password value is null."
+                    "fun validate(MailMessageConfigModel config)",
+                    "validate config password is null"
             );
         }
     }
@@ -147,12 +148,11 @@ public class MailMessageDefaultLauncherService implements MailMessageLauncherSer
     /**
      * Get Client Session
      *
-     * @param config Client Config
-     * @return Client Session
+     * @param config Mail Message Config Model Object
+     * @return Client Session Object
      */
     protected Session client(MailMessageConfigModel config) {
-        final String name = Md5Util.execute(Md5Util.execute(config.getHost() + ":"
-                + config.getPort() + "@" + config.getFrom() + "_" + config.getPassword()));
+        final String name = Md5Util.execute(config.getHost() + ":" + config.getPort() + "@" + config.getFrom() + "_" + config.getPassword());
         Session session = ExternalObjectCache.get(CACHE_TYPE, name);
         if (session == null) {
             session = client(name, config);
@@ -164,8 +164,8 @@ public class MailMessageDefaultLauncherService implements MailMessageLauncherSer
      * Create Client Session
      *
      * @param name   Client Name
-     * @param config Client Config
-     * @return Client Session
+     * @param config Mail Message Config Model Object
+     * @return Client Session Object
      */
     protected synchronized Session client(String name, MailMessageConfigModel config) {
         Session session = ExternalObjectCache.get(CACHE_TYPE, name);
@@ -205,10 +205,10 @@ public class MailMessageDefaultLauncherService implements MailMessageLauncherSer
     /**
      * Send Mail Message
      *
-     * @param form       Form Address
+     * @param session    Client Session Object
+     * @param form       Form
      * @param recipients Recipients
-     * @param session    Client Session
-     * @param ltm        Launcher Template Model
+     * @param ltm        Launcher Template Model Object
      */
     protected void send(Session session, String form, List<String> recipients, LauncherTemplateModel ltm) {
         try {
@@ -232,7 +232,7 @@ public class MailMessageDefaultLauncherService implements MailMessageLauncherSer
                             if (!FileUtil.checkFileExist(file)) {
                                 throw new LauncherParamFileException(
                                         this.getClass(),
-                                        "fun send(Session session, String from, List<String> recipients, LauncherTemplateModel template)",
+                                        "fun send(Session session, String from, List<String> recipients, LauncherTemplateModel ltm)",
                                         "reading the attachment file [" + file + "], it was found that the file does not exist"
                                 );
                             }

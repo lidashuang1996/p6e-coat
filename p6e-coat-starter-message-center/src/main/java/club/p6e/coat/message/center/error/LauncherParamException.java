@@ -1,7 +1,8 @@
 package club.p6e.coat.message.center.error;
 
-import club.p6e.coat.common.exception.CustomException;
-import club.p6e.coat.common.exception.ResourceException;
+
+import club.p6e.coat.common.error.CustomException;
+import club.p6e.coat.common.error.ResourceException;
 
 /**
  * Message Center Config Exception
