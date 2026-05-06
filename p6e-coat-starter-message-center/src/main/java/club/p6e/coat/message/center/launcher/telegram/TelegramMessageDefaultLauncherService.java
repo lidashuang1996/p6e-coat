@@ -90,7 +90,6 @@ public class TelegramMessageDefaultLauncherService implements TelegramMessageLau
                 LOGGER.info("[ TELEGRAM LAUNCHER ] >>> TELEGRAM CLIENT: {}", JsonUtil.toJson(config));
                 LOGGER.info("[ TELEGRAM LAUNCHER ] >>> TELEGRAM TEMPLATE: {}", ltm.getMessageTitle());
                 LOGGER.info("[ TELEGRAM LAUNCHER ] >>> TELEGRAM TEMPLATE CONTENT: {}", ltm.getMessageContent());
-                // execute the operation of sending telegram
                 send(client(config), ltm);
             } finally {
                 LOGGER.info("[ TELEGRAM LAUNCHER ] >>> END SEND TELEGRAM");
@@ -145,10 +144,10 @@ public class TelegramMessageDefaultLauncherService implements TelegramMessageLau
     }
 
     /**
-     * Get Client Session
+     * Get Telegram Client Session Object
      *
-     * @param config Client Config
-     * @return Client Session
+     * @param config Telegram Message Config Model Object
+     * @return Telegram Client Session Object
      */
     public Session client(TelegramMessageConfigModel config) {
         final String name = Md5Util.execute(Md5Util.execute(config.getBotToken()));

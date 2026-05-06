@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.HexFormat;
 
 /**
@@ -50,7 +51,7 @@ public class BlockingWebController {
             );
         }
         pushTextMessage(request.getName() == null ? "DEFAULT" : request.getName(), request);
-        return ResultContext.build("SUCCESS");
+        return ResultContext.build(LocalDateTime.now());
     }
 
     @PostMapping("/push/hex")
@@ -63,7 +64,7 @@ public class BlockingWebController {
             );
         }
         pushHexMessage(request.getName() == null ? "DEFAULT" : request.getName(), request);
-        return ResultContext.build("SUCCESS");
+        return ResultContext.build(LocalDateTime.now());
     }
 
     /**

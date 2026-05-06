@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
 import java.util.HexFormat;
 
 /**
@@ -49,7 +50,7 @@ public class ReactiveWebController {
             );
         }
         pushTextMessage(request.getName() == null ? "DEFAULT" : request.getName(), request);
-        return Mono.just(ResultContext.build("SUCCESS"));
+        return Mono.just(ResultContext.build(LocalDateTime.now()));
     }
 
     @PostMapping("/push/hex")
@@ -62,7 +63,7 @@ public class ReactiveWebController {
             );
         }
         pushHexMessage(request.getName() == null ? "DEFAULT" : request.getName(), request);
-        return Mono.just(ResultContext.build("SUCCESS"));
+        return Mono.just(ResultContext.build(LocalDateTime.now()));
     }
 
     /**

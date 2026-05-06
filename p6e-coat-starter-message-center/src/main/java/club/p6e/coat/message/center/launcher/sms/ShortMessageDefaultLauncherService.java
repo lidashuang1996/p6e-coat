@@ -94,10 +94,10 @@ public class ShortMessageDefaultLauncherService implements ShortMessageLauncherS
     }
 
     /**
-     * Get Client
+     * Get ALiYun SMS Client Object
      *
-     * @param config Client Config
-     * @return Client
+     * @param config Short Message Config Model Object
+     * @return ALiYun SMS Client Object
      */
     protected com.aliyun.dysmsapi20170525.Client client(ShortMessageConfigModel config) {
         try {
@@ -113,18 +113,18 @@ public class ShortMessageDefaultLauncherService implements ShortMessageLauncherS
     }
 
     /**
-     * Create Client
+     * Create ALiYun SMS Client Object
      *
      * @param name   Client Name
-     * @param config Client Config
-     * @return Client
+     * @param config Short Message Config Model Object
+     * @return ALiYun SMS Client Object
      */
     protected synchronized com.aliyun.dysmsapi20170525.Client client(String name, ShortMessageConfigModel config) throws Exception {
-        final String id = config.getApplicationId();
-        final String domain = config.getApplicationDomain();
-        final String secret = config.getApplicationSecret();
         com.aliyun.dysmsapi20170525.Client client = ExternalObjectCache.get(CACHE_TYPE, name);
         if (client == null) {
+            final String id = config.getApplicationId();
+            final String domain = config.getApplicationDomain();
+            final String secret = config.getApplicationSecret();
             final com.aliyun.teaopenapi.models.Config aliyunConfig = new com.aliyun.teaopenapi.models.Config();
             aliyunConfig.setAccessKeyId(id);
             aliyunConfig.setEndpoint(domain);
@@ -136,6 +136,13 @@ public class ShortMessageDefaultLauncherService implements ShortMessageLauncherS
         return client;
     }
 
+    /**
+     * Send Short Message
+     *
+     * @param client     ALiYun SMS Client Object
+     * @param recipients Recipients
+     * @param ltm        Launcher Template Model Object
+     */
     protected void execute(com.aliyun.dysmsapi20170525.Client client, List<String> recipients, LauncherTemplateModel ltm) {
         try {
             final String title = ltm.getMessageTitle();

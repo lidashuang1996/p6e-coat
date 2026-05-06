@@ -52,7 +52,7 @@ public class MobileMessageGoogleLauncherService implements MobileMessageLauncher
     private static final Logger LOGGER = LoggerFactory.getLogger(MobileMessageGoogleLauncherService.class);
 
     /**
-     * Log Service
+     * Log Service Object
      */
     protected final LogService logService;
 
@@ -64,8 +64,8 @@ public class MobileMessageGoogleLauncherService implements MobileMessageLauncher
     /**
      * Construct Initialization
      *
-     * @param logService Log Service
-     * @param threadPool Thread Pool Object
+     * @param logService Log Service Object
+     * @param threadPool Message Center Thread Pool Object
      */
     public MobileMessageGoogleLauncherService(LogService logService, MessageCenterThreadPool threadPool) {
         this.logService = logService;
@@ -102,14 +102,14 @@ public class MobileMessageGoogleLauncherService implements MobileMessageLauncher
     }
 
     /**
-     * Get Client Firebase App
+     * Get Firebase Client Object
      *
-     * @param config Client Config
-     * @return Client Firebase App
+     * @param config Mobile Message Config Model Object
+     * @return Firebase Client Object
      */
     protected FirebaseApp client(MobileMessageConfigModel config) {
         try {
-            final String name = Md5Util.execute(Md5Util.execute(config.getApplicationName()));
+            final String name = Md5Util.execute(config.getApplicationName());
             FirebaseApp firebase = ExternalObjectCache.get(CACHE_TYPE, name);
             if (firebase == null) {
                 firebase = client(name, config);
@@ -121,11 +121,11 @@ public class MobileMessageGoogleLauncherService implements MobileMessageLauncher
     }
 
     /**
-     * Create Client Firebase App
+     * Create Firebase Client Object
      *
      * @param name   Client Name
-     * @param config Client Config
-     * @return Client Firebase App
+     * @param config Mobile Message Config Model Object
+     * @return Firebase Client Object
      */
     protected synchronized FirebaseApp client(String name, MobileMessageConfigModel config) throws Exception {
         final String content = config.content();
@@ -149,13 +149,12 @@ public class MobileMessageGoogleLauncherService implements MobileMessageLauncher
         return firebase;
     }
 
-
     /**
      * Send Mobile Message
      *
-     * @param firebase   Client Firebase App
+     * @param firebase   Firebase Client Object
      * @param recipients Recipients
-     * @param ltm        Launcher Template Model
+     * @param ltm        Launcher Template Model Object
      */
     protected void execute(FirebaseApp firebase, List<String> recipients, LauncherTemplateModel ltm) {
         try {
