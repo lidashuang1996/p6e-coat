@@ -98,6 +98,9 @@ public class ReactivePermissionFilter implements WebFilter, Ordered {
                 }
             }
         }
+        System.out.println("path" + path);
+        System.out.println("method" + method);
+        System.out.println("permissions" + permissions);
         return this.validator.execute(path, method, permissions);
     }
 
