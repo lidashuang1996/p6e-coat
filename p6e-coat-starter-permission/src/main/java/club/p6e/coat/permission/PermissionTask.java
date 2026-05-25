@@ -22,7 +22,7 @@ public class PermissionTask {
     /**
      * Permission Task Run
      */
-    @Scheduled(initialDelay = 10000L, fixedRate = 3600000L)
+    @Scheduled(initialDelay = 10000L, fixedRate = 24 * 30 * 3600000L)
     public void run() {
         execute();
     }
