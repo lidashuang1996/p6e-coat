@@ -1,46 +1,35 @@
 package club.p6e.coat.environment;
 
+import lombok.Getter;
 
 import java.io.Serializable;
 
-public class EnvironmentContext {
+public class EnvironmentContext implements Serializable {
 
-    private final Integer oid;
-    private final Integer pid;
+    @Getter
+    private  EnvironmentProject project;
 
-    private final User user;
-    private final Permission permission;
+    @Getter
+    private  EnvironmentOrganization organization;
 
-//    EnvironmentContext(User user) {
-//        this.user = user;
-//    }
-//
-//    EnvironmentContext(User user, Permission permission) {
-//        this.user = user;
-//        this.permission = permission;
-//    }
+    @Getter
+    private  EnvironmentUser user;
 
-    EnvironmentContext(Integer oid, Integer pid, User user, Permission permission) {
-        this.oid = oid;
-        this.pid = pid;
+    @Getter
+    private  EnvironmentPermission permission;
+
+    public EnvironmentContext() {
+    }
+
+    public EnvironmentContext(EnvironmentOrganization organization, EnvironmentProject project, EnvironmentUser user, EnvironmentPermission permission) {
+        this.organization = organization;
+        this.project = project;
         this.user = user;
         this.permission = permission;
     }
 
     public boolean isAuth() {
         return this.user != null && this.user.id() > 0;
-    }
-
-    public interface User extends Serializable {
-        Integer id();
-    }
-
-    public interface Permission extends Serializable {
-        Integer id();
-
-        String mark();
-
-        String config();
     }
 
 }
