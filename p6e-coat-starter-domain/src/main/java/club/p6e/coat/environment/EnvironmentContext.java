@@ -21,6 +21,18 @@ public class EnvironmentContext implements Serializable {
     public EnvironmentContext() {
     }
 
+    public EnvironmentContext(EnvironmentOrganization organization, EnvironmentProject project) {
+        this.organization = organization;
+        this.project = project;
+    }
+
+    public EnvironmentContext(EnvironmentOrganization organization, EnvironmentProject project, EnvironmentUser user) {
+        this.organization = organization;
+        this.project = project;
+        this.user = user;
+    }
+
+
     public EnvironmentContext(EnvironmentOrganization organization, EnvironmentProject project, EnvironmentUser user, EnvironmentPermission permission) {
         this.organization = organization;
         this.project = project;
