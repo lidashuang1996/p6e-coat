@@ -9,13 +9,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
-import org.jspecify.annotations.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,14 +21,8 @@ import java.util.function.Function;
  * @author lidashuang
  * @version 1.0
  */
-@Component
-@EnableConfigurationProperties(Properties.class)
-public class Application implements ApplicationRunner {
-
-    /**
-     * Inject Log Object
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(Application.class);
+@Slf4j
+public class Application {
 
     /**
      * Event Loop Group Boss
@@ -85,17 +73,14 @@ public class Application implements ApplicationRunner {
                 this.work.shutdownGracefully();
             }
         }));
-    }
-
-    @Override
-    public void run(@NonNull ApplicationArguments args) {
+        reset();
     }
 
     /**
      * Reset
      */
     public synchronized void reset() {
-        LOGGER.info("[ WEBSOCKET SERVICE ] RESET PROPERTIES >>> {}", this.properties);
+        log.info("[ WEBSOCKET SERVICE ] RESET PROPERTIES >>> {}", this.properties);
         for (final io.netty.channel.Channel channel : this.channels) {
             channel.close();
         }
@@ -112,7 +97,7 @@ public class Application implements ApplicationRunner {
         this.boss = new MultiThreadIoEventLoopGroup(this.properties.getBossThreads(), NioIoHandler.newFactory());
         this.work = new MultiThreadIoEventLoopGroup(this.properties.getWorkerThreads(), NioIoHandler.newFactory());
         for (final Properties.Channel channel : this.properties.getChannels()) {
-            LOGGER.info("[ WEBSOCKET SERVICE ] RESET CHANNEL >>> {}", channel);
+            log.info("[ WEBSOCKET SERVICE ] RESET CHANNEL >>> {}", channel);
             AuthService auth = null;
             final List<Callback> callbacks = new ArrayList<>();
             for (final String item : channel.getCallbacks()) {
@@ -198,9 +183,9 @@ public class Application implements ApplicationRunner {
                 }
             });
             this.channels.add(bootstrap.bind(port).sync().channel());
-            LOGGER.info("[ WEBSOCKET SERVICE ] ({} : {}) ==> START SUCCESSFULLY... BIND ( {} : {} )", name, type, port, path);
+            log.info("[ WEBSOCKET SERVICE ] ({} : {}) ==> START SUCCESSFULLY... BIND ( {} : {} )", name, type, port, path);
         } catch (Exception e) {
-            LOGGER.error("[ WEBSOCKET SERVICE ]", e);
+            log.error("[ WEBSOCKET SERVICE ]", e);
         }
     }
 

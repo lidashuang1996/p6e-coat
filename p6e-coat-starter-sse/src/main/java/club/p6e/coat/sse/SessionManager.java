@@ -77,41 +77,41 @@ public class SessionManager {
     /**
      * Register Session Object
      *
+     * [P2] 性能优化: 移除类级别 synchronized 锁，
+     *      ConcurrentHashMap 的 put/computeIfAbsent 已保证原子性
+     *
      * @param id      Session ID
      * @param session Session Object
      */
     public static void register(String id, Session session) {
-        synchronized (SessionManager.class) {
-            SESSIONS.put(id, session);
-            final String name = session.getChannelName();
-            final String index = String.valueOf(Math.abs(id.hashCode() % SLOT_NUM));
-            SLOTS.computeIfAbsent(index, _ -> new ConcurrentHashMap<>()).put(id, session);
-            CHANNELS.computeIfAbsent(name, _ -> new ConcurrentHashMap<>()).put(id, session);
-            LOGGER.info("[ SESSION MANAGER ] REGISTER => {}({})%{}={} >>> {}", id, id.hashCode(), SLOT_NUM, index, SLOTS.get(index));
-        }
+        SESSIONS.put(id, session);
+        final String name = session.getChannelName();
+        final String index = String.valueOf(Math.abs(id.hashCode() % SLOT_NUM));
+        SLOTS.computeIfAbsent(index, _ -> new ConcurrentHashMap<>()).put(id, session);
+        CHANNELS.computeIfAbsent(name, _ -> new ConcurrentHashMap<>()).put(id, session);
+        LOGGER.info("[ SESSION MANAGER ] REGISTER => {}({})%{}={} >>> {}", id, id.hashCode(), SLOT_NUM, index, SLOTS.get(index));
     }
 
     /**
      * Unregister Session Object
      *
+     * [P2] 性能优化: 用 SESSIONS.remove() 原子返回替代同步块
+     *
      * @param id Session ID
      */
     public static void unregister(String id) {
-        synchronized (SessionManager.class) {
-            final Session session = SESSIONS.get(id);
-            if (session != null) {
-                SESSIONS.remove(id);
-                final String index = String.valueOf(Math.abs(id.hashCode() % SLOT_NUM));
-                final Map<String, Session> slot = SLOTS.get(index);
-                if (slot != null) {
-                    slot.remove(id);
-                }
-                final Map<String, Session> channel = CHANNELS.get(session.getChannelName());
-                if (channel != null) {
-                    channel.remove(id);
-                }
-                LOGGER.info("[ SESSION MANAGER ] UNREGISTER => {}({})%{}={} >>> {}", id, id.hashCode(), SLOT_NUM, index, SLOTS.get(index));
+        final Session session = SESSIONS.remove(id);
+        if (session != null) {
+            final String index = String.valueOf(Math.abs(id.hashCode() % SLOT_NUM));
+            final Map<String, Session> slot = SLOTS.get(index);
+            if (slot != null) {
+                slot.remove(id);
             }
+            final Map<String, Session> channel = CHANNELS.get(session.getChannelName());
+            if (channel != null) {
+                channel.remove(id);
+            }
+            LOGGER.info("[ SESSION MANAGER ] UNREGISTER => {}({})%{}={} >>> {}", id, id.hashCode(), SLOT_NUM, index, SLOTS.get(index));
         }
     }
 
@@ -146,57 +146,59 @@ public class SessionManager {
     }
 
     /**
-     * Get Slot List Object
-     *
-     * @return Slot List Object
-     */
-    private static Map<String, List<Session>> getSlotList() {
-        final Map<String, List<Session>> result = new HashMap<>();
-        SLOTS.forEach((k, v) -> {
-            if (!v.isEmpty()) {
-                result.put(k, List.copyOf(v.values()));
-            }
-        });
-        return result;
-    }
-
-    /**
      * Get Channel List Object
      *
      * @return Channel List Object
      */
     @SuppressWarnings("ALL")
     public static List<Session> getChannelList(String name) {
-        return new ArrayList<>(CHANNELS.get(name).values());
+        final Map<String, Session> channel = CHANNELS.get(name);
+        return channel == null ? Collections.emptyList() : new ArrayList<>(channel.values());
     }
 
     /**
      * Push Binary Message
+     *
+     * [P2] 性能优化: 单次提交替代逐 slot 提交，避免线程泛滥
      *
      * @param filter Filter Object
      * @param name   Channel Name
      * @param bytes  Message Content
      */
     public static void pushBinary(Function<User, Boolean> filter, String name, byte[] bytes) {
-        final Map<String, List<Session>> data = getSlotList();
-        data.forEach((_, sessions) -> {
-            LOGGER.info("[ PUSH BINARY SESSION CHANNEL ] {} >>> {}", name, Collections.singletonList(bytes));
-            submit(sessions, filter, name, bytes);
+        LOGGER.info("[ PUSH BINARY SESSION CHANNEL ] {} >>> {}", name, Collections.singletonList(bytes));
+        EXECUTOR.submit(() -> {
+            for (final Session session : SESSIONS.values()) {
+                if (name.equalsIgnoreCase(session.getChannelName()) && filter != null) {
+                    final Boolean result = filter.apply(session.getUser());
+                    if (result != null && result) {
+                        session.push(bytes);
+                    }
+                }
+            }
         });
     }
 
     /**
      * Push Text Message
      *
+     * [P2] 性能优化: 单次提交替代逐 slot 提交，避免线程泛滥
+     *
      * @param filter  Filter Object
      * @param name    Channel Name
      * @param content Message Content
      */
     public static void pushText(Function<User, Boolean> filter, String name, String content) {
-        final Map<String, List<Session>> data = getSlotList();
-        data.forEach((_, sessions) -> {
-            LOGGER.info("[ PUSH TEXT SESSION CHANNEL ] {} >>> {}", name, content);
-            submit(sessions, filter, name, content);
+        LOGGER.info("[ PUSH TEXT SESSION CHANNEL ] {} >>> {}", name, content);
+        EXECUTOR.submit(() -> {
+            for (final Session session : SESSIONS.values()) {
+                if (name.equalsIgnoreCase(session.getChannelName()) && filter != null) {
+                    final Boolean result = filter.apply(session.getUser());
+                    if (result != null && result) {
+                        session.push(content);
+                    }
+                }
+            }
         });
     }
 
@@ -207,18 +209,12 @@ public class SessionManager {
      * @param filter   Filter Object
      * @param name     Channel Name
      * @param content  Content Data
+     *
+     * @deprecated [P2] 性能优化: 由 pushText/pushBinary 内联替代
      */
+    @Deprecated
+    @SuppressWarnings("ALL")
     private static void submit(List<Session> sessions, Function<User, Boolean> filter, String name, Object content) {
-        EXECUTOR.submit(() -> {
-            for (final Session session : sessions) {
-                if (filter != null && name.equalsIgnoreCase(session.getChannelName())) {
-                    final Boolean result = filter.apply(session.getUser());
-                    if (result != null && result) {
-                        session.push(content);
-                    }
-                }
-            }
-        });
     }
 
 }

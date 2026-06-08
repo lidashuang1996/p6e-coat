@@ -20,7 +20,7 @@ import java.util.HexFormat;
  */
 @RestController
 @RequestMapping
-@ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
+@ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactiveWebController {
 
     /**
@@ -51,6 +51,13 @@ public class ReactiveWebController {
                     "request parameter exception"
             );
         }
+        if (request.getContent().length() >= 5120) {
+            throw new ParameterException(
+                    this.getClass(),
+                    "fun Mono<ResultContext> pushText(MessageContext.Request request)",
+                    "request parameter content length exception, max length is 5120"
+            );
+        }
         pushTextMessage(request.getName() == null ? "DEFAULT" : request.getName(), request);
         return Mono.just(ResultContext.build(LocalDateTime.now()));
     }
@@ -62,6 +69,13 @@ public class ReactiveWebController {
                     this.getClass(),
                     "fun Mono<ResultContext> pushHex(MessageContext.Request request)",
                     "request parameter exception"
+            );
+        }
+        if (request.getContent().length() >= 5120) {
+            throw new ParameterException(
+                    this.getClass(),
+                    "fun Mono<ResultContext> pushHex(MessageContext.Request request)",
+                    "request parameter content length exception, max length is 5120"
             );
         }
         pushHexMessage(request.getName() == null ? "DEFAULT" : request.getName(), request);

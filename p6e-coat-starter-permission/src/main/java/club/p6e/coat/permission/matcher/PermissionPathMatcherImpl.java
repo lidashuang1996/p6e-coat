@@ -1,19 +1,18 @@
 package club.p6e.coat.permission.matcher;
 
 import club.p6e.coat.permission.PermissionDetails;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.http.server.PathContainer;
-import org.springframework.stereotype.Component;
 import org.springframework.web.util.pattern.PathPattern;
-import org.springframework.web.util.pattern.PathPatternParser;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Permission Path Matcher Impl
@@ -21,27 +20,23 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author lidashuang
  * @version 1.0
  */
-@Component
+@Slf4j
 @ConditionalOnMissingBean(PermissionPathMatcher.class)
 public class PermissionPathMatcherImpl implements PermissionPathMatcher {
 
-    /**
-     * Inject Log Object
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(PermissionPathMatcherImpl.class);
-
-    /**
-     * Path Pattern Parser Object
-     */
-    private final PathPatternParser parser = new PathPatternParser();
-
-    /**
-     * Cache Object -> Key ( Path Pattern Parser Object ) / Value ( Permission Details Object )
-     */
-    private final Map<PathPattern, List<PermissionDetails>> cache = new ConcurrentHashMap<>();
+    private ConcurrentLinkedQueue<Model> tree = new ConcurrentLinkedQueue<>();
 
     @Override
     public List<PermissionDetails> match(String path) {
+        if (path == null || path.isEmpty()) {
+            return new ArrayList<>();
+        }
+        final String[] paths = path.trim().split("/");
+        for (final String item : paths) {
+            tree.peek().
+        }
+
+
         final List<PermissionDetails> result = new ArrayList<>();
         final PathContainer container = PathContainer.parsePath(path);
         for (final PathPattern pattern : this.cache.keySet()) {
@@ -67,12 +62,12 @@ public class PermissionPathMatcherImpl implements PermissionPathMatcher {
                         final String mark = model.getGid() + "_" + model.getUid();
                         final List<PermissionDetails> list = this.cache.get(pattern);
                         list.removeIf(i -> mark.equalsIgnoreCase((i.getGid() + "_" + i.getUid())));
-                        LOGGER.info("[ PERMISSION PATH MATCHER REGISTER (ADD/REPLACE) ] {}({}) >>> {}", path, model.getMethod(), model);
+                        log.info("[ PERMISSION PATH MATCHER REGISTER (ADD/REPLACE) ] {}({}) >>> {}", path, model.getMethod(), model);
                         this.cache.get(parser.parse(path)).add(model);
                         return;
                     }
                 }
-                LOGGER.info("[ PERMISSION PATH MATCHER REGISTER (ADD) ] {}({}) >>> {}", path, model.getMethod(), model);
+                log.info("[ PERMISSION PATH MATCHER REGISTER (ADD) ] {}({}) >>> {}", path, model.getMethod(), model);
                 this.cache.put(parser.parse(path), new ArrayList<>(List.of(model)));
             }
         }
@@ -91,6 +86,10 @@ public class PermissionPathMatcherImpl implements PermissionPathMatcher {
                 }
             }
         }
+    }
+
+    private static class Model implements Serializable {
+        private Map<String, List<PermissionDetails>> data = new ConcurrentHashMap<>();
     }
 
 }

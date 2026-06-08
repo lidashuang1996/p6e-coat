@@ -7,8 +7,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.*;
 import io.netty.util.AttributeKey;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
@@ -18,6 +17,7 @@ import java.util.List;
  * @author lidashuang
  * @version 1.0
  */
+@Slf4j
 public class Channel implements ChannelInboundHandler {
 
     /**
@@ -31,23 +31,6 @@ public class Channel implements ChannelInboundHandler {
     private static final byte[] LOGIN_CONTENT_BYTES = new byte[]{
             0, 0, 0, 16, 0, 16, 0, 1, 0, 0, 0, 0, 0, 0, 0, 2
     };
-
-    /**
-     * LOGOUT SUCCESS CONTENT TEXT
-     */
-    private static final String LOGOUT_CONTENT_TEXT = "{\"type\":\"logout\"}";
-
-    /**
-     * LOGOUT SUCCESS CONTENT BYTES
-     */
-    private static final byte[] LOGOUT_CONTENT_BYTES = new byte[]{
-            0, 0, 0, 16, 0, 16, 0, 1, 0, 0, 0, 0, 0, 0, 0, 4
-    };
-
-    /**
-     * Inject Log Object
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(Channel.class);
 
     /**
      * Session ID Attribute Key
@@ -128,9 +111,9 @@ public class Channel implements ChannelInboundHandler {
                 context.channel().attr(SESSION_ID).set(this.id);
                 SessionManager.register(this.id, session);
                 executeCallbackOpen(session);
-                if (DataType.TEXT.name().equalsIgnoreCase(this.type)) {
+                if (DataType.TEXT.name().equals(this.type)) {
                     context.writeAndFlush(new TextWebSocketFrame(LOGIN_CONTENT_TEXT));
-                } else if (DataType.BINARY.name().equalsIgnoreCase(this.type)) {
+                } else if (DataType.BINARY.name().equals(this.type)) {
                     context.writeAndFlush(new BinaryWebSocketFrame(Unpooled.wrappedBuffer(LOGIN_CONTENT_BYTES)));
                 }
             }
@@ -140,13 +123,6 @@ public class Channel implements ChannelInboundHandler {
     @Override
     public void handlerRemoved(ChannelHandlerContext context) {
         try {
-            if (context != null && !context.isRemoved()) {
-                if (DataType.TEXT.name().equalsIgnoreCase(this.type)) {
-                    context.writeAndFlush(new TextWebSocketFrame(LOGOUT_CONTENT_TEXT));
-                } else if (DataType.BINARY.name().equalsIgnoreCase(this.type)) {
-                    context.writeAndFlush(new BinaryWebSocketFrame(Unpooled.wrappedBuffer(LOGOUT_CONTENT_BYTES)));
-                }
-            }
             final Session session = SessionManager.get(this.id);
             if (session != null) {
                 executeCallbackClose(session);
@@ -206,7 +182,7 @@ public class Channel implements ChannelInboundHandler {
                 try {
                     callback.onOpen(session);
                 } catch (Exception e) {
-                    LOGGER.error("[ CALLBACK ERROR ] OPEN => {}", e.getMessage(), e);
+                    log.error("[ CALLBACK ERROR ] OPEN => {}", e.getMessage(), e);
                 }
             }
         }
@@ -223,7 +199,7 @@ public class Channel implements ChannelInboundHandler {
                 try {
                     callback.onClose(session);
                 } catch (Exception e) {
-                    LOGGER.error("[ CALLBACK ERROR ] CLOSE => {}", e.getMessage(), e);
+                    log.error("[ CALLBACK ERROR ] CLOSE => {}", e.getMessage(), e);
                 }
             }
         }
@@ -241,7 +217,7 @@ public class Channel implements ChannelInboundHandler {
                 try {
                     callback.onError(session, throwable);
                 } catch (Exception e) {
-                    LOGGER.error("[ CALLBACK ERROR ] ERROR => {}", e.getMessage(), e);
+                    log.error("[ CALLBACK ERROR ] ERROR => {}", e.getMessage(), e);
                 }
             }
         }
@@ -259,7 +235,7 @@ public class Channel implements ChannelInboundHandler {
                 try {
                     callback.onMessage(session, text);
                 } catch (Exception e) {
-                    LOGGER.error("[ CALLBACK ERROR ] MESSAGE TEXT => {}", e.getMessage(), e);
+                    log.error("[ CALLBACK ERROR ] MESSAGE TEXT => {}", e.getMessage(), e);
                 }
             }
         }
@@ -277,7 +253,7 @@ public class Channel implements ChannelInboundHandler {
                 try {
                     callback.onMessage(session, bytes);
                 } catch (Exception e) {
-                    LOGGER.error("[ CALLBACK ERROR ] MESSAGE BYTES => {}", e.getMessage(), e);
+                    log.error("[ CALLBACK ERROR ] MESSAGE BYTES => {}", e.getMessage(), e);
                 }
             }
         }

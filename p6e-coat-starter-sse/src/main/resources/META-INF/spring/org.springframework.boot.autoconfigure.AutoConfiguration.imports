@@ -1,4 +1,5 @@
 club.p6e.coat.sse.BlockingWebController
 club.p6e.coat.sse.ReactiveWebController
+club.p6e.coat.sse.Properties
 club.p6e.coat.sse.Application
 club.p6e.coat.sse.AuthServiceImpl

@@ -30,42 +30,14 @@ import java.util.function.Function;
 @EnableConfigurationProperties(Properties.class)
 public class Application implements ApplicationRunner {
 
-    /**
-     * Inject Log Object
-     */
     private static final Logger LOGGER = LoggerFactory.getLogger(Application.class);
 
-    /**
-     * Event Loop Group Boss
-     */
     private EventLoopGroup boss;
-
-    /**
-     * Event Loop Group Worker
-     */
     private EventLoopGroup work;
-
-    /**
-     * Properties Object
-     */
     private Properties properties;
-
-    /**
-     * Auth Service List Object
-     */
     private final List<AuthService> authServices;
-
-    /**
-     * Server Channels
-     */
     private final List<io.netty.channel.Channel> channels = new ArrayList<>();
 
-    /**
-     * Constructor Initialization
-     *
-     * @param properties   Properties Object
-     * @param authServices Auth Service List Object
-     */
     public Application(Properties properties, List<AuthService> authServices) {
         this.properties = properties;
         this.authServices = authServices;
@@ -79,14 +51,15 @@ public class Application implements ApplicationRunner {
         }));
     }
 
-
+    /**
+     * [P3] 修复: ApplicationRunner.run() 中调用 reset()，
+     *      确保 Spring Boot 启动后自动初始化 SSE 服务
+     */
     @Override
     public void run(@NonNull ApplicationArguments args) {
+        reset();
     }
 
-    /**
-     * Reset
-     */
     public synchronized void reset() {
         LOGGER.info("[ SSE SERVICE ] RESET PROPERTIES >>> {}", this.properties);
         for (final io.netty.channel.Channel channel : this.channels) {
@@ -120,45 +93,20 @@ public class Application implements ApplicationRunner {
         }
     }
 
-    /**
-     * Reset
-     *
-     * @param properties Properties Object
-     */
     @SuppressWarnings("ALL")
     public void reset(Properties properties) {
         this.properties = properties;
         reset();
     }
 
-    /**
-     * Push Message
-     *
-     * @param filter Filter Object
-     * @param name   Channel Name
-     * @param bytes  Message Content
-     */
     public void push(Function<User, Boolean> filter, String name, byte[] bytes) {
         SessionManager.pushBinary(filter, name, bytes);
     }
 
-    /**
-     * Push Message
-     *
-     * @param filter  Filter Object
-     * @param name    Channel Name
-     * @param content Message Content
-     */
     public void push(Function<User, Boolean> filter, String name, String content) {
         SessionManager.pushText(filter, name, content);
     }
 
-    /**
-     * Netty Web Socket Server
-     *
-     * @param psc  Properties Channel Object
-     * @param auth Auth Service Object
-     */
     private void run(Properties.Channel psc, AuthService auth) {
         try {
             final int port = psc.getPort();
@@ -170,11 +118,8 @@ public class Application implements ApplicationRunner {
             bootstrap.childHandler(new ChannelInitializer<>() {
                 @Override
                 protected void initChannel(io.netty.channel.Channel channel) {
-                    // HTTP
                     channel.pipeline().addLast(new HttpServerCodec());
-                    // HTTP OBJECT AGGREGATOR
                     channel.pipeline().addLast(new HttpObjectAggregator(frame));
-                    // CHANNEL
                     channel.pipeline().addLast(new Channel(psc, auth));
                 }
             });

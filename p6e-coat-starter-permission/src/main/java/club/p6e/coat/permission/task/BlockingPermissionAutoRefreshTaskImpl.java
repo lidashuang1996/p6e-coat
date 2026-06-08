@@ -3,6 +3,7 @@ package club.p6e.coat.permission.task;
 import club.p6e.coat.permission.PermissionDetails;
 import club.p6e.coat.permission.matcher.PermissionPathMatcher;
 import club.p6e.coat.permission.repository.BlockingPermissionRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -19,15 +20,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author lidashuang
  * @version 1.0
  */
-@Component
+@Slf4j
 @ConditionalOnMissingBean(BlockingPermissionAutoRefreshTask.class)
 @ConditionalOnClass(name = "org.springframework.web.servlet.package-info")
 public class BlockingPermissionAutoRefreshTaskImpl implements BlockingPermissionAutoRefreshTask {
-
-    /**
-     * Inject Log Object
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(BlockingPermissionAutoRefreshTaskImpl.class);
 
     /**
      * Permission Path Matcher Object
@@ -58,11 +54,11 @@ public class BlockingPermissionAutoRefreshTaskImpl implements BlockingPermission
     @Override
     public Long execute() {
         final LocalDateTime now = LocalDateTime.now();
-        LOGGER.info("[ PERMISSION AUTO REFRESH TASK ] => NOW: {}", now);
-        LOGGER.info("[ PERMISSION AUTO REFRESH TASK ] START EXECUTE PERMISSION UPDATE TASK");
+        log.info("[ PERMISSION AUTO REFRESH TASK ] => NOW: {}", now);
+        log.info("[ PERMISSION AUTO REFRESH TASK ] START EXECUTE PERMISSION UPDATE TASK");
         final long result = execute(this.version.incrementAndGet());
         this.matcher.cleanExpiredVersionData(this.version.get());
-        LOGGER.info("[ PERMISSION AUTO REFRESH TASK ] COMPLETE PERMISSION UPDATE TASK, COUNT >>> {}, VERSION >>> {}", result, this.version.get());
+        log.info("[ PERMISSION AUTO REFRESH TASK ] COMPLETE PERMISSION UPDATE TASK, COUNT >>> {}, VERSION >>> {}", result, this.version.get());
         return result;
     }
 

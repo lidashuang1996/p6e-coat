@@ -114,10 +114,16 @@ public class Session {
             } else {
                 content = content.toString();
             }
+            // [P1] 安全加固: 转义换行符防止 SSE 协议注入攻击
+            //     原始内容中的 \n 会破坏 SSE 事件边界，攻击者可能伪造事件流
+            final String safeContent = ((String) content)
+                    .replace("\\", "\\\\")
+                    .replace("\n", "\\n")
+                    .replace("\r", "\\r");
             final FullHttpResponse response = new DefaultFullHttpResponse(
                     HttpVersion.HTTP_1_1,
                     HttpResponseStatus.OK,
-                    Unpooled.copiedBuffer("id: " + id + "\nevent: " + event + "\ndata: " + content + "\n\n", CharsetUtil.UTF_8)
+                    Unpooled.copiedBuffer("id: " + id + "\nevent: " + event + "\ndata: " + safeContent + "\n\n", CharsetUtil.UTF_8)
             );
             response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/event-stream; charset=UTF-8");
             response.headers().set(HttpHeaderNames.CACHE_CONTROL, "no-cache");

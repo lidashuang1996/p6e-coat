@@ -81,16 +81,16 @@ public class Session {
     @SuppressWarnings("ALL")
     public void push(Object data) {
         if (context != null && !context.isRemoved()) {
-            if (DataType.TEXT.name().equalsIgnoreCase(this.channelType) && data instanceof String content) {
+            if (DataType.TEXT.name().equals(this.channelType) && data instanceof String content) {
                 final io.netty.channel.Channel channel = context.channel();
-                if (channel != null) {
+                if (channel != null && channel.isActive() && channel.isWritable()) {
                     final EventLoop el = channel.eventLoop();
                     if (el != null) {
                         el.execute(() -> channel.writeAndFlush(new TextWebSocketFrame(content)));
                     }
                 }
             }
-            if (DataType.BINARY.name().equalsIgnoreCase(this.channelType) && data instanceof byte[] bytes) {
+            if (DataType.BINARY.name().equals(this.channelType) && data instanceof byte[] bytes) {
                 final io.netty.channel.Channel channel = context.channel();
                 if (channel != null && channel.isActive() && channel.isWritable()) {
                     final EventLoop el = channel.eventLoop();

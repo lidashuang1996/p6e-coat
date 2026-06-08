@@ -1,11 +1,10 @@
 package club.p6e.coat.websocket;
 
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -34,7 +33,7 @@ public class HeartbeatCallback implements Callback {
     /**
      * Channel Name List
      */
-    private static final List<String> CHANNEL_NAME_LIST = new ArrayList<>();
+    private static final List<String> CHANNEL_NAME_LIST = new CopyOnWriteArrayList<>();
 
     /**
      * Scheduled Executor Service Object
@@ -81,11 +80,8 @@ public class HeartbeatCallback implements Callback {
      *
      * @param name Channel Name
      */
-    @SuppressWarnings("ALL")
     public static void register(String name) {
-        synchronized (CHANNEL_NAME_LIST) {
-            CHANNEL_NAME_LIST.add(name);
-        }
+        CHANNEL_NAME_LIST.add(name);
     }
 
     /**
@@ -93,11 +89,8 @@ public class HeartbeatCallback implements Callback {
      *
      * @param name Channel Name
      */
-    @SuppressWarnings("ALL")
     public static void unregister(String name) {
-        synchronized (CHANNEL_NAME_LIST) {
-            CHANNEL_NAME_LIST.remove(name);
-        }
+        CHANNEL_NAME_LIST.remove(name);
     }
 
     @Override
@@ -136,12 +129,8 @@ public class HeartbeatCallback implements Callback {
     /**
      * Task
      */
+    @Slf4j
     private static class Task implements Runnable {
-
-        /**
-         * Inject Log Object
-         */
-        private static final Logger LOGGER = LoggerFactory.getLogger(Task.class);
 
         /**
          * Interval Time
@@ -162,19 +151,18 @@ public class HeartbeatCallback implements Callback {
             try {
                 final long now = System.currentTimeMillis();
                 for (final String name : CHANNEL_NAME_LIST) {
-                    final List<Session> list = SessionManager.getChannelList(name);
-                    for (final Session session : list) {
+                    SessionManager.forEachSessionInChannel(name, session -> {
                         try {
                             if (now - session.getDate() > this.interval * 2 * 1000L) {
                                 session.close();
                             }
                         } catch (Exception e) {
-                            LOGGER.error(e.getMessage());
+                            log.error("[ HEARTBEAT TASK FOR ] {}/{} ERROR =>: {}", name, session, e.getMessage(), e);
                         }
-                    }
+                    });
                 }
             } catch (Exception e) {
-                LOGGER.error("[ HEARTBEAT TASK ] ERROR => {} ", e.getMessage(), e);
+                log.error("[ HEARTBEAT TASK ] ERROR => {} ", e.getMessage(), e);
             }
         }
 

@@ -19,7 +19,7 @@ import java.util.HexFormat;
  */
 @RestController
 @RequestMapping
-@ConditionalOnClass(name = "org.springframework.web.servlet.package-info")
+@ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class BlockingWebController {
 
     /**
@@ -50,6 +50,13 @@ public class BlockingWebController {
                     "request parameter exception"
             );
         }
+        if (request.getContent().length() >= 5120) {
+            throw new ParameterException(
+                    this.getClass(),
+                    "fun ResultContext pushText(MessageContext.Request request)",
+                    "request parameter content length exception, max length is 5120"
+            );
+        }
         pushTextMessage(request.getName() == null ? "DEFAULT" : request.getName(), request);
         return ResultContext.build(LocalDateTime.now());
     }
@@ -61,6 +68,13 @@ public class BlockingWebController {
                     this.getClass(),
                     "fun ResultContext pushHex(MessageContext.Request request)",
                     "request parameter exception"
+            );
+        }
+        if (request.getContent().length() >= 5120) {
+            throw new ParameterException(
+                    this.getClass(),
+                    "fun ResultContext pushHex(MessageContext.Request request)",
+                    "request parameter content length exception, max length is 5120"
             );
         }
         pushHexMessage(request.getName() == null ? "DEFAULT" : request.getName(), request);

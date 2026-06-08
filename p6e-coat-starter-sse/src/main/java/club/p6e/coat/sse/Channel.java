@@ -22,37 +22,14 @@ import java.util.Map;
  */
 public class Channel implements ChannelInboundHandler {
 
-    /**
-     * Inject Log Object
-     */
     private static final Logger LOGGER = LoggerFactory.getLogger(Channel.class);
 
-    /**
-     * Session ID Attribute Key
-     */
     private static final AttributeKey<String> SESSION_ID = AttributeKey.valueOf("id");
 
-    /**
-     * Session ID
-     */
     private final String id;
-
-    /**
-     * Auth Service Object
-     */
     private final AuthService auth;
-
-    /**
-     * Properties Channel Object
-     */
     private final Properties.Channel psc;
 
-    /**
-     * Constructor Initialization
-     *
-     * @param psc  Properties Channel Object
-     * @param auth Auth Service Object
-     */
     public Channel(Properties.Channel psc, AuthService auth) {
         this.psc = psc;
         this.auth = auth;
@@ -124,36 +101,13 @@ public class Channel implements ChannelInboundHandler {
         context.close();
     }
 
-    @Override
-    public void handlerAdded(ChannelHandlerContext context) {
-    }
-
-    @Override
-    public void channelActive(ChannelHandlerContext context) {
-    }
-
-    @Override
-    public void channelInactive(ChannelHandlerContext context) {
-    }
-
-    @Override
-    public void channelRegistered(ChannelHandlerContext context) {
-    }
-
-    @Override
-    public void channelUnregistered(ChannelHandlerContext context) {
-    }
-
-    @Override
-    public void channelReadComplete(ChannelHandlerContext context) {
-    }
-
-    @Override
-    public void channelWritabilityChanged(ChannelHandlerContext context) {
-    }
-
-    @Override
-    public void userEventTriggered(ChannelHandlerContext context, Object o) {
-    }
+    @Override public void handlerAdded(ChannelHandlerContext context) { }
+    @Override public void channelActive(ChannelHandlerContext context) { }
+    @Override public void channelInactive(ChannelHandlerContext context) { }
+    @Override public void channelRegistered(ChannelHandlerContext context) { }
+    @Override public void channelUnregistered(ChannelHandlerContext context) { }
+    @Override public void channelReadComplete(ChannelHandlerContext context) { }
+    @Override public void channelWritabilityChanged(ChannelHandlerContext context) { }
+    @Override public void userEventTriggered(ChannelHandlerContext context, Object o) { }
 
 }

@@ -3,11 +3,9 @@ package club.p6e.coat.permission.task;
 import club.p6e.coat.permission.PermissionDetails;
 import club.p6e.coat.permission.matcher.PermissionPathMatcher;
 import club.p6e.coat.permission.repository.ReactivePermissionRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
@@ -20,15 +18,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author lidashuang
  * @version 1.0
  */
-@Component
+@Slf4j
 @ConditionalOnMissingBean(ReactivePermissionAutoRefreshTask.class)
 @ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
 public class ReactivePermissionAutoRefreshTaskImpl implements ReactivePermissionAutoRefreshTask {
-
-    /**
-     * Inject Log Object
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReactivePermissionAutoRefreshTaskImpl.class);
 
     /**
      * Permission Path Matcher Object
@@ -59,11 +52,11 @@ public class ReactivePermissionAutoRefreshTaskImpl implements ReactivePermission
     @Override
     public Mono<Long> execute() {
         final LocalDateTime now = LocalDateTime.now();
-        LOGGER.info("[ PERMISSION AUTO REFRESH TASK ] => NOW: {}", now);
-        LOGGER.info("[ PERMISSION AUTO REFRESH TASK ] START EXECUTE PERMISSION UPDATE TASK");
+        log.info("[ PERMISSION AUTO REFRESH TASK ] => NOW: {}", now);
+        log.info("[ PERMISSION AUTO REFRESH TASK ] START EXECUTE PERMISSION UPDATE TASK");
         return execute(this.version.incrementAndGet()).map(l -> {
             this.matcher.cleanExpiredVersionData(this.version.get());
-            LOGGER.info("[ PERMISSION AUTO REFRESH TASK ] COMPLETE PERMISSION UPDATE TASK, COUNT >>> {}, VERSION >>> {}", l, this.version.get());
+            log.info("[ PERMISSION AUTO REFRESH TASK ] COMPLETE PERMISSION UPDATE TASK, COUNT >>> {}, VERSION >>> {}", l, this.version.get());
             return l;
         });
     }

@@ -1,4 +1,5 @@
 club.p6e.coat.websocket.BlockingWebController
 club.p6e.coat.websocket.ReactiveWebController
+club.p6e.coat.websocket.Properties
 club.p6e.coat.websocket.Application
 club.p6e.coat.websocket.AuthServiceImpl

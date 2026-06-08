@@ -1,13 +1,13 @@
 package club.p6e.coat.websocket;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -16,12 +16,8 @@ import java.util.function.Function;
  * @author lidashuang
  * @version 1.0
  */
+@Slf4j
 public class SessionManager {
-
-    /**
-     * Inject Log Object
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(SessionManager.class);
 
     /**
      * Session Cache Object
@@ -41,7 +37,7 @@ public class SessionManager {
     /**
      * Executor
      */
-    private static final ThreadPoolExecutor EXECUTOR = new ThreadPoolExecutor(3, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<>());
+    private static final ThreadPoolExecutor EXECUTOR = new ThreadPoolExecutor(3, 30, 60L, TimeUnit.SECONDS, new SynchronousQueue<>());
 
     /**
      * Slot Number
@@ -81,14 +77,12 @@ public class SessionManager {
      * @param session Session Object
      */
     public static void register(String id, Session session) {
-        synchronized (SessionManager.class) {
-            SESSIONS.put(id, session);
-            final String name = session.getChannelName();
-            final String index = String.valueOf(Math.abs(id.hashCode() % SLOT_NUM));
-            SLOTS.computeIfAbsent(index, _ -> new ConcurrentHashMap<>()).put(id, session);
-            CHANNELS.computeIfAbsent(name, _ -> new ConcurrentHashMap<>()).put(id, session);
-            LOGGER.info("[ SESSION MANAGER ] REGISTER => {}({})%{}={} >>> {}", id, id.hashCode(), SLOT_NUM, index, SLOTS.get(index));
-        }
+        SESSIONS.put(id, session);
+        final String name = session.getChannelName();
+        final String index = String.valueOf(Math.abs(id.hashCode() % SLOT_NUM));
+        SLOTS.computeIfAbsent(index, _ -> new ConcurrentHashMap<>()).put(id, session);
+        CHANNELS.computeIfAbsent(name, _ -> new ConcurrentHashMap<>()).put(id, session);
+        log.info("[ SESSION MANAGER ] REGISTER => {}({})%{}={}", id, id.hashCode(), SLOT_NUM, index);
     }
 
     /**
@@ -97,21 +91,19 @@ public class SessionManager {
      * @param id Session ID
      */
     public static void unregister(String id) {
-        synchronized (SessionManager.class) {
-            final Session session = SESSIONS.get(id);
-            if (session != null) {
-                SESSIONS.remove(id);
-                final String index = String.valueOf(Math.abs(id.hashCode() % SLOT_NUM));
-                final Map<String, Session> slot = SLOTS.get(index);
-                if (slot != null) {
-                    slot.remove(id);
-                }
-                final Map<String, Session> channel = CHANNELS.get(session.getChannelName());
-                if (channel != null) {
-                    channel.remove(id);
-                }
-                LOGGER.info("[ SESSION MANAGER ] UNREGISTER => {}({})%{}={} >>> {}", id, id.hashCode(), SLOT_NUM, index, SLOTS.get(index));
+        final Session session = SESSIONS.get(id);
+        if (session != null) {
+            SESSIONS.remove(id);
+            final String index = String.valueOf(Math.abs(id.hashCode() % SLOT_NUM));
+            final Map<String, Session> slot = SLOTS.get(index);
+            if (slot != null) {
+                slot.remove(id);
             }
+            final Map<String, Session> channel = CHANNELS.get(session.getChannelName());
+            if (channel != null) {
+                channel.remove(id);
+            }
+            log.info("[ SESSION MANAGER ] UNREGISTER => {}({})%{}={}", id, id.hashCode(), SLOT_NUM, index);
         }
     }
 
@@ -146,31 +138,15 @@ public class SessionManager {
     }
 
     /**
-     * Get Slot List Object
+     * For Each Session In Channel
      *
-     * @return Slot List Object
+     * @param name     Channel Name
+     * @param consumer Consumer Object
      */
-    private static Map<String, List<Session>> getSlotList() {
-        final Map<String, List<Session>> result = new HashMap<>();
-        SLOTS.forEach((k, v) -> {
-            if (!v.isEmpty()) {
-                result.put(k, List.copyOf(v.values()));
-            }
-        });
-        return result;
-    }
-
-    /**
-     * Get Channel List Object
-     *
-     * @return Channel List Object
-     */
-    @SuppressWarnings("ALL")
-    public static List<Session> getChannelList(String name) {
-        if (CHANNELS.get(name) == null) {
-            return List.of();
-        } else {
-            return List.copyOf(CHANNELS.get(name).values());
+    public static void forEachSessionInChannel(String name, Consumer<Session> consumer) {
+        final Map<String, Session> channel = CHANNELS.get(name);
+        if (channel != null) {
+            channel.values().forEach(consumer);
         }
     }
 
@@ -182,10 +158,10 @@ public class SessionManager {
      * @param bytes  Message Content
      */
     public static void pushBinary(Function<User, Boolean> filter, String name, byte[] bytes) {
-        final Map<String, List<Session>> data = getSlotList();
-        data.forEach((_, sessions) -> {
-            LOGGER.info("[ PUSH BINARY SESSION CHANNEL ] {} >>> {}", name, Collections.singletonList(bytes));
-            submit(sessions, filter, name, bytes);
+        SLOTS.forEach((_, sessions) -> {
+            if (!sessions.isEmpty()) {
+                submit(sessions, filter, name, bytes);
+            }
         });
     }
 
@@ -197,10 +173,10 @@ public class SessionManager {
      * @param content Message Content
      */
     public static void pushText(Function<User, Boolean> filter, String name, String content) {
-        final Map<String, List<Session>> data = getSlotList();
-        data.forEach((_, sessions) -> {
-            LOGGER.info("[ PUSH TEXT SESSION CHANNEL ] {} >>> {}", name, content);
-            submit(sessions, filter, name, content);
+        SLOTS.forEach((_, sessions) -> {
+            if (!sessions.isEmpty()) {
+                submit(sessions, filter, name, content);
+            }
         });
     }
 
@@ -212,9 +188,9 @@ public class SessionManager {
      * @param name     Channel Name
      * @param content  Content Data
      */
-    private static void submit(List<Session> sessions, Function<User, Boolean> filter, String name, Object content) {
+    private static void submit(Map<String, Session> sessions, Function<User, Boolean> filter, String name, Object content) {
         EXECUTOR.submit(() -> {
-            for (final Session session : sessions) {
+            for (final Session session : sessions.values()) {
                 if (filter != null && name.equalsIgnoreCase(session.getChannelName())) {
                     final Boolean result = filter.apply(session.getUser());
                     if (result != null && result) {

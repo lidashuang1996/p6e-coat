@@ -26,20 +26,12 @@ public class ReactivePermissionFilter implements WebFilter, Ordered {
 
     /**
      * Permission Header
-     * Save The Request Header Of The Permission Information Used In The Current Request
-     * Request Header Is Customized By The Program And Not Carried By The User Request
-     * When Receiving Requests, It Is Necessary To Clear The Request Header Carried By The User To Ensure Program Security
      */
-    @SuppressWarnings("ALL")
     private static final String PERMISSION_HEADER = "P6e-Permission";
 
     /**
      * User Permission Header
-     * Request Header For Saving User Owned Permission Group
-     * Request Header Is Customized By The Program And Not Carried By The User Request
-     * When Receiving Requests, It Is Necessary To Clear The Request Header Carried By The User To Ensure Program Security
      */
-    @SuppressWarnings("ALL")
     private static final String USER_PERMISSION_HEADER = "P6e-User-Permission";
 
     /**
@@ -74,7 +66,8 @@ public class ReactivePermissionFilter implements WebFilter, Ordered {
             ));
         } else {
             exchange.mutate().request(request.mutate().header(
-                    PERMISSION_HEADER, JsonUtil.toJson(details)).build()).build();
+                    PERMISSION_HEADER, JsonUtil.toJson(details)).build()
+            ).build();
             return chain.filter(exchange);
         }
     }
@@ -98,9 +91,6 @@ public class ReactivePermissionFilter implements WebFilter, Ordered {
                 }
             }
         }
-        System.out.println("path" + path);
-        System.out.println("method" + method);
-        System.out.println("permissions" + permissions);
         return this.validator.execute(path, method, permissions);
     }
 
