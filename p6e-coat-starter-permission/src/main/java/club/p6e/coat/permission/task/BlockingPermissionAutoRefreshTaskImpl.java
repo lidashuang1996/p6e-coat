@@ -1,17 +1,17 @@
 package club.p6e.coat.permission.task;
 
 import club.p6e.coat.permission.PermissionDetails;
+import club.p6e.coat.permission.matcher.PermissionGroupMatcher;
 import club.p6e.coat.permission.matcher.PermissionPathMatcher;
 import club.p6e.coat.permission.repository.BlockingPermissionRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -22,13 +22,18 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @Slf4j
 @ConditionalOnMissingBean(BlockingPermissionAutoRefreshTask.class)
-@ConditionalOnClass(name = "org.springframework.web.servlet.package-info")
+@ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class BlockingPermissionAutoRefreshTaskImpl implements BlockingPermissionAutoRefreshTask {
 
     /**
      * Permission Path Matcher Object
      */
-    private final PermissionPathMatcher matcher;
+    private final PermissionPathMatcher permissionPathMatcher;
+
+    /**
+     * Permission Group Matcher Object
+     */
+    private final PermissionGroupMatcher permissionGroupMatcher;
 
     /**
      * Blocking Permission Repository Object
@@ -43,11 +48,17 @@ public class BlockingPermissionAutoRefreshTaskImpl implements BlockingPermission
     /**
      * Constructor Initialization
      *
-     * @param matcher    Permission Path Matcher Object
-     * @param repository Blocking Permission Repository Object
+     * @param permissionPathMatcher  Permission Path Matcher Object
+     * @param permissionGroupMatcher Permission Path Matcher Object
+     * @param repository             Blocking Permission Repository Object
      */
-    public BlockingPermissionAutoRefreshTaskImpl(PermissionPathMatcher matcher, BlockingPermissionRepository repository) {
-        this.matcher = matcher;
+    public BlockingPermissionAutoRefreshTaskImpl(
+            PermissionPathMatcher permissionPathMatcher,
+            PermissionGroupMatcher permissionGroupMatcher,
+            BlockingPermissionRepository repository
+    ) {
+        this.permissionPathMatcher = permissionPathMatcher;
+        this.permissionGroupMatcher = permissionGroupMatcher;
         this.repository = repository;
     }
 
@@ -55,10 +66,13 @@ public class BlockingPermissionAutoRefreshTaskImpl implements BlockingPermission
     public Long execute() {
         final LocalDateTime now = LocalDateTime.now();
         log.info("[ PERMISSION AUTO REFRESH TASK ] => NOW: {}", now);
-        log.info("[ PERMISSION AUTO REFRESH TASK ] START EXECUTE PERMISSION UPDATE TASK");
-        final long result = execute(this.version.incrementAndGet());
-        this.matcher.cleanExpiredVersionData(this.version.get());
-        log.info("[ PERMISSION AUTO REFRESH TASK ] COMPLETE PERMISSION UPDATE TASK, COUNT >>> {}, VERSION >>> {}", result, this.version.get());
+        log.info("[ PERMISSION AUTO REFRESH TASK ] START EXECUTE PERMISSION PATH UPDATE TASK");
+        final long result = executePermissionPath(this.version.incrementAndGet());
+        this.permissionPathMatcher.cleanExpiredVersionData(this.version.get());
+        log.info("[ PERMISSION AUTO REFRESH TASK ] COMPLETE PERMISSION PATH UPDATE TASK, COUNT >>> {}, VERSION >>> {}", result, this.version.get());
+        log.info("[ PERMISSION AUTO REFRESH TASK ] START EXECUTE PERMISSION GROUP UPDATE TASK");
+        executePermissionGroup();
+        log.info("[ PERMISSION AUTO REFRESH TASK ] COMPLETE EXECUTE PERMISSION GROUP UPDATE TASK");
         return result;
     }
 
@@ -68,12 +82,12 @@ public class BlockingPermissionAutoRefreshTaskImpl implements BlockingPermission
     }
 
     /**
-     * Execute
+     * Execute Permission Path Refresh
      *
      * @param version New Version
-     * @return Permission Data Size
+     * @return Permission Path Data Size
      */
-    private Long execute(long version) {
+    private Long executePermissionPath(long version) {
         int page = 1;
         long count = 0L;
         List<PermissionDetails> list;
@@ -81,10 +95,26 @@ public class BlockingPermissionAutoRefreshTaskImpl implements BlockingPermission
             list = this.repository.getPermissionDetailsList(page++, 20);
             count += list.size();
             for (final PermissionDetails item : list) {
-                this.matcher.register(item.setVersion(version));
+                this.permissionPathMatcher.register(item.setVersion(version));
             }
         } while (!list.isEmpty());
         return count;
+    }
+
+    /**
+     * Execute Permission Group Refresh
+     */
+    private void executePermissionGroup() {
+        int page = 1;
+        List<Integer> list;
+        final Map<String, List<String>> data = new HashMap<>();
+        do {
+            list = this.repository.getPermissionGroupList(page++, 20);
+            for (final Integer item : list) {
+                data.put(String.valueOf(item), this.repository.getPermissionGroupParentList(item).stream().map(String::valueOf).toList());
+            }
+        } while (!list.isEmpty());
+        this.permissionGroupMatcher.refresh(data);
     }
 
 }

@@ -35,7 +35,7 @@ public class PermissionGroupMatcherImpl implements PermissionGroupMatcher {
         }
         List<String> list = List.of(target);
         while (!list.isEmpty()) {
-            final Set<String> tmp = new HashSet<>();
+            final Set<String> temporary = new HashSet<>();
             for (final String i : list) {
                 final List<String> parent = cache.get(i);
                 if (parent != null && !parent.isEmpty()) {
@@ -44,10 +44,10 @@ public class PermissionGroupMatcherImpl implements PermissionGroupMatcher {
                             return true;
                         }
                     }
-                    tmp.addAll(parent);
+                    temporary.addAll(parent);
                 }
             }
-            list = List.copyOf(tmp);
+            list = List.copyOf(temporary);
         }
         return false;
     }

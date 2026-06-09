@@ -14,7 +14,6 @@ import java.util.List;
  * @author lidashuang
  * @version 1.0
  */
-@Component
 @ConditionalOnMissingBean(PermissionValidator.class)
 public class PermissionValidatorImpl implements PermissionValidator {
 
@@ -52,10 +51,9 @@ public class PermissionValidatorImpl implements PermissionValidator {
                 for (final PermissionDetails permission : permissions) {
                     final String pm = permission.getMethod();
                     if (USUAL_CHAR.equalsIgnoreCase(pm) || method.equalsIgnoreCase(pm)) {
-                        continue;
-                    }
-                    if (this.permissionGroupMatcher.match(groups, String.valueOf(permission.getGid()))) {
-                        continue;
+                        if (this.permissionGroupMatcher.match(groups, String.valueOf(permission.getGid()))) {
+                            continue;
+                        }
                     }
                     return permission;
                 }

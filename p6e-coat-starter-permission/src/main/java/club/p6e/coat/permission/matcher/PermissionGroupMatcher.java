@@ -12,6 +12,13 @@ import java.util.Map;
 public interface PermissionGroupMatcher {
 
     /**
+     * Refresh Permission Group
+     *
+     * @param data Permission Group ID List Object
+     */
+    void refresh(Map<String, List<String>> data);
+
+    /**
      * Permission Group ID Match
      *
      * @param user   User Permission Group ID List Object
@@ -19,12 +26,5 @@ public interface PermissionGroupMatcher {
      * @return Permission Group Match Result
      */
     boolean match(List<String> user, String target);
-
-    /**
-     * Refresh Permission Group
-     *
-     * @param data Permission Group ID List Object
-     */
-    void refresh(Map<String, List<String>> data);
 
 }

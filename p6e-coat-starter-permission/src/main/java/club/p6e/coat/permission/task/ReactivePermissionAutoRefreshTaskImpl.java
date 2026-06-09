@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @Slf4j
 @ConditionalOnMissingBean(ReactivePermissionAutoRefreshTask.class)
-@ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
+@ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactivePermissionAutoRefreshTaskImpl implements ReactivePermissionAutoRefreshTask {
 
     /**

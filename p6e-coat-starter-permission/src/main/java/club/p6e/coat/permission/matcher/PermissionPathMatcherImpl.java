@@ -1,10 +1,9 @@
 package club.p6e.coat.permission.matcher;
 
 import club.p6e.coat.permission.PermissionDetails;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.http.server.PathContainer;
-import org.springframework.web.util.pattern.PathPattern;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,7 +11,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Permission Path Matcher Impl
@@ -24,51 +23,50 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @ConditionalOnMissingBean(PermissionPathMatcher.class)
 public class PermissionPathMatcherImpl implements PermissionPathMatcher {
 
-    private ConcurrentLinkedQueue<Model> tree = new ConcurrentLinkedQueue<>();
+    /**
+     * Model Object
+     */
+    private final Model cache = new Model();
 
     @Override
     public List<PermissionDetails> match(String path) {
         if (path == null || path.isEmpty()) {
             return new ArrayList<>();
         }
+        Model temporary = cache;
         final String[] paths = path.trim().split("/");
         for (final String item : paths) {
-            tree.peek().
-        }
-
-
-        final List<PermissionDetails> result = new ArrayList<>();
-        final PathContainer container = PathContainer.parsePath(path);
-        for (final PathPattern pattern : this.cache.keySet()) {
-            if (pattern.matches(container)) {
-                result.addAll(this.cache.get(pattern));
+            temporary = temporary.getData().get(item);
+            if (temporary == null) {
+                return new ArrayList<>();
             }
         }
-        // permission list is sorted in desc order of weight
-        result.sort(Comparator.comparingInt(PermissionDetails::getWeight).reversed());
-        return result;
+        final List<PermissionDetails> permissions = temporary.getPermissions();
+        permissions.sort(Comparator.comparingInt(PermissionDetails::getWeight).reversed());
+        return permissions;
     }
 
     @Override
-    public void register(PermissionDetails model) {
-        if (model != null
-                && model.getGid() != null && model.getUid() != null
-                && model.getMark() != null && model.getPath() != null
-                && model.getMethod() != null && model.getWeight() != null && model.getVersion() != null) {
+    public void register(PermissionDetails permission) {
+        if (permission != null
+                && permission.getGid() != null
+                && permission.getUid() != null
+                && permission.getMark() != null
+                && permission.getPath() != null
+                && permission.getMethod() != null
+                && permission.getWeight() != null
+                && permission.getVersion() != null
+        ) {
             synchronized (this) {
-                final String path = model.getPath();
-                for (final PathPattern pattern : this.cache.keySet()) {
-                    if (pattern.getPatternString().equalsIgnoreCase(path)) {
-                        final String mark = model.getGid() + "_" + model.getUid();
-                        final List<PermissionDetails> list = this.cache.get(pattern);
-                        list.removeIf(i -> mark.equalsIgnoreCase((i.getGid() + "_" + i.getUid())));
-                        log.info("[ PERMISSION PATH MATCHER REGISTER (ADD/REPLACE) ] {}({}) >>> {}", path, model.getMethod(), model);
-                        this.cache.get(parser.parse(path)).add(model);
-                        return;
-                    }
+                Model temporary = cache;
+                final String path = permission.getPath();
+                final String[] paths = path.toLowerCase().trim().split("/");
+                for (final String item : paths) {
+                    temporary = temporary.getData().computeIfAbsent(item, _ -> new Model());
                 }
-                log.info("[ PERMISSION PATH MATCHER REGISTER (ADD) ] {}({}) >>> {}", path, model.getMethod(), model);
-                this.cache.put(parser.parse(path), new ArrayList<>(List.of(model)));
+                temporary.getPermissions().add(permission);
+                temporary.getPermissions().sort(Comparator.comparingInt(PermissionDetails::getWeight).reversed());
+                log.info("[ PERMISSION PATH MATCHER REGISTER ] {}({}) >>> {}", path, permission.getMethod(), permission);
             }
         }
     }
@@ -76,20 +74,43 @@ public class PermissionPathMatcherImpl implements PermissionPathMatcher {
     @Override
     public void cleanExpiredVersionData(long version) {
         synchronized (this) {
-            for (final PathPattern key : this.cache.keySet()) {
-                final List<PermissionDetails> list = this.cache.get(key);
-                if (list != null && !list.isEmpty()) {
-                    list.removeIf(i -> i.getVersion() == null || i.getVersion() < version);
-                    if (list.isEmpty()) {
-                        this.cache.remove(key);
-                    }
-                }
-            }
+            cleanExpiredVersionData(version, cache);
         }
     }
 
+    /**
+     * Clean Expired Version Data
+     *
+     * @param version Version Object
+     * @param model   Model Object
+     */
+    private void cleanExpiredVersionData(long version, Model model) {
+        for (final String key : model.getData().keySet()) {
+            final Model value = model.getData().get(key);
+            cleanExpiredVersionData(version, value);
+            if (value.getPermissions().isEmpty()) {
+                model.getData().remove(key);
+            }
+        }
+        model.getPermissions().removeIf(p -> p.getVersion() < version);
+    }
+
+    /**
+     * Permission Path Matcher Model
+     */
+    @Data
     private static class Model implements Serializable {
-        private Map<String, List<PermissionDetails>> data = new ConcurrentHashMap<>();
+
+        /**
+         * Path Data Object
+         */
+        private Map<String, Model> data = new ConcurrentHashMap<>();
+
+        /**
+         * Permission List Data Object
+         */
+        private List<PermissionDetails> permissions = new CopyOnWriteArrayList<>();
+
     }
 
 }

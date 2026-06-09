@@ -6,10 +6,10 @@ import club.p6e.coat.permission.PermissionDetails;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.r2dbc.core.DatabaseClient;
-import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Reactive Permission Repository Impl
@@ -17,9 +17,8 @@ import java.util.List;
  * @author lidashuang
  * @version 1.0
  */
-@Component
 @ConditionalOnMissingBean(ReactivePermissionRepository.class)
-@ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
+@ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactivePermissionRepositoryImpl implements ReactivePermissionRepository {
 
     /**
@@ -120,6 +119,51 @@ public class ReactivePermissionRepositoryImpl implements ReactivePermissionRepos
                     details.setPath((baseUrl == null ? "" : baseUrl) + (url == null ? "" : url));
                     return details;
                 })
+                .all()
+                .collectList();
+    }
+
+    @SuppressWarnings("ALL")
+    @Override
+    public Mono<List<Integer>> getPermissionGroupList(Integer page, Integer size) {
+        return client.sql(TemplateParser.execute(TemplateParser.execute("""
+                        SELECT
+                            _permission_url_group_table.id_ AS id
+                        FROM
+                            @{TABLE} AS _permission_url_group_table
+                        ORDER BY
+                            _permission_url_group_table.id_
+                            ASC
+                        LIMIT
+                            :LIMIT
+                        OFFSET
+                            :OFFSET
+                        """, "TABLE", getPermissionUrlGroupTableName()
+                )))
+                .bind("LIMIT", size)
+                .bind("OFFSET", (page - 1) * size)
+                .map((row) -> Objects.requireNonNull(TransformationUtil.objectToInteger(row.get("id"))))
+                .all()
+                .collectList();
+    }
+
+    @Override
+    public Mono<List<Integer>> getPermissionGroupParentList(Integer id) {
+        return client.sql(TemplateParser.execute(TemplateParser.execute("""
+                        SELECT
+                            _permission_url_group_table.id_ AS id
+                        FROM
+                            @{TABLE} AS _permission_url_group_table
+                        ORDER BY
+                            _permission_url_group_table.id_
+                            ASC
+                        LIMIT
+                            :LIMIT
+                        OFFSET
+                            :OFFSET
+                        """, "TABLE", getPermissionUrlGroupTableName()
+                )))
+                .map((row) -> Objects.requireNonNull(TransformationUtil.objectToInteger(row.get("id"))))
                 .all()
                 .collectList();
     }

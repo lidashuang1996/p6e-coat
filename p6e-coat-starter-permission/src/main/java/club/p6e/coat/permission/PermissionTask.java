@@ -6,7 +6,6 @@ import club.p6e.coat.permission.task.ReactivePermissionAutoRefreshTask;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
 /**
  * Permission Task
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Component;
  * @author lidashuang
  * @version 1.0
  */
-@Component
 @EnableScheduling
 @ConditionalOnMissingBean(PermissionTask.class)
 public class PermissionTask {
@@ -37,7 +35,7 @@ public class PermissionTask {
             callback = SpringUtil.getBean(PermissionTaskCallback.class);
         }
         try {
-            Class.forName("org.springframework.web.servlet.package-info");
+            Class.forName("org.springframework.web.servlet.DispatcherServlet");
             final BlockingPermissionAutoRefreshTask task = SpringUtil.getBean(BlockingPermissionAutoRefreshTask.class);
             if (callback != null) {
                 callback.before(task.version());
@@ -52,7 +50,7 @@ public class PermissionTask {
         }
         if (!run) {
             try {
-                Class.forName("org.springframework.web.reactive.package-info");
+                Class.forName("org.springframework.web.reactive.DispatcherHandler");
                 final ReactivePermissionAutoRefreshTask task = SpringUtil.getBean(ReactivePermissionAutoRefreshTask.class);
                 if (callback != null) {
                     callback.before(task.version());

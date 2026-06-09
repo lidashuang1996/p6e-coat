@@ -22,4 +22,21 @@ public interface ReactivePermissionRepository {
      */
     Mono<List<PermissionDetails>> getPermissionDetailsList(Integer page, Integer size);
 
+    /**
+     * Get Permission Group List
+     *
+     * @param page Page
+     * @param size Size
+     * @return Permission Group List Object
+     */
+    Mono<List<Integer>> getPermissionGroupList(Integer page, Integer size);
+
+    /**
+     * Get Permission Group Parent List
+     *
+     * @param id Permission Group ID Object
+     * @return Permission Group Parent List Object
+     */
+    Mono<List<Integer>> getPermissionGroupParentList(Integer id);
+
 }

@@ -21,4 +21,21 @@ public interface BlockingPermissionRepository {
      */
     List<PermissionDetails> getPermissionDetailsList(Integer page, Integer size);
 
+    /**
+     * Get Permission Group List
+     *
+     * @param page Page
+     * @param size Size
+     * @return Permission Group List Object
+     */
+    List<Integer> getPermissionGroupList(Integer page, Integer size);
+
+    /**
+     * Get Permission Group Parent List
+     *
+     * @param id Permission Group ID Object
+     * @return Permission Group Parent List Object
+     */
+    List<Integer> getPermissionGroupParentList(Integer id);
+
 }

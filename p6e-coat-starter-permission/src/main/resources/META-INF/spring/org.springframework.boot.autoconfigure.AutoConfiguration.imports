@@ -1,5 +1,6 @@
 club.p6e.coat.permission.PermissionTask
 club.p6e.coat.permission.matcher.PermissionPathMatcherImpl
+club.p6e.coat.permission.matcher.PermissionGroupMatcherImpl
 club.p6e.coat.permission.validator.PermissionValidatorImpl
 club.p6e.coat.permission.task.BlockingPermissionAutoRefreshTaskImpl
 club.p6e.coat.permission.task.ReactivePermissionAutoRefreshTaskImpl
