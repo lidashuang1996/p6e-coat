@@ -33,6 +33,7 @@ public class PermissionGroupMatcherImpl implements PermissionGroupMatcher {
         if (user.contains(target)) {
             return true;
         }
+        int counter = 16;
         List<String> list = List.of(target);
         while (!list.isEmpty()) {
             final Set<String> temporary = new HashSet<>();
@@ -48,6 +49,10 @@ public class PermissionGroupMatcherImpl implements PermissionGroupMatcher {
                 }
             }
             list = List.copyOf(temporary);
+            counter--;
+            if (counter <= 0) {
+                break;
+            }
         }
         return false;
     }

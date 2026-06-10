@@ -3,6 +3,7 @@ package club.p6e.coat.permission.repository;
 import club.p6e.coat.permission.PermissionDetails;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Blocking Permission Repository
@@ -26,16 +27,8 @@ public interface BlockingPermissionRepository {
      *
      * @param page Page
      * @param size Size
-     * @return Permission Group List Object
+     * @return Permission Group Map Object
      */
-    List<Integer> getPermissionGroupList(Integer page, Integer size);
-
-    /**
-     * Get Permission Group Parent List
-     *
-     * @param id Permission Group ID Object
-     * @return Permission Group Parent List Object
-     */
-    List<Integer> getPermissionGroupParentList(Integer id);
+    Map<String, List<String>> getPermissionGroupList(Integer page, Integer size);
 
 }

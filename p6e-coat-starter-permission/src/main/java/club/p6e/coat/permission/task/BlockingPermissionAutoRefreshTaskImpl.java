@@ -26,6 +26,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class BlockingPermissionAutoRefreshTaskImpl implements BlockingPermissionAutoRefreshTask {
 
     /**
+     * Blocking Permission Repository Object
+     */
+    private final BlockingPermissionRepository repository;
+
+    /**
      * Permission Path Matcher Object
      */
     private final PermissionPathMatcher permissionPathMatcher;
@@ -36,11 +41,6 @@ public class BlockingPermissionAutoRefreshTaskImpl implements BlockingPermission
     private final PermissionGroupMatcher permissionGroupMatcher;
 
     /**
-     * Blocking Permission Repository Object
-     */
-    private final BlockingPermissionRepository repository;
-
-    /**
      * Version Object
      */
     private final AtomicInteger version = new AtomicInteger(0);
@@ -48,18 +48,18 @@ public class BlockingPermissionAutoRefreshTaskImpl implements BlockingPermission
     /**
      * Constructor Initialization
      *
-     * @param permissionPathMatcher  Permission Path Matcher Object
-     * @param permissionGroupMatcher Permission Path Matcher Object
      * @param repository             Blocking Permission Repository Object
+     * @param permissionPathMatcher  Permission Path Matcher Object
+     * @param permissionGroupMatcher Permission Group Matcher Object
      */
     public BlockingPermissionAutoRefreshTaskImpl(
+            BlockingPermissionRepository repository,
             PermissionPathMatcher permissionPathMatcher,
-            PermissionGroupMatcher permissionGroupMatcher,
-            BlockingPermissionRepository repository
+            PermissionGroupMatcher permissionGroupMatcher
     ) {
+        this.repository = repository;
         this.permissionPathMatcher = permissionPathMatcher;
         this.permissionGroupMatcher = permissionGroupMatcher;
-        this.repository = repository;
     }
 
     @Override
@@ -106,14 +106,14 @@ public class BlockingPermissionAutoRefreshTaskImpl implements BlockingPermission
      */
     private void executePermissionGroup() {
         int page = 1;
-        List<Integer> list;
+        Map<String, List<String>> temporary;
         final Map<String, List<String>> data = new HashMap<>();
         do {
-            list = this.repository.getPermissionGroupList(page++, 20);
-            for (final Integer item : list) {
-                data.put(String.valueOf(item), this.repository.getPermissionGroupParentList(item).stream().map(String::valueOf).toList());
+            temporary = this.repository.getPermissionGroupList(page++, 20);
+            for (final String key : temporary.keySet()) {
+                data.put(key, temporary.get(key));
             }
-        } while (!list.isEmpty());
+        } while (!temporary.isEmpty());
         this.permissionGroupMatcher.refresh(data);
     }
 

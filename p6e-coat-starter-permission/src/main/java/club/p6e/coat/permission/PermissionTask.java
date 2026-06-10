@@ -3,9 +3,15 @@ package club.p6e.coat.permission;
 import club.p6e.coat.common.utils.SpringUtil;
 import club.p6e.coat.permission.task.BlockingPermissionAutoRefreshTask;
 import club.p6e.coat.permission.task.ReactivePermissionAutoRefreshTask;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import org.jspecify.annotations.NonNull;
+
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Permission Task
@@ -13,22 +19,40 @@ import org.springframework.scheduling.annotation.Scheduled;
  * @author lidashuang
  * @version 1.0
  */
-@EnableScheduling
-@ConditionalOnMissingBean(PermissionTask.class)
 public class PermissionTask {
 
     /**
-     * Permission Task Run
+     * Permission Task Scheduled Executor Service Object
      */
-    @Scheduled(initialDelay = 10000L, fixedRate = 3600000L)
-    public void run() {
-        execute();
+    private final ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(1, new ThreadFactory() {
+        private final AtomicInteger count = new AtomicInteger(0);
+
+        @Override
+        public Thread newThread(@NonNull Runnable r) {
+            return new Thread(r, "PERMISSION-TASK-THREAD-" + count.getAndIncrement());
+        }
+    });
+
+    /**
+     * Init Task
+     */
+    @PostConstruct
+    public void init() {
+        executor.scheduleWithFixedDelay(this::execute, 30L, 3600L, TimeUnit.SECONDS);
+    }
+
+    /**
+     * Close Task
+     */
+    @PreDestroy
+    public void close() {
+        executor.shutdown();
     }
 
     /**
      * Execute Task
      */
-    public synchronized void execute() {
+    private void execute() {
         boolean run = false;
         PermissionTaskCallback callback = null;
         if (SpringUtil.exist(PermissionTaskCallback.class)) {
@@ -45,7 +69,7 @@ public class PermissionTask {
                 callback.after(task.version());
             }
             run = true;
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException _) {
             // ignore exception
         }
         if (!run) {
@@ -59,7 +83,7 @@ public class PermissionTask {
                 if (callback != null) {
                     callback.after(task.version());
                 }
-            } catch (ClassNotFoundException e) {
+            } catch (ClassNotFoundException _) {
                 // ignore exception
             }
         }

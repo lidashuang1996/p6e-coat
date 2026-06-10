@@ -36,14 +36,16 @@ public class PermissionPathMatcherImpl implements PermissionPathMatcher {
         Model temporary = cache;
         final String[] paths = path.trim().split("/");
         for (final String item : paths) {
-            temporary = temporary.getData().get(item);
-            if (temporary == null) {
-                return new ArrayList<>();
+            Model model = temporary.getData().get(item);
+            if (model == null) {
+                model = temporary.getData().get("*");
+                if (model == null) {
+                    return new ArrayList<>();
+                }
             }
+            temporary = model;
         }
-        final List<PermissionDetails> permissions = temporary.getPermissions();
-        permissions.sort(Comparator.comparingInt(PermissionDetails::getWeight).reversed());
-        return permissions;
+        return temporary.getPermissions();
     }
 
     @Override
@@ -88,9 +90,6 @@ public class PermissionPathMatcherImpl implements PermissionPathMatcher {
         for (final String key : model.getData().keySet()) {
             final Model value = model.getData().get(key);
             cleanExpiredVersionData(version, value);
-            if (value.getPermissions().isEmpty()) {
-                model.getData().remove(key);
-            }
         }
         model.getPermissions().removeIf(p -> p.getVersion() < version);
     }

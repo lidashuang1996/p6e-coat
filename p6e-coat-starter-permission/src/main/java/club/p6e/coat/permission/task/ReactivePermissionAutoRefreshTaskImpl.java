@@ -1,6 +1,7 @@
 package club.p6e.coat.permission.task;
 
 import club.p6e.coat.permission.PermissionDetails;
+import club.p6e.coat.permission.matcher.PermissionGroupMatcher;
 import club.p6e.coat.permission.matcher.PermissionPathMatcher;
 import club.p6e.coat.permission.repository.ReactivePermissionRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +10,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -24,14 +27,20 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ReactivePermissionAutoRefreshTaskImpl implements ReactivePermissionAutoRefreshTask {
 
     /**
-     * Permission Path Matcher Object
-     */
-    private final PermissionPathMatcher matcher;
-
-    /**
      * Reactive Permission Repository Object
      */
     private final ReactivePermissionRepository repository;
+
+    /**
+     * Permission Path Matcher Object
+     */
+    private final PermissionPathMatcher permissionPathMatcher;
+
+    /**
+     * Permission Group Matcher Object
+     */
+    private final PermissionGroupMatcher permissionGroupMatcher;
+
 
     /**
      * Version Object
@@ -41,12 +50,18 @@ public class ReactivePermissionAutoRefreshTaskImpl implements ReactivePermission
     /**
      * Constructor Initialization
      *
-     * @param matcher    Permission Path Matcher Object
-     * @param repository Blocking Permission Repository Object
+     * @param repository             Reactive Permission Repository Object
+     * @param permissionPathMatcher  Permission Path Matcher Object
+     * @param permissionGroupMatcher Permission Group Matcher Object
      */
-    public ReactivePermissionAutoRefreshTaskImpl(PermissionPathMatcher matcher, ReactivePermissionRepository repository) {
-        this.matcher = matcher;
+    public ReactivePermissionAutoRefreshTaskImpl(
+            ReactivePermissionRepository repository,
+            PermissionPathMatcher permissionPathMatcher,
+            PermissionGroupMatcher permissionGroupMatcher
+    ) {
         this.repository = repository;
+        this.permissionPathMatcher = permissionPathMatcher;
+        this.permissionGroupMatcher = permissionGroupMatcher;
     }
 
     @Override
@@ -54,10 +69,17 @@ public class ReactivePermissionAutoRefreshTaskImpl implements ReactivePermission
         final LocalDateTime now = LocalDateTime.now();
         log.info("[ PERMISSION AUTO REFRESH TASK ] => NOW: {}", now);
         log.info("[ PERMISSION AUTO REFRESH TASK ] START EXECUTE PERMISSION UPDATE TASK");
-        return execute(this.version.incrementAndGet()).map(l -> {
-            this.matcher.cleanExpiredVersionData(this.version.get());
+        return executePermissionPath(this.version.incrementAndGet()).map(l -> {
+            this.permissionPathMatcher.cleanExpiredVersionData(this.version.get());
             log.info("[ PERMISSION AUTO REFRESH TASK ] COMPLETE PERMISSION UPDATE TASK, COUNT >>> {}, VERSION >>> {}", l, this.version.get());
             return l;
+        }).flatMap(_ -> {
+            log.info("[ PERMISSION AUTO REFRESH TASK ] START EXECUTE PERMISSION GROUP UPDATE TASK");
+            return executePermissionGroup().map(m -> {
+                this.permissionGroupMatcher.refresh(m);
+                log.info("[ PERMISSION AUTO REFRESH TASK ] COMPLETE EXECUTE PERMISSION GROUP UPDATE TASK");
+                return (long) m.size();
+            });
         });
     }
 
@@ -67,25 +89,25 @@ public class ReactivePermissionAutoRefreshTaskImpl implements ReactivePermission
     }
 
     /**
-     * Execute
+     * Execute Permission Path Refresh
      *
      * @param version New Version
-     * @return Permission Data Size
+     * @return Permission Path Data Size
      */
-    private Mono<Long> execute(long version) {
-        return execute(1, 20, 0L, version);
+    private Mono<Long> executePermissionPath(long version) {
+        return executePermissionPath(1, 20, 0L, version);
     }
 
     /**
-     * Execute Read Data (Page/Size) Permission Data To Permission Details List Object
+     * Execute Read Data (Page/Size) Permission Path Data To Permission Path Details List Object
      *
      * @param page    Page
      * @param size    Size
      * @param count   Count
      * @param version Version
-     * @return Permission Data Size
+     * @return Permission Path Data Size
      */
-    private Mono<Long> execute(int page, int size, long count, long version) {
+    private Mono<Long> executePermissionPath(int page, int size, long count, long version) {
         return this
                 .repository
                 .getPermissionDetailsList(page, size)
@@ -95,12 +117,46 @@ public class ReactivePermissionAutoRefreshTaskImpl implements ReactivePermission
                         return Mono.just(count);
                     } else {
                         for (final PermissionDetails item : list) {
-                            this.matcher.register(item.setVersion(version));
+                            this.permissionPathMatcher.register(item.setVersion(version));
                         }
-                        return execute(page + 1, size, count + list.size(), version);
+                        return executePermissionPath(page + 1, size, count + list.size(), version);
                     }
                 });
 
+    }
+
+    /**
+     * Execute Permission Group Refresh
+     *
+     * @return Permission Group Data Object
+     */
+    private Mono<Map<String, List<String>>> executePermissionGroup() {
+        return executePermissionGroup(1, 20, new HashMap<>());
+    }
+
+    /**
+     * Execute Read Data (Page/Size) Permission Group Data Object
+     *
+     * @param page   Page
+     * @param size   Size
+     * @param result Permission Group Data Object
+     * @return Permission Group Data Object
+     */
+    private Mono<Map<String, List<String>>> executePermissionGroup(int page, int size, Map<String, List<String>> result) {
+        return this
+                .repository
+                .getPermissionGroupList(page, size)
+                .switchIfEmpty(Mono.just(Map.of()))
+                .flatMap(map -> {
+                    if (map.isEmpty()) {
+                        return Mono.just(result);
+                    } else {
+                        for (final String key : map.keySet()) {
+                            result.put(key, map.get(key));
+                        }
+                        return executePermissionGroup(page + 1, size, result);
+                    }
+                });
     }
 
 }

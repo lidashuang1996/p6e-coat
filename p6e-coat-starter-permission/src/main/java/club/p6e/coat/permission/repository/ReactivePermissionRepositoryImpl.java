@@ -1,5 +1,6 @@
 package club.p6e.coat.permission.repository;
 
+import club.p6e.coat.common.utils.JsonUtil;
 import club.p6e.coat.common.utils.TemplateParser;
 import club.p6e.coat.common.utils.TransformationUtil;
 import club.p6e.coat.permission.PermissionDetails;
@@ -8,8 +9,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.r2dbc.core.DatabaseClient;
 import reactor.core.publisher.Mono;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 
 /**
  * Reactive Permission Repository Impl
@@ -125,10 +127,11 @@ public class ReactivePermissionRepositoryImpl implements ReactivePermissionRepos
 
     @SuppressWarnings("ALL")
     @Override
-    public Mono<List<Integer>> getPermissionGroupList(Integer page, Integer size) {
+    public Mono<Map<String, List<String>>> getPermissionGroupList(Integer page, Integer size) {
         return client.sql(TemplateParser.execute(TemplateParser.execute("""
                         SELECT
-                            _permission_url_group_table.id_ AS id
+                            _permission_url_group_table.id_ AS id,
+                            _permission_url_group_table.parent_ AS parent
                         FROM
                             @{TABLE} AS _permission_url_group_table
                         ORDER BY
@@ -142,30 +145,23 @@ public class ReactivePermissionRepositoryImpl implements ReactivePermissionRepos
                 )))
                 .bind("LIMIT", size)
                 .bind("OFFSET", (page - 1) * size)
-                .map((row) -> Objects.requireNonNull(TransformationUtil.objectToInteger(row.get("id"))))
+                .map((row) -> {
+                    final Map<String, String> data = new HashMap<>();
+                    data.put("id", TransformationUtil.objectToString(row.get("id")));
+                    data.put("parent", TransformationUtil.objectToString(row.get("parent")));
+                    return data;
+                })
                 .all()
-                .collectList();
-    }
-
-    @Override
-    public Mono<List<Integer>> getPermissionGroupParentList(Integer id) {
-        return client.sql(TemplateParser.execute(TemplateParser.execute("""
-                        SELECT
-                            _permission_url_group_table.id_ AS id
-                        FROM
-                            @{TABLE} AS _permission_url_group_table
-                        ORDER BY
-                            _permission_url_group_table.id_
-                            ASC
-                        LIMIT
-                            :LIMIT
-                        OFFSET
-                            :OFFSET
-                        """, "TABLE", getPermissionUrlGroupTableName()
-                )))
-                .map((row) -> Objects.requireNonNull(TransformationUtil.objectToInteger(row.get("id"))))
-                .all()
-                .collectList();
+                .collectList()
+                .map(list -> {
+                    final Map<String, List<String>> result = new HashMap<>();
+                    for (Map<String, String> item : list) {
+                        final String id = item.get("id");
+                        final String parent = item.get("parent");
+                        result.put(id, JsonUtil.fromJsonToList(parent, String.class));
+                    }
+                    return result;
+                });
     }
 
 }

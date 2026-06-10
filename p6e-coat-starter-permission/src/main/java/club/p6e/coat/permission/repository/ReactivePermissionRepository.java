@@ -4,6 +4,7 @@ import club.p6e.coat.permission.PermissionDetails;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Reactive Permission Repository
@@ -27,16 +28,8 @@ public interface ReactivePermissionRepository {
      *
      * @param page Page
      * @param size Size
-     * @return Permission Group List Object
+     * @return Permission Group Map Object
      */
-    Mono<List<Integer>> getPermissionGroupList(Integer page, Integer size);
-
-    /**
-     * Get Permission Group Parent List
-     *
-     * @param id Permission Group ID Object
-     * @return Permission Group Parent List Object
-     */
-    Mono<List<Integer>> getPermissionGroupParentList(Integer id);
+    Mono<Map<String, List<String>>> getPermissionGroupList(Integer page, Integer size);
 
 }
