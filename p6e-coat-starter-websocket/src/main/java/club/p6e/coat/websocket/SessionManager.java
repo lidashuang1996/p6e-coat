@@ -2,7 +2,10 @@ package club.p6e.coat.websocket;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -122,7 +125,6 @@ public class SessionManager {
      *
      * @return Session List Object
      */
-    @SuppressWarnings("ALL")
     public static List<Session> all() {
         return new ArrayList<>(SESSIONS.values());
     }
@@ -132,7 +134,6 @@ public class SessionManager {
      *
      * @return Session Keys
      */
-    @SuppressWarnings("ALL")
     public static Set<String> keys() {
         return SESSIONS.keySet();
     }
@@ -183,7 +184,7 @@ public class SessionManager {
     /**
      * Submit Push Message Task
      *
-     * @param sessions Session List Object
+     * @param sessions Session Map Object
      * @param filter   Filter Object
      * @param name     Channel Name
      * @param content  Content Data

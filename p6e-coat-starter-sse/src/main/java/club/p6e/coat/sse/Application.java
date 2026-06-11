@@ -8,13 +8,7 @@ import io.netty.channel.nio.NioIoHandler;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
-import org.jspecify.annotations.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,18 +20,40 @@ import java.util.function.Function;
  * @author lidashuang
  * @version 1.0
  */
-@Component
-@EnableConfigurationProperties(Properties.class)
-public class Application implements ApplicationRunner {
+@Slf4j
+public class Application {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Application.class);
-
+    /**
+     * Event Loop Group Boss
+     */
     private EventLoopGroup boss;
+
+    /**
+     * Event Loop Group Worker
+     */
     private EventLoopGroup work;
+
+    /**
+     * Properties Object
+     */
     private Properties properties;
+
+    /**
+     * Auth Service List Object
+     */
     private final List<AuthService> authServices;
+
+    /**
+     * Server Channels
+     */
     private final List<io.netty.channel.Channel> channels = new ArrayList<>();
 
+    /**
+     * Constructor Initialization
+     *
+     * @param properties   Properties Object
+     * @param authServices Auth Service List Object
+     */
     public Application(Properties properties, List<AuthService> authServices) {
         this.properties = properties;
         this.authServices = authServices;
@@ -49,19 +65,14 @@ public class Application implements ApplicationRunner {
                 this.work.shutdownGracefully();
             }
         }));
-    }
-
-    /**
-     * [P3] 修复: ApplicationRunner.run() 中调用 reset()，
-     *      确保 Spring Boot 启动后自动初始化 SSE 服务
-     */
-    @Override
-    public void run(@NonNull ApplicationArguments args) {
         reset();
     }
 
+    /**
+     * Reset
+     */
     public synchronized void reset() {
-        LOGGER.info("[ SSE SERVICE ] RESET PROPERTIES >>> {}", this.properties);
+        log.info("[ SSE SERVICE ] RESET PROPERTIES >>> {}", this.properties);
         for (final io.netty.channel.Channel channel : this.channels) {
             channel.close();
         }
@@ -78,7 +89,7 @@ public class Application implements ApplicationRunner {
         this.boss = new MultiThreadIoEventLoopGroup(this.properties.getBossThreads(), NioIoHandler.newFactory());
         this.work = new MultiThreadIoEventLoopGroup(this.properties.getWorkerThreads(), NioIoHandler.newFactory());
         for (final Properties.Channel channel : this.properties.getChannels()) {
-            LOGGER.info("[ SSE SERVICE ] RESET CHANNEL >>> {}", channel);
+            log.info("[ SSE SERVICE ] RESET CHANNEL >>> {}", channel);
             AuthService auth = null;
             for (final AuthService item : this.authServices) {
                 if (channel.getAuth().equalsIgnoreCase(item.getClass().getName())) {
@@ -93,20 +104,44 @@ public class Application implements ApplicationRunner {
         }
     }
 
-    @SuppressWarnings("ALL")
+    /**
+     * Reset
+     *
+     * @param properties Properties Object
+     */
     public void reset(Properties properties) {
         this.properties = properties;
         reset();
     }
 
+    /**
+     * Push Message
+     *
+     * @param filter Filter Object
+     * @param name   Channel Name
+     * @param bytes  Message Content
+     */
     public void push(Function<User, Boolean> filter, String name, byte[] bytes) {
         SessionManager.pushBinary(filter, name, bytes);
     }
 
+    /**
+     * Push Message
+     *
+     * @param filter  Filter Object
+     * @param name    Channel Name
+     * @param content Message Content
+     */
     public void push(Function<User, Boolean> filter, String name, String content) {
         SessionManager.pushText(filter, name, content);
     }
 
+    /**
+     * Netty Web Socket Server
+     *
+     * @param psc  Properties Channel Object
+     * @param auth Auth Service Object
+     */
     private void run(Properties.Channel psc, AuthService auth) {
         try {
             final int port = psc.getPort();
@@ -118,15 +153,18 @@ public class Application implements ApplicationRunner {
             bootstrap.childHandler(new ChannelInitializer<>() {
                 @Override
                 protected void initChannel(io.netty.channel.Channel channel) {
+                    // HTTP
                     channel.pipeline().addLast(new HttpServerCodec());
+                    // HTTP OBJECT AGGREGATOR
                     channel.pipeline().addLast(new HttpObjectAggregator(frame));
+                    // CHANNEL
                     channel.pipeline().addLast(new Channel(psc, auth));
                 }
             });
             this.channels.add(bootstrap.bind(port).sync().channel());
-            LOGGER.info("[ SSE SERVICE ] ({}) ==> START SUCCESSFULLY... BIND ( {} )", name, port);
+            log.info("[ SSE SERVICE ] ({}) ==> START SUCCESSFULLY... BIND ( {} )", name, port);
         } catch (Exception e) {
-            LOGGER.error("[ SSE SERVICE ]", e);
+            log.error("[ SSE SERVICE ] >>> {}", e.getMessage(), e);
         }
     }
 

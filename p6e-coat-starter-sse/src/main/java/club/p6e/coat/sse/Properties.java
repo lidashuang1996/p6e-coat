@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Config
+ * Properties
  *
  * @author lidashuang
  * @version 1.0
@@ -89,19 +89,16 @@ public class Properties {
             private Integer maxAge = 3600;
 
             /**
-             * [P1] 安全加固: 默认 origin 改为空列表，禁止通配符 "*"
-             * 使用者必须显式配置允许跨域的来源域名
+             * Channel Cross Domain Allow Origin
              */
             private List<String> origin = new ArrayList<>();
 
             /**
-             * [P3] 代码质量: String[] 改为 List<String>
              * Channel Cross Domain Allow Headers
              */
             private List<String> headers = new ArrayList<>(List.of("Content-Type"));
 
             /**
-             * [P3] 代码质量: String[] 改为 List<String>
              * Channel Cross Domain Allow Methods
              */
             private List<String> methods = new ArrayList<>(List.of("GET", "POST", "DELETE", "PUT", "OPTIONS"));

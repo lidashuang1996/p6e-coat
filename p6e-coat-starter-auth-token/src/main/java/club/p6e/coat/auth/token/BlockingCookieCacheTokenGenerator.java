@@ -89,8 +89,10 @@ public class BlockingCookieCacheTokenGenerator implements BlockingTokenGenerator
     public Cookie cookie(String name, String content) {
         final Cookie cookie = new Cookie(name, content);
         cookie.setPath("/");
+        cookie.setSecure(true);
         cookie.setHttpOnly(true);
         cookie.setMaxAge(duration());
+        cookie.setAttribute("SameSite", "Strict");
         return cookie;
     }
 

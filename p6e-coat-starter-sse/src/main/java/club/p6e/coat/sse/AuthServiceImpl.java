@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
  * @author lidashuang
  * @version 1.0
  */
-@Component
 @ConditionalOnMissingBean(AuthService.class)
 public class AuthServiceImpl implements AuthService {
 

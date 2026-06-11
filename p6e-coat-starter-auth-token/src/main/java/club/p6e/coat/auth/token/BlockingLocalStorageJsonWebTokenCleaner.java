@@ -7,33 +7,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 
 /**
- * Blocking Local Storage Json Web Token Cleaner
+ * Blocking Local Storage JSON Web Token Cleaner
  *
  * @author lidashuang
  * @version 1.0
  */
 @SuppressWarnings("ALL")
 public class BlockingLocalStorageJsonWebTokenCleaner implements BlockingTokenCleaner {
-
-    /**
-     * Bearer Type
-     */
-    protected static final String BEARER_TYPE = "Bearer";
-
-    /**
-     * Request Parameter Name
-     */
-    protected static final String REQUEST_PARAMETER_NAME = "token";
-
-    /**
-     * Authorization Prefix
-     */
-    protected static final String AUTHORIZATION_PREFIX = BEARER_TYPE + " ";
-
-    /**
-     * Authorization Header Name
-     */
-    protected static final String AUTHORIZATION_HEADER_NAME = "Authorization";
 
     /**
      * User Builder Object

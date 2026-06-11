@@ -17,13 +17,14 @@ import java.util.Base64;
  * @author lidashuang
  * @version 1.0
  */
+@SuppressWarnings("ALL")
 @Getter
 public class Session {
 
     /**
      * Date Time Formatter Object
      */
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
 
     /**
      * User Object
@@ -41,11 +42,6 @@ public class Session {
     private final ChannelHandlerContext context;
 
     /**
-     * Date Object
-     */
-    private volatile long date;
-
-    /**
      * Constructor Initialization
      *
      * @param name    Channel Name
@@ -56,21 +52,11 @@ public class Session {
         this.user = user;
         this.context = context;
         this.channelName = name;
-        this.date = System.currentTimeMillis();
-    }
-
-    /**
-     * Refresh Session
-     */
-    @SuppressWarnings("ALL")
-    public void refresh() {
-        this.date = System.currentTimeMillis();
     }
 
     /**
      * Close Session
      */
-    @SuppressWarnings("ALL")
     public void close() {
         if (context != null && !context.isRemoved()) {
             context.close();
@@ -105,25 +91,20 @@ public class Session {
      */
     public void push(String id, String event, Object content) {
         if (context != null && !context.isRemoved()) {
+            String result = "";
             event = event == null ? "MESSAGE" : event;
             id = id == null ? (LocalDateTime.now().format(DATE_TIME_FORMATTER) + GeneratorUtil.random(8, true, false)) : id;
             if (content == null) {
-                content = "";
+                result = "";
             } else if (content instanceof final byte[] bytes) {
-                content = Base64.getEncoder().encodeToString(bytes);
+                result = Base64.getEncoder().encodeToString(bytes);
             } else {
-                content = content.toString();
+                result = String.valueOf(content).replaceAll("\\n", "");
             }
-            // [P1] 安全加固: 转义换行符防止 SSE 协议注入攻击
-            //     原始内容中的 \n 会破坏 SSE 事件边界，攻击者可能伪造事件流
-            final String safeContent = ((String) content)
-                    .replace("\\", "\\\\")
-                    .replace("\n", "\\n")
-                    .replace("\r", "\\r");
             final FullHttpResponse response = new DefaultFullHttpResponse(
                     HttpVersion.HTTP_1_1,
                     HttpResponseStatus.OK,
-                    Unpooled.copiedBuffer("id: " + id + "\nevent: " + event + "\ndata: " + safeContent + "\n\n", CharsetUtil.UTF_8)
+                    Unpooled.copiedBuffer("id: " + id + "\nevent: " + event + "\ndata: " + result + "\n\n", CharsetUtil.UTF_8)
             );
             response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/event-stream; charset=UTF-8");
             response.headers().set(HttpHeaderNames.CACHE_CONTROL, "no-cache");

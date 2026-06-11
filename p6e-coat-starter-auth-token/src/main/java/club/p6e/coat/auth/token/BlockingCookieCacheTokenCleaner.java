@@ -67,7 +67,9 @@ public class BlockingCookieCacheTokenCleaner implements BlockingTokenCleaner {
         final Cookie cookie = new Cookie(name, content);
         cookie.setPath("/");
         cookie.setMaxAge(0);
+        cookie.setSecure(true);
         cookie.setHttpOnly(true);
+        cookie.setAttribute("SameSite", "Strict");
         return cookie;
     }
 

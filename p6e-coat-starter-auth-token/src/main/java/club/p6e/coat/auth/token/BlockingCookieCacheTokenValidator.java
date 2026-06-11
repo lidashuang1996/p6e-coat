@@ -47,7 +47,7 @@ public class BlockingCookieCacheTokenValidator implements BlockingTokenValidator
                     if (model != null) {
                         final String content = cache.getUser(model.getUid());
                         if (content != null) {
-                            return this.builder.create(content);
+                            return builder.create(content);
                         }
                     }
                 }

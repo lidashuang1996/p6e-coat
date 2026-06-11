@@ -60,9 +60,9 @@ public class BlockingLocalStorageCacheTokenValidator implements BlockingTokenVal
 
     @Override
     public User execute(HttpServletRequest request, HttpServletResponse response) {
-        final List<String> list = new ArrayList<>();
         final String ht = request.getHeader(AUTHORIZATION_HEADER_NAME);
         final String qt = request.getParameter(REQUEST_PARAMETER_NAME);
+        final List<String> list = new ArrayList<>();
         if (ht != null) {
             list.add(ht);
         }

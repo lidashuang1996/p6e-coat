@@ -15,7 +15,6 @@ public interface User extends Serializable {
      *
      * @return User ID
      */
-    @SuppressWarnings("ALL")
     String id();
 
 }

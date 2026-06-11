@@ -8,8 +8,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandler;
 import io.netty.handler.codec.http.*;
 import io.netty.util.AttributeKey;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -20,20 +19,39 @@ import java.util.Map;
  * @author lidashuang
  * @version 1.0
  */
+@Slf4j
 public class Channel implements ChannelInboundHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Channel.class);
-
+    /**
+     * Session ID Attribute Key
+     */
     private static final AttributeKey<String> SESSION_ID = AttributeKey.valueOf("id");
 
+    /**
+     * Session ID
+     */
     private final String id;
+
+    /**
+     * Auth Service Object
+     */
     private final AuthService auth;
+
+    /**
+     * Properties Channel Object
+     */
     private final Properties.Channel psc;
 
+    /**
+     * Constructor Initialization
+     *
+     * @param psc  Properties Channel Object
+     * @param auth Auth Service Object
+     */
     public Channel(Properties.Channel psc, AuthService auth) {
+        this.id = GeneratorUtil.uuid() + GeneratorUtil.random();
         this.psc = psc;
         this.auth = auth;
-        this.id = GeneratorUtil.uuid() + GeneratorUtil.random();
     }
 
     @Override
@@ -62,7 +80,7 @@ public class Channel implements ChannelInboundHandler {
                 final User user = this.auth.validate(this.psc.getName(), request.uri());
                 if (user == null) {
                     response.content().writeBytes(context.alloc().buffer().writeBytes(JsonUtil.toJson(
-                            ResultContext.build(500, "AUTH_ERROR", "AUTH_ERROR")
+                            ResultContext.build(401, "AUTH_ERROR", "AUTH_ERROR")
                     ).getBytes(StandardCharsets.UTF_8)));
                     context.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
                 } else {
@@ -83,31 +101,46 @@ public class Channel implements ChannelInboundHandler {
 
     @Override
     public void handlerRemoved(ChannelHandlerContext context) {
-        try {
-            final Session session = SessionManager.get(this.id);
-            if (session != null) {
-                session.push("LOGOUT", JsonUtil.toJson(Map.of("type", "LOGOUT", "data", "SUCCESS")));
-            }
-        } finally {
-            if (this.id != null) {
-                SessionManager.unregister(this.id);
-            }
+        if (this.id != null) {
+            SessionManager.unregister(this.id);
         }
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext context, Throwable e) {
-        LOGGER.error("[ CHANNEL ERROR ] {} => {}", this.id, e.getMessage(), e);
         context.close();
     }
 
-    @Override public void handlerAdded(ChannelHandlerContext context) { }
-    @Override public void channelActive(ChannelHandlerContext context) { }
-    @Override public void channelInactive(ChannelHandlerContext context) { }
-    @Override public void channelRegistered(ChannelHandlerContext context) { }
-    @Override public void channelUnregistered(ChannelHandlerContext context) { }
-    @Override public void channelReadComplete(ChannelHandlerContext context) { }
-    @Override public void channelWritabilityChanged(ChannelHandlerContext context) { }
-    @Override public void userEventTriggered(ChannelHandlerContext context, Object o) { }
+    @Override
+    public void handlerAdded(ChannelHandlerContext context) {
+    }
+
+    @Override
+    public void channelActive(ChannelHandlerContext context) {
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext context) {
+    }
+
+    @Override
+    public void channelRegistered(ChannelHandlerContext context) {
+    }
+
+    @Override
+    public void channelUnregistered(ChannelHandlerContext context) {
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext context) {
+    }
+
+    @Override
+    public void channelWritabilityChanged(ChannelHandlerContext context) {
+    }
+
+    @Override
+    public void userEventTriggered(ChannelHandlerContext context, Object o) {
+    }
 
 }

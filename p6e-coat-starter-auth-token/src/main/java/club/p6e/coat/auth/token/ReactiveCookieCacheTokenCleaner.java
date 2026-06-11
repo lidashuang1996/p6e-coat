@@ -86,7 +86,7 @@ public class ReactiveCookieCacheTokenCleaner implements ReactiveTokenCleaner {
      * @return Response Cookie Object
      */
     public ResponseCookie cookie(String name, String content) {
-        return ResponseCookie.from(name, content).path("/").maxAge(0).httpOnly(true).build();
+        return ResponseCookie.from(name, content).path("/").maxAge(0).httpOnly(true).secure(true).sameSite("Strict").build();
     }
 
 }
