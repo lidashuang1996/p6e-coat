@@ -4,10 +4,9 @@ import club.p6e.coat.common.utils.JsonUtil;
 import club.p6e.coat.common.utils.TransformationUtil;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.reactivestreams.Publisher;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferFactory;
@@ -46,13 +45,8 @@ import java.util.regex.Pattern;
  * @author lidashuang
  * @version 1.0
  */
-@SuppressWarnings("ALL")
+@Slf4j
 public class LogWebFilter implements WebFilter, Ordered {
-
-    /**
-     * Inject Log Object
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(LogWebFilter.class);
 
     /**
      * Data Buffer Factory Object
@@ -271,7 +265,7 @@ public class LogWebFilter implements WebFilter, Ordered {
                         try {
                             list = List.of(InetAddress.getLocalHost().getHostAddress());
                         } catch (Exception e) {
-                            LOGGER.error("[ LOG IP ERROR] >>> {}", e.getMessage());
+                            log.error("[ LOG IP ERROR] >>> {}", e.getMessage());
                         }
                     } else {
                         list = List.of(inetSocketAddressHost);
@@ -384,9 +378,9 @@ public class LogWebFilter implements WebFilter, Ordered {
                                 model.setIntervalDateTime(e - s);
                             }
                             if (properties.getLog().isDetails()) {
-                                LOGGER.info(model.toJsonString());
+                                log.info(model.toJsonString());
                             } else {
-                                LOGGER.info("{} >>> [{}] {} ::: {}",
+                                log.info("{} >>> [{}] {} ::: {}",
                                         model.getIp(),
                                         model.getRequestMethod(),
                                         model.getPath(),

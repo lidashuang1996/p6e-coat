@@ -14,12 +14,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 /**
- * Base64 Encoder Header Gateway Filter Factory
+ * Base64 Encoding Header Gateway Filter Factory
  *
  * @author lidashuang
  * @version 1.0
  */
-public class Base64EncoderHeaderGatewayFilterFactory extends AbstractGatewayFilterFactory<Object> {
+public class Base64EncodingHeaderGatewayFilterFactory extends AbstractGatewayFilterFactory<Object> {
 
     @NonNull
     @Override
@@ -43,7 +43,8 @@ public class Base64EncoderHeaderGatewayFilterFactory extends AbstractGatewayFilt
                 if (name.toLowerCase().startsWith("p6e-")) {
                     final String value = httpHeaders.getFirst(name);
                     if (value != null) {
-                        builder.header(name, Base64.getEncoder().encodeToString(value.getBytes(StandardCharsets.UTF_8)));
+                        builder.headers(h -> h.set(name,
+                                Base64.getEncoder().encodeToString(value.getBytes(StandardCharsets.UTF_8))));
                     }
                 }
             }

@@ -1,6 +1,7 @@
 package club.p6e.cloud.gateway.auth;
 
 import club.p6e.coat.common.exception.AuthException;
+import org.jspecify.annotations.NonNull;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -17,7 +18,7 @@ import reactor.core.publisher.Mono;
 public class ValidationAuthenticationGatewayFilterFactory extends AbstractGatewayFilterFactory<Object> {
 
     @Override
-    public GatewayFilter apply(Object config) {
+    public @NonNull GatewayFilter apply(Object config) {
         return new CustomGatewayFilter();
     }
 
@@ -28,33 +29,24 @@ public class ValidationAuthenticationGatewayFilterFactory extends AbstractGatewa
 
         /**
          * User Info Header Name
-         * Request Header For User Information
-         * Request Header Is Customized By The Program And Not Carried By The User Request
-         * When Receiving Requests, It Is Necessary To Clear The Request Header Carried By The User To Ensure Program Security
          */
         @SuppressWarnings("ALL")
         private static final String USER_INFO_HEADER = "P6e-User-Info";
 
         /**
          * Permission Header Name
-         * Save The Request Header Of The Permission Information Used In The Current Request
-         * Request Header Is Customized By The Program And Not Carried By The User Request
-         * When Receiving Requests, It Is Necessary To Clear The Request Header Carried By The User To Ensure Program Security
          */
         @SuppressWarnings("ALL")
         private static final String PERMISSION_HEADER = "P6e-Permission";
 
         /**
          * Authentication Header Name
-         * Request Header For Authentication
-         * Request Header Is Customized By The Program And Not Carried By The User Request
-         * When Receiving Requests, It Is Necessary To Clear The Request Header Carried By The User To Ensure Program Security
          */
         @SuppressWarnings("ALL")
         private static final String AUTHENTICATION_HEADER = "P6e-Authentication";
 
         @Override
-        public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        public @NonNull Mono<Void> filter(ServerWebExchange exchange, @NonNull GatewayFilterChain chain) {
             final ServerHttpRequest request = exchange.getRequest();
             final String userInfo = request.getHeaders().getFirst(USER_INFO_HEADER);
             final String permission = request.getHeaders().getFirst(PERMISSION_HEADER);

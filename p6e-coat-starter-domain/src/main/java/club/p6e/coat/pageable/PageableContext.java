@@ -3,8 +3,8 @@ package club.p6e.coat.pageable;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import java.util.Hashtable;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Pageable Context
@@ -17,11 +17,16 @@ import java.util.Map;
 public class PageableContext {
 
     /**
-     * All Source Cache Object
+     * All Pageable Context Cache Object
      */
-    private static final Map<Class<?>, String> ALL_CACHE = new Hashtable<>() {{
-        put(PageableContext.class, "1");
-    }};
+    private static final Map<Class<?>, String> ALL_CACHE = new ConcurrentHashMap<>();
+
+    /*
+     * Register All Pageable Context Object
+     */
+    static {
+        register(PageableContext.class);
+    }
 
     /**
      * All

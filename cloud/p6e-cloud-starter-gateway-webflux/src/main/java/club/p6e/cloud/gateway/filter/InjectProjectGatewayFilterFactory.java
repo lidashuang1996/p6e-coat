@@ -4,17 +4,19 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * Inject Organization Project Gateway Filter Factory
+ * Inject Project Gateway Filter Factory
  *
  * @author lidashuang
  * @version 1.0
  */
-public class InjectOrganizationProjectGatewayFilterFactory extends AbstractGatewayFilterFactory<Object> {
+public class InjectProjectGatewayFilterFactory extends AbstractGatewayFilterFactory<Object> {
 
     /**
      * Project Param Name
@@ -33,6 +35,12 @@ public class InjectOrganizationProjectGatewayFilterFactory extends AbstractGatew
      */
     @SuppressWarnings("ALL")
     private static final String PROJECT_PARAM_3 = "projectId";
+
+    /**
+     * Project Param Name
+     */
+    @SuppressWarnings("ALL")
+    private static final String PROJECT_PARAM_4 = "project_id";
 
     /**
      * Project Header Name
@@ -61,15 +69,20 @@ public class InjectOrganizationProjectGatewayFilterFactory extends AbstractGatew
         @Override
         public Mono<Void> filter(ServerWebExchange exchange, @NonNull GatewayFilterChain chain) {
             final ServerHttpRequest request = exchange.getRequest();
-            String project = request.getQueryParams().getFirst(PROJECT_PARAM_1);
+            final HttpHeaders headers = request.getHeaders();
+            final MultiValueMap<String, String> params = request.getQueryParams();
+            String project = params.getFirst(PROJECT_PARAM_1);
             if (project == null) {
-                project = request.getHeaders().getFirst(PROJECT_PARAM_2);
+                project = params.getFirst(PROJECT_PARAM_2);
             }
             if (project == null) {
-                project = request.getHeaders().getFirst(PROJECT_PARAM_3);
+                project = params.getFirst(PROJECT_PARAM_3);
             }
             if (project == null) {
-                project = request.getHeaders().getFirst(X_PROJECT_HEADER);
+                project = params.getFirst(PROJECT_PARAM_4);
+            }
+            if (project == null) {
+                project = headers.getFirst(X_PROJECT_HEADER);
             }
             if (project == null) {
                 return chain.filter(exchange);

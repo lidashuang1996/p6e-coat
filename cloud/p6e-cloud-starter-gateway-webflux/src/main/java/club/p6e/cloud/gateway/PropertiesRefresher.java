@@ -1,8 +1,7 @@
 package club.p6e.cloud.gateway;
 
 import club.p6e.coat.common.utils.JsonUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Properties Refresher
@@ -10,12 +9,8 @@ import org.slf4j.LoggerFactory;
  * @author lidashuang
  * @version 1.0
  */
+@Slf4j
 public class PropertiesRefresher {
-
-    /**
-     * Inject Log Object
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesRefresher.class);
 
     /**
      * Route Locator Object
@@ -44,9 +39,8 @@ public class PropertiesRefresher {
      *
      * @param properties Properties Object
      */
-    @SuppressWarnings("ALL")
     public void execute(Properties properties) {
-        LOGGER.info("[ NEW PROPERTIES ] ({}) >>> {}", properties.getClass(), JsonUtil.toJson(properties));
+        log.info("[ NEW PROPERTIES ] ({}) >>> {}", properties.getClass(), JsonUtil.toJson(properties));
         this.properties.setLog(properties.getLog());
         this.properties.setRoutes(properties.getRoutes());
         // custom gateway routing locators to perform new routing configurations

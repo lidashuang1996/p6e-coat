@@ -1,6 +1,5 @@
 package club.p6e.cloud.gateway.permission;
 
-import club.p6e.coat.common.utils.JsonUtil;
 import org.jspecify.annotations.NonNull;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -9,15 +8,12 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-
 /**
  * Inject Permission Gateway Filter Factory
  *
  * @author lidashuang
  * @version 1.0
  */
-@SuppressWarnings("ALL")
 public class InjectPermissionGatewayFilterFactory extends AbstractGatewayFilterFactory<Object> {
 
     @NonNull
@@ -52,9 +48,8 @@ public class InjectPermissionGatewayFilterFactory extends AbstractGatewayFilterF
          * @param exchange Server Web Exchange Object
          * @return Permission Data Serialize String Object
          */
-        @SuppressWarnings("ALL")
         public String execute(ServerWebExchange exchange) {
-            return JsonUtil.toJson(new ArrayList<>());
+            throw new RuntimeException("Inject Permission Gateway Filter Factory Is Not Implemented.");
         }
 
     }
