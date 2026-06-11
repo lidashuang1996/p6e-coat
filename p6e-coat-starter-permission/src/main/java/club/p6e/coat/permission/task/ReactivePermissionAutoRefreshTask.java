@@ -3,7 +3,7 @@ package club.p6e.coat.permission.task;
 import reactor.core.publisher.Mono;
 
 /**
- * Permission Auto Refresh Task
+ * Reactive Permission Auto Refresh Task
  *
  * @author lidashuang
  * @version 1.0

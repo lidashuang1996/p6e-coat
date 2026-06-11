@@ -40,7 +40,7 @@ public class ReactiveCookieCacheTokenGenerator implements ReactiveTokenGenerator
         final ServerHttpRequest request = exchange.getRequest();
         final ServerHttpResponse response = exchange.getResponse();
         return this.cache.set(user.id(), device == null ? "PC" : device, token, user.serialize(), duration())
-                .flatMap(m -> Mono.just(cookie(name(), token)))
+                .flatMap(_ -> Mono.just(cookie(name(), token)))
                 .flatMap(c -> {
                     response.addCookie(c);
                     return Mono.just(LocalDateTime.now());
@@ -53,6 +53,7 @@ public class ReactiveCookieCacheTokenGenerator implements ReactiveTokenGenerator
      * @param exchange Server Web Exchange Object
      * @return Device Content
      */
+    @SuppressWarnings("ALL")
     public String device(ServerWebExchange exchange) {
         return exchange.getRequest().getHeaders().getFirst("P6e-Device");
     }
@@ -92,7 +93,7 @@ public class ReactiveCookieCacheTokenGenerator implements ReactiveTokenGenerator
      * @return Response Cookie Object
      */
     public ResponseCookie cookie(String name, String content) {
-        return ResponseCookie.from(name, content).path("/").maxAge(duration()).httpOnly(true).build();
+        return ResponseCookie.from(name, content).path("/").maxAge(duration()).httpOnly(true).secure(true).sameSite("Strict").build();
     }
 
 }

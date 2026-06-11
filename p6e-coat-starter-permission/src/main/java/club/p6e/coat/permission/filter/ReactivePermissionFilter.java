@@ -22,7 +22,7 @@ import java.util.List;
  * @version 1.0
  */
 @SuppressWarnings("ALL")
-public class ReactivePermissionFilter implements WebFilter, Ordered {
+public class ReactivePermissionFilter implements WebFilter {
 
     /**
      * Permission Header
@@ -46,11 +46,6 @@ public class ReactivePermissionFilter implements WebFilter, Ordered {
      */
     public ReactivePermissionFilter(PermissionValidator validator) {
         this.validator = validator;
-    }
-
-    @Override
-    public int getOrder() {
-        return 20000;
     }
 
     @NonNull
@@ -80,18 +75,22 @@ public class ReactivePermissionFilter implements WebFilter, Ordered {
      */
     public PermissionDetails validate(ServerHttpRequest request) {
         final List<String> permissions = new ArrayList<>();
-        final String path = request.getPath().value();
-        final String method = request.getMethod().name().toUpperCase();
-        final List<String> list = request.getHeaders().get(USER_PERMISSION_HEADER);
-        if (list != null) {
-            for (final String item : list) {
-                final List<String> data = JsonUtil.fromJsonToList(item, String.class);
-                if (data != null) {
-                    permissions.addAll(data);
+        if (request.getMethod() == null) {
+            return null;
+        } else {
+            final String path = request.getPath().value();
+            final String method = request.getMethod().name().toUpperCase();
+            final List<String> list = request.getHeaders().get(USER_PERMISSION_HEADER);
+            if (list != null) {
+                for (final String item : list) {
+                    final List<String> data = JsonUtil.fromJsonToList(item, String.class);
+                    if (data != null) {
+                        permissions.addAll(data);
+                    }
                 }
             }
+            return this.validator.execute(path, method, permissions);
         }
-        return this.validator.execute(path, method, permissions);
     }
 
 }

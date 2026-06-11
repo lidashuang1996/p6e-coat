@@ -78,7 +78,6 @@ public class Session {
      *
      * @param data Message Content
      */
-    @SuppressWarnings("ALL")
     public void push(Object data) {
         if (context != null && !context.isRemoved()) {
             if (DataType.TEXT.name().equals(this.channelType) && data instanceof String content) {

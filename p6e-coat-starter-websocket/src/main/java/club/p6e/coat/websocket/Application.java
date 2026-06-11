@@ -113,6 +113,9 @@ public class Application {
                     break;
                 }
             }
+            if (auth == null) {
+                throw new NullPointerException("[ WEBSOCKET SERVICE ] (" + channel.getAuth() + ") AUTH SERVICE NOT FOUND");
+            }
             run(channel.getPort(), channel.getPath(), channel.getName(), channel.getType(), channel.getFrame(), auth, callbacks);
         }
     }
@@ -122,7 +125,6 @@ public class Application {
      *
      * @param properties Properties Object
      */
-    @SuppressWarnings("ALL")
     public void reset(Properties properties) {
         this.properties = properties;
         reset();
@@ -185,7 +187,7 @@ public class Application {
             this.channels.add(bootstrap.bind(port).sync().channel());
             log.info("[ WEBSOCKET SERVICE ] ({} : {}) ==> START SUCCESSFULLY... BIND ( {} : {} )", name, type, port, path);
         } catch (Exception e) {
-            log.error("[ WEBSOCKET SERVICE ]", e);
+            log.error("[ WEBSOCKET SERVICE ] >>> {}", e.getMessage(), e);
         }
     }
 

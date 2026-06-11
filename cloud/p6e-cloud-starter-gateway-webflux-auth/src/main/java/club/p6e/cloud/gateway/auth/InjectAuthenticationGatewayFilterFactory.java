@@ -35,7 +35,7 @@ public class InjectAuthenticationGatewayFilterFactory extends AbstractGatewayFil
     }
 
     @Override
-    public GatewayFilter apply(Object config) {
+    public @NonNull GatewayFilter apply(Object config) {
         return new CustomGatewayFilter(service);
     }
 
@@ -48,18 +48,12 @@ public class InjectAuthenticationGatewayFilterFactory extends AbstractGatewayFil
 
         /**
          * User Info Header Name
-         * Request Header For User Information
-         * Request Header Is Customized By The Program And Not Carried By The User Request
-         * When Receiving Requests, It Is Necessary To Clear The Request Header Carried By The User To Ensure Program Security
          */
         @SuppressWarnings("ALL")
         private static final String USER_INFO_HEADER = "P6e-User-Info";
 
         /**
          * Authentication Header Name
-         * Request Header For Authentication
-         * Request Header Is Customized By The Program And Not Carried By The User Request
-         * When Receiving Requests, It Is Necessary To Clear The Request Header Carried By The User To Ensure Program Security
          */
         @SuppressWarnings("ALL")
         private static final String AUTHENTICATION_HEADER = "P6e-Authentication";

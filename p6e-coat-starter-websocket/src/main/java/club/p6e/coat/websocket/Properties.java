@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Config
+ * Properties
  *
  * @author lidashuang
  * @version 1.0

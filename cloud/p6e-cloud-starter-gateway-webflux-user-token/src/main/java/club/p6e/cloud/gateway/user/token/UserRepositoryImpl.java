@@ -4,7 +4,6 @@ import club.p6e.coat.common.utils.TemplateParser;
 import club.p6e.coat.common.utils.TransformationUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.r2dbc.core.DatabaseClient;
-import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
@@ -16,7 +15,6 @@ import java.util.Map;
  * @author lidashuang
  * @version 1.0
  */
-@Component
 @ConditionalOnMissingBean(UserRepository.class)
 public class UserRepositoryImpl implements UserRepository {
 
@@ -46,7 +44,7 @@ public class UserRepositoryImpl implements UserRepository {
     @SuppressWarnings("ALL")
     @Override
     public Mono<Map<String, Object>> get(Integer id) {
-        return client.sql(TemplateParser.execute(TemplateParser.execute("""
+        return client.sql(TemplateParser.execute("""
                         SELECT
                             _user.id_,
                             _user.status_,
@@ -67,7 +65,7 @@ public class UserRepositoryImpl implements UserRepository {
                             _user.id_ = :ID
                         ;                
                         """, "TABLE", getUserTableName()
-                )))
+                ))
                 .bind("ID", id)
                 .map((readable) -> {
                     final Map<String, Object> result = new HashMap<>();
@@ -86,7 +84,7 @@ public class UserRepositoryImpl implements UserRepository {
                     result.put("description", TransformationUtil.objectToString(readable.get("description_")));
                     return result;
                 })
-                .one();
+                .first();
     }
 
 }

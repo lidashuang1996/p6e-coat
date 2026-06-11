@@ -19,7 +19,6 @@
         <dependency>
             <groupId>club.p6e.coat</groupId>
             <artifactId>p6e-coat-starter-domain</artifactId>
-            <version>4.0.2</version>
         </dependency>
         <!-- P6e Coat Domain [END] -->
 

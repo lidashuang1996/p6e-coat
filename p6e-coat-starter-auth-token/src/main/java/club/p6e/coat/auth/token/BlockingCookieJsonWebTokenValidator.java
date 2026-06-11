@@ -46,7 +46,7 @@ public class BlockingCookieJsonWebTokenValidator implements BlockingTokenValidat
                     String content = codec.decryption(cookie.getValue());
                     if (content != null) {
                         content = content.substring(content.indexOf("@") + 1);
-                        return this.builder.create(content);
+                        return builder.create(content);
                     }
                 }
             }

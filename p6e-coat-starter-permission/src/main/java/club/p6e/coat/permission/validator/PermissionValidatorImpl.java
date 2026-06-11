@@ -4,7 +4,6 @@ import club.p6e.coat.permission.PermissionDetails;
 import club.p6e.coat.permission.matcher.PermissionGroupMatcher;
 import club.p6e.coat.permission.matcher.PermissionPathMatcher;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -52,10 +51,9 @@ public class PermissionValidatorImpl implements PermissionValidator {
                     final String pm = permission.getMethod();
                     if (USUAL_CHAR.equalsIgnoreCase(pm) || method.equalsIgnoreCase(pm)) {
                         if (this.permissionGroupMatcher.match(groups, String.valueOf(permission.getGid()))) {
-                            continue;
+                            return permission;
                         }
                     }
-                    return permission;
                 }
             }
         }

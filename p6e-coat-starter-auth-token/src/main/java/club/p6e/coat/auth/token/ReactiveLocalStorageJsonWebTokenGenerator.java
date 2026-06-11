@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono;
 import java.util.HashMap;
 
 /**
- * Reactive Local Storage Json Web Token Generator
+ * Reactive Local Storage JSON Web Token Generator
  *
  * @author lidashuang
  * @version 1.0
@@ -34,7 +34,7 @@ public class ReactiveLocalStorageJsonWebTokenGenerator implements ReactiveTokenG
         final int duration = duration();
         final String device = device(exchange);
         final String content = this.codec.encryption(user.id(), (device == null ? "PC" : device) + "@" + user.serialize(), duration);
-        return Mono.just(content).map(m -> new HashMap<>() {{
+        return Mono.just(content).map(_ -> new HashMap<>() {{
             put("token", content);
             put("type", "Bearer");
             put("expiration", duration);
@@ -47,6 +47,7 @@ public class ReactiveLocalStorageJsonWebTokenGenerator implements ReactiveTokenG
      * @param exchange Server Web Exchange Object
      * @return Device Content
      */
+    @SuppressWarnings("ALL")
     public String device(ServerWebExchange exchange) {
         return exchange.getRequest().getHeaders().getFirst("P6e-Device");
     }

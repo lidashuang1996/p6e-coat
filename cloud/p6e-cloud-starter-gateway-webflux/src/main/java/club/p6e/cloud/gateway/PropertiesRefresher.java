@@ -39,7 +39,6 @@ public class PropertiesRefresher {
      *
      * @param properties Properties Object
      */
-    @SuppressWarnings("ALL")
     public void execute(Properties properties) {
         log.info("[ NEW PROPERTIES ] ({}) >>> {}", properties.getClass(), JsonUtil.toJson(properties));
         this.properties.setLog(properties.getLog());

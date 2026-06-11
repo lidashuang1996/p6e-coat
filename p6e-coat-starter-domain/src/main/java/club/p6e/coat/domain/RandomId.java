@@ -25,7 +25,7 @@ public class RandomId implements Identifier, Serializable {
      * Constructor Initialization
      */
     public RandomId() {
-        this.id = UUID.randomUUID().toString().replaceAll("-", "");
+        this.id = UUID.randomUUID().toString().replace("-", "");
     }
 
 }

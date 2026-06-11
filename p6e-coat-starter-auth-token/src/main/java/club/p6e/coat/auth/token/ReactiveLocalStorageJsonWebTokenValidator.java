@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Reactive Local Storage Json Web Token Validator
+ * Reactive Local Storage JSON Web Token Validator
  *
  * @author lidashuang
  * @version 1.0
