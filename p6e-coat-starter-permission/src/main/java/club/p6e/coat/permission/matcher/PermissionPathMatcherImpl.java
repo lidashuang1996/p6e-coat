@@ -34,7 +34,7 @@ public class PermissionPathMatcherImpl implements PermissionPathMatcher {
             return new ArrayList<>();
         }
         Model temporary = cache;
-        final String[] paths = path.trim().split("/");
+        final String[] paths = path.toLowerCase().trim().split("/");
         for (final String item : paths) {
             Model model = temporary.getData().get(item);
             if (model == null) {
@@ -90,6 +90,9 @@ public class PermissionPathMatcherImpl implements PermissionPathMatcher {
         for (final String key : model.getData().keySet()) {
             final Model value = model.getData().get(key);
             cleanExpiredVersionData(version, value);
+            if (value.getPermissions().isEmpty()) {
+                model.getData().remove(key);
+            }
         }
         model.getPermissions().removeIf(p -> p.getVersion() < version);
     }

@@ -94,9 +94,9 @@ public class BlockingPermissionRepositoryImpl implements BlockingPermissionRepos
                             _permission_url.id_
                             ASC
                         LIMIT 
-                            :LIMIT
+                            ?
                         OFFSET
-                            :OFFSET
+                            ?
                     ) AS _permission_url_table
                     LEFT JOIN 
                         @{TABLE2} AS _permission_url_group_mapper_url_table
@@ -127,7 +127,7 @@ public class BlockingPermissionRepositoryImpl implements BlockingPermissionRepos
                 }
                 return list;
             }
-        });
+        }, size, (page - 1) * size);
     }
 
     @SuppressWarnings("ALL")
@@ -143,9 +143,9 @@ public class BlockingPermissionRepositoryImpl implements BlockingPermissionRepos
                     _permission_url_group_table.id_
                     ASC
                 LIMIT
-                    :LIMIT
+                    ?
                 OFFSET
-                    :OFFSET
+                    ?
                 """, "TABLE", getPermissionUrlGroupTableName()
         )), new ResultSetExtractor<Map<String, List<String>>>() {
             @Override
@@ -158,7 +158,7 @@ public class BlockingPermissionRepositoryImpl implements BlockingPermissionRepos
                 }
                 return result;
             }
-        });
+        }, size, (page - 1) * size);
     }
 
 

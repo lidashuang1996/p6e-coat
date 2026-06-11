@@ -19,7 +19,7 @@ import java.util.*;
  * @version 1.0
  */
 @SuppressWarnings("ALL")
-public class BlockingPermissionFilter implements Filter, Ordered {
+public class BlockingPermissionFilter implements Filter {
 
     /**
      * Permission Header
@@ -43,11 +43,6 @@ public class BlockingPermissionFilter implements Filter, Ordered {
      */
     public BlockingPermissionFilter(PermissionValidator validator) {
         this.validator = validator;
-    }
-
-    @Override
-    public int getOrder() {
-        return 20000;
     }
 
     @Override

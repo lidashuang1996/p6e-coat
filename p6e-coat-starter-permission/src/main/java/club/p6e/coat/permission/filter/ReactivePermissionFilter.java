@@ -22,7 +22,7 @@ import java.util.List;
  * @version 1.0
  */
 @SuppressWarnings("ALL")
-public class ReactivePermissionFilter implements WebFilter, Ordered {
+public class ReactivePermissionFilter implements WebFilter {
 
     /**
      * Permission Header
@@ -46,11 +46,6 @@ public class ReactivePermissionFilter implements WebFilter, Ordered {
      */
     public ReactivePermissionFilter(PermissionValidator validator) {
         this.validator = validator;
-    }
-
-    @Override
-    public int getOrder() {
-        return 20000;
     }
 
     @NonNull
