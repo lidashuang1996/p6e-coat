@@ -16,7 +16,7 @@ public final class WebExceptionExecuteConfig {
     public static void init() {
         boolean run = false;
         try {
-            Class.forName("org.springframework.web.servlet.package-info");
+            Class.forName("org.springframework.web.servlet.DispatcherServlet");
             run = true;
             CustomException.registerTransformer(org.springframework.web.servlet.resource.NoResourceFoundException.class, new ExceptionExtend11());
             CustomException.registerTransformer(org.springframework.web.server.MethodNotAllowedException.class, new ExceptionExtend21());
@@ -25,7 +25,7 @@ public final class WebExceptionExecuteConfig {
         }
         if (!run) {
             try {
-                Class.forName("org.springframework.web.reactive.package-info");
+                Class.forName("org.springframework.web.reactive.DispatcherHandler");
                 CustomException.registerTransformer(org.springframework.web.reactive.resource.NoResourceFoundException.class, new ExceptionExtend12());
             } catch (Exception e) {
                 // ignore exception

@@ -25,7 +25,7 @@ import java.nio.charset.StandardCharsets;
 @RestController
 @RequestMapping("/__version__")
 @Component(value = "club.p6e.coat.common.controller.ReactiveVersionController")
-@ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
+@ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactiveVersionController {
 
     @RequestMapping("")
@@ -41,6 +41,11 @@ public class ReactiveVersionController {
         return response.writeWith(Mono.just(dataBufferFactory.wrap(version().getBytes(StandardCharsets.UTF_8))));
     }
 
+    /**
+     * Get Version
+     *
+     * @return version
+     */
     private String version() {
         final StringBuilder content = new StringBuilder();
         try (final InputStream inputStream = ClassLoader.getSystemClassLoader().getResourceAsStream("version")) {

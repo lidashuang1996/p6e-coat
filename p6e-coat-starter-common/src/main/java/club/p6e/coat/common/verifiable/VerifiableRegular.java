@@ -6,11 +6,20 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Verifiable Regular
+ *
  * @author lidashuang
  * @version 1.0
  */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface VerifiableRegular {
+
+    /**
+     * Regular Expression
+     *
+     * @return Regular Expression Value
+     */
     String value() default "";
+
 }

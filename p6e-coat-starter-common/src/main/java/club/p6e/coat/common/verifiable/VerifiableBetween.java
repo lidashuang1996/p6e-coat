@@ -6,6 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Verifiable Between
+ *
  * @author lidashuang
  * @version 1.0
  */
@@ -13,8 +15,18 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface VerifiableBetween {
 
+    /**
+     * Verifiable Between Min Length
+     *
+     * @return Verifiable Between Min Length Value
+     */
     double min();
 
+    /**
+     * Verifiable Between Max Length
+     *
+     * @return Verifiable Between Max Length Value
+     */
     double max();
 
 }

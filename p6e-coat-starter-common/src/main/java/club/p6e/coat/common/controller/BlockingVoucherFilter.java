@@ -19,7 +19,6 @@ import java.nio.charset.StandardCharsets;
  * @author lidashuang
  * @version 1.0
  */
-@SuppressWarnings("ALL")
 public class BlockingVoucherFilter implements Filter {
 
     /**

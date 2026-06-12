@@ -6,6 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Verifiable Not Null
+ *
  * @author lidashuang
  * @version 1.0
  */

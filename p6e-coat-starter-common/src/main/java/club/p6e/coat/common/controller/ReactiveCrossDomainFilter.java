@@ -15,6 +15,7 @@ import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -24,7 +25,6 @@ import java.util.List;
  * @author lidashuang
  * @version 1.0
  */
-@SuppressWarnings("ALL")
 public class ReactiveCrossDomainFilter implements WebFilter {
 
     /**
@@ -60,7 +60,7 @@ public class ReactiveCrossDomainFilter implements WebFilter {
             final ServerHttpRequest request = exchange.getRequest();
             final ServerHttpResponse response = exchange.getResponse();
             String origin = WebUtil.getHeader(request, HttpHeaders.ORIGIN);
-            if (validationOrigin(origin, List.copyOf(crossDomain.getWhiteList()))) {
+            if (validationOrigin(origin, crossDomain.getWhiteList())) {
                 response.getHeaders().setAccessControlAllowOrigin(origin == null ? "*" : origin);
                 response.getHeaders().setAccessControlMaxAge(getAccessControlMaxAge());
                 response.getHeaders().setAccessControlAllowMethods(getAccessControlAllowMethods());
@@ -84,16 +84,31 @@ public class ReactiveCrossDomainFilter implements WebFilter {
     /**
      * Validation Origin
      *
-     * @param origin    origin
-     * @param whiteList whiteList
+     * @param origin    Origin String
+     * @param whiteList White List Object
      * @return true or false
      */
+    @SuppressWarnings("ALL")
     public boolean validationOrigin(String origin, List<String> whiteList) {
-        if (whiteList != null && !whiteList.isEmpty()) {
-            for (final String item : whiteList) {
-                if (item.equals("*") || origin.startsWith(item)) {
+        if (origin == null || whiteList == null || whiteList.isEmpty()) {
+            return false;
+        }
+        for (final String item : whiteList) {
+            if ("*".equals(item)) {
+                return true;
+            }
+            try {
+                final URI originUri = URI.create(origin);
+                final URI patternUri = URI.create(item);
+                if (originUri.getHost() != null
+                        && originUri.getScheme() != null
+                        && originUri.getHost().equals(patternUri.getHost())
+                        && originUri.getScheme().equals(patternUri.getScheme())
+                        && String.valueOf(originUri.getPort()).equals(String.valueOf(patternUri.getPort()))) {
                     return true;
                 }
+            } catch (Exception _) {
+                // ignore exception
             }
         }
         return false;

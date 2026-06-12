@@ -23,7 +23,7 @@ import java.nio.charset.StandardCharsets;
 @RestController
 @RequestMapping("/__version__")
 @Component(value = "club.p6e.coat.common.controller.BlockingVersionController")
-@ConditionalOnClass(name = "org.springframework.web.servlet.package-info")
+@ConditionalOnClass(name = "org.springframework.web.servlet.DispatcherServlet")
 public class BlockingVersionController {
 
     @RequestMapping("")
@@ -42,6 +42,11 @@ public class BlockingVersionController {
         }
     }
 
+    /**
+     * Get Version
+     *
+     * @return version
+     */
     private String version() {
         final StringBuilder content = new StringBuilder();
         try (final InputStream inputStream = ResourceReader.class.getClassLoader().getResourceAsStream("version")) {

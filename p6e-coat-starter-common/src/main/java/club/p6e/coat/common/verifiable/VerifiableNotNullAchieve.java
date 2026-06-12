@@ -4,6 +4,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 /**
+ * Verifiable Not Null Achieve
+ *
  * @author lidashuang
  * @version 1.0
  */

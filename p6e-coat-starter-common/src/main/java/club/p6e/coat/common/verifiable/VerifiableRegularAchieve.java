@@ -5,6 +5,8 @@ import java.lang.reflect.Field;
 import java.util.regex.Pattern;
 
 /**
+ * Verifiable Regular Achieve
+ *
  * @author lidashuang
  * @version 1.0
  */
@@ -17,8 +19,8 @@ public class VerifiableRegularAchieve implements VerifiableAchieveInterface {
                 field.setAccessible(true);
                 final Object value = field.get(data);
                 final String content = regular.value();
-                if (value instanceof String string) {
-                    return Pattern.compile(content).matcher(string).matches();
+                if (!content.isEmpty() && value instanceof String vs) {
+                    return Pattern.compile(content).matcher(vs).matches();
                 }
             } catch (Exception ignored) {
                 // ignored exception

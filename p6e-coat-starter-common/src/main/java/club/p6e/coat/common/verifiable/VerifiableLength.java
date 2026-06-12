@@ -6,6 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Verifiable Length
+ *
  * @author lidashuang
  * @version 1.0
  */
@@ -13,10 +15,25 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface VerifiableLength {
 
+    /**
+     * Verifiable Length Min Length
+     *
+     * @return Verifiable Length Min Length Value
+     */
     int min();
 
+    /**
+     * Verifiable Length Max Length
+     *
+     * @return Verifiable Length Max Length Value
+     */
     int max();
 
+    /**
+     * Verifiable Length Is Allow Null
+     *
+     * @return Verifiable Length Is Allow Null Value
+     */
     boolean isAllowNull() default false;
 
 }

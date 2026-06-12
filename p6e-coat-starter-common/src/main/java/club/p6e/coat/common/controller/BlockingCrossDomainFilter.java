@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,7 +25,6 @@ import java.util.stream.Stream;
  * @author lidashuang
  * @version 1.0
  */
-@SuppressWarnings("ALL")
 public class BlockingCrossDomainFilter implements Filter {
 
     /**
@@ -59,8 +59,8 @@ public class BlockingCrossDomainFilter implements Filter {
             final HttpServletRequest request = (HttpServletRequest) servletRequest;
             final HttpServletResponse response = (HttpServletResponse) servletResponse;
             final String origin = WebUtil.getHeader(request, HttpHeaders.ORIGIN);
-            if (validationOrigin(origin, List.copyOf(crossDomain.getWhiteList()))) {
-                response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin == null ? "https://dongdongne.com/" : origin);
+            if (validationOrigin(origin, crossDomain.getWhiteList())) {
+                response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin == null ? "*" : origin);
                 response.setHeader(HttpHeaders.ACCESS_CONTROL_MAX_AGE, getAccessControlMaxAge());
                 response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, getAccessControlAllowMethods());
                 response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, getAccessControlAllowHeaders());
@@ -84,16 +84,31 @@ public class BlockingCrossDomainFilter implements Filter {
     /**
      * Validation Origin
      *
-     * @param origin    origin
-     * @param whiteList whiteList
+     * @param origin    Origin String
+     * @param whiteList White List Object
      * @return true or false
      */
+    @SuppressWarnings("ALL")
     public boolean validationOrigin(String origin, List<String> whiteList) {
-        if (whiteList != null && !whiteList.isEmpty()) {
-            for (final String item : whiteList) {
-                if (item.equals("*") || origin.startsWith(item)) {
+        if (origin == null || whiteList == null || whiteList.isEmpty()) {
+            return false;
+        }
+        for (final String item : whiteList) {
+            if ("*".equals(item)) {
+                return true;
+            }
+            try {
+                final URI originUri = URI.create(origin);
+                final URI patternUri = URI.create(item);
+                if (originUri.getHost() != null
+                        && originUri.getScheme() != null
+                        && originUri.getHost().equals(patternUri.getHost())
+                        && originUri.getScheme().equals(patternUri.getScheme())
+                        && String.valueOf(originUri.getPort()).equals(String.valueOf(patternUri.getPort()))) {
                     return true;
                 }
+            } catch (Exception _) {
+                // ignore exception
             }
         }
         return false;

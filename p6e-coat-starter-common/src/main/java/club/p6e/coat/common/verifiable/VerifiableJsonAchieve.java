@@ -6,6 +6,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 /**
+ * Verifiable Json Achieve
+ *
  * @author lidashuang
  * @version 1.0
  */
@@ -17,9 +19,8 @@ public class VerifiableJsonAchieve implements VerifiableAchieveInterface {
             try {
                 field.setAccessible(true);
                 final Object value = field.get(data);
-                if (value instanceof String string) {
-                    JsonUtil.fromJsonToMap(string, Object.class, Object.class);
-                    return true;
+                if (value instanceof String vs) {
+                    return JsonUtil.fromJsonToMap(vs, Object.class, Object.class) != null;
                 }
             } catch (Exception ignored) {
                 // ignored exception
