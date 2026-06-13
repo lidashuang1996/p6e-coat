@@ -4,6 +4,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 /**
+ * Verifiable Length Achieve
+ *
  * @author lidashuang
  * @version 1.0
  */
@@ -20,7 +22,7 @@ public class VerifiableLengthAchieve implements VerifiableAchieveInterface {
                 }
                 final int min = length.min();
                 final int max = length.max();
-                if (value instanceof String string && string.length() >= min && string.length() <= max) {
+                if (value instanceof String vs && vs.length() >= min && vs.length() <= max) {
                     return true;
                 }
             } catch (Exception ignored) {

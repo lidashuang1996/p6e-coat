@@ -4,6 +4,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 /**
+ * Verifiable Range Achieve
+ *
  * @author lidashuang
  * @version 1.0
  */
@@ -16,16 +18,16 @@ public class VerifiableRangeAchieve implements VerifiableAchieveInterface {
                 field.setAccessible(true);
                 final String[] list = range.value();
                 final Object value = field.get(data);
-                if (value instanceof String string) {
+                if (value instanceof String vs) {
                     for (final String item : list) {
-                        if (item.equals(string)) {
+                        if (item.equals(vs)) {
                             return true;
                         }
                     }
-                } else if (value instanceof Number number) {
+                } else if (value instanceof Number vn) {
                     for (final String item : list) {
                         if (String.valueOf(Double.valueOf(item))
-                                .equals(String.valueOf(number.doubleValue()))) {
+                                .equals(String.valueOf(vn.doubleValue()))) {
                             return true;
                         }
                     }

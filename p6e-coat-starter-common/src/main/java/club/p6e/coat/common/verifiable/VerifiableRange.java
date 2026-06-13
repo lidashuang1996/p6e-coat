@@ -6,6 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Verifiable Range
+ *
  * @author lidashuang
  * @version 1.0
  */
@@ -13,6 +15,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface VerifiableRange {
 
+    /**
+     * Verifiable Range
+     *
+     * @return Verifiable Range Range Value
+     */
     String[] value() default {};
 
 }

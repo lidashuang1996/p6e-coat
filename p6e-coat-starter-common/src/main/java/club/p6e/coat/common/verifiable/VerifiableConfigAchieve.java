@@ -1,13 +1,15 @@
-package club.p6e.coat.common.old.pageable.verifiable;
+package club.p6e.coat.common.verifiable;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 /**
+ * Verifiable Config Achieve
+ *
  * @author lidashuang
  * @version 1.0
  */
-public class VerifiableBetweenAchieve implements VerifiableAchieveInterface {
+public class VerifiableConfigAchieve implements VerifiableAchieveInterface {
 
     @Override
     public boolean execute(Annotation annotation, Field field, Object data) {

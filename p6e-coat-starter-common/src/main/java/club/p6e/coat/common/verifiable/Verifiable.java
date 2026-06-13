@@ -2,17 +2,25 @@ package club.p6e.coat.common.verifiable;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.Hashtable;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * Verifiable
+ *
  * @author lidashuang
  * @version 1.0
  */
 public class Verifiable {
 
-    private static final Map<Class<? extends Annotation>, VerifiableAchieveInterface> ACHIEVES = new Hashtable<>();
+    /**
+     * Verifiable Achieves Object
+     */
+    private static final Map<Class<? extends Annotation>, VerifiableAchieveInterface> ACHIEVES = new ConcurrentHashMap<>();
 
+    /*
+     * Init Verifiable Achieves Object
+     */
     static {
         ACHIEVES.put(VerifiableJson.class, new VerifiableJsonAchieve());
         ACHIEVES.put(VerifiableRange.class, new VerifiableRangeAchieve());
@@ -22,6 +30,12 @@ public class Verifiable {
         ACHIEVES.put(VerifiableBetween.class, new VerifiableBetweenAchieve());
     }
 
+    /**
+     * Execute Verifiable
+     *
+     * @param data Verifiable Data Object
+     * @return Execute Verifiable Result Object
+     */
     public static boolean execute(Object data) {
         if (data == null) {
             return false;
@@ -35,11 +49,18 @@ public class Verifiable {
         }
     }
 
+    /**
+     * Execute Verifiable Field
+     *
+     * @param field Verifiable Field Data Object
+     * @param data  Verifiable Data Object
+     * @return Execute Verifiable Result Object
+     */
     private static boolean execute(Field field, Object data) {
         if (field != null) {
-            for (final Class<? extends Annotation> key : ACHIEVES.keySet()) {
-                if (field.isAnnotationPresent(key)
-                        && !ACHIEVES.get(key).execute(field.getAnnotation(key), field, data)) {
+            for (final Class<? extends Annotation> annotation : ACHIEVES.keySet()) {
+                if (field.isAnnotationPresent(annotation)
+                        && !ACHIEVES.get(annotation).execute(field.getAnnotation(annotation), field, data)) {
                     return false;
                 }
             }

@@ -3,9 +3,8 @@ package club.p6e.coat.common;
 import club.p6e.coat.common.controller.WebExceptionExecuteConfig;
 import club.p6e.coat.common.utils.SnowflakeIdUtil;
 import club.p6e.coat.common.utils.SpringUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
@@ -17,14 +16,10 @@ import org.springframework.stereotype.Component;
  * @author lidashuang
  * @version 1.0
  */
+@Slf4j
 @Order(0)
 @Component(value = "club.p6e.coat.common.ApplicationRunner")
 public class ApplicationRunner implements CommandLineRunner {
-
-    /**
-     * Inject Log Object
-     */
-    private final static Logger LOGGER = LoggerFactory.getLogger(ApplicationRunner.class);
 
     /**
      * Application Context Object
@@ -48,7 +43,7 @@ public class ApplicationRunner implements CommandLineRunner {
         for (final String name : properties.getSnowflake().keySet()) {
             final Properties.Snowflake snowflake = properties.getSnowflake().get(name);
             SnowflakeIdUtil.register(name, new SnowflakeIdUtil.Implementation(snowflake.getWorkerId(), snowflake.getDataCenterId()));
-            LOGGER.info("P6E COMMON INIT SNOWFLAKE [ WORKER ID: {}, DATACENTER ID: {} ] ==> {}", snowflake.getWorkerId(), snowflake.getDataCenterId(), name);
+            log.info("SNOWFLAKE ({}) ==> [ WORKER ID: {}, DATACENTER ID: {} ]", name, snowflake.getWorkerId(), snowflake.getDataCenterId());
         }
     }
 

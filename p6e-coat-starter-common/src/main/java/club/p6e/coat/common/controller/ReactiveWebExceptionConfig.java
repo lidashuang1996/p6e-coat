@@ -20,7 +20,7 @@ import reactor.core.publisher.Mono;
  */
 @ControllerAdvice
 @Component("club.p6e.coat.common.controller.ReactiveWebExceptionConfig")
-@ConditionalOnClass(name = "org.springframework.web.reactive.package-info")
+@ConditionalOnClass(name = "org.springframework.web.reactive.DispatcherHandler")
 public class ReactiveWebExceptionConfig {
 
     /**
@@ -48,11 +48,11 @@ public class ReactiveWebExceptionConfig {
     public Mono<Object> def(Exception exception) {
         if (CustomException.transformation(exception) instanceof final CustomException ce) {
             if (properties.isDebug()) {
-                LOGGER.info(ce.getMessage());
+                LOGGER.error(ce.getMessage(), ce);
             }
             return Mono.just(ResultContext.build(ce.getCode(), ce.getSketch(), ce.getContent()));
         } else {
-            LOGGER.error("[{}] >>> {}", exception.getClass(), exception.getMessage());
+            LOGGER.error("[{}] >>> {}", exception.getClass(), exception.getMessage(), exception);
             if (properties.isDebug()) {
                 exception.printStackTrace();
                 return Mono.just(ResultContext.build(500, "SERVICE_EXCEPTION", exception.getMessage()));
