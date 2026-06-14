@@ -16,7 +16,7 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
-public class InjectProjectGatewayFilterFactory extends AbstractGatewayFilterFactory<Object> {
+public class InjectOrganizationProjectGatewayFilterFactory extends AbstractGatewayFilterFactory<Object> {
 
     /**
      * Project Param Name
@@ -54,6 +54,18 @@ public class InjectProjectGatewayFilterFactory extends AbstractGatewayFilterFact
     @SuppressWarnings("ALL")
     private static final String PROJECT_HEADER = "P6e-Project";
 
+    /**
+     * Organization Header Name
+     */
+    @SuppressWarnings("ALL")
+    private static final String ORGANIZATION_HEADER = "P6e-Organization";
+
+    /**
+     * USER INFO HEADER
+     */
+    @SuppressWarnings("ALL")
+    private static final String USER_INFO_HEADER = "P6e-User-Info";
+
     @NonNull
     @Override
     public GatewayFilter apply(Object config) {
@@ -87,9 +99,7 @@ public class InjectProjectGatewayFilterFactory extends AbstractGatewayFilterFact
             if (project == null) {
                 return chain.filter(exchange);
             } else {
-                return chain.filter(exchange.mutate().request(
-                        exchange.getRequest().mutate().header(PROJECT_HEADER, project).build()
-                ).build());
+                throw new RuntimeException("Inject Project Gateway Filter Factory Is Not Implemented.");
             }
         }
 

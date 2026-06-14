@@ -14,6 +14,7 @@ import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 /**
  * Reactive Voucher Filter
@@ -58,7 +59,7 @@ public class ReactiveVoucherFilter implements WebFilter {
             final String voucher = WebUtil.getHeader(request, security.getHeader());
             if (voucher != null) {
                 for (final String item : security.getVouchers()) {
-                    if (item.equals(voucher)) {
+                    if (item.equals(voucher) || Base64.getEncoder().encodeToString(item.getBytes(StandardCharsets.UTF_8)).equals(voucher)) {
                         return chain.filter(exchange);
                     }
                 }

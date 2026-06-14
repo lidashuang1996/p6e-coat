@@ -48,7 +48,7 @@ public class ReactiveVersionController {
      */
     private String version() {
         final StringBuilder content = new StringBuilder();
-        try (final InputStream inputStream = ClassLoader.getSystemClassLoader().getResourceAsStream("version")) {
+        try (final InputStream inputStream = ClassLoader.getSystemClassLoader().getResourceAsStream("version.txt")) {
             if (inputStream == null) {
                 content.append("UNKNOWN");
             } else {

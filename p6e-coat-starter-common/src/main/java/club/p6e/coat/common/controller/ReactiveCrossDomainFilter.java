@@ -90,25 +90,27 @@ public class ReactiveCrossDomainFilter implements WebFilter {
      */
     @SuppressWarnings("ALL")
     public boolean validationOrigin(String origin, List<String> whiteList) {
-        if (origin == null || whiteList == null || whiteList.isEmpty()) {
+        if (whiteList == null || whiteList.isEmpty()) {
             return false;
         }
         for (final String item : whiteList) {
             if ("*".equals(item)) {
                 return true;
             }
-            try {
-                final URI originUri = URI.create(origin);
-                final URI patternUri = URI.create(item);
-                if (originUri.getHost() != null
-                        && originUri.getScheme() != null
-                        && originUri.getHost().equals(patternUri.getHost())
-                        && originUri.getScheme().equals(patternUri.getScheme())
-                        && String.valueOf(originUri.getPort()).equals(String.valueOf(patternUri.getPort()))) {
-                    return true;
+            if (item != null && origin != null) {
+                try {
+                    final URI originUri = URI.create(origin);
+                    final URI patternUri = URI.create(item);
+                    if (originUri.getHost() != null
+                            && originUri.getScheme() != null
+                            && originUri.getHost().equals(patternUri.getHost())
+                            && originUri.getScheme().equals(patternUri.getScheme())
+                            && String.valueOf(originUri.getPort()).equals(String.valueOf(patternUri.getPort()))) {
+                        return true;
+                    }
+                } catch (Exception _) {
+                    // ignore exception
                 }
-            } catch (Exception _) {
-                // ignore exception
             }
         }
         return false;

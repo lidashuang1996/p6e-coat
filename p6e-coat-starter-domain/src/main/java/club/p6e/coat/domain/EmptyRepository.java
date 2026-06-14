@@ -1,4 +1,4 @@
-﻿package club.p6e.coat.domain;
+package club.p6e.coat.domain;
 
 import club.p6e.coat.environment.EnvironmentContext;
 import club.p6e.coat.pageable.PageableContext;

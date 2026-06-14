@@ -38,7 +38,7 @@ public class PermissionTask {
      */
     @PostConstruct
     public void init() {
-        executor.scheduleWithFixedDelay(this::execute, 30L, 3600L, TimeUnit.SECONDS);
+        executor.scheduleWithFixedDelay(this::execute, 5L, 3600L, TimeUnit.SECONDS);
     }
 
     /**

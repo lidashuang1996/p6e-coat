@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 /**
  * Blocking Voucher Filter
@@ -53,7 +54,7 @@ public class BlockingVoucherFilter implements Filter {
             final String voucher = WebUtil.getHeader((HttpServletRequest) servletRequest, security.getHeader());
             if (voucher != null) {
                 for (final String item : security.getVouchers()) {
-                    if (item.equals(voucher)) {
+                    if (item.equals(voucher) || Base64.getEncoder().encodeToString(item.getBytes(StandardCharsets.UTF_8)).equals(voucher)) {
                         chain.doFilter(servletRequest, servletResponse);
                         return;
                     }

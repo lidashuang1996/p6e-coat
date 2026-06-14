@@ -49,7 +49,7 @@ public class BlockingVersionController {
      */
     private String version() {
         final StringBuilder content = new StringBuilder();
-        try (final InputStream inputStream = ResourceReader.class.getClassLoader().getResourceAsStream("version")) {
+        try (final InputStream inputStream = ResourceReader.class.getClassLoader().getResourceAsStream("version.txt")) {
             if (inputStream == null) {
                 content.append("UNKNOWN");
             } else {
