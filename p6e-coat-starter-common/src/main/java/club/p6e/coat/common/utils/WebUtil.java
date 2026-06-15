@@ -343,7 +343,7 @@ public class WebUtil {
 
         @Override
         public String mergeUrlParams(String url, Map<String, String> params) {
-            if (params != null) {
+            if (params != null && !params.isEmpty()) {
                 final String content = params.entrySet().stream().map(entry ->
                         entry.getKey() + "=" + URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8)
                 ).reduce((a, b) -> a + "&" + b).orElse("");
