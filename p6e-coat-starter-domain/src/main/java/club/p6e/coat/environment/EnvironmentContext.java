@@ -36,6 +36,9 @@ public class EnvironmentContext implements Serializable {
     @Getter
     private EnvironmentPermission permission;
 
+    @Getter
+    private EnvironmentLanguage language;
+
     /**
      * Constructor Initialization
      */
@@ -88,6 +91,10 @@ public class EnvironmentContext implements Serializable {
      */
     public boolean isAuth() {
         return this.user != null && this.user.id() > 0;
+    }
+
+    public String language() {
+        return this.language == null ? null : this.language.id();
     }
 
 }
