@@ -30,11 +30,8 @@ public class PermissionPathMatcherImpl implements PermissionPathMatcher {
         if (path == null || path.isEmpty()) {
             return new ArrayList<>();
         }
-        System.out.println("path >>> " + path);
         Model temporary = cache;
-        System.out.println("temporary 11 >>> " + temporary);
         final String[] paths = path.toLowerCase().trim().split("/");
-        System.out.println(Arrays.toString(paths));
         for (final String item : paths) {
             Model model = temporary.getData().get(item);
             if (model == null) {
@@ -44,11 +41,7 @@ public class PermissionPathMatcherImpl implements PermissionPathMatcher {
                 }
             }
             temporary = model;
-            System.out.println("temporary 22 >>> " + temporary);
         }
-        System.out.println(
-                "temporary " + temporary
-        );
         return temporary.getPermissions();
     }
 
@@ -63,19 +56,16 @@ public class PermissionPathMatcherImpl implements PermissionPathMatcher {
                 && permission.getWeight() != null
                 && permission.getVersion() != null
         ) {
-            System.out.println("xxx permission.getVersion() >>> " + permission.getVersion());
             synchronized (this) {
                 Model temporary = cache;
                 final String path = permission.getPath();
                 final String[] paths = path.toLowerCase().trim().split("/");
                 for (final String item : paths) {
                     temporary = temporary.getData().computeIfAbsent(item, _ -> new Model());
-                    System.out.println("xxx temporary <> " + temporary);
                 }
                 temporary.getPermissions().add(permission);
                 temporary.getPermissions().sort(Comparator.comparingInt(PermissionDetails::getWeight).reversed());
                 log.info("[ PERMISSION PATH MATCHER REGISTER ] {}({}) >>> {}", path, permission.getMethod(), permission);
-                System.out.println("xxx cache <> " + cache);
             }
         }
     }
@@ -94,10 +84,8 @@ public class PermissionPathMatcherImpl implements PermissionPathMatcher {
      * @param model   Model Object
      */
     private void cleanExpiredVersionData(long version, Model model) {
-        System.out.println("xxxx >> versionversionversionversion " + version);
         for (final String key : model.getData().keySet()) {
-            final Model value = model.getData().get(key);
-            cleanExpiredVersionData(version, value);
+            cleanExpiredVersionData(version, model.getData().get(key));
         }
         model.getPermissions().removeIf(p -> p.getVersion() < version);
     }

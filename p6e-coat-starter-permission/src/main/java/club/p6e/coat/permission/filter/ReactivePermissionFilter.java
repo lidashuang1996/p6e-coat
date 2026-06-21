@@ -5,7 +5,6 @@ import club.p6e.coat.common.utils.JsonUtil;
 import club.p6e.coat.permission.PermissionDetails;
 import club.p6e.coat.permission.validator.PermissionValidator;
 import org.jspecify.annotations.NonNull;
-import org.springframework.core.Ordered;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
@@ -81,9 +80,6 @@ public class ReactivePermissionFilter implements WebFilter {
             final String path = request.getPath().value();
             final String method = request.getMethod().name().toUpperCase();
             final List<String> list = request.getHeaders().get(USER_PERMISSION_HEADER);
-            System.out.println("path >>> " + path);
-            System.out.println("method >>> " + method);
-            System.out.println("list >>> " + list);
             if (list != null) {
                 for (final String item : list) {
                     final List<String> data = JsonUtil.fromJsonToList(item, String.class);
