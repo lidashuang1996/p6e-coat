@@ -4,7 +4,7 @@ import club.p6e.coat.common.utils.GeneratorUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandler;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.websocketx.*;
 import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ import java.util.List;
  * @version 1.0
  */
 @Slf4j
-public class Channel implements ChannelInboundHandler {
+public class Channel extends ChannelInboundHandlerAdapter {
 
     /**
      * LOGIN SUCCESS CONTENT TEXT
@@ -95,8 +95,6 @@ public class Channel implements ChannelInboundHandler {
             }
         } else if (o instanceof PingWebSocketFrame) {
             context.writeAndFlush(new PongWebSocketFrame());
-        } else if (o instanceof PongWebSocketFrame) {
-            context.writeAndFlush(new PingWebSocketFrame());
         }
     }
 
@@ -141,34 +139,6 @@ public class Channel implements ChannelInboundHandler {
             executeCallbackError(session, e);
         }
         context.close();
-    }
-
-    @Override
-    public void handlerAdded(ChannelHandlerContext context) {
-    }
-
-    @Override
-    public void channelActive(ChannelHandlerContext context) {
-    }
-
-    @Override
-    public void channelInactive(ChannelHandlerContext context) {
-    }
-
-    @Override
-    public void channelRegistered(ChannelHandlerContext context) {
-    }
-
-    @Override
-    public void channelUnregistered(ChannelHandlerContext context) {
-    }
-
-    @Override
-    public void channelReadComplete(ChannelHandlerContext context) {
-    }
-
-    @Override
-    public void channelWritabilityChanged(ChannelHandlerContext context) {
     }
 
     /**

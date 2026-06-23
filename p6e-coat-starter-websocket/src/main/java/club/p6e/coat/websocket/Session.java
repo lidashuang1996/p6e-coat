@@ -67,9 +67,16 @@ public class Session {
     /**
      * Close Session
      */
+    @SuppressWarnings("ALL")
     public void close() {
         if (context != null && !context.isRemoved()) {
-            context.close();
+            final io.netty.channel.Channel channel = context.channel();
+            if (channel != null && channel.isActive() && channel.isWritable()) {
+                final EventLoop el = channel.eventLoop();
+                if (el != null) {
+                    el.execute(channel::close);
+                }
+            }
         }
     }
 
@@ -78,9 +85,11 @@ public class Session {
      *
      * @param data Message Content
      */
+    @SuppressWarnings("ALL")
     public void push(Object data) {
         if (context != null && !context.isRemoved()) {
-            if (DataType.TEXT.name().equals(this.channelType) && data instanceof String content) {
+            final DataType dataType = DataType.valueOf(this.channelType);
+            if (dataType == DataType.TEXT && data instanceof String content) {
                 final io.netty.channel.Channel channel = context.channel();
                 if (channel != null && channel.isActive() && channel.isWritable()) {
                     final EventLoop el = channel.eventLoop();
@@ -88,8 +97,7 @@ public class Session {
                         el.execute(() -> channel.writeAndFlush(new TextWebSocketFrame(content)));
                     }
                 }
-            }
-            if (DataType.BINARY.name().equals(this.channelType) && data instanceof byte[] bytes) {
+            } else if (dataType == DataType.BINARY && data instanceof byte[] bytes) {
                 final io.netty.channel.Channel channel = context.channel();
                 if (channel != null && channel.isActive() && channel.isWritable()) {
                     final EventLoop el = channel.eventLoop();

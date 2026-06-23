@@ -12,6 +12,7 @@ import reactor.core.publisher.Mono;
 
 /**
  * Inject Project Gateway Filter Factory
+ * Template Code Implementation, Not Involved In Runtime Logic
  *
  * @author lidashuang
  * @version 1.0
@@ -21,50 +22,50 @@ public class InjectOrganizationProjectGatewayFilterFactory extends AbstractGatew
     /**
      * Project Param Name
      */
-    @SuppressWarnings("ALL")
     private static final String PROJECT_PARAM_1 = "pid";
 
     /**
      * Project Param Name
      */
-    @SuppressWarnings("ALL")
     private static final String PROJECT_PARAM_2 = "project";
 
     /**
      * Project Param Name
      */
-    @SuppressWarnings("ALL")
     private static final String PROJECT_PARAM_3 = "projectId";
 
     /**
      * Project Param Name
      */
-    @SuppressWarnings("ALL")
     private static final String PROJECT_PARAM_4 = "project_id";
 
     /**
-     * Project Header Name
+     * Project Header Name (External Request Headers)
+     * Custom HTTP Header Name, Non Standard RFC Header
      */
     @SuppressWarnings("ALL")
     private static final String X_PROJECT_HEADER = "X-Project";
 
     /**
-     * Project Header Name
+     * Project Header Name (Internal Request Header)
+     * Custom HTTP Header Name, Non Standard RFC Header
      */
     @SuppressWarnings("ALL")
     private static final String PROJECT_HEADER = "P6e-Project";
 
     /**
-     * Organization Header Name
-     */
-    @SuppressWarnings("ALL")
-    private static final String ORGANIZATION_HEADER = "P6e-Organization";
-
-    /**
-     * USER INFO HEADER
+     * User Info Header Name (Internal Request Header)
+     * Custom HTTP Header Name, Non Standard RFC Header
      */
     @SuppressWarnings("ALL")
     private static final String USER_INFO_HEADER = "P6e-User-Info";
+
+    /**
+     * Organization Header Name (Internal Request Header)
+     * Custom HTTP Header Name, Non Standard RFC Header
+     */
+    @SuppressWarnings("ALL")
+    private static final String ORGANIZATION_HEADER = "P6e-Organization";
 
     @NonNull
     @Override
@@ -74,6 +75,7 @@ public class InjectOrganizationProjectGatewayFilterFactory extends AbstractGatew
 
     /**
      * Custom Gateway Filter
+     * Template Code Implementation, Not Involved In Runtime Logic
      */
     public static class CustomGatewayFilter implements GatewayFilter {
 
@@ -99,7 +101,7 @@ public class InjectOrganizationProjectGatewayFilterFactory extends AbstractGatew
             if (project == null) {
                 return chain.filter(exchange);
             } else {
-                throw new RuntimeException("Inject Project Gateway Filter Factory Is Not Implemented.");
+                return Mono.error(new RuntimeException("Inject Project Gateway Filter Factory Is Not Implemented."));
             }
         }
 

@@ -70,7 +70,7 @@ public class ReactivePermissionRepositoryImpl implements ReactivePermissionRepos
         return client.sql(TemplateParser.execute(TemplateParser.execute("""
                         SELECT
                             _permission_url_table.url_ AS url,
-                            _permission_url_table.base_url_ AS baseUrl,
+                            _permission_url_table.base_url_ AS base_url,
                             _permission_url_table.method_ AS method,
                             _permission_url_group_table.mark_ AS mark,
                             _permission_url_group_table.weight_ AS weight,
@@ -110,7 +110,7 @@ public class ReactivePermissionRepositoryImpl implements ReactivePermissionRepos
                     details.setGid(TransformationUtil.objectToInteger(row.get("gid")));
                     details.setUid(TransformationUtil.objectToInteger(row.get("uid")));
                     details.setUrl(TransformationUtil.objectToString(row.get("url")));
-                    details.setBaseUrl(TransformationUtil.objectToString(row.get("baseUrl")));
+                    details.setBaseUrl(TransformationUtil.objectToString(row.get("base_url")));
                     details.setMethod(TransformationUtil.objectToString(row.get("method")));
                     details.setMark(TransformationUtil.objectToString(row.get("mark")));
                     details.setWeight(TransformationUtil.objectToInteger(row.get("weight")));

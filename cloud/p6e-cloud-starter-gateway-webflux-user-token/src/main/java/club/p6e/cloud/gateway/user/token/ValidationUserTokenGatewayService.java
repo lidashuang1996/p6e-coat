@@ -1,6 +1,7 @@
 package club.p6e.cloud.gateway.user.token;
 
 import club.p6e.coat.auth.UserBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.http.HttpHeaders;
@@ -12,6 +13,8 @@ import reactor.core.publisher.Mono;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * Validation User Token Gateway Service
@@ -19,6 +22,7 @@ import java.time.ZoneId;
  * @author lidashuang
  * @version 1.0
  */
+@Slf4j
 @ConditionalOnMissingBean(ValidationUserTokenGatewayService.class)
 public class ValidationUserTokenGatewayService {
 
@@ -28,25 +32,28 @@ public class ValidationUserTokenGatewayService {
     private static final String TOKEN_PARAM = "token";
 
     /**
-     * Token Header
+     * Token Header (External Request Headers)
+     * Custom HTTP Header Name, Non Standard RFC Header
      */
     @SuppressWarnings("ALL")
     private static final String TOKEN_HEADER = "X-Token";
 
     /**
-     * User Info Header Name
+     * User Info Header Name (Internal Request Header)
+     * Custom HTTP Header Name, Non Standard RFC Header
      */
     @SuppressWarnings("ALL")
     private static final String USER_INFO_HEADER = "P6e-User-Info";
 
     /**
-     * Authentication Header Name
+     * Authentication Header Name (Internal Request Header)
+     * Custom HTTP Header Name, Non Standard RFC Header
      */
     @SuppressWarnings("ALL")
     private static final String AUTHENTICATION_HEADER = "P6e-Authentication";
 
     /**
-     * User Toke Object
+     * User Builder Object
      */
     private final UserBuilder builder;
 
@@ -95,11 +102,7 @@ public class ValidationUserTokenGatewayService {
         final ServerHttpRequest request = exchange.getRequest();
         final HttpHeaders headers = request.getHeaders();
         final MultiValueMap<String, String> params = request.getQueryParams();
-        String token = params.getFirst(TOKEN_PARAM);
-        if (token == null) {
-            token = headers.getFirst(TOKEN_HEADER);
-        }
-        return token;
+        return Stream.of(params.getFirst(TOKEN_PARAM), headers.getFirst(TOKEN_HEADER)).filter(Objects::nonNull).findFirst().orElse(null);
     }
 
     /**
@@ -113,33 +116,67 @@ public class ValidationUserTokenGatewayService {
         if (token == null) {
             return Mono.empty();
         } else {
-            return cache.verification(token).switchIfEmpty(userTokenRepository.get(token).flatMap(m -> {
-                if (m.getStartDateTime() != null && m.getEndDateTime() != null) {
-                    final long endEpochMilli = m.getEndDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-                    final long nowEpochMilli = LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-                    final long startEpochMilli = m.getStartDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-                    if (startEpochMilli <= nowEpochMilli && nowEpochMilli < endEpochMilli) {
-                        final long remaining = (endEpochMilli - nowEpochMilli) / 1000L;
-                        final long timeout = Math.min(remaining, 3600L);
-                        return userRepository.get(m.getUid()).map(builder::create).flatMap(u -> cache.register(token, u.serialize(), timeout));
-                    }
-                }
-                return Mono.empty();
-            })).map(s -> exchange.mutate().request(exchange.getRequest().mutate().header(USER_INFO_HEADER, s).header(AUTHENTICATION_HEADER, "1").build()).build());
+            return cache
+                    .verification(token)
+                    .onErrorResume(e -> {
+                        log.warn("user token redis unavailable, skip cache: {}", e.getMessage());
+                        return Mono.empty();
+                    })
+                    .switchIfEmpty(userTokenRepository
+                            .get(token)
+                            .onErrorResume(e -> {
+                                log.warn("user token db query failed, skip validation: {}", e.getMessage());
+                                return Mono.empty();
+                            })
+                            .flatMap(m -> {
+                                if (m.getStartDateTime() != null && m.getEndDateTime() != null) {
+                                    final long endEpochMilli = m.getEndDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+                                    final long nowEpochMilli = LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+                                    final long startEpochMilli = m.getStartDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+                                    if (startEpochMilli <= nowEpochMilli && nowEpochMilli < endEpochMilli) {
+                                        final long remaining = (endEpochMilli - nowEpochMilli) / 1000L;
+                                        final long timeout = Math.min(remaining, 3600L);
+                                        return userRepository.get(m.getUid())
+                                    .onErrorResume(e -> {
+                                        log.warn("user data query failed, skip validation: {}", e.getMessage());
+                                        return Mono.empty();
+                                    })
+                                    .map(builder::create)
+                                    .flatMap(u -> cache.register(token, u.serialize(), timeout));
+                                    }
+                                }
+                                return Mono.empty();
+                            })).map(s -> exchange.mutate().request(exchange.getRequest().mutate()
+                            .header(USER_INFO_HEADER, s)
+                            .header(AUTHENTICATION_HEADER, "1").build()
+                    ).build());
         }
     }
 
     /**
      * User Token Cache
-     *
-     * @param template Reactive String Redis Template Object
      */
-    private record UserTokenCache(ReactiveStringRedisTemplate template) {
+    @SuppressWarnings("ALL")
+    private static class UserTokenCache {
 
         /**
          * User Token Cache Prefix
          */
         private static final String PRESET_USER_TOKEN_CACHE_PREFIX = "PRESET_USER_TOKEN:";
+
+        /**
+         * Reactive String Redis Template Object
+         */
+        private final ReactiveStringRedisTemplate template;
+
+        /**
+         * Constructor Initialization
+         *
+         * @param template Reactive String Redis Template Object
+         */
+        public UserTokenCache(ReactiveStringRedisTemplate template) {
+            this.template = template;
+        }
 
         /**
          * Register
@@ -150,7 +187,10 @@ public class ValidationUserTokenGatewayService {
          * @return Mono<String> User Token
          */
         public Mono<String> register(String token, String content, long timeout) {
-            return template.opsForValue().set(PRESET_USER_TOKEN_CACHE_PREFIX + token, content, Duration.ofSeconds(timeout)).map(_ -> content);
+            return template
+                    .opsForValue()
+                    .set(PRESET_USER_TOKEN_CACHE_PREFIX + token, content, Duration.ofSeconds(timeout))
+                    .map(_ -> content);
         }
 
         /**

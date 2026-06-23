@@ -6,6 +6,7 @@ import club.p6e.coat.common.utils.JsonUtil;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandler;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.*;
 import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +21,7 @@ import java.util.Map;
  * @version 1.0
  */
 @Slf4j
-public class Channel implements ChannelInboundHandler {
+public class Channel extends ChannelInboundHandlerAdapter {
 
     /**
      * Session ID Attribute Key
@@ -109,38 +110,6 @@ public class Channel implements ChannelInboundHandler {
     @Override
     public void exceptionCaught(ChannelHandlerContext context, Throwable e) {
         context.close();
-    }
-
-    @Override
-    public void handlerAdded(ChannelHandlerContext context) {
-    }
-
-    @Override
-    public void channelActive(ChannelHandlerContext context) {
-    }
-
-    @Override
-    public void channelInactive(ChannelHandlerContext context) {
-    }
-
-    @Override
-    public void channelRegistered(ChannelHandlerContext context) {
-    }
-
-    @Override
-    public void channelUnregistered(ChannelHandlerContext context) {
-    }
-
-    @Override
-    public void channelReadComplete(ChannelHandlerContext context) {
-    }
-
-    @Override
-    public void channelWritabilityChanged(ChannelHandlerContext context) {
-    }
-
-    @Override
-    public void userEventTriggered(ChannelHandlerContext context, Object o) {
     }
 
 }

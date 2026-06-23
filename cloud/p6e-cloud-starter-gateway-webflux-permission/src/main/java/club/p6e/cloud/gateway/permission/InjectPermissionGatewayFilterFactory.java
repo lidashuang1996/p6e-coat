@@ -10,6 +10,7 @@ import reactor.core.publisher.Mono;
 
 /**
  * Inject Permission Gateway Filter Factory
+ * Template Code Implementation, Not Involved In Runtime Logic
  *
  * @author lidashuang
  * @version 1.0
@@ -28,18 +29,19 @@ public class InjectPermissionGatewayFilterFactory extends AbstractGatewayFilterF
     public static class CustomGatewayFilter implements GatewayFilter {
 
         /**
-         * Premission Header Name
+         * User Permission Header Name (Internal Request Header)
+         * Custom HTTP Header Name, Non Standard RFC Header
          */
         @SuppressWarnings("ALL")
         private static final String USER_PERMISSION_HEADER = "P6e-User-Permission";
 
         @NonNull
         @Override
-        public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        public Mono<Void> filter(ServerWebExchange exchange, @NonNull GatewayFilterChain chain) {
             final ServerHttpRequest request = exchange.getRequest();
-            return chain.filter(exchange.mutate().request(
-                    request.mutate().header(USER_PERMISSION_HEADER, execute(exchange)).build()
-            ).build());
+            return execute(exchange).flatMap(permission -> chain.filter(exchange.mutate().request(
+                    request.mutate().header(USER_PERMISSION_HEADER, permission).build()
+            ).build()));
         }
 
         /**
@@ -48,8 +50,9 @@ public class InjectPermissionGatewayFilterFactory extends AbstractGatewayFilterF
          * @param exchange Server Web Exchange Object
          * @return Permission Data Serialize String Object
          */
-        public String execute(ServerWebExchange exchange) {
-            throw new RuntimeException("Inject Permission Gateway Filter Factory Is Not Implemented.");
+        @SuppressWarnings("ALL")
+        public Mono<String> execute(ServerWebExchange exchange) {
+            return Mono.error(new RuntimeException("Inject Permission Gateway Filter Factory Is Not Implemented."));
         }
 
     }

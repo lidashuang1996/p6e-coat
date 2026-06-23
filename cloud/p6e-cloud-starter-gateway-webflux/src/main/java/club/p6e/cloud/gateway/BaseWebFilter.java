@@ -15,6 +15,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * Basic Web Filter
@@ -29,19 +30,6 @@ public class BaseWebFilter implements WebFilter, Ordered {
      */
     private static final int ORDER = Integer.MIN_VALUE + 2000;
 
-    /**
-     * Only Response Header
-     */
-    private static final List<String> ONLY_RESPONSE_HEADERS = List.of(
-            "Content-Type",
-            "Access-Control",
-            "Access-Control-Max-Age",
-            "Access-Control-Allow-Origin",
-            "Access-Control-Allow-Headers",
-            "Access-Control-Allow-Methods",
-            "Access-Control-Allow-Credentials"
-    );
-
     @Override
     public int getOrder() {
         return ORDER;
@@ -54,7 +42,7 @@ public class BaseWebFilter implements WebFilter, Ordered {
         final ServerHttpResponse response = exchange.getResponse();
         return chain.filter(exchange
                 .mutate()
-                .request(new CustomServerHttpRequestDecorator(request))
+                .request(new CustomServerHttpRequestDecorator(request).cleanRequestHeaders(h -> h.startsWith("p6e-")))
                 .response(new CustomServerHttpResponseDecorator(response))
                 .build()
         );
@@ -70,15 +58,25 @@ public class BaseWebFilter implements WebFilter, Ordered {
          */
         public CustomServerHttpRequestDecorator(ServerHttpRequest delegate) {
             super(delegate);
+        }
+
+        /**
+         * Clean Request Headers
+         *
+         * @param filter Function Object
+         * @return Custom Server Http Request Decorator Object
+         */
+        public CustomServerHttpRequestDecorator cleanRequestHeaders(Function<String, Boolean> filter) {
             // request header is used internally for calling
             // prohibit sending requests that carry this request header to downstream services
             final List<String> headers = new ArrayList<>();
             for (final String headerName : this.getHeaders().headerNames()) {
-                if (headerName.toLowerCase().startsWith("p6e-")) {
+                if (filter != null && filter.apply(headerName.toLowerCase())) {
                     headers.add(headerName);
                 }
             }
             headers.forEach(h -> this.getHeaders().remove(h));
+            return this;
         }
 
     }
@@ -87,6 +85,19 @@ public class BaseWebFilter implements WebFilter, Ordered {
      * Custom Server Http Response Decorator
      */
     private static class CustomServerHttpResponseDecorator extends ServerHttpResponseDecorator {
+
+        /**
+         * Only Response Header
+         */
+        private static final List<String> ONLY_RESPONSE_HEADERS = List.of(
+                "Content-Type",
+                "Access-Control",
+                "Access-Control-Max-Age",
+                "Access-Control-Allow-Origin",
+                "Access-Control-Allow-Headers",
+                "Access-Control-Allow-Methods",
+                "Access-Control-Allow-Credentials"
+        );
 
         /**
          * Constructor Initialization

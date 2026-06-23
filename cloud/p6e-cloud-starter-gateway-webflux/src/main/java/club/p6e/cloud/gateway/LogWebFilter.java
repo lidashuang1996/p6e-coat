@@ -64,7 +64,8 @@ public class LogWebFilter implements WebFilter, Ordered {
     private static final int ORDER = Integer.MIN_VALUE + 1000;
 
     /**
-     * User Info Header Name
+     * User Info Header Name (Internal Request Header)
+     * Custom HTTP Header Name, Non Standard RFC Header
      */
     @SuppressWarnings("ALL")
     private static final String USER_INFO_HEADER = "P6e-User-Info";
@@ -131,32 +132,43 @@ public class LogWebFilter implements WebFilter, Ordered {
     private static class CustomServerHttpRequestDecorator extends ServerHttpRequestDecorator {
 
         /**
-         * IP Request Header
+         * IP Request Header (External Request Headers)
+         * Custom HTTP Header Name, Non Standard RFC Header
          */
         @SuppressWarnings("ALL")
         private static final String LOCAL_IP = "127.0.0.1";
+
         /**
-         * IP Request Header
+         * IP Request Header (External Request Headers)
+         * Custom HTTP Header Name, Non Standard RFC Header
          */
         @SuppressWarnings("ALL")
         private final static String IP_UNKNOWN = "unknown";
+
         /**
-         * IP Request Header
+         * IP Request Header (External Request Headers)
+         * Custom HTTP Header Name, Non Standard RFC Header
          */
         @SuppressWarnings("ALL")
         private static final String IP_HEADER_X_REQUEST_IP = "x-request-ip";
+
         /**
-         * IP Request Header
+         * IP Request Header (External Request Headers)
+         * Custom HTTP Header Name, Non Standard RFC Header
          */
         @SuppressWarnings("ALL")
         private static final String IP_HEADER_X_FORWARDED_FOR = "x-forwarded-for";
+
         /**
-         * IP Request Header
+         * IP Request Header (External Request Headers)
+         * Custom HTTP Header Name, Non Standard RFC Header
          */
         @SuppressWarnings("ALL")
         private static final String IP_HEADER_PROXY_CLIENT_IP = "proxy-client-ip";
+
         /**
-         * IP Request Header
+         * IP Request Header (External Request Headers)
+         * Custom HTTP Header Name, Non Standard RFC Header
          */
         @SuppressWarnings("ALL")
         private static final String IP_HEADER_WL_PROXY_CLIENT_IP = "wl-proxy-client-ip";

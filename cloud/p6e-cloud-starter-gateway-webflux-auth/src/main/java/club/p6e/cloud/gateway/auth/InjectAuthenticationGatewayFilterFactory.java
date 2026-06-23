@@ -47,13 +47,15 @@ public class InjectAuthenticationGatewayFilterFactory extends AbstractGatewayFil
     public record CustomGatewayFilter(InjectAuthenticationGatewayService service) implements GatewayFilter {
 
         /**
-         * User Info Header Name
+         * User Info Header Name (Internal Request Header)
+         * Custom HTTP Header Name, Non Standard RFC Header
          */
         @SuppressWarnings("ALL")
         private static final String USER_INFO_HEADER = "P6e-User-Info";
 
         /**
-         * Authentication Header Name
+         * Authentication Header Name (Internal Request Header)
+         * Custom HTTP Header Name, Non Standard RFC Header
          */
         @SuppressWarnings("ALL")
         private static final String AUTHENTICATION_HEADER = "P6e-Authentication";
@@ -93,11 +95,22 @@ public class InjectAuthenticationGatewayFilterFactory extends AbstractGatewayFil
             final ServerHttpRequest request = exchange.getRequest();
             final String userInfo = request.getHeaders().getFirst(USER_INFO_HEADER);
             final String authentication = request.getHeaders().getFirst(AUTHENTICATION_HEADER);
-            final boolean status = authentication != null && !authentication.isEmpty();
-            if (status && ("1".equalsIgnoreCase(authentication) || "MQ==".equalsIgnoreCase(authentication)) && userInfo != null && !userInfo.isEmpty()) {
+            final boolean status = authentication != null && !authentication.isEmpty()
+                    // 1 / MQ==
+                    // determine whether the user information has been written into the request
+                    // due to the possibility of user information being messy code, it may be encoded using base64 or not encoded at all
+                    && ("1".equals(authentication) || "MQ==".equals(authentication));
+            if (status && userInfo != null && !userInfo.isEmpty()) {
                 return chain.filter(exchange);
             } else {
-                return service.execute(exchange).defaultIfEmpty(ANONYMOUS).flatMap(u -> chain.filter(exchange.mutate().request(exchange.getRequest().mutate().header(USER_INFO_HEADER, u.serialize()).header(AUTHENTICATION_HEADER, ANONYMOUS == u ? "0" : "1").build()).build()));
+                return service
+                        .execute(exchange)
+                        .defaultIfEmpty(ANONYMOUS)
+                        .flatMap(u -> chain.filter(exchange.mutate().request(exchange
+                                .getRequest().mutate()
+                                .header(USER_INFO_HEADER, u.serialize())
+                                .header(AUTHENTICATION_HEADER, ANONYMOUS.id().equals(u.id()) ? "0" : "1").build()
+                        ).build()));
             }
         }
 

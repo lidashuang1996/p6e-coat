@@ -28,19 +28,22 @@ public class ValidationAuthenticationGatewayFilterFactory extends AbstractGatewa
     public static class CustomGatewayFilter implements GatewayFilter {
 
         /**
-         * User Info Header Name
+         * User Info Header Name (Internal Request Header)
+         * Custom HTTP Header Name, Non Standard RFC Header
          */
         @SuppressWarnings("ALL")
         private static final String USER_INFO_HEADER = "P6e-User-Info";
 
         /**
-         * Permission Header Name
+         * Permission Header Name (Internal Request Header)
+         * Custom HTTP Header Name, Non Standard RFC Header
          */
         @SuppressWarnings("ALL")
         private static final String PERMISSION_HEADER = "P6e-Permission";
 
         /**
-         * Authentication Header Name
+         * Authentication Header Name (Internal Request Header)
+         * Custom HTTP Header Name, Non Standard RFC Header
          */
         @SuppressWarnings("ALL")
         private static final String AUTHENTICATION_HEADER = "P6e-Authentication";
@@ -53,10 +56,15 @@ public class ValidationAuthenticationGatewayFilterFactory extends AbstractGatewa
             final String authentication = request.getHeaders().getFirst(AUTHENTICATION_HEADER);
             final boolean status = authentication != null && !authentication.isEmpty();
             if (status) {
-                if (("1".equalsIgnoreCase(authentication) || "MQ==".equalsIgnoreCase(authentication)) && userInfo != null && !userInfo.isEmpty()) {
+                // 1 / MQ==
+                // determine whether the user information has been written into the request
+                // due to the possibility of user information being messy code, it may be encoded using base64 or not encoded at all
+                final boolean status0 = "0".equals(authentication) || "MA==".equals(authentication);
+                final boolean status1 = "1".equals(authentication) || "MQ==".equals(authentication);
+                if (status1 && userInfo != null && !userInfo.isEmpty()) {
                     // login user access
                     return chain.filter(exchange);
-                } else if (("0".equalsIgnoreCase(authentication) || "MA==".equalsIgnoreCase(authentication)) && userInfo != null && !userInfo.isEmpty() && permission != null && !permission.isEmpty()) {
+                } else if (status0 && userInfo != null && !userInfo.isEmpty() && permission != null && !permission.isEmpty()) {
                     // anonymous user access
                     // current access permission is required
                     return chain.filter(exchange);

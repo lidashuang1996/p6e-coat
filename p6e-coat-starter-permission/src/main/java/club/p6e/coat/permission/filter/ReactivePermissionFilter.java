@@ -20,17 +20,20 @@ import java.util.List;
  * @author lidashuang
  * @version 1.0
  */
-@SuppressWarnings("ALL")
 public class ReactivePermissionFilter implements WebFilter {
 
     /**
-     * Permission Header
+     * Permission Header (Internal Request Header)
+     * Custom HTTP Header Name, Non Standard RFC Header
      */
+    @SuppressWarnings("ALL")
     private static final String PERMISSION_HEADER = "P6e-Permission";
 
     /**
-     * User Permission Header
+     * User Permission Header (Internal Request Header)
+     * Custom HTTP Header Name, Non Standard RFC Header
      */
+    @SuppressWarnings("ALL")
     private static final String USER_PERMISSION_HEADER = "P6e-User-Permission";
 
     /**
@@ -74,22 +77,18 @@ public class ReactivePermissionFilter implements WebFilter {
      */
     public PermissionDetails validate(ServerHttpRequest request) {
         final List<String> permissions = new ArrayList<>();
-        if (request.getMethod() == null) {
-            return null;
-        } else {
-            final String path = request.getPath().value();
-            final String method = request.getMethod().name().toUpperCase();
-            final List<String> list = request.getHeaders().get(USER_PERMISSION_HEADER);
-            if (list != null) {
-                for (final String item : list) {
-                    final List<String> data = JsonUtil.fromJsonToList(item, String.class);
-                    if (data != null) {
-                        permissions.addAll(data);
-                    }
-                }
+        final String path = request.getPath().value();
+        final String method = request.getMethod().name().toUpperCase();
+        final String user = request.getHeaders().getFirst(USER_PERMISSION_HEADER);
+        if (user != null) {
+            // the user source of this place is the internal request header
+            // please ensure the security of internal request header
+            final List<String> data = JsonUtil.fromJsonToList(user, String.class);
+            if (data != null) {
+                permissions.addAll(data);
             }
-            return this.validator.execute(path, method, permissions);
         }
+        return this.validator.execute(path, method, permissions);
     }
 
 }

@@ -73,7 +73,7 @@ public class BlockingPermissionRepositoryImpl implements BlockingPermissionRepos
         return template.query(TemplateParser.execute(TemplateParser.execute("""
                     SELECT
                         _permission_url_table.url_ AS url,
-                        _permission_url_table.base_url_ AS baseUrl,
+                        _permission_url_table.base_url_ AS base_url,
                         _permission_url_table.method_ AS method,
                         _permission_url_group_table.mark_ AS mark,
                         _permission_url_group_table.weight_ AS weight,

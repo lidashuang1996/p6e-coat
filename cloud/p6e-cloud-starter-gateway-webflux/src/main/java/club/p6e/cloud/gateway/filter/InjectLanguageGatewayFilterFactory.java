@@ -19,17 +19,18 @@ public class InjectLanguageGatewayFilterFactory extends AbstractGatewayFilterFac
     /**
      * Language Param Name
      */
-    @SuppressWarnings("ALL")
     private static final String LANGUAGE_PARAM = "language";
 
     /**
-     * Language Header Name
+     * Language Header Name (External Request Headers)
+     * Custom HTTP Header Name, Non Standard RFC Header
      */
     @SuppressWarnings("ALL")
     private static final String X_LANGUAGE_HEADER = "X-Language";
 
     /**
-     * Language Header Name
+     * Language Header Name (Internal Request Header)
+     * Custom HTTP Header Name, Non Standard RFC Header
      */
     @SuppressWarnings("ALL")
     private static final String LANGUAGE_HEADER = "P6e-Language";
@@ -53,11 +54,12 @@ public class InjectLanguageGatewayFilterFactory extends AbstractGatewayFilterFac
             if (language == null) {
                 language = request.getHeaders().getFirst(X_LANGUAGE_HEADER);
             }
-            if (language == null) {
-                return chain.filter(exchange);
-            } else {
-                return chain.filter(exchange.mutate().request(request.mutate().header(LANGUAGE_HEADER, language).build()).build());
+            if (language != null) {
+                exchange = exchange.mutate().request(
+                        request.mutate().header(LANGUAGE_HEADER, language).build()
+                ).build();
             }
+            return chain.filter(exchange);
         }
 
     }

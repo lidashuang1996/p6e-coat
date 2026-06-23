@@ -7,7 +7,6 @@ import club.p6e.coat.permission.validator.PermissionValidator;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
-import org.springframework.core.Ordered;
 
 import java.io.IOException;
 import java.util.*;
@@ -18,7 +17,6 @@ import java.util.*;
  * @author lidashuang
  * @version 1.0
  */
-@SuppressWarnings("ALL")
 public class BlockingPermissionFilter implements Filter {
 
     /**
@@ -66,12 +64,15 @@ public class BlockingPermissionFilter implements Filter {
      * @param request Http Servlet Request Object
      * @return Permission Details Object
      */
+    @SuppressWarnings("ALL")
     public PermissionDetails validate(HttpServletRequest request) {
         final List<String> permissions = new ArrayList<>();
         final String method = request.getMethod().toUpperCase();
         final String user = request.getHeader(USER_PERMISSION_HEADER);
         final String path = request.getContextPath() + request.getServletPath();
         if (user != null) {
+            // the user source of this place is the internal request header
+            // please ensure the security of internal request header
             final List<String> data = JsonUtil.fromJsonToList(user, String.class);
             if (data != null) {
                 permissions.addAll(data);

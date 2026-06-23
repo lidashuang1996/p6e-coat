@@ -26,17 +26,16 @@ public class ValidateVoucherGatewayFilterFactory extends AbstractGatewayFilterFa
     /**
      * Voucher Request Parameter
      */
-    @SuppressWarnings("ALL")
     private static final String V_PARAMETER = "v";
 
     /**
      * Voucher Request Parameter
      */
-    @SuppressWarnings("ALL")
     private static final String VOUCHER_PARAMETER = "voucher";
 
     /**
-     * Voucher Header Name
+     * Voucher Header Name (External Request Headers)
+     * Custom HTTP Header Name, Non Standard RFC Header
      */
     @SuppressWarnings("ALL")
     private static final String X_VOUCHER_HEADER = "X-Voucher";

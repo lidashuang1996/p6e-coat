@@ -1,4 +1,4 @@
-package club.p6e.coat.websocket;
+package club.p6e.coat.sse;
 
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
@@ -11,26 +11,19 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Heartbeat Callback
+ * Heartbeat
  *
  * @author lidashuang
  * @version 1.0
  */
 @SuppressWarnings("ALL")
 @Slf4j
-public class HeartbeatCallback implements Callback {
+public class Heartbeat {
 
     /**
      * HEARTBEAT CONTENT TEXT
      */
     public static final String CONTENT_TEXT = "{\"type\":\"heartbeat\"}";
-
-    /**
-     * HEARTBEAT CONTENT BYTES
-     */
-    public static final byte[] CONTENT_BYTES = new byte[]{
-            0, 0, 0, 16, 0, 16, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
-    };
 
     /**
      * Channel Name List
@@ -58,7 +51,7 @@ public class HeartbeatCallback implements Callback {
     /**
      * Constructor Initialization
      */
-    public HeartbeatCallback() {
+    public Heartbeat() {
         this(60L);
     }
 
@@ -67,7 +60,7 @@ public class HeartbeatCallback implements Callback {
      *
      * @param interval Interval Time
      */
-    public HeartbeatCallback(long interval) {
+    public Heartbeat(long interval) {
         this.interval = interval <= 0 ? 60L : interval;
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             executor.shutdown();
@@ -107,42 +100,9 @@ public class HeartbeatCallback implements Callback {
     public synchronized void init() {
         if (!init) {
             init = true;
-            log.info("[ WEB SOCKET HEARTBEAT ] INIT ] {}", this.interval);
-            executor.scheduleAtFixedRate(new Task(this.interval), this.interval, this.interval, TimeUnit.SECONDS);
+            log.info("[ SSE HEARTBEAT ] INIT ] {}", this.interval);
+            executor.scheduleAtFixedRate(new Task(), this.interval, this.interval, TimeUnit.SECONDS);
         }
-    }
-
-    @Override
-    public void onOpen(Session session) {
-    }
-
-    @Override
-    public void onClose(Session session) {
-    }
-
-    @Override
-    public void onMessage(Session session, String text) {
-        if (CONTENT_TEXT.equalsIgnoreCase(text)) {
-            session.refresh();
-            session.push(CONTENT_TEXT);
-        }
-    }
-
-    @Override
-    public void onMessage(Session session, byte[] bytes) {
-        if (CONTENT_BYTES.length == bytes.length) {
-            for (int i = 0; i < bytes.length; i++) {
-                if (bytes[i] != CONTENT_BYTES[i]) {
-                    return;
-                }
-            }
-            session.refresh();
-            session.push(CONTENT_BYTES);
-        }
-    }
-
-    @Override
-    public void onError(Session session, Throwable throwable) {
     }
 
     /**
@@ -151,37 +111,20 @@ public class HeartbeatCallback implements Callback {
     @Slf4j
     private static class Task implements Runnable {
 
-        /**
-         * Interval Time
-         */
-        private final long interval;
-
-        /**
-         * Constructor Initialization
-         *
-         * @param interval Interval Time
-         */
-        public Task(long interval) {
-            this.interval = interval;
-        }
-
         @Override
         public void run() {
             try {
-                final long now = System.currentTimeMillis();
                 for (final String name : CHANNEL_NAME_LIST) {
                     SessionManager.forEachSessionInChannel(name, session -> {
                         try {
-                            if (now - session.getDate() > this.interval * 2 * 1000L) {
-                                session.close();
-                            }
+                            session.push(CONTENT_TEXT);
                         } catch (Exception e) {
-                            log.error("[ WEB SOCKET HEARTBEAT TASK FOR ] {}/{} ERROR =>: {}", name, session, e.getMessage(), e);
+                            log.warn("[ SSE HEARTBEAT TASK RUN PUSH MESSAGE ] {}/{} ERROR =>: {}", name, session, e.getMessage(), e);
                         }
                     });
                 }
             } catch (Exception e) {
-                log.error("[ WEB SOCKET HEARTBEAT TASK ] ERROR => {} ", e.getMessage(), e);
+                log.error("[ SSE HEARTBEAT TASK ] ERROR => {} ", e.getMessage(), e);
             }
         }
 

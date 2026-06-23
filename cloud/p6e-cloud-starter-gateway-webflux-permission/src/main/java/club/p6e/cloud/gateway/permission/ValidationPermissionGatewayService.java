@@ -5,7 +5,6 @@ import club.p6e.coat.permission.PermissionDetails;
 import club.p6e.coat.permission.filter.ReactivePermissionFilter;
 import club.p6e.coat.permission.validator.PermissionValidator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -15,7 +14,6 @@ import reactor.core.publisher.Mono;
  * @author lidashuang
  * @version 1.0
  */
-@Component
 @ConditionalOnMissingBean(ValidationPermissionGatewayService.class)
 public class ValidationPermissionGatewayService {
 

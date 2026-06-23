@@ -1,5 +1,6 @@
 package club.p6e.cloud.gateway.permission;
 
+import club.p6e.coat.common.exception.PermissionException;
 import club.p6e.coat.common.utils.JsonUtil;
 import org.jspecify.annotations.NonNull;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -45,7 +46,8 @@ public class ValidationPermissionGatewayFilterFactory extends AbstractGatewayFil
     public record CustomGatewayFilter(ValidationPermissionGatewayService service) implements GatewayFilter {
 
         /**
-         * Permission Header
+         * Permission Header Name (Internal Request Header)
+         * Custom HTTP Header Name, Non Standard RFC Header
          */
         @SuppressWarnings("ALL")
         private static final String PERMISSION_HEADER = "P6e-Permission";
@@ -54,9 +56,17 @@ public class ValidationPermissionGatewayFilterFactory extends AbstractGatewayFil
         @Override
         public Mono<Void> filter(ServerWebExchange exchange, @NonNull GatewayFilterChain chain) {
             final ServerHttpRequest request = exchange.getRequest();
-            return service.execute(exchange).flatMap(p ->
-                    chain.filter(exchange.mutate().request(request.mutate()
-                            .header(PERMISSION_HEADER, JsonUtil.toJson(p)).build()).build()));
+            return service.execute(exchange).flatMap(p -> {
+                final String json = JsonUtil.toJson(p);
+                if (json == null) {
+                    return Mono.error(new PermissionException(
+                            ValidationPermissionGatewayFilterFactory.class,
+                            "fun filter(ServerWebExchange exchange, GatewayFilterChain chain)",
+                            "check permission appear serialize permission details error"
+                    ));
+                }
+                return chain.filter(exchange.mutate().request(request.mutate().header(PERMISSION_HEADER, json).build()).build());
+            });
         }
 
     }

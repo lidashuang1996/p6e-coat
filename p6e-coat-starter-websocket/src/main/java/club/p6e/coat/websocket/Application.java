@@ -9,11 +9,15 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Application
@@ -40,17 +44,17 @@ public class Application {
     private Properties properties;
 
     /**
-     * Callback List Object
+     * Callback Map Object
      */
-    private final List<Callback> callbacks;
+    private final Map<String, Callback> callbackMap;
 
     /**
-     * Auth Service List Object
+     * Auth Service Map Object
      */
-    private final List<AuthService> authServices;
+    private final Map<String, AuthService> authServiceMap;
 
     /**
-     * Server Channels
+     * Server Channels List Object
      */
     private final List<io.netty.channel.Channel> channels = new ArrayList<>();
 
@@ -62,9 +66,11 @@ public class Application {
      * @param authServices Auth Service List Object
      */
     public Application(Properties properties, List<Callback> callbacks, List<AuthService> authServices) {
-        this.callbacks = callbacks;
         this.properties = properties;
-        this.authServices = authServices;
+        this.callbackMap = callbacks.stream().collect(Collectors.toUnmodifiableMap(
+                c -> c.getClass().getName(), c -> c, (c, _) -> c));
+        this.authServiceMap = authServices.stream().collect(Collectors.toUnmodifiableMap(
+                a -> a.getClass().getName(), a -> a, (a, _) -> a));
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             if (this.boss != null) {
                 this.boss.shutdownGracefully();
@@ -73,50 +79,48 @@ public class Application {
                 this.work.shutdownGracefully();
             }
         }));
-        reset();
     }
 
     /**
      * Reset
      */
+    @PostConstruct
     public synchronized void reset() {
-        log.info("[ WEBSOCKET SERVICE ] RESET PROPERTIES >>> {}", this.properties);
-        for (final io.netty.channel.Channel channel : this.channels) {
-            channel.close();
-        }
-        this.channels.clear();
-        if (this.boss != null) {
-            this.boss.shutdownGracefully();
-            this.boss = null;
-        }
-        if (this.work != null) {
-            this.work.shutdownGracefully();
-            this.work = null;
-        }
-        SessionManager.init(this.properties.getManagerThreadPoolLength());
-        this.boss = new MultiThreadIoEventLoopGroup(this.properties.getBossThreads(), NioIoHandler.newFactory());
-        this.work = new MultiThreadIoEventLoopGroup(this.properties.getWorkerThreads(), NioIoHandler.newFactory());
-        for (final Properties.Channel channel : this.properties.getChannels()) {
-            log.info("[ WEBSOCKET SERVICE ] RESET CHANNEL >>> {}", channel);
-            AuthService auth = null;
-            final List<Callback> callbacks = new ArrayList<>();
-            for (final String item : channel.getCallbacks()) {
-                for (final Callback callback : this.callbacks) {
-                    if (callback.getClass().getName().equalsIgnoreCase(item)) {
-                        callbacks.add(callback);
-                    }
+        try {
+            log.info("[ WEBSOCKET SERVICE ] RESET PROPERTIES >>> {}", this.properties);
+            for (final io.netty.channel.Channel channel : this.channels) {
+                channel.close();
+            }
+            this.channels.clear();
+            if (this.boss != null) {
+                this.boss.shutdownGracefully();
+                this.boss = null;
+            }
+            if (this.work != null) {
+                this.work.shutdownGracefully();
+                this.work = null;
+            }
+            SessionManager.init(this.properties.getManagerThreadPoolLength());
+            this.boss = new MultiThreadIoEventLoopGroup(this.properties.getBossThreads(), NioIoHandler.newFactory());
+            this.work = new MultiThreadIoEventLoopGroup(this.properties.getWorkerThreads(), NioIoHandler.newFactory());
+            for (final Properties.Channel channel : this.properties.getChannels()) {
+                log.info("[ WEBSOCKET SERVICE ] RESET CHANNEL >>> {}", channel);
+                final AuthService auth = this.authServiceMap.get(channel.getAuth());
+                if (auth == null) {
+                    throw new NullPointerException("[ WEBSOCKET SERVICE ] (" + channel.getAuth() + ") AUTH SERVICE NOT FOUND");
                 }
+                final List<Callback> channelCallbacks = channel.getCallbacks().stream().map(this.callbackMap::get).filter(Objects::nonNull).toList();
+                run(channel.getPort(), channel.getPath(), channel.getName(), channel.getType(), channel.getFrame(), auth, channelCallbacks);
             }
-            for (final AuthService item : this.authServices) {
-                if (item.getClass().getName().equalsIgnoreCase(channel.getAuth())) {
-                    auth = item;
-                    break;
-                }
+        } catch (Exception e) {
+            if (this.boss != null) {
+                this.boss.shutdownGracefully();
+                this.boss = null;
             }
-            if (auth == null) {
-                throw new NullPointerException("[ WEBSOCKET SERVICE ] (" + channel.getAuth() + ") AUTH SERVICE NOT FOUND");
+            if (this.work != null) {
+                this.work.shutdownGracefully();
+                this.work = null;
             }
-            run(channel.getPort(), channel.getPath(), channel.getName(), channel.getType(), channel.getFrame(), auth, callbacks);
         }
     }
 
@@ -125,6 +129,7 @@ public class Application {
      *
      * @param properties Properties Object
      */
+    @SuppressWarnings("ALL")
     public void reset(Properties properties) {
         this.properties = properties;
         reset();
@@ -184,7 +189,7 @@ public class Application {
                     channel.pipeline().addLast(new Channel(name, type, auth, callbacks));
                 }
             });
-            this.channels.add(bootstrap.bind(port).sync().channel());
+            this.channels.add(bootstrap.bind(port).channel());
             log.info("[ WEBSOCKET SERVICE ] ({} : {}) ==> START SUCCESSFULLY... BIND ( {} : {} )", name, type, port, path);
         } catch (Exception e) {
             log.error("[ WEBSOCKET SERVICE ] >>> {}", e.getMessage(), e);

@@ -36,13 +36,27 @@ public class ValidationUserTokenGatewayFilterFactory extends AbstractGatewayFilt
 
     /**
      * Custom Gateway Filter
-     *
-     * @param service Validation User Token Gateway Service Object
      */
-    public record CustomGatewayFilter(ValidationUserTokenGatewayService service) implements GatewayFilter {
+    public static class CustomGatewayFilter implements GatewayFilter {
+
+        /**
+         * Validation User Token Gateway Service Object
+         */
+        private final ValidationUserTokenGatewayService service;
+
+        /**
+         * Constructor Initialization
+         *
+         * @param service Validation User Token Gateway Service Object
+         */
+        public CustomGatewayFilter(ValidationUserTokenGatewayService service) {
+            this.service = service;
+        }
 
         @Override
         public @NonNull Mono<Void> filter(@NonNull ServerWebExchange exchange, GatewayFilterChain chain) {
+            // token is empty or validation degraded → pass through without auth header,
+            // downstream services decide whether to reject unauthenticated requests
             return service.execute(exchange).switchIfEmpty(Mono.just(exchange)).flatMap(chain::filter);
         }
 

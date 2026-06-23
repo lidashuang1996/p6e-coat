@@ -8,11 +8,14 @@ import io.netty.channel.nio.NioIoHandler;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Application
@@ -39,9 +42,9 @@ public class Application {
     private Properties properties;
 
     /**
-     * Auth Service List Object
+     * Auth Service Map Object
      */
-    private final List<AuthService> authServices;
+    private final Map<String, AuthService> authServiceMap;
 
     /**
      * Server Channels
@@ -56,7 +59,8 @@ public class Application {
      */
     public Application(Properties properties, List<AuthService> authServices) {
         this.properties = properties;
-        this.authServices = authServices;
+        this.authServiceMap = authServices.stream().collect(Collectors.toUnmodifiableMap(
+                a -> a.getClass().getName(), a -> a, (a, _) -> a));
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             if (this.boss != null) {
                 this.boss.shutdownGracefully();
@@ -65,42 +69,47 @@ public class Application {
                 this.work.shutdownGracefully();
             }
         }));
-        reset();
     }
 
     /**
      * Reset
      */
+    @PostConstruct
     public synchronized void reset() {
-        log.info("[ SSE SERVICE ] RESET PROPERTIES >>> {}", this.properties);
-        for (final io.netty.channel.Channel channel : this.channels) {
-            channel.close();
-        }
-        this.channels.clear();
-        if (this.boss != null) {
-            this.boss.shutdownGracefully();
-            this.boss = null;
-        }
-        if (this.work != null) {
-            this.work.shutdownGracefully();
-            this.work = null;
-        }
-        SessionManager.init(this.properties.getManagerThreadPoolLength());
-        this.boss = new MultiThreadIoEventLoopGroup(this.properties.getBossThreads(), NioIoHandler.newFactory());
-        this.work = new MultiThreadIoEventLoopGroup(this.properties.getWorkerThreads(), NioIoHandler.newFactory());
-        for (final Properties.Channel channel : this.properties.getChannels()) {
-            log.info("[ SSE SERVICE ] RESET CHANNEL >>> {}", channel);
-            AuthService auth = null;
-            for (final AuthService item : this.authServices) {
-                if (channel.getAuth().equalsIgnoreCase(item.getClass().getName())) {
-                    auth = item;
-                    break;
+        try {
+            log.info("[ SSE SERVICE ] RESET PROPERTIES >>> {}", this.properties);
+            for (final io.netty.channel.Channel channel : this.channels) {
+                channel.close();
+            }
+            this.channels.clear();
+            if (this.boss != null) {
+                this.boss.shutdownGracefully();
+                this.boss = null;
+            }
+            if (this.work != null) {
+                this.work.shutdownGracefully();
+                this.work = null;
+            }
+            SessionManager.init(this.properties.getManagerThreadPoolLength());
+            this.boss = new MultiThreadIoEventLoopGroup(this.properties.getBossThreads(), NioIoHandler.newFactory());
+            this.work = new MultiThreadIoEventLoopGroup(this.properties.getWorkerThreads(), NioIoHandler.newFactory());
+            for (final Properties.Channel channel : this.properties.getChannels()) {
+                log.info("[ SSE SERVICE ] RESET CHANNEL >>> {}", channel);
+                final AuthService auth = this.authServiceMap.get(channel.getAuth());
+                if (auth == null) {
+                    throw new NullPointerException("[ SSE SERVICE ] (" + channel.getAuth() + ") AUTH SERVICE NOT FOUND");
                 }
+                run(channel, auth);
             }
-            if (auth == null) {
-                throw new NullPointerException("[ SSE SERVICE ] (" + channel.getAuth() + ") AUTH SERVICE NOT FOUND");
+        } catch (Exception e) {
+            if (this.boss != null) {
+                this.boss.shutdownGracefully();
+                this.boss = null;
             }
-            run(channel, auth);
+            if (this.work != null) {
+                this.work.shutdownGracefully();
+                this.work = null;
+            }
         }
     }
 

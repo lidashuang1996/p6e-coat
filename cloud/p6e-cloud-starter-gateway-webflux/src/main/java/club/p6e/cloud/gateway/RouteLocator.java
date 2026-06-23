@@ -64,15 +64,21 @@ public class RouteLocator implements RouteDefinitionRepository {
     @NonNull
     @Override
     public Mono<Void> save(Mono<RouteDefinition> mr) {
-        return mr.map(routeDefinitions::add).then();
+        return mr.doOnNext(rd -> {
+            synchronized (this) {
+                routeDefinitions.add(rd);
+            }
+        }).then();
     }
 
     @NonNull
     @Override
     public Mono<Void> delete(Mono<String> ms) {
         return ms.map(r -> {
-            routeDefinitions.removeIf(item ->
-                    item.getId() != null && item.getId().equalsIgnoreCase(r));
+            synchronized (this) {
+                routeDefinitions.removeIf(item ->
+                        item.getId() != null && item.getId().equalsIgnoreCase(r));
+            }
             return r;
         }).then();
     }

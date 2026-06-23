@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -19,6 +19,7 @@ import java.util.function.Function;
  * @author lidashuang
  * @version 1.0
  */
+@SuppressWarnings("ALL")
 @Slf4j
 public class SessionManager {
 
@@ -38,14 +39,18 @@ public class SessionManager {
     private static final Map<String, Map<String, Session>> CHANNELS = new ConcurrentHashMap<>();
 
     /**
-     * Executor
-     */
-    private static final ThreadPoolExecutor EXECUTOR = new ThreadPoolExecutor(3, 30, 60L, TimeUnit.SECONDS, new SynchronousQueue<>());
-
-    /**
      * Slot Number
      */
     private static int SLOT_NUM = 15;
+
+    /**
+     * Executor
+     */
+    private static final ThreadPoolExecutor EXECUTOR = new ThreadPoolExecutor(
+            3, 15, 60L, TimeUnit.SECONDS,
+            new LinkedBlockingQueue<>(256),
+            new ThreadPoolExecutor.CallerRunsPolicy()
+    );
 
     static {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -66,7 +71,7 @@ public class SessionManager {
      *
      * @param num Thread Pool Length
      */
-    public synchronized static void init(int num) {
+    public static void init(int num) {
         SLOT_NUM = num < 0 ? 15 : num;
         SLOTS.clear();
         SESSIONS.clear();
@@ -159,9 +164,15 @@ public class SessionManager {
      * @param bytes  Message Content
      */
     public static void pushBinary(Function<User, Boolean> filter, String name, byte[] bytes) {
-        SLOTS.forEach((_, sessions) -> {
-            if (!sessions.isEmpty()) {
-                submit(sessions, filter, name, bytes);
+        log.info("[ PUSH BINARY SESSION CHANNEL ] {} >>> {}", name, bytes.length);
+        EXECUTOR.submit(() -> {
+            for (final Session session : SESSIONS.values()) {
+                if (filter != null && name.equalsIgnoreCase(session.getChannelName())) {
+                    final Boolean result = filter.apply(session.getUser());
+                    if (result != null && result) {
+                        session.push(bytes);
+                    }
+                }
             }
         });
     }
@@ -174,24 +185,9 @@ public class SessionManager {
      * @param content Message Content
      */
     public static void pushText(Function<User, Boolean> filter, String name, String content) {
-        SLOTS.forEach((_, sessions) -> {
-            if (!sessions.isEmpty()) {
-                submit(sessions, filter, name, content);
-            }
-        });
-    }
-
-    /**
-     * Submit Push Message Task
-     *
-     * @param sessions Session Map Object
-     * @param filter   Filter Object
-     * @param name     Channel Name
-     * @param content  Content Data
-     */
-    private static void submit(Map<String, Session> sessions, Function<User, Boolean> filter, String name, Object content) {
+        log.info("[ PUSH TEXT SESSION CHANNEL ] {} >>> {}", name, content);
         EXECUTOR.submit(() -> {
-            for (final Session session : sessions.values()) {
+            for (final Session session : SESSIONS.values()) {
                 if (filter != null && name.equalsIgnoreCase(session.getChannelName())) {
                     final Boolean result = filter.apply(session.getUser());
                     if (result != null && result) {

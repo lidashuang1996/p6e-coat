@@ -26,7 +26,7 @@ public class PermissionGroupMatcherImpl implements PermissionGroupMatcher {
     private final ConcurrentHashMap<String, List<String>> cache = new ConcurrentHashMap<>();
 
     @Override
-    public boolean match(List<String> user, String target) {
+    public boolean match(Set<String> user, String target) {
         if (user == null || user.isEmpty() || target == null) {
             return false;
         }
