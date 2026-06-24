@@ -31,7 +31,7 @@ public class BaseController {
      * @param fileReader File Reader Object
      * @return Server Response Object
      */
-    public static Mono<ServerResponse> getDownloadServerResponse(ServerRequest request, FileReader fileReader) {
+    public static Mono<ServerResponse> returnDownloadServerResponse(ServerRequest request, FileReader fileReader) {
         return getHttpRangeServerResponse(request.headers().range(), fileReader, headers ->
                 headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="
                         + URLEncoder.encode(fileReader.getFileAttribute().getName(), StandardCharsets.UTF_8)
@@ -46,7 +46,7 @@ public class BaseController {
      * @param fileReader File Reader Object
      * @return Server Response Object
      */
-    public static Mono<ServerResponse> getResourceServerResponse(ServerRequest request, FileReader fileReader) {
+    public static Mono<ServerResponse> returnResourceServerResponse(ServerRequest request, FileReader fileReader) {
         return getHttpRangeServerResponse(request.headers().range(), fileReader, headers -> {
         });
     }

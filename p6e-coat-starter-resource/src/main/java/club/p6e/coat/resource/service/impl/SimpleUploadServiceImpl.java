@@ -4,8 +4,8 @@ import club.p6e.coat.common.exception.ParameterException;
 import club.p6e.coat.common.utils.CopyUtil;
 import club.p6e.coat.resource.*;
 import club.p6e.coat.resource.context.SimpleUploadContext;
-import club.p6e.coat.resource.error.NodeException;
-import club.p6e.coat.resource.error.NodePermissionException;
+import club.p6e.coat.resource.error.ResourceNodeException;
+import club.p6e.coat.resource.error.ResourcePermissionException;
 import club.p6e.coat.resource.model.UploadLogModel;
 import club.p6e.coat.resource.repository.UploadRepository;
 import club.p6e.coat.resource.service.SimpleUploadService;
@@ -111,7 +111,7 @@ public class SimpleUploadServiceImpl implements SimpleUploadService {
         final Properties.Upload uc = properties.getUploads().get(node);
         final Map<String, Object> attributes = new HashMap<>(request.getOther());
         if (uc == null) {
-            return Mono.error(new NodeException(
+            return Mono.error(new ResourceNodeException(
                     this.getClass(),
                     "fun execute(SimpleUploadContext.Request request) => request node mapper config does not exist exception",
                     "request node mapper config does not exist exception"
@@ -168,7 +168,7 @@ public class SimpleUploadServiceImpl implements SimpleUploadService {
                                         })
                                         .map(m -> CopyUtil.run(m, SimpleUploadContext.Dto.class));
                             } else {
-                                return Mono.error(new NodePermissionException(
+                                return Mono.error(new ResourcePermissionException(
                                         this.getClass(),
                                         "fun execute(SimpleUploadContext.Request request) => request node file operation permission exception",
                                         "request node file operation permission exception")

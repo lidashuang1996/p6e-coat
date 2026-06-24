@@ -14,22 +14,12 @@ public interface FileReaderBuilder {
     /**
      * Build File Reader Object
      *
-     * @param type       Type
-     * @param attributes Attributes
-     * @param file       File Object
+     * @param file               File Object
+     * @param fileAttribute      File Attribute Object
+     * @param resourceType       Resource Type
+     * @param resourceAttributes Resource Attributes
      * @return File Reader Object
      */
-    FileReader build(String type, Map<String, Object> attributes, File file);
-
-    /**
-     * Build File Reader Object
-     *
-     * @param type       Type
-     * @param attributes Attributes
-     * @param file       File Object
-     * @param attribute  File Attribute Object
-     * @return File Reader Object
-     */
-    FileReader build(String type, Map<String, Object> attributes, File file, FileAttribute attribute);
+    FileReader build(File file, FileAttribute fileAttribute, String resourceType, Map<String, Object> resourceAttributes);
 
 }

@@ -35,7 +35,7 @@ public class DownloadController extends BaseController {
 
     @GetMapping
     public Mono<ServerResponse> def(ServerRequest request, DownloadContext.Request dcr) {
-        return service.execute(dcr).flatMap(fr -> getDownloadServerResponse(request, fr));
+        return service.execute(dcr).flatMap(fr -> returnDownloadServerResponse(request, fr));
     }
 
 }

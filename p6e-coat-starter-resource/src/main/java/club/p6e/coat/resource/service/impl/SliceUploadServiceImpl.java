@@ -7,7 +7,7 @@ import club.p6e.coat.common.utils.CopyUtil;
 import club.p6e.coat.common.utils.SpringUtil;
 import club.p6e.coat.resource.*;
 import club.p6e.coat.resource.context.SliceUploadContext;
-import club.p6e.coat.resource.error.NodeException;
+import club.p6e.coat.resource.error.ResourceNodeException;
 import club.p6e.coat.resource.model.UploadChunkLogModel;
 import club.p6e.coat.resource.model.UploadLogModel;
 import club.p6e.coat.resource.repository.UploadChunkRepository;
@@ -207,7 +207,7 @@ public class SliceUploadServiceImpl implements SliceUploadService {
         }
         final Properties.Upload uc = properties.getUploads().get(node);
         if (uc == null) {
-            return Mono.error(new NodeException(
+            return Mono.error(new ResourceNodeException(
                     this.getClass(),
                     "fun execute(SliceUploadContext.Close.Request request) => request node mapper config does not exist exception",
                     "request node mapper config does not exist exception"

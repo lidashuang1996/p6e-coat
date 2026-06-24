@@ -12,19 +12,13 @@ import java.util.Map;
  * @author lidashuang
  * @version 1.0
  */
-@Component
 @ConditionalOnMissingBean(FileReaderBuilder.class)
 public class SimpleFileReaderBuilder implements FileReaderBuilder {
 
     @Override
-    public FileReader build(String type, Map<String, Object> attributes, File file) {
-        return build(type, attributes, file, new SimpleFileAttribute(file));
-    }
-
-    @Override
-    public FileReader build(String type, Map<String, Object> attributes, File file, FileAttribute attribute) {
-        if ("DISK".equalsIgnoreCase(type)) {
-            return new SimpleFileReader(file, attribute);
+    public FileReader build(File file, FileAttribute fileAttribute, String resourceType, Map<String, Object> resourceAttributes) {
+        if ("DISK".equalsIgnoreCase(resourceType)) {
+            return new SimpleFileReader(file, resourceAttributes);
         }
         return null;
     }

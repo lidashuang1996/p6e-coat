@@ -10,7 +10,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
 /**
- * Resource Service Object
+ * Resource Controller
  *
  * @author lidashuang
  * @version 1.0
@@ -35,7 +35,7 @@ public class ResourceController extends BaseController {
 
     @GetMapping
     public Mono<ServerResponse> def(ServerRequest request, ResourceContext.Request rcr) {
-        return service.execute(rcr).flatMap(fr -> getResourceServerResponse(request, fr));
+        return service.execute(rcr).flatMap(fr -> returnResourceServerResponse(request, fr));
     }
 
 }

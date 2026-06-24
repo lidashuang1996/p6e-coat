@@ -499,7 +499,7 @@ public final class FileUtil {
      * @return 文件名称
      */
     @SuppressWarnings("ALL")
-    public static String name(String content) {
+    public static String getName(String content) {
         boolean bool = false;
         final StringBuilder sb = new StringBuilder();
         for (int j = content.length() - 1; j >= 0; j--) {

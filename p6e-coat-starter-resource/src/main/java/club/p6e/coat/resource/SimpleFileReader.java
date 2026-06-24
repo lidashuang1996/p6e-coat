@@ -1,10 +1,13 @@
 package club.p6e.coat.resource;
 
+import club.p6e.coat.common.utils.FileUtil;
 import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.MediaType;
 import reactor.core.publisher.Flux;
 
 import java.io.File;
+import java.nio.file.OpenOption;
 
 /**
  * Simple File Reader
@@ -14,27 +17,42 @@ import java.io.File;
  */
 public class SimpleFileReader implements FileReader {
 
+    /**
+     * File Object
+     */
     private final File file;
-    private final FileAttribute attribute;
 
-    public SimpleFileReader(File file, FileAttribute attribute) {
+    /**
+     * File Attribute Object
+     */
+    private final FileAttribute fileAttribute;
+
+    private static final DefaultDataBufferFactory BUFFER_FACTORY = new DefaultDataBufferFactory();
+
+    /**
+     * Constructor Initialization
+     *
+     * @param file          File Object
+     * @param fileAttribute File Attribute Object
+     */
+    public SimpleFileReader(File file, FileAttribute fileAttribute) {
         this.file = file;
-        this.attribute = attribute;
+        this.fileAttribute = fileAttribute;
     }
 
     @Override
     public MediaType getFileMediaType() {
-        return attribute.getMediaType();
+        return fileAttribute.getMediaType();
     }
 
     @Override
     public FileAttribute getFileAttribute() {
-        return attribute;
+        return fileAttribute;
     }
 
     @Override
     public Flux<DataBuffer> execute() {
-        return null;
+        return FileUtil.read
     }
 
     @Override

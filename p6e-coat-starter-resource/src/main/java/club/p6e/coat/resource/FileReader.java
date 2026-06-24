@@ -13,32 +13,32 @@ import reactor.core.publisher.Flux;
 public interface FileReader {
 
     /**
-     * 获取文件媒体类型对象
+     * Get File Media Type Object
      *
-     * @return 媒体类型
+     * @return Media Type Object
      */
     MediaType getFileMediaType();
 
     /**
-     * 获取文件模型对象
+     * Get File Attribute Object
      *
-     * @return 文件模型对象
+     * @return File Attribute Object
      */
     FileAttribute getFileAttribute();
 
     /**
-     * 执行文件读取操作
+     * Execute File Read Operation
      *
-     * @return 字节码流
+     * @return Data Buffer Object
      */
     Flux<DataBuffer> execute();
 
     /**
-     * 执行文件读取操作
+     * Execute File Read Operation
      *
-     * @param position 读取的文件开始位置
-     * @param size     读取的文件长度
-     * @return 字节码流
+     * @param position File Read Position
+     * @param size     File Read Size
+     * @return Data Buffer Object
      */
     Flux<DataBuffer> execute(long position, long size);
 

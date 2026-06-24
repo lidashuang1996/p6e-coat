@@ -1,21 +1,22 @@
 package club.p6e.coat.resource;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 /**
- * File Permission Service Impl
+ * Simple File Permission Service
  *
  * @author lidashuang
  * @version 1.0
  */
-@Component
 @ConditionalOnMissingBean(FilePermissionService.class)
-public class FilePermissionServiceImpl implements FilePermissionService {
+public class SimpleFilePermissionService implements FilePermissionService {
 
     @Override
     public Mono<Boolean> execute(FilePermissionType type, String voucher) {
+        if (voucher == null || voucher.isEmpty()) {
+            return Mono.just(false);
+        }
         return Mono.just(true);
     }
 
