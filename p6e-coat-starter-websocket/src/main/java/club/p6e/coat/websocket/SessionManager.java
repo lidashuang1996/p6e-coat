@@ -90,7 +90,7 @@ public class SessionManager {
         final String index = String.valueOf(Math.abs(id.hashCode() % SLOT_NUM));
         SLOTS.computeIfAbsent(index, _ -> new ConcurrentHashMap<>()).put(id, session);
         CHANNELS.computeIfAbsent(name, _ -> new ConcurrentHashMap<>()).put(id, session);
-        log.info("[ SESSION MANAGER ] REGISTER => {}({})%{}={}", id, id.hashCode(), SLOT_NUM, index);
+        log.info("[ WEB SOCKET SESSION MANAGER ] REGISTER => {}({})%{}={}", id, id.hashCode(), SLOT_NUM, index);
     }
 
     /**
@@ -111,7 +111,7 @@ public class SessionManager {
             if (channel != null) {
                 channel.remove(id);
             }
-            log.info("[ SESSION MANAGER ] UNREGISTER => {}({})%{}={}", id, id.hashCode(), SLOT_NUM, index);
+            log.info("[ WEB SOCKET SESSION MANAGER ] UNREGISTER => {}({})%{}={}", id, id.hashCode(), SLOT_NUM, index);
         }
     }
 
@@ -164,7 +164,7 @@ public class SessionManager {
      * @param bytes  Message Content
      */
     public static void pushBinary(Function<User, Boolean> filter, String name, byte[] bytes) {
-        log.info("[ PUSH BINARY SESSION CHANNEL ] {} >>> {}", name, bytes.length);
+        log.info("[ WEB SOCKET PUSH BINARY SESSION CHANNEL ] {} >>> {}", name, bytes.length);
         EXECUTOR.submit(() -> {
             for (final Session session : SESSIONS.values()) {
                 if (filter != null && name.equalsIgnoreCase(session.getChannelName())) {
@@ -185,7 +185,7 @@ public class SessionManager {
      * @param content Message Content
      */
     public static void pushText(Function<User, Boolean> filter, String name, String content) {
-        log.info("[ PUSH TEXT SESSION CHANNEL ] {} >>> {}", name, content);
+        log.info("[ WEB SOCKET PUSH TEXT SESSION CHANNEL ] {} >>> {}", name, content);
         EXECUTOR.submit(() -> {
             for (final Session session : SESSIONS.values()) {
                 if (filter != null && name.equalsIgnoreCase(session.getChannelName())) {

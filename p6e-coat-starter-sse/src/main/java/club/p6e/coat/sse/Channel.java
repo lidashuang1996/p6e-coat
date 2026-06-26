@@ -5,11 +5,9 @@ import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.common.utils.JsonUtil;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandler;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.*;
 import io.netty.util.AttributeKey;
-import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -20,7 +18,6 @@ import java.util.Map;
  * @author lidashuang
  * @version 1.0
  */
-@Slf4j
 public class Channel extends ChannelInboundHandlerAdapter {
 
     /**

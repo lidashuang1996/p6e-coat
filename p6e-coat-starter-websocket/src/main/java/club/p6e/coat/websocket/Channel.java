@@ -152,7 +152,7 @@ public class Channel extends ChannelInboundHandlerAdapter {
                 try {
                     callback.onOpen(session);
                 } catch (Exception e) {
-                    log.error("[ CALLBACK ERROR ] OPEN => {}", e.getMessage(), e);
+                    log.error("[ WEB SOCKET CALLBACK ERROR ] OPEN => {}", e.getMessage(), e);
                 }
             }
         }
@@ -169,7 +169,7 @@ public class Channel extends ChannelInboundHandlerAdapter {
                 try {
                     callback.onClose(session);
                 } catch (Exception e) {
-                    log.error("[ CALLBACK ERROR ] CLOSE => {}", e.getMessage(), e);
+                    log.error("[ WEB SOCKET CALLBACK ERROR ] CLOSE => {}", e.getMessage(), e);
                 }
             }
         }
@@ -187,7 +187,7 @@ public class Channel extends ChannelInboundHandlerAdapter {
                 try {
                     callback.onError(session, throwable);
                 } catch (Exception e) {
-                    log.error("[ CALLBACK ERROR ] ERROR => {}", e.getMessage(), e);
+                    log.error("[ WEB SOCKET CALLBACK ERROR ] ERROR => {}", e.getMessage(), e);
                 }
             }
         }
@@ -205,7 +205,7 @@ public class Channel extends ChannelInboundHandlerAdapter {
                 try {
                     callback.onMessage(session, text);
                 } catch (Exception e) {
-                    log.error("[ CALLBACK ERROR ] MESSAGE TEXT => {}", e.getMessage(), e);
+                    log.error("[ WEB SOCKET CALLBACK ERROR ] MESSAGE TEXT => {}", e.getMessage(), e);
                 }
             }
         }
@@ -223,7 +223,7 @@ public class Channel extends ChannelInboundHandlerAdapter {
                 try {
                     callback.onMessage(session, bytes);
                 } catch (Exception e) {
-                    log.error("[ CALLBACK ERROR ] MESSAGE BYTES => {}", e.getMessage(), e);
+                    log.error("[ WEB SOCKET CALLBACK ERROR ] MESSAGE BYTES => {}", e.getMessage(), e);
                 }
             }
         }

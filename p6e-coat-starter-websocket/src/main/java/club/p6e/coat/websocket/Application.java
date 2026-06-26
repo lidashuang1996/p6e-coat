@@ -87,7 +87,7 @@ public class Application {
     @PostConstruct
     public synchronized void reset() {
         try {
-            log.info("[ WEBSOCKET SERVICE ] RESET PROPERTIES >>> {}", this.properties);
+            log.info("[ WEB SOCKET SERVICE ] RESET PROPERTIES >>> {}", this.properties);
             for (final io.netty.channel.Channel channel : this.channels) {
                 channel.close();
             }
@@ -104,10 +104,10 @@ public class Application {
             this.boss = new MultiThreadIoEventLoopGroup(this.properties.getBossThreads(), NioIoHandler.newFactory());
             this.work = new MultiThreadIoEventLoopGroup(this.properties.getWorkerThreads(), NioIoHandler.newFactory());
             for (final Properties.Channel channel : this.properties.getChannels()) {
-                log.info("[ WEBSOCKET SERVICE ] RESET CHANNEL >>> {}", channel);
+                log.info("[ WEB SOCKET SERVICE ] RESET CHANNEL >>> {}", channel);
                 final AuthService auth = this.authServiceMap.get(channel.getAuth());
                 if (auth == null) {
-                    throw new NullPointerException("[ WEBSOCKET SERVICE ] (" + channel.getAuth() + ") AUTH SERVICE NOT FOUND");
+                    throw new NullPointerException("[ WEB SOCKET SERVICE ] (" + channel.getAuth() + ") AUTH SERVICE NOT FOUND");
                 }
                 final List<Callback> channelCallbacks = channel.getCallbacks().stream().map(this.callbackMap::get).filter(Objects::nonNull).toList();
                 run(channel.getPort(), channel.getPath(), channel.getName(), channel.getType(), channel.getFrame(), auth, channelCallbacks);
@@ -190,9 +190,9 @@ public class Application {
                 }
             });
             this.channels.add(bootstrap.bind(port).channel());
-            log.info("[ WEBSOCKET SERVICE ] ({} : {}) ==> START SUCCESSFULLY... BIND ( {} : {} )", name, type, port, path);
+            log.info("[ WEB SOCKET SERVICE ] ({} : {}) ==> START SUCCESSFULLY... BIND ( {} : {} )", name, type, port, path);
         } catch (Exception e) {
-            log.error("[ WEBSOCKET SERVICE ] >>> {}", e.getMessage(), e);
+            log.error("[ WEB SOCKET SERVICE ] >>> {}", e.getMessage(), e);
         }
     }
 
