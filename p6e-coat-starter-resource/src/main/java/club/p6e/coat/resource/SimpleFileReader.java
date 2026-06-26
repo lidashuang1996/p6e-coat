@@ -1,8 +1,8 @@
 package club.p6e.coat.resource;
 
-import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.support.ResourceRegion;
 import org.springframework.http.MediaType;
-import reactor.core.publisher.Flux;
 
 import java.io.File;
 
@@ -12,34 +12,42 @@ import java.io.File;
  * @author lidashuang
  * @version 1.0
  */
-public class SimpleFileReader implements FileReader {
+public class SimpleFileReader implements FileReader<ResourceRegion> {
 
+    /**
+     * File Object
+     */
     private final File file;
-    private final FileAttribute attribute;
 
-    public SimpleFileReader(File file, FileAttribute attribute) {
+    /**
+     * File Attribute Object
+     */
+    private final FileAttribute fileAttribute;
+
+    /**
+     * Constructor Initialization
+     *
+     * @param file          File Object
+     * @param fileAttribute File Attribute Object
+     */
+    public SimpleFileReader(File file, FileAttribute fileAttribute) {
         this.file = file;
-        this.attribute = attribute;
-    }
-
-    @Override
-    public MediaType getFileMediaType() {
-        return attribute.getMediaType();
+        this.fileAttribute = fileAttribute;
     }
 
     @Override
     public FileAttribute getFileAttribute() {
-        return attribute;
+        return fileAttribute;
     }
 
     @Override
-    public Flux<DataBuffer> execute() {
-        return null;
+    public ResourceRegion execute() {
+        return new ResourceRegion(new FileSystemResource(file), 0, file.length());
     }
 
     @Override
-    public Flux<DataBuffer> execute(long position, long size) {
-        return null;
+    public ResourceRegion execute(long position, long size) {
+        return new ResourceRegion(new FileSystemResource(file), position, size);
     }
 
 }

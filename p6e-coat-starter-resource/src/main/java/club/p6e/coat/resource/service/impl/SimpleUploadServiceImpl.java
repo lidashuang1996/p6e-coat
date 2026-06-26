@@ -4,15 +4,13 @@ import club.p6e.coat.common.exception.ParameterException;
 import club.p6e.coat.common.utils.CopyUtil;
 import club.p6e.coat.resource.*;
 import club.p6e.coat.resource.context.SimpleUploadContext;
-import club.p6e.coat.resource.error.NodeException;
-import club.p6e.coat.resource.error.NodePermissionException;
-import club.p6e.coat.resource.model.UploadLogModel;
-import club.p6e.coat.resource.repository.UploadRepository;
+import club.p6e.coat.resource.error.*;
+import club.p6e.coat.resource.model.FileUploadModel;
+import club.p6e.coat.resource.repository.FileUploadRepository;
 import club.p6e.coat.resource.service.SimpleUploadService;
 import club.p6e.coat.resource.utils.FileUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.http.codec.multipart.FilePart;
-import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.io.File;
@@ -25,8 +23,7 @@ import java.util.Map;
  * @author lidashuang
  * @version 1.0
  */
-@Component
-@ConditionalOnMissingBean(SimpleUploadService.class)
+@ConditionalOnMissingBean(SimpleUploadServiceImpl.class)
 public class SimpleUploadServiceImpl implements SimpleUploadService {
 
     /**
@@ -42,7 +39,17 @@ public class SimpleUploadServiceImpl implements SimpleUploadService {
     /**
      * Upload Repository Object
      */
-    private final UploadRepository repository;
+    private final FileUploadRepository repository;
+
+    /**
+     * File Auth Object
+     */
+    private final FileAuth fileAuth;
+
+    /**
+     * File Permission Object
+     */
+    private final FilePermission filePermission;
 
     /**
      * File Writer Builder Object
@@ -50,36 +57,33 @@ public class SimpleUploadServiceImpl implements SimpleUploadService {
     private final FileWriterBuilder fileWriterBuilder;
 
     /**
-     * File Permission Service Object
+     * Folder Storage Location Path Object
      */
-    private final FilePermissionService filePermissionService;
-
-    /**
-     * Folder Storage Location Path Service Object
-     */
-    private final FolderStorageLocationPathService folderStorageLocationPathService;
+    private final FolderStorageLocationPath folderStorageLocationPath;
 
     /**
      * Constructor Initializers
      *
-     * @param properties                       Properties Object
-     * @param repository                       Upload Repository Object
-     * @param fileWriterBuilder                File Writer Builder Object
-     * @param filePermissionService            File Permission Service Object
-     * @param folderStorageLocationPathService Folder Storage Location Path Service Object
+     * @param properties                Properties Object
+     * @param repository                Upload Repository Object
+     * @param filePermission            File Permission Object
+     * @param fileWriterBuilder         File Writer Builder Object
+     * @param folderStorageLocationPath Folder Storage Location Path Object
      */
     public SimpleUploadServiceImpl(
             Properties properties,
-            UploadRepository repository,
+            FileUploadRepository repository,
+            FileAuth fileAuth,
+            FilePermission filePermission,
             FileWriterBuilder fileWriterBuilder,
-            FilePermissionService filePermissionService,
-            FolderStorageLocationPathService folderStorageLocationPathService
+            FolderStorageLocationPath folderStorageLocationPath
     ) {
         this.properties = properties;
         this.repository = repository;
+        this.fileAuth = fileAuth;
+        this.filePermission = filePermission;
         this.fileWriterBuilder = fileWriterBuilder;
-        this.filePermissionService = filePermissionService;
-        this.folderStorageLocationPathService = folderStorageLocationPathService;
+        this.folderStorageLocationPath = folderStorageLocationPath;
     }
 
     @Override
@@ -90,89 +94,104 @@ public class SimpleUploadServiceImpl implements SimpleUploadService {
         if (node == null) {
             return Mono.error(new ParameterException(
                     this.getClass(),
-                    "fun execute(SimpleUploadContext.Request request) => request parameter <node> exception",
+                    "fun execute(SimpleUploadContext.Request request)",
                     "request parameter <node> exception"
             ));
         }
         if (voucher == null) {
             return Mono.error(new ParameterException(
                     this.getClass(),
-                    "fun execute(SimpleUploadContext.Request request) => request parameter <voucher> exception",
+                    "fun execute(SimpleUploadContext.Request request)",
                     "request parameter <voucher> exception"
             ));
         }
         if (filePart == null) {
             return Mono.error(new ParameterException(
                     this.getClass(),
-                    "fun execute(SimpleUploadContext.Request request) => request parameter <file> exception",
+                    "fun execute(SimpleUploadContext.Request request)",
                     "request parameter <file> exception"
             ));
         }
-        final Properties.Upload uc = properties.getUploads().get(node);
+        final Properties.Upload upload = properties.getUploads().get(node);
         final Map<String, Object> attributes = new HashMap<>(request.getOther());
-        if (uc == null) {
-            return Mono.error(new NodeException(
+        if (upload == null) {
+            return Mono.error(new ResourceNodeException(
                     this.getClass(),
-                    "fun execute(SimpleUploadContext.Request request) => request node mapper config does not exist exception",
+                    "fun execute(SimpleUploadContext.Request request)",
                     "request node mapper config does not exist exception"
             ));
         } else {
             request.setFile(null);
-            attributes.putAll(uc.getOther());
-            final String fileName = FileUtil.name(filePart.filename());
-            final String fileSuffix = FileUtil.getSuffix(fileName);
-            final String fileContent = FileUtil.composeFile(fileName, fileSuffix);
-//            if (fileLength > uc.getMax()) {
-//                return Mono.error(new ParameterException(
-//                        this.getClass(),
-//                        "fun execute(SimpleUploadContext.Request request) => request parameter <file/size> exception",
-//                        "request parameter <file/size> exception"
-//                ));
-            final String fileRelativePath = FileUtil.composePath(folderStorageLocationPathService.execute(), fileContent);
-            final String fileAbsolutePath = FileUtil.composePath(uc.getPath(), fileRelativePath);
-            final UploadLogModel model = new UploadLogModel();
-            model.setSize(0L);
-            model.setSource(SOURCE);
-            model.setName(fileName);
-            model.setStorageType(uc.getType());
-            model.setStorageLocation(fileRelativePath);
-            final String targetPath = FileUtil.convertAbsolutePath(fileAbsolutePath);
-            if (targetPath == null) {
-                return Mono.error(new ParameterException(
+            attributes.putAll(upload.getOther());
+            final String fileName = FileUtil.getName(filePart.filename());
+            final String fileSuffix = FileUtil.getSuffix(filePart.filename());
+            final String fileNameSuffix = FileUtil.composeFile(fileName, fileSuffix);
+            final String fileRelativePath = FileUtil.composePath(folderStorageLocationPath.execute(), fileNameSuffix);
+            final String fileAbsolutePath = FileUtil.composePath(upload.getPath(), fileRelativePath);
+            final String outputPath = FileUtil.convertAbsolutePath(fileAbsolutePath);
+            if (outputPath == null) {
+                return Mono.error(new ResourcePathException(
                         this.getClass(),
-                        "fun execute(SimpleUploadContext.Request request) => request parameter <file/path> exception",
-                        "request parameter <file/path> exception"
+                        "fun execute(SimpleUploadContext.Request request)",
+                        "request resource target path exception"
                 ));
             } else {
-                final File targetFile = new File(targetPath);
-                final FileWriter fileWriter = fileWriterBuilder.of(uc.getType(), attributes)
-                        .build(Mono.just(targetFile).flatMap(f -> filePart.transferTo(f).then(Mono.just(f))));
-                return filePermissionService
-                        .execute(FilePermissionType.UPLOAD, voucher)
-                        .flatMap(b -> {
-                            if (b) {
-                                return repository.create(model)
-                                        .flatMap(m -> fileWriter.execute().then(Mono.just(m)))
-                                        .flatMap(m -> repository.closeLock(m.getId()))
-                                        .flatMap(m -> {
-                                            if (targetFile.length() > uc.getMax()) {
-                                                FileUtil.deleteFile(targetFile);
-                                                return Mono.error(new ParameterException(
-                                                        this.getClass(),
-                                                        "fun execute(SimpleUploadContext.Request request) => request parameter <file/size> exception",
-                                                        "request parameter <file/size> exception"
-                                                ));
-                                            } else {
-                                                return repository.update(m.setSize(targetFile.length()));
-                                            }
-                                        })
-                                        .map(m -> CopyUtil.run(m, SimpleUploadContext.Dto.class));
-                            } else {
-                                return Mono.error(new NodePermissionException(
+                return fileAuth
+                        .execute(voucher)
+                        .flatMap(fu -> {
+                            if (fu.getId() == 0) {
+                                return Mono.error(new ResourceAuthException(
                                         this.getClass(),
-                                        "fun execute(SimpleUploadContext.Request request) => request node file operation permission exception",
-                                        "request node file operation permission exception")
-                                );
+                                        "fun execute(SimpleUploadContext.Request request)",
+                                        "request auth exception"
+                                ));
+                            } else {
+                                return filePermission
+                                        .execute(FilePermissionType.DOWNLOAD, fu)
+                                        .flatMap(b -> {
+                                            if (b) {
+                                                attributes.put("__name__", fileName);
+                                                attributes.put("__suffix__", fileSuffix);
+                                                attributes.put("__name_suffix__", fileNameSuffix);
+                                                final File outputFile = new File(outputPath);
+                                                if (!FileUtil.checkFolderExist(outputFile.getParent())) {
+                                                    FileUtil.createFolder(outputFile.getParent());
+                                                }
+                                                final FileUploadModel model = new FileUploadModel();
+                                                model.setSize(0L);
+                                                model.setSource(SOURCE);
+                                                model.setName(fileName);
+                                                model.setStorageLocation(fileRelativePath);
+                                                model.setStorageType(upload.getType().name());
+                                                model.setOwner(String.valueOf(fu.getId()));
+                                                final FileWriter fileWriter = fileWriterBuilder.build(outputFile, upload.getType(), attributes);
+                                                return repository.create(model)
+                                                        .flatMap(m -> filePart.transferTo(outputFile).then(Mono.just(m)))
+                                                        .flatMap(m -> fileWriter.execute().map(_ -> m))
+                                                        .flatMap(m -> repository.closeLock(m.getId(), String.valueOf(fu.getId())).map(_ -> m))
+                                                        .flatMap(m -> {
+                                                            if (outputFile.length() > upload.getMax()) {
+                                                                FileUtil.deleteFile(outputFile);
+                                                                return Mono.error(new ResourceSizeException(
+                                                                        this.getClass(),
+                                                                        "fun execute(SimpleUploadContext.Request request)",
+                                                                        "request file size exceeds the maximum limit " +
+                                                                                "(" + outputFile.length() + "/" + upload.getMax() + ") exception"
+                                                                ));
+                                                            } else {
+                                                                return repository.update(new FileUploadModel().setId(m.getId()).setSize(outputFile.length()));
+                                                            }
+                                                        })
+                                                        .map(m -> CopyUtil.run(m, SimpleUploadContext.Dto.class));
+
+                                            } else {
+                                                return Mono.error(new ResourcePermissionException(
+                                                        this.getClass(),
+                                                        "fun execute(SimpleUploadContext.Request request)",
+                                                        "request node resource permission exception"
+                                                ));
+                                            }
+                                        });
                             }
                         });
             }

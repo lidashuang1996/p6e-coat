@@ -34,6 +34,11 @@ public class SliceUploadContext extends HashMap<String, Object> implements Seria
             private String name;
 
             /**
+             * Node
+             */
+            private String node;
+
+            /**
              * Voucher
              */
             private String voucher;

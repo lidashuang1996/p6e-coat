@@ -12,15 +12,23 @@ import java.io.File;
  */
 public class SimpleFileWriter implements FileWriter {
 
-    private final Mono<File> mono;
+    /**
+     * File Object
+     */
+    private final File file;
 
-    public SimpleFileWriter(Mono<File> mono) {
-        this.mono = mono;
+    /**
+     * Constructor Initialization
+     *
+     * @param file File Object
+     */
+    public SimpleFileWriter(File file) {
+        this.file = file;
     }
 
     @Override
-    public Mono<Void> execute() {
-        return null;
+    public Mono<File> execute() {
+        return Mono.just(file);
     }
 
 }

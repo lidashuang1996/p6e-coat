@@ -1,8 +1,7 @@
 package club.p6e.coat.resource;
 
-import org.springframework.http.MediaType;
-
 import java.io.File;
+import java.util.Map;
 
 /**
  * File Attribute Builder
@@ -15,18 +14,10 @@ public interface FileAttributeBuilder {
     /**
      * Build File Attribute Object
      *
-     * @param file File Object
+     * @param file                   File Object
+     * @param fileResourceAttributes File Resource Attributes Object
      * @return File Attribute Object
      */
-    FileAttribute build(File file);
-
-    /**
-     * Build File Attribute Object
-     *
-     * @param file      File Object
-     * @param mediaType Media Type
-     * @return File Attribute Object
-     */
-    FileAttribute build(File file, MediaType mediaType);
+    FileAttribute build(File file, Map<String, Object> fileResourceAttributes);
 
 }

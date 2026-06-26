@@ -19,8 +19,8 @@ club.p6e.coat.resource.mapper.OpenUploadContextRequestParameterMapper,\
 club.p6e.coat.resource.mapper.ResourceContextRequestParameterMapper,\
 club.p6e.coat.resource.mapper.SimpleUploadContextRequestParameterMapper,\
 club.p6e.coat.resource.mapper.SliceUploadContextRequestParameterMapper,\
-club.p6e.coat.resource.repository.UploadChunkRepository,\
-club.p6e.coat.resource.repository.UploadRepository,\
+club.p6e.coat.resource.repository.FileUploadChunkRepository,\
+club.p6e.coat.resource.repository.FileUploadRepository,\
 club.p6e.coat.resource.router.CloseUploadRouterFunction,\
 club.p6e.coat.resource.router.DownloadRouterFunction,\
 club.p6e.coat.resource.router.OpenUploadRouterFunction,\
@@ -35,9 +35,9 @@ club.p6e.coat.resource.service.impl.SimpleUploadServiceImpl,\
 club.p6e.coat.resource.service.impl.SliceUploadServiceImpl,\
 club.p6e.coat.resource.task.FileSliceCleanTask,\
 club.p6e.coat.resource.task.FileSliceCleanTaskStrategyServiceImpl,\
-club.p6e.coat.resource.FilePermissionServiceImpl,\
+club.p6e.coat.resource.SimpleFilePermission,\
 club.p6e.coat.resource.FileReadWriteServiceImpl,\
-club.p6e.coat.resource.FileSignatureServiceImpl,\
-club.p6e.coat.resource.FolderStorageLocationPathServiceImpl,\
+club.p6e.coat.resource.SimpleFileSignature,\
+club.p6e.coat.resource.SimpleFolderStorageLocationPath,\
 club.p6e.coat.resource.Properties,\
 club.p6e.coat.resource.SimpleFileAttributeBuilder

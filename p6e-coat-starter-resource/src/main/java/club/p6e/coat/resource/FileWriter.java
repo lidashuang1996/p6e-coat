@@ -2,6 +2,8 @@ package club.p6e.coat.resource;
 
 import reactor.core.publisher.Mono;
 
+import java.io.File;
+
 /**
  * File Writer
  *
@@ -13,8 +15,8 @@ public interface FileWriter {
     /**
      * Execute File Writer
      *
-     * @return Mono Void
+     * @return File Object
      */
-    Mono<Void> execute();
+    Mono<File> execute();
 
 }

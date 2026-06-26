@@ -18,6 +18,6 @@ public interface ResourceService {
      * @param request Resource Context Request Object
      * @return File Reader Object
      */
-    Mono<FileReader> execute(ResourceContext.Request request);
+    Mono<FileReader<?>> execute(ResourceContext.Request request);
 
 }

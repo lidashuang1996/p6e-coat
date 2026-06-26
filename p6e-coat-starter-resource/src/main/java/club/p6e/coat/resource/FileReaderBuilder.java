@@ -12,24 +12,14 @@ import java.util.Map;
 public interface FileReaderBuilder {
 
     /**
-     * Build File Reader Object
+     * Build File Reader
      *
-     * @param type       Type
-     * @param attributes Attributes
-     * @param file       File Object
+     * @param file                   File Object
+     * @param fileAttribute          File Attribute Object
+     * @param fileResourceType       File Resource Type Object
+     * @param fileResourceAttributes File Resource Attributes Object
      * @return File Reader Object
      */
-    FileReader build(String type, Map<String, Object> attributes, File file);
-
-    /**
-     * Build File Reader Object
-     *
-     * @param type       Type
-     * @param attributes Attributes
-     * @param file       File Object
-     * @param attribute  File Attribute Object
-     * @return File Reader Object
-     */
-    FileReader build(String type, Map<String, Object> attributes, File file, FileAttribute attribute);
+    FileReader<?> build(File file, FileAttribute fileAttribute, FileResourceType fileResourceType, Map<String, Object> fileResourceAttributes);
 
 }

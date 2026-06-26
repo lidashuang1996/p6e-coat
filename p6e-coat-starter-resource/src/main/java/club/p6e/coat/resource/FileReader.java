@@ -1,45 +1,34 @@
 package club.p6e.coat.resource;
 
-import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.http.MediaType;
-import reactor.core.publisher.Flux;
-
 /**
  * File Reader
  *
  * @author lidashuang
  * @version 1.0
  */
-public interface FileReader {
+public interface FileReader<R> {
 
     /**
-     * 获取文件媒体类型对象
+     * Get File Attribute Object
      *
-     * @return 媒体类型
-     */
-    MediaType getFileMediaType();
-
-    /**
-     * 获取文件模型对象
-     *
-     * @return 文件模型对象
+     * @return File Attribute Object
      */
     FileAttribute getFileAttribute();
 
     /**
-     * 执行文件读取操作
+     * Execute File Read
      *
-     * @return 字节码流
+     * @return Resource Object
      */
-    Flux<DataBuffer> execute();
+    R execute();
 
     /**
-     * 执行文件读取操作
+     * Execute File Read
      *
-     * @param position 读取的文件开始位置
-     * @param size     读取的文件长度
-     * @return 字节码流
+     * @param position File Read Position
+     * @param size     File Read Size
+     * @return Resource Object
      */
-    Flux<DataBuffer> execute(long position, long size);
+    R execute(long position, long size);
 
 }

@@ -2,10 +2,8 @@ package club.p6e.coat.resource;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -18,9 +16,7 @@ import java.util.Map;
  * @version 1.0
  */
 @Data
-@Component
 @Accessors(chain = true)
-@ConditionalOnMissingBean(Properties.class)
 @ConfigurationProperties(prefix = "p6e.coat.resource")
 public class Properties implements Serializable {
 
@@ -53,7 +49,7 @@ public class Properties implements Serializable {
          * ALIBABA_CLOUD_OBJECT_STORAGE
          * TENCENT_CLOUD_OBJECT_STORAGE
          */
-        private String type = "DISK";
+        private FileResourceType type = FileResourceType.DISK;
 
         /**
          * File Path
@@ -105,7 +101,7 @@ public class Properties implements Serializable {
          * ALIBABA_CLOUD_OBJECT_STORAGE
          * TENCENT_CLOUD_OBJECT_STORAGE
          */
-        private String type = "DISK";
+        private FileResourceType type = FileResourceType.DISK;
 
         /**
          * File Path
@@ -133,7 +129,7 @@ public class Properties implements Serializable {
          * ALIBABA_CLOUD_OBJECT_STORAGE
          * TENCENT_CLOUD_OBJECT_STORAGE
          */
-        private String type = "DISK";
+        private FileResourceType type = FileResourceType.DISK;
 
         /**
          * File Path

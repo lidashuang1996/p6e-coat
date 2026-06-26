@@ -1,72 +1,72 @@
 package club.p6e.coat.resource;
 
-import club.p6e.coat.common.exception.FileException;
+import club.p6e.coat.resource.error.ResourcePathException;
 import club.p6e.coat.resource.utils.FileUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.buffer.DataBufferUtils;
-import org.springframework.stereotype.Component;
+import org.springframework.core.io.buffer.DefaultDataBufferFactory;
 import reactor.core.publisher.Mono;
 
 import java.io.File;
 import java.security.MessageDigest;
 
 /**
- * 文件签名服务
+ * Simple File Signature
  *
  * @author lidashuang
  * @version 1.0
  */
-@Component
-@ConditionalOnMissingBean(
-        value = FileSignatureService.class,
-        ignored = FileSignatureServiceImpl.class
-)
-public class FileSignatureServiceImpl implements FileSignatureService {
-
-    private final static Logger LOGGER = LoggerFactory.getLogger(FileSignatureServiceImpl.class);
+@ConditionalOnMissingBean(SimpleFileSignature.class)
+public class SimpleFileSignature implements FileSignature {
 
     /**
-     * HEX_CHARS
+     * Hex Chars Array
      */
     private static final char[] HEX_CHARS = new char[]
             {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
+    /**
+     * File Buffer Size
+     */
+    private static final int FILE_BUFFER_SIZE = 1024 * 1024 * 5;
+
+    /**
+     * Default Data Buffer Factory
+     */
+    private static final DefaultDataBufferFactory DEFAULT_DATA_BUFFER_FACTORY = new DefaultDataBufferFactory();
+
+
     @Override
     public Mono<String> execute(File file) {
-        LOGGER.info("FileSignatureServiceImpl   :::: file >>>>>>>>>>>>> {}", file);
-        final FileSignatureService.DigestAlgorithm digestAlgorithm = new DefaultDigestAlgorithm();
+        final FileSignature.DigestAlgorithm digestAlgorithm = new DefaultDigestAlgorithm();
         return Mono.just(file)
-                .flatMap(f -> FileUtil.checkFileExist(f) ? Mono.just(f) : Mono.error(new FileException(
-                        FileSignatureServiceImpl.class,
-                        "fun execute(File file). ==> " +
-                                "execute(...) resource data is not a file exception.",
-                        "execute(...) resource data is not a file exception."
+                .flatMap(f -> FileUtil.checkFileExist(f) ? Mono.just(f) : Mono.error(new ResourcePathException(
+                        SimpleFileSignature.class,
+                        "fun execute(File file)",
+                        "resource path file <" + file.getName() + "> exception"
                 )))
-                .flatMap(f -> FileUtil
-                        .readFile(file)
+                .flatMap(f -> DataBufferUtils
+                        .read(new FileSystemResource(f), DEFAULT_DATA_BUFFER_FACTORY, FILE_BUFFER_SIZE)
                         .flatMap(buffer -> {
                             try {
                                 final int count = buffer.readableByteCount();
                                 final byte[] bytes = new byte[count];
                                 buffer.read(bytes);
                                 digestAlgorithm.input(bytes);
-                                LOGGER.info("FileSignatureServiceImpl   :::: md5 file >>>>>>>>>>>>> {}", file);
                                 return Mono.just(count);
                             } finally {
                                 DataBufferUtils.release(buffer);
-                                LOGGER.info("FileSignatureServiceImpl   :::: release  file {}", file);
                             }
                         }).count())
-                .map(l -> digestAlgorithmBytesToHexString(digestAlgorithm.output()));
+                .map(_ -> digestAlgorithmBytesToHexString(digestAlgorithm.output()));
     }
 
     /**
-     * 摘要算法转换为 HEX 格式的字符串
+     * Digest Algorithm Bytes To Hex String
      *
-     * @param bytes 等待转换的内容
-     * @return 转换结果
+     * @param bytes Digest Algorithm Bytes Object
+     * @return Hex String Object
      */
     private String digestAlgorithmBytesToHexString(byte[] bytes) {
         final char[] chars = new char[32];
@@ -79,17 +79,17 @@ public class FileSignatureServiceImpl implements FileSignatureService {
     }
 
     /**
-     * 默认的摘要算法实现
+     * Default Digest Algorithm
      */
-    private static class DefaultDigestAlgorithm implements FileSignatureService.DigestAlgorithm {
+    private static class DefaultDigestAlgorithm implements FileSignature.DigestAlgorithm {
 
         /**
-         * 摘要算法对象
+         * Message Digest Object
          */
         private final MessageDigest md;
 
         /**
-         * 构造方法初始化
+         * Constructor Initialization
          */
         public DefaultDigestAlgorithm() {
             try {

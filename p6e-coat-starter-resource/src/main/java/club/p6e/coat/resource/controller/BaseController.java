@@ -3,11 +3,8 @@ package club.p6e.coat.resource.controller;
 import club.p6e.coat.resource.FileReader;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpRange;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.*;
 import org.springframework.web.reactive.function.server.ServerRequest;
-import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
 import java.io.Serializable;
@@ -25,18 +22,16 @@ import java.util.function.Consumer;
 public class BaseController {
 
     /**
-     * Get Download Server Response
+     * Return Download Server Response
      *
      * @param request    Server Request Object
      * @param fileReader File Reader Object
-     * @return Server Response Object
+     * @return Response Entity Object
      */
-    public static Mono<ServerResponse> getDownloadServerResponse(ServerRequest request, FileReader fileReader) {
-        return getHttpRangeServerResponse(request.headers().range(), fileReader, headers ->
-                headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="
-                        + URLEncoder.encode(fileReader.getFileAttribute().getName(), StandardCharsets.UTF_8)
-                )
-        );
+    public static Mono<HttpEntity<?>> returnDownloadServerResponse(ServerRequest request, FileReader<?> fileReader) {
+        return returnHttpRangeServerResponse(headers -> headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="
+                + URLEncoder.encode(fileReader.getFileAttribute().getName(), StandardCharsets.UTF_8)
+        ), request.headers().range(), fileReader);
     }
 
     /**
@@ -46,42 +41,41 @@ public class BaseController {
      * @param fileReader File Reader Object
      * @return Server Response Object
      */
-    public static Mono<ServerResponse> getResourceServerResponse(ServerRequest request, FileReader fileReader) {
-        return getHttpRangeServerResponse(request.headers().range(), fileReader, headers -> {
-        });
+    public static Mono<HttpEntity<?>> returnResourceServerResponse(ServerRequest request, FileReader<?> fileReader) {
+        return returnHttpRangeServerResponse(headers -> headers.add(HttpHeaders.CONTENT_TYPE,
+                fileReader.getFileAttribute().getMediaType().getType()), request.headers().range(), fileReader);
     }
 
     /**
-     * Get Http Range Server Response
+     * Return Http Range Server Response
      *
+     * @param httpHeaders   Http Headers Object
      * @param httpRangeList Http Range List Object
      * @param fileReader    File Reader Object
-     * @param headers       Headers Object
-     * @return Server Response Object
+     * @return Http Entity Object
      */
-    public static Mono<ServerResponse> getHttpRangeServerResponse(List<HttpRange> httpRangeList, FileReader fileReader, Consumer<HttpHeaders> headers) {
+    public static Mono<HttpEntity<?>> returnHttpRangeServerResponse(Consumer<HttpHeaders> httpHeaders, List<HttpRange> httpRangeList, FileReader<?> fileReader) {
         final long length = fileReader.getFileAttribute().getLength();
-        if (httpRangeList.isEmpty()) {
-            return ServerResponse
-                    .ok()
-                    .contentLength(length)
-                    .contentType(fileReader.getFileMediaType())
-                    .headers(headers)
-                    .body((response, context) -> response.writeWith(fileReader.execute()));
-        } else {
-            final HttpRange range = httpRangeList.get(0);
+        if (httpRangeList != null && !httpRangeList.isEmpty() && httpRangeList.getFirst() != null) {
+            final HttpRange range = httpRangeList.getFirst();
             final long el = range.getRangeEnd(length);
             final long sl = range.getRangeStart(length);
             final long cl = el - sl + 1;
-            return ServerResponse
+            return Mono.just(ResponseEntity
                     .status(HttpStatus.PARTIAL_CONTENT)
                     .contentLength(cl)
-                    .contentType(fileReader.getFileMediaType())
-                    .headers(headers)
+                    .contentType(fileReader.getFileAttribute().getMediaType())
+                    .headers(httpHeaders)
                     .header(HttpHeaders.ACCEPT_RANGES, "bytes")
                     .header(HttpHeaders.CONTENT_RANGE, "bytes " + sl + "-" + el + "/" + length)
-                    .body((response, context) -> response.writeWith(fileReader.execute(sl, cl)));
+                    .body(fileReader.execute(sl, cl)));
         }
+        return Mono.just(ResponseEntity
+                .ok()
+                .contentLength(length)
+                .headers(httpHeaders)
+                .contentType(fileReader.getFileAttribute().getMediaType())
+                .body(fileReader.execute()));
     }
 
     /**

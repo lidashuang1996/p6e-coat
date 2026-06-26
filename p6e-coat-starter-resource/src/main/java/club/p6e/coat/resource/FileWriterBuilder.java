@@ -1,7 +1,5 @@
 package club.p6e.coat.resource;
 
-import reactor.core.publisher.Mono;
-
 import java.io.File;
 import java.util.Map;
 
@@ -14,13 +12,13 @@ import java.util.Map;
 public interface FileWriterBuilder {
 
     /**
-     * Build File Writer Object
+     * Build File Writer
      *
-     * @param type       Type
-     * @param attributes Attributes
-     * @param mono       File Object
+     * @param file                   File Object
+     * @param fileResourceType       File Resource Type Object
+     * @param fileResourceAttributes File Resource Attributes Object
      * @return File Writer Object
      */
-    FileWriter build(String type, Map<String, Object> attributes, Mono<File> mono);
+    FileWriter build(File file, FileResourceType fileResourceType, Map<String, Object> fileResourceAttributes);
 
 }
