@@ -1,7 +1,6 @@
 package club.p6e.coat.resource;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.util.Map;
@@ -12,13 +11,13 @@ import java.util.Map;
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(FileReaderBuilder.class)
+@ConditionalOnMissingBean(SimpleFileReaderBuilder.class)
 public class SimpleFileReaderBuilder implements FileReaderBuilder {
 
     @Override
-    public FileReader build(File file, FileAttribute fileAttribute, String resourceType, Map<String, Object> resourceAttributes) {
-        if ("DISK".equalsIgnoreCase(resourceType)) {
-            return new SimpleFileReader(file, resourceAttributes);
+    public FileReader<?> build(File file, FileAttribute fileAttribute, FileResourceType fileResourceType, Map<String, Object> fileResourceAttributes) {
+        if (FileResourceType.DISK == fileResourceType) {
+            return new SimpleFileReader(file, fileAttribute);
         }
         return null;
     }

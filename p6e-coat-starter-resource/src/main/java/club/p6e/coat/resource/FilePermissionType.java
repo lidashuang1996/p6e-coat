@@ -15,10 +15,12 @@ public enum FilePermissionType {
      * Upload File Permission Type
      */
     UPLOAD("U"),
+
     /**
      * Resource File Permission Type
      */
     RESOURCE("R"),
+
     /**
      * Download File Permission Type
      */
@@ -29,6 +31,11 @@ public enum FilePermissionType {
      */
     private final String mark;
 
+    /**
+     * Constructor Initialization
+     *
+     * @param mark File Permission Type Mark
+     */
     FilePermissionType(String mark) {
         this.mark = mark;
     }

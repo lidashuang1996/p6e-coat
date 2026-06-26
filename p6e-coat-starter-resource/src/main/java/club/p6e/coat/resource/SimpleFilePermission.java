@@ -4,13 +4,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import reactor.core.publisher.Mono;
 
 /**
- * Simple File Permission Service
+ * Simple File Permission
  *
  * @author lidashuang
  * @version 1.0
  */
-@ConditionalOnMissingBean(FilePermissionService.class)
-public class SimpleFilePermissionService implements FilePermissionService {
+@ConditionalOnMissingBean(SimpleFilePermission.class)
+public class SimpleFilePermission implements FilePermission {
 
     @Override
     public Mono<Boolean> execute(FilePermissionType type, String voucher) {

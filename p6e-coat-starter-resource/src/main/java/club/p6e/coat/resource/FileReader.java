@@ -1,23 +1,12 @@
 package club.p6e.coat.resource;
 
-import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.http.MediaType;
-import reactor.core.publisher.Flux;
-
 /**
  * File Reader
  *
  * @author lidashuang
  * @version 1.0
  */
-public interface FileReader {
-
-    /**
-     * Get File Media Type Object
-     *
-     * @return Media Type Object
-     */
-    MediaType getFileMediaType();
+public interface FileReader<R> {
 
     /**
      * Get File Attribute Object
@@ -27,19 +16,19 @@ public interface FileReader {
     FileAttribute getFileAttribute();
 
     /**
-     * Execute File Read Operation
+     * Execute File Read
      *
-     * @return Data Buffer Object
+     * @return Resource Object
      */
-    Flux<DataBuffer> execute();
+    R execute();
 
     /**
-     * Execute File Read Operation
+     * Execute File Read
      *
      * @param position File Read Position
      * @param size     File Read Size
-     * @return Data Buffer Object
+     * @return Resource Object
      */
-    Flux<DataBuffer> execute(long position, long size);
+    R execute(long position, long size);
 
 }

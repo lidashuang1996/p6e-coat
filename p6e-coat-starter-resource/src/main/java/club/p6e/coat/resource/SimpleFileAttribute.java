@@ -9,22 +9,25 @@ import org.springframework.http.MediaType;
  * @author lidashuang
  * @version 1.0
  */
-@Getter
+@SuppressWarnings("ALL")
 public class SimpleFileAttribute implements FileAttribute {
 
     /**
      * File Name
      */
+    @Getter
     private final String name;
 
     /**
      * File Length
      */
+    @Getter
     private final long length;
 
     /**
      * File Media Type
      */
+    @Getter
     private final MediaType mediaType;
 
     /**

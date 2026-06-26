@@ -3,20 +3,18 @@ package club.p6e.coat.resource;
 import club.p6e.coat.common.utils.GeneratorUtil;
 import club.p6e.coat.resource.utils.FileUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * Folder Storage Location Path Service Impl
+ * Simple Folder Storage Location Path
  *
  * @author lidashuang
  * @version 1.0
  */
-@Component
-@ConditionalOnMissingBean(FolderStorageLocationPathServiceImpl.class)
-public class FolderStorageLocationPathServiceImpl implements FolderStorageLocationPathService {
+@ConditionalOnMissingBean(SimpleFolderStorageLocationPath.class)
+public class SimpleFolderStorageLocationPath implements FolderStorageLocationPath {
 
     /**
      * Date Time Formatter Object
@@ -25,7 +23,8 @@ public class FolderStorageLocationPathServiceImpl implements FolderStorageLocati
 
     @Override
     public String execute() {
-        return FileUtil.composePath(DATE_TIME_FORMATTER.format(LocalDateTime.now()), GeneratorUtil.uuid() + GeneratorUtil.random(6, true, false));
+        return FileUtil.composePath(DATE_TIME_FORMATTER.format(LocalDateTime.now()),
+                GeneratorUtil.uuid() + GeneratorUtil.random(6, true, false));
     }
 
 }

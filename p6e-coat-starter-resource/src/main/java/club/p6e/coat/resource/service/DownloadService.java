@@ -18,6 +18,6 @@ public interface DownloadService {
      * @param request Download Context Request Object
      * @return File Reader Object
      */
-    Mono<FileReader> execute(DownloadContext.Request request);
+    Mono<FileReader<?>> execute(DownloadContext.Request request);
 
 }
