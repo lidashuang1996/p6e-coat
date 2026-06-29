@@ -1,5 +1,4 @@
 club.p6e.cloud.gateway.Properties
-club.p6e.cloud.gateway.PropertiesRefresher
 club.p6e.cloud.gateway.RouteLocator
 club.p6e.cloud.gateway.BaseWebFilter
 club.p6e.cloud.gateway.filter.InjectVoucherGatewayFilterFactory
