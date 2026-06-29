@@ -20,6 +20,6 @@ public interface BlockingPermissionAutoRefreshTask {
      *
      * @return Version
      */
-    Integer version();
+    Long version();
 
 }

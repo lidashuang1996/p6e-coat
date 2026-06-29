@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Blocking Permission Auto Refresh Task Impl
@@ -43,7 +43,7 @@ public class BlockingPermissionAutoRefreshTaskImpl implements BlockingPermission
     /**
      * Version Object
      */
-    private final AtomicInteger version = new AtomicInteger(0);
+    private final AtomicLong version = new AtomicLong(0L);
 
     /**
      * Constructor Initialization
@@ -77,7 +77,7 @@ public class BlockingPermissionAutoRefreshTaskImpl implements BlockingPermission
     }
 
     @Override
-    public Integer version() {
+    public Long version() {
         return this.version.get();
     }
 

@@ -6,9 +6,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Permission Path Matcher Impl
@@ -25,10 +28,15 @@ public class PermissionPathMatcherImpl implements PermissionPathMatcher {
      */
     private final Model cache = new Model();
 
+    /**
+     * Reentrant Lock Object
+     */
+    private final ReentrantLock lock = new ReentrantLock();
+
     @Override
     public List<PermissionDetails> match(String path) {
         if (path == null || path.isEmpty()) {
-            return new ArrayList<>();
+            return List.of();
         }
         Model temporary = cache;
         final String[] paths = path.toLowerCase().trim().split("/");
@@ -37,12 +45,12 @@ public class PermissionPathMatcherImpl implements PermissionPathMatcher {
             if (model == null) {
                 model = temporary.getData().get("*");
                 if (model == null) {
-                    return new ArrayList<>();
+                    return List.of();
                 }
             }
             temporary = model;
         }
-        return temporary.getPermissions();
+        return List.copyOf(temporary.getPermissions());
     }
 
     @Override
@@ -56,7 +64,8 @@ public class PermissionPathMatcherImpl implements PermissionPathMatcher {
                 && permission.getWeight() != null
                 && permission.getVersion() != null
         ) {
-            synchronized (this) {
+            try {
+                lock.lock();
                 Model temporary = cache;
                 final String path = permission.getPath();
                 final String[] paths = path.toLowerCase().trim().split("/");
@@ -66,14 +75,19 @@ public class PermissionPathMatcherImpl implements PermissionPathMatcher {
                 temporary.getPermissions().add(permission);
                 temporary.getPermissions().sort(Comparator.comparingInt(PermissionDetails::getWeight).reversed());
                 log.info("[ PERMISSION PATH MATCHER REGISTER ] {}({}) >>> {}", path, permission.getMethod(), permission);
+            } finally {
+                lock.unlock();
             }
         }
     }
 
     @Override
     public void cleanExpiredVersionData(long version) {
-        synchronized (this) {
+        try {
+            lock.lock();
             cleanExpiredVersionData(version, cache);
+        } finally {
+            lock.unlock();
         }
     }
 

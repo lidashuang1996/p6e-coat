@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -45,7 +44,7 @@ public class ReactivePermissionAutoRefreshTaskImpl implements ReactivePermission
     /**
      * Version Object
      */
-    private final AtomicInteger version = new AtomicInteger(0);
+    private final AtomicLong version = new AtomicLong(0);
 
     /**
      * Constructor Initialization
@@ -84,7 +83,7 @@ public class ReactivePermissionAutoRefreshTaskImpl implements ReactivePermission
     }
 
     @Override
-    public Integer version() {
+    public Long version() {
         return this.version.get();
     }
 
@@ -95,23 +94,30 @@ public class ReactivePermissionAutoRefreshTaskImpl implements ReactivePermission
      * @return Permission Path Data Size
      */
     private Mono<Long> executePermissionPath(long version) {
-        final AtomicLong count = new AtomicLong(0);
-        final AtomicInteger page = new AtomicInteger(1);
-        return Mono.defer(() -> this.repository
-                .getPermissionDetailsList(page.getAndIncrement(), 20)
-                .switchIfEmpty(Mono.just(List.of()))
-        ).expand(list -> {
-            if (list.isEmpty()) {
-                return Mono.empty();
-            }
-            for (final PermissionDetails item : list) {
-                this.permissionPathMatcher.register(item.setVersion(version));
-            }
-            count.addAndGet(list.size());
-            return Mono.defer(() -> this.repository
-                    .getPermissionDetailsList(page.getAndIncrement(), 20)
-                    .switchIfEmpty(Mono.just(List.of())));
-        }).then(Mono.just(count.get()));
+        return executePermissionPath(version, 1, new AtomicLong(0));
+    }
+
+    /**
+     * Execute Permission Path Refresh
+     *
+     * @param version New Version
+     * @param page    Page Number
+     * @param count   Count Number
+     * @return Permission Path Data Size
+     */
+    private Mono<Long> executePermissionPath(long version, int page, AtomicLong count) {
+        return this.repository
+                .getPermissionDetailsList(page, 20)
+                .flatMap(list -> {
+                    if (list.isEmpty()) {
+                        return Mono.just(count.get());
+                    }
+                    for (final PermissionDetails item : list) {
+                        this.permissionPathMatcher.register(item.setVersion(version));
+                    }
+                    count.addAndGet(list.size());
+                    return executePermissionPath(version, page + 1, count);
+                });
     }
 
     /**
@@ -120,20 +126,26 @@ public class ReactivePermissionAutoRefreshTaskImpl implements ReactivePermission
      * @return Permission Group Data Object
      */
     private Mono<Map<String, List<String>>> executePermissionGroup() {
-        final AtomicInteger page = new AtomicInteger(1);
-        final Map<String, List<String>> result = new HashMap<>();
-        return Mono.defer(() -> this.repository
-                .getPermissionGroupList(page.getAndIncrement(), 20)
-                .switchIfEmpty(Mono.just(Map.of()))
-        ).expand(map -> {
-            if (map.isEmpty()) {
-                return Mono.empty();
-            }
-            result.putAll(map);
-            return Mono.defer(() -> this.repository
-                    .getPermissionGroupList(page.getAndIncrement(), 20)
-                    .switchIfEmpty(Mono.just(Map.of())));
-        }).then(Mono.just(result));
+        return executePermissionGroup(1, new HashMap<>());
+    }
+
+    /**
+     * Execute Permission Group Refresh
+     *
+     * @param page   Page Number
+     * @param result Result Object
+     * @return Permission Group Data Object
+     */
+    private Mono<Map<String, List<String>>> executePermissionGroup(int page, Map<String, List<String>> result) {
+        return this.repository
+                .getPermissionGroupList(page, 20)
+                .flatMap(map -> {
+                    if (map.isEmpty()) {
+                        return Mono.just(result);
+                    }
+                    result.putAll(map);
+                    return executePermissionGroup(page + 1, result);
+                });
     }
 
 }

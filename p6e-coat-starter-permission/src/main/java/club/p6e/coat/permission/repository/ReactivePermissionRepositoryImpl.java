@@ -8,8 +8,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.r2dbc.core.DatabaseClient;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -146,22 +148,13 @@ public class ReactivePermissionRepositoryImpl implements ReactivePermissionRepos
                 .bind("LIMIT", size)
                 .bind("OFFSET", (page - 1) * size)
                 .map((row) -> {
-                    final Map<String, String> data = new HashMap<>();
-                    data.put("id", TransformationUtil.objectToString(row.get("id")));
-                    data.put("parent", TransformationUtil.objectToString(row.get("parent")));
-                    return data;
+                    final String id = TransformationUtil.objectToString(row.get("id"));
+                    final String parent = TransformationUtil.objectToString(row.get("parent"));
+                    final List<String> parentList = JsonUtil.fromJsonToList(parent, String.class);
+                    return Tuples.of(id, parentList == null ? new ArrayList<>() : parentList);
                 })
                 .all()
-                .collectList()
-                .map(list -> {
-                    final Map<String, List<String>> result = new HashMap<>();
-                    for (Map<String, String> item : list) {
-                        final String id = item.get("id");
-                        final String parent = item.get("parent");
-                        result.put(id, JsonUtil.fromJsonToList(parent, String.class));
-                    }
-                    return result;
-                });
+                .collectMap(Tuple2::getT1, t -> (List<String>) t.getT2());
     }
 
 }

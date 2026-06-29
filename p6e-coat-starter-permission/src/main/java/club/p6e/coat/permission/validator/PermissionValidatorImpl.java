@@ -45,15 +45,14 @@ public class PermissionValidatorImpl implements PermissionValidator {
     }
 
     @Override
-    public PermissionDetails execute(String path, String method, List<String> groups) {
+    public PermissionDetails execute(String path, String method, Set<String> groups) {
         if (groups != null && !groups.isEmpty()) {
-            final Set<String> gs = new HashSet<>(groups);
             final List<PermissionDetails> permissions = this.permissionPathMatcher.match(path);
             if (permissions != null && !permissions.isEmpty()) {
                 for (final PermissionDetails permission : permissions) {
                     final String pm = permission.getMethod();
                     if (USUAL_CHAR.equalsIgnoreCase(pm) || method.equalsIgnoreCase(pm)) {
-                        if (this.permissionGroupMatcher.match(gs, String.valueOf(permission.getGid()))) {
+                        if (this.permissionGroupMatcher.match(groups, String.valueOf(permission.getGid()))) {
                             return permission;
                         }
                     }

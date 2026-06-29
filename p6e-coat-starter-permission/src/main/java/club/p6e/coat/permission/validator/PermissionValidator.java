@@ -3,6 +3,7 @@ package club.p6e.coat.permission.validator;
 import club.p6e.coat.permission.PermissionDetails;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Permission Validator
@@ -20,6 +21,6 @@ public interface PermissionValidator {
      * @param groups Permission Group
      * @return Permission Details Object
      */
-    PermissionDetails execute(String path, String method, List<String> groups);
+    PermissionDetails execute(String path, String method, Set<String> groups);
 
 }

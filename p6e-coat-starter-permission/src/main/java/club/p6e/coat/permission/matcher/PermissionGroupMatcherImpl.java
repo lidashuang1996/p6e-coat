@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Permission Path Matcher Impl
@@ -18,6 +19,16 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @ConditionalOnMissingBean(PermissionGroupMatcher.class)
 public class PermissionGroupMatcherImpl implements PermissionGroupMatcher {
+
+    /**
+     * Max Permission Group Depth
+     */
+    private static final int MAX_GROUP_DEPTH = 16;
+
+    /**
+     * Reentrant Lock Object
+     */
+    private final ReentrantLock lock = new ReentrantLock();
 
     /**
      * Cache Object
@@ -33,7 +44,7 @@ public class PermissionGroupMatcherImpl implements PermissionGroupMatcher {
         if (user.contains(target)) {
             return true;
         }
-        int counter = 16;
+        int counter = MAX_GROUP_DEPTH;
         List<String> list = List.of(target);
         while (!list.isEmpty()) {
             final Set<String> temporary = new HashSet<>();
@@ -59,9 +70,14 @@ public class PermissionGroupMatcherImpl implements PermissionGroupMatcher {
 
     @Override
     public void refresh(Map<String, List<String>> data) {
-        cache.clear();
-        for (final String key : data.keySet()) {
-            cache.put(key, data.get(key));
+        try {
+            lock.lock();
+            cache.clear();
+            for (final String key : data.keySet()) {
+                cache.put(key, data.get(key));
+            }
+        } finally {
+            lock.unlock();
         }
     }
 

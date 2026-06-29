@@ -64,9 +64,8 @@ public class BlockingPermissionFilter implements Filter {
      * @param request Http Servlet Request Object
      * @return Permission Details Object
      */
-    @SuppressWarnings("ALL")
     public PermissionDetails validate(HttpServletRequest request) {
-        final List<String> permissions = new ArrayList<>();
+        final Set<String> permissions = new HashSet<>();
         final String method = request.getMethod().toUpperCase();
         final String user = request.getHeader(USER_PERMISSION_HEADER);
         final String path = request.getContextPath() + request.getServletPath();

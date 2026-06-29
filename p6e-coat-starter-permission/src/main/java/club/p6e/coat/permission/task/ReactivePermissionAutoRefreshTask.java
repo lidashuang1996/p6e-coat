@@ -22,6 +22,6 @@ public interface ReactivePermissionAutoRefreshTask {
      *
      * @return Version
      */
-    Integer version();
+    Long version();
 
 }

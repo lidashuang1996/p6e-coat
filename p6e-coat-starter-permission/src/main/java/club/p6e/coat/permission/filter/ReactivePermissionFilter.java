@@ -11,8 +11,9 @@ import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Reactive Permission Filter
@@ -25,6 +26,7 @@ public class ReactivePermissionFilter implements WebFilter {
     /**
      * Permission Header (Internal Request Header)
      * Custom HTTP Header Name, Non Standard RFC Header
+     * Validity Of The Request Header Has Been Verified
      */
     @SuppressWarnings("ALL")
     private static final String PERMISSION_HEADER = "P6e-Permission";
@@ -32,6 +34,7 @@ public class ReactivePermissionFilter implements WebFilter {
     /**
      * User Permission Header (Internal Request Header)
      * Custom HTTP Header Name, Non Standard RFC Header
+     * Validity Of The Request Header Has Been Verified
      */
     @SuppressWarnings("ALL")
     private static final String USER_PERMISSION_HEADER = "P6e-User-Permission";
@@ -76,7 +79,7 @@ public class ReactivePermissionFilter implements WebFilter {
      * @return Permission Details Object
      */
     public PermissionDetails validate(ServerHttpRequest request) {
-        final List<String> permissions = new ArrayList<>();
+        final Set<String> permissions = new HashSet<>();
         final String path = request.getPath().value();
         final String method = request.getMethod().name().toUpperCase();
         final String user = request.getHeaders().getFirst(USER_PERMISSION_HEADER);
